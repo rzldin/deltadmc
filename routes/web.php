@@ -1,0 +1,244 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+
+
+
+Auth::routes();
+Route::get('/', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/', 'Auth\LoginController@login')->name('login');
+
+Route::group(['middleware' => 'auth'], function(){
+    Route::get('/dashboard', function () {
+        return view('content');
+    });
+    Route::get('/logout', 'Otentikasi\OtentikasiController@logout')->name('logout');
+
+    /** Master */
+
+    //Country
+    Route::get('/master/country', 'MasterController@country')->name('master.country');
+    Route::post('/master/country_doAdd', 'MasterController@country_doAdd')->name('master.country_doAdd');
+    Route::post('/master/cek_country_code', 'MasterController@cek_country_code')->name('master.cek_country_code');
+    Route::post('/master/country_doEdit', 'MasterController@country_doEdit')->name('master.country_doEdit');
+    Route::post('/master/country_get', 'MasterController@country_get')->name('master.country_get');
+    Route::post('/master/country_getAll', 'MasterController@get_all_country')->name('master.country_getAll');
+    Route::get('/master/country_delete/{id}', 'MasterController@country_delete')->name('master.country_delete');
+
+    //Carrier
+    Route::get('/master/carrier', 'MasterController@carrier')->name('master.carrier');
+    Route::post('/master/carrier_doAdd', 'MasterController@carrier_doAdd')->name('master.carrier_doAdd');
+    Route::post('/master/cek_carrier_code', 'MasterController@cek_carrier_code')->name('master.cek_carrier_code');
+    Route::post('/master/carrier_doEdit', 'MasterController@carrier_doEdit')->name('master.carrier_doEdit');
+    Route::post('/master/carrier_get', 'MasterController@carrier_get')->name('master.carrier_get');
+    Route::get('/master/carrier_delete/{id}', 'MasterController@carrier_delete')->name('master.carrier_delete');
+
+    //Carrier
+    Route::get('/master/charge', 'MasterController@charge')->name('master.charge');
+    Route::post('/master/charge_doAdd', 'MasterController@charge_doAdd')->name('master.charge_doAdd');
+    Route::post('/master/cek_charge_code', 'MasterController@cek_charge_code')->name('master.cek_charge_code');
+    Route::post('/master/charge_doEdit', 'MasterController@charge_doEdit')->name('master.charge_doEdit');
+    Route::post('/master/charge_get', 'MasterController@charge_get')->name('master.charge_get');
+    Route::get('/master/charge_delete/{id}', 'MasterController@charge_delete')->name('master.charge_delete');
+
+    
+    //Vehicle
+    Route::get('/master/vehicle', 'MasterController@vehicle')->name('master.vehicle');
+    Route::post('/master/vehicle_doAdd', 'MasterController@vehicle_doAdd')->name('master.vehicle_doAdd');
+    Route::post('/master/cek_vehicle_code', 'MasterController@cek_vehicle_code')->name('master.cek_vehicle_code');
+    Route::post('/master/vehicle_doEdit', 'MasterController@vehicle_doEdit')->name('master.vehicle_doEdit');
+    Route::post('/master/vehicle_get', 'MasterController@vehicle_get')->name('master.vehicle_get');
+    Route::get('/master/vehicle_delete/{id}', 'MasterController@vehicle_delete')->name('master.vehicle_delete');
+
+
+    //Port
+    Route::get('/master/port', 'MasterController@port')->name('master.port');
+    Route::post('/master/port_doAdd', 'MasterController@port_doAdd')->name('master.port_doAdd');
+    Route::post('/master/cek_port_code', 'MasterController@cek_port_code')->name('master.cek_port_code');
+    Route::post('/master/port_doEdit', 'MasterController@port_doEdit')->name('master.port_doEdit');
+    Route::post('/master/port_get', 'MasterController@port_get')->name('master.port_get');
+    Route::post('/master/port_doEdit', 'MasterController@port_doEdit')->name('master.port_doEdit');
+    Route::get('/master/port_delete/{id}', 'MasterController@port_delete')->name('master.port_delete');
+
+    //Currency
+    Route::get('/master/currency', 'MasterController@currency')->name('master.currency');
+    Route::post('/master/currency_doAdd', 'MasterController@currency_doAdd')->name('master.currency_doAdd');
+    Route::post('/master/cek_currency_code', 'MasterController@cek_currency_code')->name('master.cek_currency_code');
+    Route::post('/master/currency_doEdit', 'MasterController@currency_doEdit')->name('master.currency_doEdit');
+    Route::post('/master/currency_get', 'MasterController@currency_get')->name('master.currency_get');
+    Route::post('/master/currency_doEdit', 'MasterController@currency_doEdit')->name('master.currency_doEdit');
+    Route::get('/master/currency_delete/{id}', 'MasterController@currency_delete')->name('master.currency_delete');
+
+    //Company
+    Route::get('/master/company', 'MasterController@company')->name('master.company');
+    Route::get('/master/company_add', 'MasterController@company_add')->name('master.company_add');
+    Route::post('/master/company_addAddress', 'MasterController@company_addAddress')->name('master.company_addAddress');
+    Route::post('/master/company_doAdd', 'MasterController@company_doAdd')->name('master.company_doAdd');
+    Route::post('/master/cek_company_code', 'MasterController@cek_company_code')->name('master.cek_company_code');
+    Route::get('/master/company_edit/{id}', 'MasterController@company_edit')->name('master.company_edit');
+    Route::get('/master/company_view/{id}', 'MasterController@company_view')->name('master.company_view');
+    Route::post('/master/company_doUpdate/{id}', 'MasterController@company_doUpdate')->name('master.company_doUpdate');
+    Route::post('/master/company_loadDetail','MasterController@company_loadDetail')->name('master.company_loadDetail');
+    Route::post('/master/company_deleteAddress','MasterController@company_deleteAddress')->name('master.company_deleteAddress');
+    Route::post('/master/company_updateAddress', 'MasterController@company_updateAddress')->name('master.company_updateAddress');
+    Route::post('/master/company_doEdit', 'MasterController@company_doEdit')->name('master.company_doEdit');
+    Route::post('/master/company_get', 'MasterController@company_get')->name('master.company_get');
+    Route::post('/master/company_doEdit', 'MasterController@company_doEdit')->name('master.company_doEdit');
+    Route::get('/master/company_delete/{id}', 'MasterController@company_delete')->name('master.company_delete');
+
+    Route::post('/master/company_addPic', 'MasterController@company_addPic')->name('master.company_addPic');
+    Route::post('/master/company_loadDetailPic','MasterController@company_loadDetailPic')->name('master.company_loadDetailPic');
+    Route::post('/master/company_deletePic','MasterController@company_deletePic')->name('master.company_deletePic');
+    Route::post('/master/company_updatePic', 'MasterController@company_updatePic')->name('master.company_updatePic');
+
+
+    //User
+    Route::get('/master/user', 'MasterController@user')->name('master.user');
+    Route::post('/master/user_doAdd', 'MasterController@user_doAdd')->name('master.user_doAdd');
+    Route::post('/master/user_doEdit', 'MasterController@user_doEdit')->name('master.user_doEdit');
+    Route::post('/master/users_get', 'MasterController@users_get')->name('master.users_get');
+    Route::get('/master/user_delete/{id}', 'MasterController@user_delete')->name('master.user_delete');
+    Route::post('/master/cek_username', 'MasterController@cek_username')->name('master.cek_username');
+
+
+    //Account
+    Route::get('/master/account', 'MasterController@account')->name('master.account');
+    Route::post('/master/account_doAdd', 'MasterController@account_doAdd')->name('master.account_doAdd');
+    Route::post('/master/account_doEdit', 'MasterController@account_doEdit')->name('master.account_doEdit');
+    Route::post('/master/account_get', 'MasterController@account_get')->name('master.account_get');
+    Route::get('/master/account_delete/{id}', 'MasterController@account_delete')->name('master.account_delete');
+
+
+    //Schedule Type
+    Route::get('/master/schedule', 'MasterController@schedule')->name('master.schedule');
+    Route::post('/master/schedule_doAdd', 'MasterController@schedule_doAdd')->name('master.schedule_doAdd');
+    Route::post('/master/schedule_doEdit', 'MasterController@schedule_doEdit')->name('master.schedule_doEdit');
+    Route::post('/master/schedule_get', 'MasterController@schedule_get')->name('master.schedule_get');
+    Route::get('/master/schedule_delete/{id}', 'MasterController@schedule_delete')->name('master.schedule_delete');
+ 
+
+    //Loaded Type
+    Route::get('/master/loaded', 'MasterController@loaded')->name('master.loaded');
+    Route::post('/master/loaded_doAdd', 'MasterController@loaded_doAdd')->name('master.loaded_doAdd');
+    Route::post('/master/loaded_doEdit', 'MasterController@loaded_doEdit')->name('master.loaded_doEdit');
+    Route::post('/master/loaded_get', 'MasterController@loaded_get')->name('master.loaded_get');
+    Route::get('/master/loaded_delete/{id}', 'MasterController@loaded_delete')->name('master.loaded_delete');
+
+    //Freight
+    Route::get('/master/freight', 'MasterController@freight')->name('master.freight');
+    Route::post('/master/freight_doAdd', 'MasterController@freight_doAdd')->name('master.freight_doAdd');
+    Route::post('/master/freight_doEdit', 'MasterController@freight_doEdit')->name('master.freight_doEdit');
+    Route::post('/master/freight_get', 'MasterController@freight_get')->name('master.freight_get');
+    Route::get('/master/freight_delete/{id}', 'MasterController@freight_delete')->name('master.freight_delete');
+
+    //incoterms
+    Route::get('/master/incoterms', 'MasterController@incoterms')->name('master.incoterms');
+    Route::post('/master/incoterms_doAdd', 'MasterController@incoterms_doAdd')->name('master.incoterms_doAdd');
+    Route::post('/master/incoterms_doEdit', 'MasterController@incoterms_doEdit')->name('master.incoterms_doEdit');
+    Route::post('/master/incoterms_get', 'MasterController@incoterms_get')->name('master.incoterms_get');
+    Route::get('/master/incoterms_delete/{id}', 'MasterController@incoterms_delete')->name('master.incoterms_delete');
+
+
+    //container
+    Route::get('/master/container', 'MasterController@container')->name('master.container');
+    Route::post('/master/container_doAdd', 'MasterController@container_doAdd')->name('master.container_doAdd');
+    Route::post('/master/container_doEdit', 'MasterController@container_doEdit')->name('master.container_doEdit');
+    Route::post('/master/container_get', 'MasterController@container_get')->name('master.container_get');
+    Route::get('/master/container_delete/{id}', 'MasterController@container_delete')->name('master.container_delete');
+
+    //service
+    Route::get('/master/service', 'MasterController@service')->name('master.service');
+    Route::post('/master/service_doAdd', 'MasterController@service_doAdd')->name('master.service_doAdd');
+    Route::post('/master/service_doEdit', 'MasterController@service_doEdit')->name('master.service_doEdit');
+    Route::post('/master/service_get', 'MasterController@service_get')->name('master.service_get');
+    Route::get('/master/service_delete/{id}', 'MasterController@service_delete')->name('master.service_delete');
+
+
+    //Charge Group
+    Route::get('/master/charge_group', 'MasterController@charge_group')->name('master.charge_group');
+    Route::post('/master/charge_group_doAdd', 'MasterController@charge_group_doAdd')->name('master.charge_group_doAdd');
+    Route::post('/master/charge_group_doEdit', 'MasterController@charge_group_doEdit')->name('master.charge_group_doEdit');
+    Route::post('/master/charge_group_get', 'MasterController@charge_group_get')->name('master.charge_group_get');
+    Route::get('/master/charge_group_delete/{id}', 'MasterController@charge_group_delete')->name('master.charge_group_delete');
+    Route::post('/master/cek_charge_group_name', 'MasterController@cek_charge_group_name')->name('master.cek_charge_group_name');
+
+
+    //UOM
+    Route::get('/master/uom', 'MasterController@uom')->name('master.uom');
+    Route::post('/master/uom_doAdd', 'MasterController@uom_doAdd')->name('master.uom_doAdd');
+    Route::post('/master/uom_doEdit', 'MasterController@uom_doEdit')->name('master.uom_doEdit');
+    Route::post('/master/uom_get', 'MasterController@uom_get')->name('master.uom_get');
+    Route::get('/master/uom_delete/{id}', 'MasterController@uom_delete')->name('master.uom_delete');
+    Route::post('/master/cek_uom_code', 'MasterController@cek_uom_code')->name('master.cek_uom_code');
+
+    //vehicle
+    Route::get('/master/vehicleType', 'MasterController@vehicleType')->name('master.vehicleType');
+    Route::post('/master/vehicleType_doAdd', 'MasterController@vehicleType_doAdd')->name('master.vehicleType_doAdd');
+    Route::post('/master/vehicleType_doEdit', 'MasterController@vehicleType_doEdit')->name('master.vehicleType_doEdit');
+    Route::post('/master/vehicleType_get', 'MasterController@vehicleType_get')->name('master.vehicleType_get');
+    Route::get('/master/vehicleType_delete/{id}', 'MasterController@vehicleType_delete')->name('master.vehicleType_delete');
+
+
+    /** Quontation */
+    Route::get('quotation/list', 'QuotationController@index')->name('quotation.list');
+    Route::get('/quotation/quote_add', 'QuotationController@quote_add')->name('quotation.quote_add');
+    Route::post('/quotation/quote_doAdd', 'QuotationController@quote_doAdd')->name('quotation.quote_doAdd');
+    Route::get('/quotation/quote_edit/{id}', 'QuotationController@quote_edit')->name('quotation.quote_edit');
+    Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
+
+    #Load Detail Dimension
+    Route::post('/quotation/quote_addDimension', 'QuotationController@quote_addDimension')->name('quotation.quote_addDimension');
+    Route::post('/quotation/quote_loadDimension','QuotationController@quote_loadDimension')->name('quotation.quote_loadDimension');
+    Route::post('/quotation/quote_deleteDimension','QuotationController@quote_deleteDimension')->name('quotation.quote_deleteDimension');
+    Route::post('/quotation/uom_getAll', 'QuotationController@uom_getAll')->name('quotation.quote_getAll');
+    Route::post('/quotation/quote_updateDimension', 'QuotationController@quote_updateDimension')->name('quotation.quote_updateDimension');
+
+    #Load Detail Shipping
+    Route::post('/quotation/quote_addShipping', 'QuotationController@quote_addShipping')->name('quotation.quote_addShipping');
+    Route::post('/quotation/quote_loadShipping','QuotationController@quote_loadShipping')->name('quotation.quote_loadShipping');
+    Route::post('/quotation/quote_deleteShipping','QuotationController@quote_deleteShipping')->name('quotation.quote_deleteShipping');
+    Route::post('/quotation/uom_getAll', 'QuotationController@uom_getAll')->name('quotation.quote_getAll');
+    Route::post('/quotation/quote_getDetailShipping', 'QuotationController@quote_getDetailShipping')->name('quotation.quote_getDetailShipping');
+    Route::post('/quotation/quote_updateShipping', 'QuotationController@quote_updateShipping')->name('quotation.quote_updateShipping');
+
+    #Load Detail Quote
+    Route::post('/quotation/quote_addDetail', 'QuotationController@quote_addDetail')->name('quotation.quote_addDetail');
+    Route::post('/quotation/quote_loadDetail','QuotationController@quote_loadDetail')->name('quotation.quote_loadDetail');
+    Route::post('/quotation/quote_deleteDetail','QuotationController@quote_deleteDetail')->name('quotation.quote_deleteDetail');
+    Route::post('/quotation/quote_getDetailQ', 'QuotationController@quote_getDetailQ')->name('quotation.quote_getDetailQ');
+    Route::post('/quotation/quote_updateDetail', 'QuotationController@quote_updateDetail')->name('quotation.quote_updateDetail');
+
+    #Profit
+    Route::post('/quotation/quote_addProfit', 'QuotationController@quote_addProfit')->name('quotation.quote_addProfit');
+    Route::post('/quotation/quote_loadProfit','QuotationController@quote_loadProfit')->name('quotation.quote_loadProfit');
+
+    #Approved Quote
+    Route::post('/quotation/quoteApproved', 'QuotationController@quote_approved')->name('quotation.quoteApprove');
+
+    #View Quote
+    Route::post('/quotation/viewVersion', 'QuotationController@get_version')->name('quotation.viewVersion');
+    Route::post('/quotation/quote_getView', 'QuotationController@quote_getView')->name('quotation.getView');
+
+    /** Role Access **/
+    Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
+    Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');
+    Route::post('/user/access_doEdit', 'ManagementController@user_accessdoEdit')->name('user.access_doEdit');
+    Route::post('/user/access_get', 'ManagementController@user_access_get')->name('user.access_get');
+    Route::get('/master/access_delete/{id}', 'ManagementController@user_accessDelete')->name('user.access_delete');
+});
+
+
+
+Route::get('/home', 'HomeController@index')->name('home');
