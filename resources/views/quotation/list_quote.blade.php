@@ -49,22 +49,27 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $row->quote_no }}</td>
                                 <td>{{ $row->quote_date }}</td>
-                                <td>{{ $row->version_no }}</td>
+                                <td class="text-center">{{ $row->version_no }}</td>
                                 <td>{{ $row->client_name }}</td>
                                 <td>{{ $row->name_pic }}</td>
                                 <td>{{ ucwords($row->activity) }}</td>
                                 <td>{{ $row->loaded_type }}</td>
                                 <td>{{ $row->shipment_by }}</td>
-                                <td class="text-center">
-                                    @if ($row->status == 0)
-                                        <span class="badge badge-secondary">New</span>
-                                    @else
-                                        <span class="badge badge-danger">Approved</span>
-                                    @endif
-                                </td>
+                                @if ($row->status == 1)
+                                    <td class="bg-success text-center">
+                                        Approved
+                                    </td>
+                                @else
+                                    <td class="bg-secondary text-center">
+                                        New
+                                    </td>
+                                @endif
                                 <td>
-                                    <a class="btn btn-primary btn-xs" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}')"><i class="fa fa-file-alt"></i> View </a>
-                                    <a href="javascript:;" class="btn btn-success btn-xs" style="@if($row->status == 1) display:none; @endif" onclick="approve('{{ $row->id }}')"><i class="fa fa-check"></i> Approve</a>
+                                    <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
+                                    <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}','edit', '{{ $row->id }}')" status="edit"><i class="fa fa-edit"></i> Edit </a>
+                                    @if ($row->status == 0)
+                                    {{-- <a class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete </a>                                         --}}
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -97,7 +102,8 @@
                                 
                             </select>
                             <input type="hidden" name="quote_no" id="quote_no" value="">
-                            <input type="hidden" name="id_quote" id="id_quote" value="">
+                            <input type="hidden" name="id_quote" id="id_quotex" value="">
+                            <input type="hidden" id="status" value="">
                         </div>
                     </div>
                 </form>
@@ -113,7 +119,36 @@
 
 @push('after-scripts')
    <script>
-        function viewVersion(quote_no, verse){
+        var dsState;
+
+        function viewVersion(quote_no, verse, status, id){
+            $.ajax({
+                type: "POST",
+                url: "{{ route('quotation.cekVersion') }}",
+                data:{quote_no:quote_no, verse:verse},
+                dataType:"json",
+                success: function (result) {
+                    if(result){
+                        if(status == 'view'){
+                            $('#selectVersion').html(`<option value="${verse}"></option>`);
+                            $('#quote_no').val(quote_no);
+                            $('#formku').attr("action", "{{ route('quotation.getView') }}");
+                            $('#formku').submit(); 
+                        }else{
+                            $('#id_quotex').val(id);
+                            $('#quote_no').val(quote_no);
+                            $('#formku').attr("action", `{{ url('quotation/quote_edit/${id}') }}`);
+                            $('#formku').submit(); 
+                        }
+                    }else{  
+                        viewVersionx(quote_no, verse, status);
+                    } 
+                }
+            });
+        }
+
+        function viewVersionx(quote_no, verse, status){
+            dsState == "View";
             $.ajax({
                 type: "POST",
                 url: "{{ route('quotation.viewVersion') }}",
@@ -121,8 +156,14 @@
                 dataType:"html",
                 success: function (result) {
                     var tabel = JSON.parse(result);
-                    $('#selectVersion').html(tabel);
+
+                    if(status == 'view'){
+                        $('#selectVersion').html(tabel[0]);
+                    }else{
+                        $('#selectVersion').html(tabel[1]);
+                    }
                     $('#quote_no').val(quote_no);
+                    $('#status').val(status);
                     $("#myModal").find('.modal-title').text('Select Version');
                     $("#myModal").modal('show',{backdrop: 'true'}); 
                 }
@@ -131,36 +172,14 @@
 
         function simpandata()
         {
-            $('#formku').attr("action", "{{ route('quotation.getView') }}");
+            let id = $('#selectVersion').val();
+            if($('#status').val() == 'view'){
+                $('#formku').attr("action", "{{ route('quotation.getView') }}");
+            }else{
+                $('#formku').attr("action", `{{ url('quotation/quote_edit/${id}') }}`);
+            }
             $('#formku').submit();    
         }
         
-        
-        function approve(id)
-        {
-            Swal.fire({
-                title: 'Konfirmasi Approved!',
-                text: 'Apakah anda yakin ingin meng Approve data ini?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#d33',
-                confirmButtonText: "Approved",
-		        cancelButtonText: "cancel",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('quotation.quoteApprove') }}",
-                        data: {id:id},
-                        dataType: 'json',
-                        cache: false,
-                        success: function (response) {
-                            location.replace(location.href.split('#')[0]);
-                        },
-                    });
-                }
-            });
-        }   
     </script> 
 @endpush

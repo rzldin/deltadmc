@@ -7,12 +7,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Detail Quotation</h1>
+                <h1>New Version</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('quotation.list') }}">List Quote</a></li>
-                    <li class="breadcrumb-item active">Add Detail</li>
+                    <li class="breadcrumb-item active">Quote New Version</li>
                 </ol>
             </div>
       </div>
@@ -39,7 +39,7 @@
                         @endforeach
                     @endif
                     <!-- form start -->
-                    <form action="{{ route('quotation.quote_doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                    <form action="{{ route('quotation.quote_doAdd') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                     {{ csrf_field() }}   
                     <div class="card-body">
                         <div class="row">
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}">
-                                        <input type="hidden" name="id_quote" name="id_quote" value="{{ $quote->id }}">
+                                        <input type="hidden" name="id_quote" name="id_quote" value="{{ Request::segment(3) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3 mt-3">
@@ -58,12 +58,10 @@
                                         <label>Version</label>
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $quote->version_no }}" onkeyup="numberOnly(this);" readonly>
+                                        <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $quote->version_no+1 }}" onkeyup="numberOnly(this);" readonly>
                                     </div>
                                     <div class="col-md-4 mt-2">
-                                        <input type="checkbox" name="final" id="final" style="margin-right: 5px" @if ($quote->final_flag == 1)
-                                            checked
-                                        @endif><label> FINAL</label>
+                                        <input type="checkbox" name="final" id="final" style="margin-right: 5px" ><label> FINAL</label>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -586,7 +584,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Profit Analysis</h3>
-                        <button type="button" class="btn btn-primary float-right" id="calculate" onclick="calculate()"><i class="fa fa-calculator"></i> Calculate</button>
+                        <button type="button" class="btn btn-primary float-right"  id="calculate" onclick="calculate()"><i class="fa fa-calculator"></i> Calculate</button>
                     </div>
                     <div class="card-body table-responsive p-0">
                        <table class="table table_lowm table-bordered">
@@ -608,7 +606,7 @@
                 </div>
             </div>
             <div class="col-md-12 mt-3">
-                <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData()">
+                <button type="button" class="btn btn-primary mb-4 float-left mr-2" id="saveData">
                 <i class="fa fa-save"></i> Save
                 </button>
                 <a href="{{ url('quotation/quote_new/'.$quote->id) }}" class="btn btn-info float-left mr-2"> 
@@ -622,7 +620,7 @@
                 @endif"> 
                     <i class="fa fa-envelope"></i> Send Email 
                 </a>
-                <a href="{{ url('booking/add_booking/'.$quote->id) }}" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
+                <a href="" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
                     disabledx
                 @endif"> 
                     <i class="fa fa-plus"></i> Create Booking Order 
@@ -634,6 +632,7 @@
   @push('after-scripts')
 
   <script>
+
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -1515,8 +1514,7 @@
         }
     }
 
-    function updateData()
-    {
+    $("#saveData").click(function(){
         if($.trim($("#quote_no").val()) == ""){
             Swal.fire({
                 title: 'Error!',
@@ -1557,6 +1555,12 @@
             Swal.fire({
                 title: 'Error!',
                 text: 'Please input Commodity',
+                icon: 'error'
+            })
+        }else if($.trim($("#pic").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select PIC',
                 icon: 'error'
             })
         }else if($.trim($("#pic").val()) == ""){
@@ -1614,10 +1618,12 @@
                 icon: 'error'
             })
         }else{
-            $(this).prop('disabled', false).text('Please Wait ...');
+            $(this).prop('disabled', true).text('Please Wait ...');
             $('#formku').submit();
         }
-    }
+    });
+
+
 
     $(function() {
         loadDimension({{ Request::segment(3) }});

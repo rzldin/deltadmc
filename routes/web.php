@@ -195,7 +195,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('quotation/list', 'QuotationController@index')->name('quotation.list');
     Route::get('/quotation/quote_add', 'QuotationController@quote_add')->name('quotation.quote_add');
     Route::post('/quotation/quote_doAdd', 'QuotationController@quote_doAdd')->name('quotation.quote_doAdd');
-    Route::get('/quotation/quote_edit/{id}', 'QuotationController@quote_edit')->name('quotation.quote_edit');
+    Route::match(array('GET', 'POST'), '/quotation/quote_edit/{id}', 'QuotationController@quote_edit')->name('quotation.quote_edit');
+    Route::post('/quotation/quote_doUpdate', 'QuotationController@quote_doUpdate')->name('quotation.quote_doUpdate');
+    Route::get('quotation/quote_new/{id}', 'QuotationController@quote_new')->name('quotation.quote_new');
     Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
 
     #Load Detail Dimension
@@ -229,7 +231,12 @@ Route::group(['middleware' => 'auth'], function(){
 
     #View Quote
     Route::post('/quotation/viewVersion', 'QuotationController@get_version')->name('quotation.viewVersion');
-    Route::post('/quotation/quote_getView', 'QuotationController@quote_getView')->name('quotation.getView');
+    Route::post('/quotation/cekVersion', 'QuotationController@cek_version')->name('quotation.cekVersion');
+    Route::match(array('GET', 'POST'), '/quotation/quote_getView', 'QuotationController@quote_getView')->name('quotation.getView');
+
+    /** Booking */
+    Route::get('booking/list', 'BookingController@index')->name('booking.list');
+    Route::match(array('GET', 'POST'), 'booking/add_booking/{id}', 'BookingController@add_booking')->name('booking.add');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

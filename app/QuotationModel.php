@@ -9,7 +9,7 @@ class QuotationModel extends Model
 {
     public static function getQuote()
     {
-        return DB::select("SELECT max(a.id) as id, a.quote_no, max(a.version_no) as version_no, max(a.quote_date) as quote_date, max(a.activity) as activity, max(a.shipment_by) as shipment_by, max(b.client_name) as client_name, max(c.name) as name_pic, max(d.loaded_type) as loaded_type, max(a.status) as status FROM t_quote a LEFT JOIN t_mcompany b ON a.customer_id = b.id LEFT JOIN t_mpic c ON a.t_mpic_id = c.id LEFT JOIN t_mloaded_type d ON a.t_mloaded_type_id = d.id GROUP BY a.quote_no");
+        return DB::select("SELECT max(a.id) as id, a.quote_no, max(a.version_no) as version_no, max(a.quote_date) as quote_date, max(a.activity) as activity, max(a.shipment_by) as shipment_by, max(b.client_name) as client_name, max(c.name) as name_pic, max(d.loaded_type) as loaded_type, max(a.status) as status, max(a.created_on) as create_quote FROM t_quote a LEFT JOIN t_mcompany b ON a.customer_id = b.id LEFT JOIN t_mpic c ON a.t_mpic_id = c.id LEFT JOIN t_mloaded_type d ON a.t_mloaded_type_id = d.id GROUP BY a.quote_no");
     }
 
     public static function get_quoteProfit($id)
@@ -49,6 +49,18 @@ class QuotationModel extends Model
                 ->leftJoin('t_muom', 't_quote_dimension.height_uom_id', '=', 't_muom.id')
                 ->select('t_quote_dimension.*', 't_muom.uom_code', 't_quote_dimension.length as le_dimen')
                 ->where('t_quote_dimension.t_quote_id', $id)->get();
+    }
+
+    public static function get_detailQuote($id)
+    {
+        return DB::table('t_quote')
+                ->leftJoin('t_mcompany', 't_quote.customer_id', '=', 't_mcompany.id')
+                ->leftJoin('t_mloaded_type', 't_quote.t_mloaded_type_id', '=', 't_mloaded_type.id')
+                ->leftJoin('t_mpic', 't_quote.t_mpic_id', '=', 't_mpic.id')
+                ->leftJoin('t_mport', 't_quote.from_id', '=', 't_mport.id')
+                ->leftJoin('t_muom', 't_quote.weight_uom_id', '=', 't_muom.id')
+                ->select('t_quote.*', 't_mcompany.client_name', 't_mloaded_type.loaded_type', 't_mpic.name as name_pic','t_mport.port_name', 't_muom.uom_code', 't_mpic.id as id_pic')
+                ->where('t_quote.id', $id)->first();
     }
 
 

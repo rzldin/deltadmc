@@ -123,15 +123,8 @@ class QuotationController extends Controller
     }
 
     public function quote_edit($id)
-    {
-        $quote = DB::table('t_quote')
-                ->leftJoin('t_mcompany', 't_quote.customer_id', '=', 't_mcompany.id')
-                ->leftJoin('t_mloaded_type', 't_quote.t_mloaded_type_id', '=', 't_mloaded_type.id')
-                ->leftJoin('t_mpic', 't_quote.t_mpic_id', '=', 't_mpic.id')
-                ->leftJoin('t_mport', 't_quote.from_id', '=', 't_mport.id')
-                ->leftJoin('t_muom', 't_quote.weight_uom_id', '=', 't_muom.id')
-                ->select('t_quote.*', 't_mcompany.client_name', 't_mloaded_type.loaded_type', 't_mpic.name as name_pic','t_mport.port_name', 't_muom.uom_code', 't_mpic.id as id_pic')
-                ->where('t_quote.id', $id)->first();
+    {       
+        $quote = QuotationModel::get_detailQuote($id);
         
         $data['loaded'] = MasterModel::loaded_get();
         $data['company'] = MasterModel::company_data();
@@ -144,6 +137,24 @@ class QuotationController extends Controller
         $data['volume_uom'] = DB::table('t_muom')->where('id', $quote->volume_uom_id)->first();
         $data['quote'] = $quote;
         return view('quotation.quote_edit')->with($data);
+    }
+
+    public function quote_new($id)
+    {       
+        $quote = QuotationModel::get_detailQuote($id);
+        
+        $data['loaded'] = MasterModel::loaded_get();
+        $data['company'] = MasterModel::company_data();
+        $data['inco'] = MasterModel::incoterms_get();
+        $data['port'] = MasterModel::port();
+        $data['uom'] = MasterModel::uom();
+        $data['charge'] = MasterModel::charge();
+        $data['carrier'] = MasterModel::carrier();
+        $data['currency'] = MasterModel::currency();
+        $data['volume_uom'] = DB::table('t_muom')->where('id', $quote->volume_uom_id)->first();
+        $data['quote'] = $quote;
+        $data['old_id'] = $id; 
+        return view('quotation.quote_new_version')->with($data);
     }
 
     public function quote_approved(Request $request)
@@ -165,9 +176,23 @@ class QuotationController extends Controller
         echo json_encode($return_data);
     }
 
+    public function cek_version(Request $request)
+    {
+        $quote = DB::select("SELECT * FROM t_quote WHERE quote_no = '".$request->quote_no."'");
+        if(count($quote) == 1){
+            $a = true;
+        }else{
+            $a = false;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($a);
+    }
+
     public function get_version(Request $request)
     {
         $option = '';
+        $option1 = '';
         
         $quote = DB::select("SELECT * FROM t_quote WHERE quote_no = '".$request->quote_no."'");
 
@@ -181,10 +206,12 @@ class QuotationController extends Controller
             }
 
             $option .= '<option value="'.$row->version_no.'" '.$status.'>'.$row->version_no.'</option>';
+            $option1 .= '<option value="'.$row->id.'" '.$status.'>'.$row->version_no.'</option>';
+
         }
 
         header('Content-Type: application/json');
-        echo json_encode($option);
+        echo json_encode([$option,$option1]);
     }
 
     public function quote_getView(Request $request)
@@ -863,6 +890,84 @@ class QuotationController extends Controller
 
             header('Content-Type: application/json');
             echo json_encode($tabel);
+    }
+
+    public function quote_doUpdate(Request $request)
+    {
+        if($request->hazard == 'on'){
+            $h = 1;
+        }else{
+            $h = 0;
+        }
+
+        if($request->final == 'on'){
+            $f = 1;
+        }else{
+            $f = 0;
+        }
+
+        if($request->delivery == 'on'){
+            $del = 1;
+        }else{
+            $del = 0;
+        }
+        
+        if($request->custom == 'on'){
+            $custom = 1;
+        }else{
+            $custom = 0;
+        }
+
+        if($request->fumigation == 'on'){
+            $fumi = 1;
+        }else{
+            $fumi = 0;
+        }
+
+        if($request->goods == 'on'){
+            $goods = 1;
+        }else{
+            $goods = 0;
+        }
+
+        try {
+            DB::table('t_quote')
+            ->where('id', $request->id_quote)
+            ->update([
+                'quote_no'              => $request->quote_no,
+                'version_no'            => $request->version,
+                'quote_date'            => Carbon::parse($request->date),
+                'customer_id'           => $request->customer,
+                'activity'              => $request->activity,
+                't_mloaded_type_id'     => $request->loaded,
+                't_mpic_id'             => $request->pic,
+                'shipment_by'           => $request->shipment,
+                'terms'                 => $request->terms,
+                'from_text'             => $request->from,
+                'from_id'               => $request->form_id,
+                'to_text'               => $request->to,
+                'to_id'                 => $request->to_id,
+                'commodity'             => $request->commodity,
+                'pieces'                => $request->pieces,
+                'weight'                => $request->weight,
+                'weight_uom_id'         => $request->uom_weight,
+                'volume'                => $request->volume,
+                'volume_uom_id'         => $request->uom_volume,
+                'final_flag'            => $f,
+                'hazardous_flag'        => $h,
+                'hazardous_info'        => $request->hazard_txt,
+                'additional_info'       => $request->additional,
+                'pickup_delivery_flag'  => $del,
+                'custom_flag'           => $custom,
+                'fumigation_flag'       => $fumi,
+                'stackable_flag'        => $goods,
+            ]);
+
+            return redirect('quotation/list')->with('status', 'Successfully Updated');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+
     }
 
 }

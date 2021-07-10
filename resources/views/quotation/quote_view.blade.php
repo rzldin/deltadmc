@@ -444,6 +444,9 @@
                 </div>
             </div>
             <div class="col-md-12 mt-3 mb-3">
+                @if ($quote->status == 0 && $quote->final_flag == 1)
+                <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $quote->id }}')"><i class="fa fa-check"></i> Approve</a>
+                @endif
                 <a href="{{ route('quotation.list') }}" class="btn btn-secondary float-left"><i class="fa fa-angle-left"></i> Back</a>
             </div>
         </div>
@@ -451,3 +454,34 @@
 </section>
 
 @endsection
+
+@push('after-scripts')
+    <script>
+        function approve(id)
+        {
+            Swal.fire({
+                title: 'Konfirmasi Approved!',
+                text: 'Apakah anda yakin ingin meng Approve data ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+                confirmButtonText: "Approved",
+		        cancelButtonText: "cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('quotation.quoteApprove') }}",
+                        data: {id:id},
+                        dataType: 'json',
+                        cache: false,
+                        success: function (response) {
+                            location.replace("{{ route('quotation.list') }}");
+                        },
+                    });
+                }
+            });
+        }   
+    </script>
+@endpush
