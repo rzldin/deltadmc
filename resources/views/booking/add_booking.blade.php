@@ -62,7 +62,8 @@
                                                                         <label>Booking Number</label>
                                                                     </div>
                                                                     <div class="col-md-8">
-                                                                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ...">
+                                                                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" readonly>
+                                                                        <input type="hidden" name="id_booking" value="{{ $quote->id }}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="row mb-3">
@@ -71,7 +72,7 @@
                                                                     </div>
                                                                     <div class="col-md-8">
                                                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                            <input type="text" name="booking_date" id="booking_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                                            <input type="text" name="booking_date" id="booking_date" value="{{ \Carbon\Carbon::parse($quote->booking_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
                                                                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                             </div>
@@ -83,7 +84,7 @@
                                                                         <label>Version No</label>
                                                                     </div>
                                                                     <div class="col-md-8">
-                                                                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ...">
+                                                                        <input type="text" class="form-control" name="version_no" value="{{ $quote->version_no }}" id="version_no" placeholder="Version No ..." readonly>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -94,7 +95,7 @@
                                                                         <label>Quote Number</label>
                                                                     </div>
                                                                     <div class="col-md-8">
-                                                                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}">
+                                                                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}" readonly>
                                                                         <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->id }}">
                                                                     </div>
                                                                 </div>
@@ -178,7 +179,7 @@
                                                                         <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
                                                                             <option value="" selected>-- Select Customer --</option>
                                                                             @foreach ($company as $c)
-                                                                            <option value="{{ $c->id }}" @if ($quote->customer_id == $c->id)
+                                                                            <option value="{{ $c->id }}" @if ($quote->client_id == $c->id)
                                                                                 selected
                                                                             @endif>{{ $c->client_name }}</option>
                                                                             @endforeach
@@ -681,7 +682,7 @@
                                                                     <div class="col-md-8">
                                                                         <select class="form-control select2bs44" style="width: 100%;" name="incoterms" id="incoterms">
                                                                             @foreach ($inco as $row)
-                                                                            <option value="{{ $row->id }}" @if ($row->id == $quote->terms)
+                                                                            <option value="{{ $row->id }}" @if ($row->id == $quote->t_mincoterms_id)
                                                                                 selected
                                                                             @endif>{{ $row->incoterns_code }}</option>
                                                                             @endforeach

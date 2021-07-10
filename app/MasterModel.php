@@ -262,10 +262,19 @@ class MasterModel extends Model
         return DB::select("SELECT * from t_mpic where t_mcompany_id ='".$id."'");
     }
 
+    public static function get_address($id)
+    {
+        return DB::select("SELECT * from t_maddress where t_mcompany_id ='".$id."'");
+    }
+
     public static function get_doc()
     {
         return DB::table('t_mdoc_type')->get();
     }
 
+    public static function get_mbl_issued()
+    {
+        return DB::table('t_mbl_issued')->get();
+    }
 
 }

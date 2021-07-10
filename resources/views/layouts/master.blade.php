@@ -154,8 +154,32 @@
     <!-- Datatble spesifics script -->
     <script>
 
-          //Date picker
+    //Date picker
     $('#reservationdate').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdatex').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdatexx').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdateDOC').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdateMBL').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdatez').datetimepicker({
+        format: 'L'
+    });
+
+    $('#reservationdateAWB').datetimepicker({
         format: 'L'
     });
     

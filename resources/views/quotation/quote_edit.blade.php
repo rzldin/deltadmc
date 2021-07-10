@@ -622,7 +622,7 @@
                 @endif"> 
                     <i class="fa fa-envelope"></i> Send Email 
                 </a>
-                <a href="{{ url('booking/add_booking/'.$quote->id) }}" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
+                <a href="{{ url('booking/header_booking/'.$quote->id) }}" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
                     disabledx
                 @endif"> 
                     <i class="fa fa-plus"></i> Create Booking Order 
