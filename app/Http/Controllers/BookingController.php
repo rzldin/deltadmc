@@ -18,7 +18,7 @@ class BookingController extends Controller
         return view('booking.list_booking', compact('data'));
     }
 
-    public function add_booking($id)
+    public function edit_booking($id)
     {
         $data['quote']      = BookingModel::get_bookingDetail($id)[0];
         $data['doc']        = MasterModel::get_doc();
@@ -28,7 +28,7 @@ class BookingController extends Controller
         $data['container']  = MasterModel::container_get();
         $data['loaded']     = MasterModel::loaded_get();
 
-        return view('booking.add_booking')->with($data);
+        return view('booking.edit_booking')->with($data);
     }
 
     public function header_booking($id)
@@ -275,7 +275,7 @@ class BookingController extends Controller
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
-            return redirect('booking/add_booking/'.$id)->with('status', 'Successfully added');
+            return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }

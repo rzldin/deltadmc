@@ -56,7 +56,7 @@
                                 @endif
                                 <td>
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('')"><i class="fa fa-file-alt"></i> View </a>
-                                    <a class="btn btn-info btn-sm" onclick="viewVersion('')" status="edit"><i class="fa fa-edit"></i> Edit </a>
+                                    <a href="{{ url('booking/edit_booking/'.$row->id) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> Edit </a>
                                 </td>
                             </tr>
                             @endforeach

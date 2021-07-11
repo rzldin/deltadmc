@@ -236,7 +236,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     /** Booking */
     Route::get('booking/list', 'BookingController@index')->name('booking.list');
-    Route::match(array('GET', 'POST'), 'booking/add_booking/{id}', 'BookingController@add_booking')->name('booking.add');
+    Route::match(array('GET', 'POST'), 'booking/edit_booking/{id}', 'BookingController@edit_booking')->name('booking.edit');
     Route::match(['get', 'post'], 'booking/header_booking/{id}', 'BookingController@header_booking')->name('booking.header');
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');
     Route::post('/booking/doAdd', 'BookingController@booking_doAdd')->name('booking.doAdd');
