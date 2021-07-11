@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 07, 2021 at 10:47 AM
+-- Generation Time: Jul 11, 2021 at 02:17 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.5
 
@@ -58,6 +58,294 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `t_bcharges_dtl`
+--
+
+CREATE TABLE `t_bcharges_dtl` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `position_no` int(11) NOT NULL,
+  `t_mcharge_code_id` int(11) NOT NULL,
+  `desc` text NOT NULL,
+  `reimburse_flag` int(1) DEFAULT NULL,
+  `currency` varchar(50) NOT NULL,
+  `rate` decimal(25,4) NOT NULL,
+  `cost` decimal(25,4) NOT NULL,
+  `sell` decimal(25,4) NOT NULL,
+  `qty` decimal(25,4) NOT NULL,
+  `cost_val` decimal(25,4) NOT NULL,
+  `sell_val` decimal(25,4) NOT NULL,
+  `vat` decimal(25,4) NOT NULL,
+  `subtotal` decimal(25,4) NOT NULL,
+  `routing` varchar(255) NOT NULL,
+  `transit_time` varchar(50) NOT NULL,
+  `t_invoice_id` int(11) NOT NULL,
+  `invoice_type` varchar(25) NOT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_bcommodity`
+--
+
+CREATE TABLE `t_bcommodity` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `position_no` int(11) NOT NULL,
+  `hs_code` varchar(100) NOT NULL,
+  `desc` text NOT NULL,
+  `origin` varchar(100) NOT NULL,
+  `qty_comm` int(11) NOT NULL,
+  `uom_comm` int(11) NOT NULL,
+  `qty_packages` int(11) NOT NULL,
+  `uom_packages` int(11) NOT NULL,
+  `weight` int(11) NOT NULL,
+  `weight_uom` decimal(10,0) NOT NULL,
+  `netto` decimal(10,0) NOT NULL,
+  `volume` decimal(10,0) NOT NULL,
+  `volume_uom` int(11) NOT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_bcommodity`
+--
+
+INSERT INTO `t_bcommodity` (`id`, `t_booking_id`, `position_no`, `hs_code`, `desc`, `origin`, `qty_comm`, `uom_comm`, `qty_packages`, `uom_packages`, `weight`, `weight_uom`, `netto`, `volume`, `volume_uom`, `created_by`, `created_on`) VALUES
+(2, 1, 1, 'testhscode001', 'test', 'indonesia', 100, 1, 200, 1, 50, '1', '100', '20', 1, 'admin', '2021-07-11 13:40:45');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_bcontainer`
+--
+
+CREATE TABLE `t_bcontainer` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `container_no` varchar(100) NOT NULL,
+  `size` varchar(100) NOT NULL,
+  `t_mloaded_type_id` int(11) NOT NULL,
+  `t_mcontainer_type_id` int(11) NOT NULL,
+  `seal_no` varchar(100) NOT NULL,
+  `vgm` decimal(10,0) DEFAULT NULL,
+  `vgm_uom` int(11) DEFAULT NULL,
+  `responsible_party` varchar(255) DEFAULT NULL,
+  `authorized_person` varchar(255) DEFAULT NULL,
+  `method_of_weighing` int(11) DEFAULT NULL,
+  `weighing_party` varchar(255) DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_bcontainer`
+--
+
+INSERT INTO `t_bcontainer` (`id`, `t_booking_id`, `container_no`, `size`, `t_mloaded_type_id`, `t_mcontainer_type_id`, `seal_no`, `vgm`, `vgm_uom`, `responsible_party`, `authorized_person`, `method_of_weighing`, `weighing_party`, `created_by`, `created_on`) VALUES
+(1, 1, 'testtt001', '200', 1, 1, 'b1743ezx', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2021-07-11 16:03:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_bdocument`
+--
+
+CREATE TABLE `t_bdocument` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `t_mdoc_type_id` int(11) NOT NULL,
+  `doc_no` varchar(255) NOT NULL,
+  `doc_date` date NOT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_bdocument`
+--
+
+INSERT INTO `t_bdocument` (`id`, `t_booking_id`, `t_mdoc_type_id`, `doc_no`, `doc_date`, `created_by`, `created_on`) VALUES
+(1, 1, 1, 'docx001', '2021-07-12', 'admin', '2021-07-11 18:01:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_booking`
+--
+
+CREATE TABLE `t_booking` (
+  `id` int(11) NOT NULL,
+  `t_quote_id` int(11) NOT NULL,
+  `booking_no` varchar(255) NOT NULL,
+  `booking_date` date NOT NULL,
+  `version_no` int(11) NOT NULL,
+  `activity` varchar(50) NOT NULL,
+  `status` int(1) DEFAULT 0,
+  `t_mdoc_type_id` int(11) DEFAULT NULL,
+  `custom_doc_no` varchar(50) DEFAULT NULL,
+  `custom_doc_date` date DEFAULT NULL,
+  `igm_no` varchar(100) DEFAULT NULL,
+  `igm_date` date DEFAULT NULL,
+  `custom_pos` varchar(100) DEFAULT NULL,
+  `custom_subpos` varchar(100) DEFAULT NULL,
+  `client_id` int(11) NOT NULL,
+  `client_addr_id` int(11) NOT NULL,
+  `client_pic_id` int(11) NOT NULL,
+  `shipper_id` int(11) NOT NULL,
+  `shipper_addr_id` int(11) NOT NULL,
+  `shipper_pic_id` int(11) NOT NULL,
+  `consignee_id` int(11) NOT NULL,
+  `consignee_addr_id` int(11) NOT NULL,
+  `consignee_pic_id` int(11) NOT NULL,
+  `not_party_id` int(11) NOT NULL,
+  `not_party_addr_id` int(11) NOT NULL,
+  `not_party_pic_id` int(11) NOT NULL,
+  `agent_id` int(11) NOT NULL,
+  `agent_addr_id` int(11) NOT NULL,
+  `agent_pic_id` int(11) NOT NULL,
+  `shipping_line_id` int(11) NOT NULL,
+  `shpline_addr_id` int(11) NOT NULL,
+  `shpline_pic_id` int(11) NOT NULL,
+  `vendor_id` int(11) NOT NULL,
+  `vendor_addr_id` int(11) NOT NULL,
+  `vendor_pic_id` int(11) NOT NULL,
+  `carrier_id` int(11) DEFAULT NULL,
+  `carrier_no` varchar(100) DEFAULT NULL,
+  `mcarrier_id` int(11) DEFAULT NULL,
+  `m_carrier_no` varchar(100) DEFAULT NULL,
+  `t_mloaded_type_id` int(11) DEFAULT NULL,
+  `t_mservice_type_id` int(11) DEFAULT NULL,
+  `flight_number` varchar(255) DEFAULT NULL,
+  `eta_date` date DEFAULT NULL,
+  `etd_date` date DEFAULT NULL,
+  `place_origin` varchar(100) DEFAULT NULL,
+  `place_destination` varchar(100) DEFAULT NULL,
+  `pol_id` int(11) DEFAULT NULL,
+  `pol_custom_desc` varchar(100) DEFAULT NULL,
+  `pod_id` int(11) DEFAULT NULL,
+  `pod_custom_desc` varchar(100) DEFAULT NULL,
+  `pot_id` int(11) DEFAULT NULL,
+  `fumigation_flag` int(1) DEFAULT NULL,
+  `insurance_flag` int(1) DEFAULT NULL,
+  `t_mincoterms_id` int(11) DEFAULT NULL,
+  `t_mfreight_charges_id` int(11) DEFAULT NULL,
+  `place_payment` decimal(25,4) DEFAULT NULL,
+  `place_payment_addr_id` varchar(11) DEFAULT NULL,
+  `place_payment_custom` text DEFAULT NULL,
+  `valuta_payment` varchar(50) DEFAULT NULL,
+  `value_prepaid` decimal(25,4) DEFAULT NULL,
+  `value_collect` decimal(25,4) DEFAULT NULL,
+  `freetime_detention` int(11) DEFAULT NULL,
+  `stuffing_date` date DEFAULT NULL,
+  `stuffing_place` text DEFAULT NULL,
+  `delivery_of_goods` text DEFAULT NULL,
+  `valuta_comm` varchar(100) DEFAULT NULL,
+  `value_comm` decimal(25,4) DEFAULT NULL,
+  `rates_comm` decimal(25,4) DEFAULT NULL,
+  `exchange_valuta_comm` varchar(50) DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `mbl_shipper` text DEFAULT NULL,
+  `mbl_consignee` text DEFAULT NULL,
+  `mbl_not_party` text DEFAULT NULL,
+  `mbl_no` varchar(100) DEFAULT NULL,
+  `mbl_date` date DEFAULT NULL,
+  `valuta_mbl` varchar(50) DEFAULT NULL,
+  `hbl_shipper` text DEFAULT NULL,
+  `hbl_consignee` text DEFAULT NULL,
+  `hbl_not_party` text DEFAULT NULL,
+  `hbl_no` varchar(100) DEFAULT NULL,
+  `hbl_date` date DEFAULT NULL,
+  `valuta_hbl` varchar(50) DEFAULT NULL,
+  `t_mbl_issued_id` int(11) DEFAULT NULL,
+  `total_commodity` decimal(10,0) DEFAULT NULL,
+  `total_package` decimal(10,0) DEFAULT NULL,
+  `total_container` decimal(10,0) DEFAULT NULL,
+  `total_cost` decimal(25,4) DEFAULT NULL,
+  `total_sell` decimal(25,4) DEFAULT NULL,
+  `total_profit` decimal(25,4) DEFAULT NULL,
+  `profit_pct` decimal(25,4) DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_booking`
+--
+
+INSERT INTO `t_booking` (`id`, `t_quote_id`, `booking_no`, `booking_date`, `version_no`, `activity`, `status`, `t_mdoc_type_id`, `custom_doc_no`, `custom_doc_date`, `igm_no`, `igm_date`, `custom_pos`, `custom_subpos`, `client_id`, `client_addr_id`, `client_pic_id`, `shipper_id`, `shipper_addr_id`, `shipper_pic_id`, `consignee_id`, `consignee_addr_id`, `consignee_pic_id`, `not_party_id`, `not_party_addr_id`, `not_party_pic_id`, `agent_id`, `agent_addr_id`, `agent_pic_id`, `shipping_line_id`, `shpline_addr_id`, `shpline_pic_id`, `vendor_id`, `vendor_addr_id`, `vendor_pic_id`, `carrier_id`, `carrier_no`, `mcarrier_id`, `m_carrier_no`, `t_mloaded_type_id`, `t_mservice_type_id`, `flight_number`, `eta_date`, `etd_date`, `place_origin`, `place_destination`, `pol_id`, `pol_custom_desc`, `pod_id`, `pod_custom_desc`, `pot_id`, `fumigation_flag`, `insurance_flag`, `t_mincoterms_id`, `t_mfreight_charges_id`, `place_payment`, `place_payment_addr_id`, `place_payment_custom`, `valuta_payment`, `value_prepaid`, `value_collect`, `freetime_detention`, `stuffing_date`, `stuffing_place`, `delivery_of_goods`, `valuta_comm`, `value_comm`, `rates_comm`, `exchange_valuta_comm`, `remarks`, `mbl_shipper`, `mbl_consignee`, `mbl_not_party`, `mbl_no`, `mbl_date`, `valuta_mbl`, `hbl_shipper`, `hbl_consignee`, `hbl_not_party`, `hbl_no`, `hbl_date`, `valuta_hbl`, `t_mbl_issued_id`, `total_commodity`, `total_package`, `total_container`, `total_cost`, `total_sell`, `total_profit`, `profit_pct`, `created_by`, `created_on`) VALUES
+(1, 1, 'TESTBOOKING001', '2021-07-10', 1, 'domestic', 0, 1, 'doc001', '2021-07-10', NULL, NULL, NULL, NULL, 8, 5, 6, 8, 5, 6, 8, 5, 6, 8, 5, 6, 8, 5, 6, 8, 5, 6, 8, 5, 6, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-07-10', '2021-07-10', 'test pootest destination', 'testtt', 2, 'test', 2, 'tessst', 2, 0, 1, 1, 2, '200.0000', NULL, NULL, 'IDR', '200.0000', '200.0000', 23, '2021-07-10', 'testtt', 'testtt', NULL, NULL, NULL, NULL, 'remarks test', NULL, NULL, NULL, 'MBL001', '2021-07-10', 'IDR', NULL, NULL, NULL, NULL, '2021-07-10', 'IDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2021-07-10 23:50:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_bpackages`
+--
+
+CREATE TABLE `t_bpackages` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `position_no` int(11) NOT NULL,
+  `desc` varchar(255) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `qty_uom` varchar(50) NOT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_bpackages`
+--
+
+INSERT INTO `t_bpackages` (`id`, `t_booking_id`, `position_no`, `desc`, `qty`, `qty_uom`, `created_by`, `created_on`) VALUES
+(2, 1, 1, 'sendal eiger', 100, '1', 'admin', '2021-07-11 14:14:27');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_broad_cons`
+--
+
+CREATE TABLE `t_broad_cons` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `no_sj` varchar(100) NOT NULL,
+  `t_mvehicle_type_id` int(11) NOT NULL,
+  `t_mvehicle_id` int(11) NOT NULL,
+  `driver` varchar(255) NOT NULL,
+  `driver_phone` varchar(100) NOT NULL,
+  `pickup_addr` text NOT NULL,
+  `delivery_addr` text NOT NULL,
+  `notes` text NOT NULL,
+  `created_by` varchar(50) NOT NULL,
+  `created_on` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_bschedule`
+--
+
+CREATE TABLE `t_bschedule` (
+  `id` int(11) NOT NULL,
+  `t_booking_id` int(11) NOT NULL,
+  `t_mschedule_type_id` int(11) NOT NULL,
+  `position_no` int(11) NOT NULL,
+  `desc` text NOT NULL,
+  `date` datetime NOT NULL,
+  `notes` text NOT NULL,
+  `created_by` varchar(50) NOT NULL,
+  `created_on` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `t_maccess_control`
 --
 
@@ -98,7 +386,9 @@ INSERT INTO `t_maccess_control` (`id`, `t_mresponsibility_id`, `t_mapps_menu_id`
 (21, 1, 22, 1, 'admin', '2021-07-02 07:55:14'),
 (22, 1, 23, 1, 'admin', '2021-07-02 07:55:14'),
 (23, 1, 24, 1, 'admin', '2021-07-02 09:07:16'),
-(24, 1, 25, 1, 'admin', '2021-07-02 09:57:11');
+(24, 1, 25, 1, 'admin', '2021-07-02 09:57:11'),
+(25, 1, 26, 1, 'admin', '2021-07-09 15:32:45'),
+(26, 1, 27, 1, 'admin', '2021-07-09 15:32:45');
 
 -- --------------------------------------------------------
 
@@ -228,7 +518,9 @@ INSERT INTO `t_mapps_menu` (`id`, `apps_menu_name`, `apps_menu_level`, `apps_men
 (22, 'Quotation', 'main menu', 0, 'quotation', '', 1, 'admin', '2021-07-02 14:51:29'),
 (23, 'List Qoute', 'sub menu', 22, 'quotation/list', '', 1, 'admin', '2021-07-02 14:53:22'),
 (24, 'Charge Group', 'sub menu', 1, 'master/charge_group', '', 1, 'admin', '2021-07-02 16:04:25'),
-(25, 'uom', 'sub menu', 1, 'master/uom', '', 1, 'admin', '2021-07-02 16:54:59');
+(25, 'uom', 'sub menu', 1, 'master/uom', '', 1, 'admin', '2021-07-02 16:54:59'),
+(26, 'Booking', 'main menu', 0, 'booking', '', 1, 'admin', '2021-07-09 22:30:36'),
+(27, 'List Booking', 'sub menu', 26, 'booking/list', '', 1, 'admin', '2021-07-09 22:31:33');
 
 -- --------------------------------------------------------
 
@@ -244,6 +536,13 @@ CREATE TABLE `t_mbl_issued` (
   `created_by` varchar(50) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_mbl_issued`
+--
+
+INSERT INTO `t_mbl_issued` (`id`, `name`, `desc`, `active_flag`, `created_by`, `created_on`) VALUES
+(1, 'test issued mbl', 'test', 1, 'admin', '2021-07-10 13:19:23');
 
 -- --------------------------------------------------------
 
@@ -445,6 +744,13 @@ CREATE TABLE `t_mdoc_type` (
   `created_by` varchar(50) DEFAULT NULL,
   `created_on` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_mdoc_type`
+--
+
+INSERT INTO `t_mdoc_type` (`id`, `name`, `desc`, `doc_group`, `active_flag`, `created_by`, `created_on`) VALUES
+(1, 'test doc', 'test', 'file', 1, 'admin', '2021-07-09 23:56:20');
 
 -- --------------------------------------------------------
 
@@ -787,8 +1093,16 @@ CREATE TABLE `t_quote` (
 --
 
 INSERT INTO `t_quote` (`id`, `quote_no`, `version_no`, `quote_date`, `customer_id`, `activity`, `t_mloaded_type_id`, `t_mpic_id`, `shipment_by`, `terms`, `from_text`, `from_id`, `to_text`, `to_id`, `commodity`, `pieces`, `weight`, `weight_uom_id`, `volume`, `volume_uom_id`, `final_flag`, `status`, `hazardous_flag`, `hazardous_info`, `additional_info`, `pickup_delivery_flag`, `custom_flag`, `fumigation_flag`, `stackable_flag`, `created_by`, `created_on`) VALUES
-(1, 'TEST0001', 1, '2021-07-03', 8, 'export', 1, 6, 'SEA', 1, 'TEST AJA', NULL, 'TEST AJA', 2, 'test aja', 12, 10, 1, 15, 1, 0, 1, 1, 'danger materi', NULL, NULL, NULL, NULL, NULL, 'admin', '2021-07-03 22:45:46'),
-(2, 'TEST0001', 2, '2021-07-05', 8, 'domestic', 1, 6, 'LAND', 1, 'TEST AJA', NULL, 'TEST AJA', 2, 'test aja', 12, 10, 1, 15, 1, 0, NULL, 1, 'danger materi', 'ini berbahaya, jangan di banting', 1, 1, 1, 1, 'admin', '2021-07-05 09:40:22');
+(1, 'TEST0001', 1, '2021-07-03', 8, 'export', 1, 6, 'SEA', 1, 'TEST AJA', NULL, 'TEST AJA', 2, 'test aja', 12, 10, 1, 15, 1, 1, 1, 1, 'danger materi', NULL, NULL, NULL, NULL, NULL, 'admin', '2021-07-03 22:45:46'),
+(2, 'TEST0001', 3, '2021-07-05', 8, 'domestic', 1, 6, 'LAND', 1, 'TEST AJA', NULL, 'TEST AJA', NULL, 'test aja', 12, 10, 1, 15, 1, 1, 1, 1, 'danger materi', 'ini berbahaya, jangan di banting', 1, 1, 1, 1, 'admin', '2021-07-05 09:40:22'),
+(3, 'TEST0002', 1, '2021-07-16', 2, 'import', 1, 2, 'AIR', 1, 'TEST AJA', NULL, 'TEST AJA', 2, 'test aja', 12, 10, 1, 15, 1, 0, 1, 0, NULL, NULL, 1, 1, 0, 0, 'admin', '2021-07-09 12:46:21'),
+(4, 'TEST0003', 1, '2021-07-09', 8, 'export', 1, 6, 'AIR', 2, 'TEST AJA', NULL, 'TEST AJA', 2, 'test aja', 12, 10, 1, 15, 1, 0, NULL, 0, NULL, NULL, 0, 0, 0, 1, 'admin', '2021-07-09 17:25:40'),
+(5, 'TEST0004', 1, '2021-07-09', 8, 'export', 1, 6, 'AIR', 2, 'TEST AJA', NULL, 'TEST AJA', NULL, 'test aja', 12, 10, 1, 15, 1, 0, NULL, 0, NULL, NULL, 0, 0, 0, 1, 'admin', '2021-07-09 17:28:46'),
+(6, 'TEST0001', 4, '2021-05-07', 8, 'domestic', 1, 6, 'LAND', 1, 'Tanjung Merak', NULL, 'Tanjung Pinang', NULL, 'test aja', 200, 16, 1, 17, 1, 0, NULL, 1, 'danger materi', 'ini berbahaya, jangan di banting', 1, 1, 1, 1, 'admin', '2021-07-09 20:48:05'),
+(7, 'TEST0001', 5, '2021-05-07', 8, 'domestic', 1, 6, 'LAND', 1, 'Tanjung Merak', NULL, 'Tanjung Pinang', NULL, 'test aja', 200, 16, 1, 17, 1, 0, NULL, 1, 'danger materi', 'ini berbahaya, jangan di banting', 1, 1, 1, 1, 'admin', '2021-07-09 20:56:20'),
+(8, 'TEST0002', 2, '2021-07-09', 2, 'export', 1, 2, 'AIR', 1, 'TEST AJA', NULL, 'TEST AJA', NULL, 'test aja', 12, 10, 1, 15, 1, 0, NULL, 0, NULL, NULL, 1, 1, 0, 0, 'admin', '2021-07-09 22:06:04'),
+(9, 'TEST0002', 3, '2021-09-07', 2, 'export', 1, 2, 'AIR', 1, 'TEST AJA', NULL, 'TEST AJA', NULL, 'test aja', 12, 10, 1, 15, 1, 0, NULL, 0, NULL, NULL, 1, 1, 0, 0, 'admin', '2021-07-09 22:27:48'),
+(10, 'TEST0001', 6, '2021-05-07', 8, 'domestic', 1, 6, 'LAND', 1, 'Tanjung Merak', NULL, 'Tanjung Pinang kabau', NULL, 'test aja', 200, 16, 1, 17, 1, 0, NULL, 1, 'danger materi', 'ini berbahaya, jangan di banting', 1, 1, 1, 1, 'admin', '2021-07-11 00:20:42');
 
 -- --------------------------------------------------------
 
@@ -917,7 +1231,8 @@ CREATE TABLE `t_quote_shipg_dtl` (
 INSERT INTO `t_quote_shipg_dtl` (`id`, `t_quote_id`, `position_no`, `t_mcarrier_id`, `routing`, `transit_time`, `t_mcurrency_id`, `rate`, `cost`, `sell`, `qty`, `cost_val`, `sell_val`, `vat`, `subtotal`, `notes`, `created_by`, `created_on`) VALUES
 (2, 1, 1, 1, 'smgk', 23, 1, '100.0000', '100.0000', '100.0000', 5, '100.0000', '300.0000', '250.0000', '1750.0000', 'good job', 'admin', '2021-07-04 12:57:27'),
 (3, 1, 2, 1, 'jktx', 23, 1, '200.0000', '300.0000', '400.0000', 2, '200.0000', '300.0000', '200.0000', '800.0000', 'oke', 'admin', '2021-07-04 14:21:45'),
-(4, 2, 1, 1, 'jkt', 23, 1, '100.0000', '200.0000', '200.0000', 4, '200.0000', '300.0000', '200.0000', '1400.0000', 'okew', 'admin', '2021-07-05 09:49:20');
+(4, 2, 1, 1, 'jkt', 23, 1, '100.0000', '200.0000', '200.0000', 4, '200.0000', '300.0000', '200.0000', '1400.0000', 'okew', 'admin', '2021-07-05 09:49:20'),
+(5, 7, 1, 1, 'solo', 23, 1, '12.0000', '12.0000', '12.0000', 2, '12.0000', '12.0000', '12.0000', '36.0000', 'yy', 'admin', '2021-07-09 20:59:33');
 
 -- --------------------------------------------------------
 
@@ -974,6 +1289,54 @@ ALTER TABLE `migrations`
 --
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
+
+--
+-- Indexes for table `t_bcharges_dtl`
+--
+ALTER TABLE `t_bcharges_dtl`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_bcommodity`
+--
+ALTER TABLE `t_bcommodity`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_bcontainer`
+--
+ALTER TABLE `t_bcontainer`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_bdocument`
+--
+ALTER TABLE `t_bdocument`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_booking`
+--
+ALTER TABLE `t_booking`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_bpackages`
+--
+ALTER TABLE `t_bpackages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_broad_cons`
+--
+ALTER TABLE `t_broad_cons`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `t_bschedule`
+--
+ALTER TABLE `t_bschedule`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `t_maccess_control`
@@ -1179,10 +1542,58 @@ ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT for table `t_bcharges_dtl`
+--
+ALTER TABLE `t_bcharges_dtl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_bcommodity`
+--
+ALTER TABLE `t_bcommodity`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `t_bcontainer`
+--
+ALTER TABLE `t_bcontainer`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `t_bdocument`
+--
+ALTER TABLE `t_bdocument`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `t_booking`
+--
+ALTER TABLE `t_booking`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `t_bpackages`
+--
+ALTER TABLE `t_bpackages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `t_broad_cons`
+--
+ALTER TABLE `t_broad_cons`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_bschedule`
+--
+ALTER TABLE `t_bschedule`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `t_maccess_control`
 --
 ALTER TABLE `t_maccess_control`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `t_maccount`
@@ -1206,13 +1617,13 @@ ALTER TABLE `t_maddress`
 -- AUTO_INCREMENT for table `t_mapps_menu`
 --
 ALTER TABLE `t_mapps_menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `t_mbl_issued`
 --
 ALTER TABLE `t_mbl_issued`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `t_mcarrier`
@@ -1260,7 +1671,7 @@ ALTER TABLE `t_mcurrency`
 -- AUTO_INCREMENT for table `t_mdoc_type`
 --
 ALTER TABLE `t_mdoc_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `t_mfreight_charges`
@@ -1338,7 +1749,7 @@ ALTER TABLE `t_mvehicle_type`
 -- AUTO_INCREMENT for table `t_quote`
 --
 ALTER TABLE `t_quote`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `t_quote_dimension`
@@ -1362,7 +1773,7 @@ ALTER TABLE `t_quote_profit`
 -- AUTO_INCREMENT for table `t_quote_shipg_dtl`
 --
 ALTER TABLE `t_quote_shipg_dtl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
