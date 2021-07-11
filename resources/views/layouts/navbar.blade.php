@@ -1,4 +1,4 @@
-<body class="hold-transition sidebar-mini layout-fixed @if(Request::segment(1) == 'quotation') sidebar-collapse @endif">
+<body class="hold-transition sidebar-mini layout-fixed @if(Request::segment(1) == 'quotation' || Request::segment(1) == 'booking') sidebar-collapse @endif">
     <div class="wrapper">
     
       <!-- Preloader -->

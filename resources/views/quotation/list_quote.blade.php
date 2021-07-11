@@ -68,7 +68,7 @@
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
                                     <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}','edit', '{{ $row->id }}')" status="edit"><i class="fa fa-edit"></i> Edit </a>
                                     @if ($row->status == 0)
-                                    {{-- <a class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete </a>                                         --}}
+                                    <a class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete </a>                                        
                                     @endif
                                 </td>
                             </tr>

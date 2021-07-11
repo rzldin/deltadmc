@@ -241,6 +241,32 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');
     Route::post('/booking/doAdd', 'BookingController@booking_doAdd')->name('booking.doAdd');
 
+    #Load Detail Commodity
+    Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');
+    Route::post('/booking/loadCommodity','BookingController@loadCommodity')->name('booking.loadCommodity');
+    Route::post('/booking/deleteCommodity','BookingController@deleteCommodity')->name('booking.deleteCommodity');
+    Route::post('/booking/updateCommodity', 'BookingController@updateCommodity')->name('booking.updateCommodity');
+
+    #Load Detail Packages
+    Route::post('/booking/addPackages', 'BookingController@addPackages')->name('booking.addPackages');
+    Route::post('/booking/loadPackages','BookingController@loadPackages')->name('booking.loadPackages');
+    Route::post('/booking/deletePackages','BookingController@deletePackages')->name('booking.deletePackages');
+    Route::post('/booking/updatePackages', 'BookingController@updatePackages')->name('booking.updatePackages');
+
+    #Load Detail Container
+    Route::post('/booking/addContainer', 'BookingController@addContainer')->name('booking.addContainer');
+    Route::post('/booking/loadContainer','BookingController@loadContainer')->name('booking.loadContainer');
+    Route::post('/booking/deleteContainer','BookingController@deleteContainer')->name('booking.deleteContainer');
+    Route::post('/booking/updateContainer', 'BookingController@updateContainer')->name('booking.updateContainer');
+    Route::post('/booking/getAll', 'BookingController@getAll')->name('booking.getAll');
+
+    #Load Detail Doc
+    Route::post('/booking/addDoc', 'BookingController@addDoc')->name('booking.addDoc');
+    Route::post('/booking/loadDoc','BookingController@loadDoc')->name('booking.loadDoc');
+    Route::post('/booking/deleteDoc','BookingController@deleteDoc')->name('booking.deleteDoc');
+    Route::post('/booking/updateDoc', 'BookingController@updateDoc')->name('booking.updateDoc');
+    Route::post('/booking/getDoc', 'BookingController@getDoc')->name('booking.getDoc');
+    
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

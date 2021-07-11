@@ -22,7 +22,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-sm" href="{{ url('quotation/quote_add') }}"><i class="fa fa-plus"></i> Create Booking</a>
+                    <a class="btn btn-primary btn-sm" href=""><i class="fa fa-plus"></i> Create Booking</a>
                 </div>
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->
@@ -35,26 +35,31 @@
                                 <th>Shipper</th>
                                 <th>Consignee</th>
                                 <th>Client</th>
-                                <th>Created By</th>
-                                <th>Created On</th>
                                 <th>Activity</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                           <tr>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                               <td></td>
-                           </tr>
+                            @foreach ($data as $row)
+                            <tr>
+                                <td>{{ $row->booking_no }}</td>
+                                <td>{{ \Carbon\Carbon::parse($row->booking_date)->format('d/m/Y') }}</td>
+                                <td>{{ $row->company_d }}</td>
+                                <td>{{ $row->company_c }}</td>
+                                <td>{{ $row->company_b }}</td>
+                                <td>{{ $row->activity }}</td>
+                                @if ($row->status == 0)
+                                <td class="bg-secondary text-center">NEW</td>
+                                @elseif($row->status == 1) 
+                                <td class="bg-success text-center">Approve</td>
+                                @endif
+                                <td>
+                                    <a class="btn btn-primary btn-sm" onclick="viewVersion('')"><i class="fa fa-file-alt"></i> View </a>
+                                    <a class="btn btn-info btn-sm" onclick="viewVersion('')" status="edit"><i class="fa fa-edit"></i> Edit </a>
+                                </td>
+                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

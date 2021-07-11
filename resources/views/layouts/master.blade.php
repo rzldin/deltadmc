@@ -182,6 +182,10 @@
     $('#reservationdateAWB').datetimepicker({
         format: 'L'
     });
+
+    $('#reservationdatec').datetimepicker({
+        format: 'L'
+    });
     
       $(function () {
         $('#myTable').DataTable({
