@@ -57,13 +57,14 @@
                                                     {{ $error }}
                                                 </div>  		
                                                 @endforeach
-                                            @endif
+                                                @endif
+                                                <?php $verse = $quote->version_no; ?>
                                                 @if ($quote->activity == 'domestic')
-                                                {{\App\Http\Controllers\BookingController::edit_header_domestic($quote)}}
+                                                {{\App\Http\Controllers\BookingController::edit_header_domestic($quote, $verse)}}
                                                 @elseif($quote->activity == 'export')
-                                                {{\App\Http\Controllers\BookingController::edit_header_export($quote)}}
+                                                {{\App\Http\Controllers\BookingController::edit_header_export($quote, $verse)}}
                                                 @elseif($quote->activity == 'import')
-                                                {{\App\Http\Controllers\BookingController::edit_header_import($quote)}}
+                                                {{\App\Http\Controllers\BookingController::edit_header_import($quote, $verse)}}
                                                 @endif
                                             </form>
                                             <div class="row float-right mt-2">
@@ -619,7 +620,79 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-settings" role="tabpanel" aria-labelledby="custom-content-below-settings-tab">
-                                Pellentesque vestibulum commodo nibh nec blandit. Maecenas neque magna, iaculis tempus turpis ac, ornare sodales tellus. Mauris eget blandit dolor. Quisque tincidunt venenatis vulputate. Morbi euismod molestie tristique. Vestibulum consectetur dolor a vestibulum pharetra. Donec interdum placerat urna nec pharetra. Etiam eget dapibus orci, eget aliquet urna. Nunc at consequat diam. Nunc et felis ut nisl commodo dignissim. In hac habitasse platea dictumst. Praesent imperdiet accumsan ex sit amet facilisis.
+                                <section class="content">
+                                    <div class="container-fluid mt-3">
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h5>Cost</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                        <thead>
+                                                          <tr>
+                                                            <td>No.</th>
+                                                            <td>Schedule</td>
+                                                            <td>Description</th>
+                                                            <td>Time</td>
+                                                            <td>Notes</td>
+                                                            <td>Action</td>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody id="tblSchedule">
+                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h5>Sell</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                        <thead>
+                                                          <tr>
+                                                            <td>No.</th>
+                                                            <td>Schedule</td>
+                                                            <td>Description</th>
+                                                            <td>Time</td>
+                                                            <td>Notes</td>
+                                                            <td>Action</td>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody id="tblSchedule">
+                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <h5>Profit Analysis</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                        <thead>
+                                                          <tr>
+                                                            <td>No.</th>
+                                                            <td>Schedule</td>
+                                                            <td>Description</th>
+                                                            <td>Time</td>
+                                                            <td>Notes</td>
+                                                            <td>Action</td>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody id="tblSchedule">
+                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section> 
                             </div>
                         </div>
                     </div>

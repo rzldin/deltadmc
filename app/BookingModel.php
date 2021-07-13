@@ -57,4 +57,5 @@ class BookingModel extends Model
         return DB::table('t_bschedule')->where('id', $id)->first();
     }
 
+
 }

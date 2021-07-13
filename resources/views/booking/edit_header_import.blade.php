@@ -2,6 +2,7 @@
     <div class="card-header">
         <h3 class="card-title">Booking Information</h3>
     </div>
+
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
@@ -32,7 +33,7 @@
                         <label>Version No</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $quote->version_no }}" readonly>
+                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $verse }}" readonly>
                     </div>
                 </div>
             </div>
@@ -736,7 +737,7 @@
                                     <div class="col-md-8">
                                         <select class="form-control select2bs44" style="width: 100%;" name="incoterms" id="incoterms">
                                             @foreach ($inco as $row)
-                                            <option value="{{ $row->id }}" @if ($row->id == $quote->terms)
+                                            <option value="{{ $row->id }}" @if ($row->id == $quote->t_mincoterms_id)
                                                 selected
                                             @endif>{{ $row->incoterns_code }}</option>
                                             @endforeach
@@ -912,7 +913,7 @@
                                 <label>BL/AWB Number</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="hbl_number" id="hbl_number" placeholder="Enter BL/AWB Number ..." value="{{ $quote->bl_no }}">
+                                <input type="text" class="form-control" name="hbl_number" id="hbl_number" placeholder="Enter BL/AWB Number ..." value="{{ $quote->hbl_no }}">
                             </div>
                         </div>
                         <div class="row mb-3">

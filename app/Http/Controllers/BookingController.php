@@ -106,7 +106,7 @@ class BookingController extends Controller
         return view('booking.view_header_import')->with($data);
     }
 
-    public static function edit_header_domestic($quote)
+    public static function edit_header_domestic($quote,$verse)
     {
         $data['quote']          = $quote;
         $data['doc']            = MasterModel::get_doc();
@@ -117,6 +117,7 @@ class BookingController extends Controller
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
+        $data['verse']          = $verse;
         $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
         $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
@@ -127,7 +128,7 @@ class BookingController extends Controller
         return view('booking.edit_header_domestic')->with($data);
     }
 
-    public static function edit_header_export($quote)
+    public static function edit_header_export($quote, $verse)
     {
         $data['quote']          = $quote;
         $data['doc']            = MasterModel::get_doc();
@@ -138,6 +139,7 @@ class BookingController extends Controller
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
+        $data['verse']          = $verse;
         $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
         $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
@@ -148,7 +150,7 @@ class BookingController extends Controller
         return view('booking.edit_header_export')->with($data);
     }
 
-    public static function edit_header_import($quote)
+    public static function edit_header_import($quote, $verse)
     {
         $data['quote']          = $quote;
         $data['doc']            = MasterModel::get_doc();
@@ -159,6 +161,7 @@ class BookingController extends Controller
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
+        $data['verse']          = $verse;
         $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
         $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
@@ -827,7 +830,9 @@ class BookingController extends Controller
 
     public function new_version($id)
     {
-        return view();
+        $data = BookingModel::get_bookingDetail($id);
+        $quote = $data[0];
+        return view('booking.new_version', compact('quote'));
     }
 
     public function doUpdate(Request $request)

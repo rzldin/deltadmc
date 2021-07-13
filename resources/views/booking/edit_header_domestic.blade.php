@@ -2,6 +2,7 @@
     <div class="card-header">
         <h3 class="card-title">Booking Information</h3>
     </div>
+    
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
@@ -32,7 +33,7 @@
                         <label>Version No</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $quote->version_no }}" readonly>
+                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $verse }}" readonly>
                     </div>
                 </div>
             </div>
