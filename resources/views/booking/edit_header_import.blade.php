@@ -164,7 +164,7 @@
                         <label>Client</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
+                        <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="client_detail(this.value)">
                             <option value="" selected>-- Select Client --</option>
                             @foreach ($company as $c)
                             <option value="{{ $c->id }}" @if ($quote->client_id == $c->id)
@@ -227,7 +227,7 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="shipper-detail" style="display: none">
+                <div class="shipper-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Shipper Address</label>
@@ -235,6 +235,11 @@
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="shipper_addr" id="shipper_addr">
                                 <option value="" selected>-- Select Shipper Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->shipper_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -245,6 +250,11 @@
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="shipper_pic" id="shipper_pic">
                                 <option value="" selected>-- Select Shipper PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->shipper_pic_id == $item->id)
+                                    selected
+                                @endif>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -267,7 +277,7 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="consignee-detail" style="display: none">
+                <div class="consignee-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Consignee Address</label>
@@ -275,6 +285,11 @@
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="consignee_addr" id="consignee_addr">
                                 <option value="" selected>-- Select consignee Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->consignee_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -285,6 +300,11 @@
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="consignee_pic" id="consignee_pic">
                                 <option value="" selected>-- Select consignee PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->consignee_pic_id == $item->id)
+                                    selected
+                                @endif>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -307,14 +327,19 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="not-detail" style="display: none">
+                <div class="not-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Notify Party Address</label>
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="not_addr" id="not_addr">
-                                <option value="" selected>-- Select consignee Address --</option>
+                                <option value="" selected>-- Select Notify Party Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->not_party_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -324,7 +349,12 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="not_pic" id="not_pic">
-                                <option value="" selected>-- Select consignee PIC --</option>
+                                <option value="" selected>-- Select Notify Party PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->not_party_pic_id == $item->id)
+                                    selected
+                                @endif>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -347,14 +377,19 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="agent-detail" style="display: none">
+                <div class="agent-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Agent Address</label>
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="agent_addr" id="agent_addr">
-                                <option value="" selected>-- Select agent Address --</option>
+                                <option value="" selected>-- Select Agent Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->agent_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -364,7 +399,12 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="agent_pic" id="agent_pic">
-                                <option value="" selected>-- Select consignee PIC --</option>
+                                <option value="" selected>-- Select Agent PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->agent_pic_id == $item->id)
+                                    selected
+                                @endif>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -387,14 +427,19 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="shipline-detail" style="display: none">
+                <div class="shipline-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Shipping Line Address</label>
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="shipline_addr" id="shipline_addr">
-                                <option value="" selected>-- Select consignee Address --</option>
+                                <option value="" selected>-- Select Shipping Line Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->shpline_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -405,6 +450,11 @@
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="shipline_pic" id="shipline_pic">
                                 <option value="" selected>-- Select consignee PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->shpline_pic_id == $item->id)
+                                    selected
+                                @endif>{{ $item->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -443,14 +493,19 @@
                         <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
-                <div class="vendor-detail" style="display: none">
+                <div class="vendor-detail">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label>Vendor Address</label>
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="vendor_addr" id="vendor_addr">
-                                <option value="" selected>-- Select consignee Address --</option>
+                                <option value="" selected>-- Select Vendor Address --</option>
+                                @foreach ($cust_addr as $item)
+                                <option value="{{ $item->id }}" @if ($quote->vendor_addr_id == $item->id)
+                                    selected
+                                @endif>{{ $item->address }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -460,11 +515,11 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="vendor_pic" id="vendor_pic">
-                                <option value="">-- Select consignee PIC --</option>
-                                @foreach ($carrier as $item)
-                                <option value="{{ $item->id }}" @if($quote->carrier_id == $item->id)
+                                <option value="" selected>-- Select Vendor PIC --</option>
+                                @foreach ($cust_pic as $item)
+                                <option value="{{ $item->id }}" @if ($quote->vendor_pic_id == $item->id)
                                     selected
-                                @endif>{{ $item->code }}</option>
+                                @endif>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -476,7 +531,12 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
-                            <option value="" selected>-- Select Shipping Line --</option>
+                            <option value="" selected>-- Select Carrier --</option>
+                            @foreach ($carrier as $item)
+                            <option value="{{ $item->id }}" @if($quote->carrier_id == $item->id)
+                                selected
+                            @endif>{{ $item->code }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">

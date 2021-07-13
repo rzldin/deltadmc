@@ -37,4 +37,24 @@ class BookingModel extends Model
         return DB::select("SELECT a.*, b.name FROM t_bdocument a LEFT JOIN t_mdoc_type b ON a.t_mdoc_type_id = b.id WHERE a.t_booking_id='".$id."'");
     }
 
+    public static function getRoadCons($id)
+    {
+        return DB::select("SELECT a.*, b.type, c.vehicle_no FROM t_broad_cons a LEFT JOIN t_mvehicle_type b ON a.t_mvehicle_type_id = b.id LEFT JOIN t_mvehicle c ON a.t_mvehicle_id = c.id WHERE a.t_booking_id ='".$id."'");
+    }
+
+    public static function roadConsDetail($id)
+    {
+        return DB::table('t_broad_cons')->where('id', $id)->first();
+    }
+
+    public static function getSchedule($id)
+    {
+        return DB::select("SELECT a.*, b.schedule_type FROM t_bschedule a LEFT JOIN t_mschedule_type b ON a.t_mschedule_type_id = b.id WHERE a.t_booking_id ='".$id."'");
+    }
+
+    public static function scheduleDetail($id)
+    {
+        return DB::table('t_bschedule')->where('id', $id)->first();
+    }
+
 }

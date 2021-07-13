@@ -199,11 +199,31 @@
         });
       });
 
+      $(function () {
+        $('#myTablex').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "ordering": true,
+          "info": true,
+          "autoWidth": true,
+          "responsive": true,
+        });
+      });
+
       $(function(){
         $('.select2bs4').select2({
           theme: 'bootstrap4',
           tags: true,
           dropdownParent: $("#myModal")
+        })
+      })
+
+      $(function(){
+        $('.select2bs4k').select2({
+          theme: 'bootstrap4',
+          tags: true,
+          dropdownParent: $("#myModalx")
         })
       })
 
@@ -226,20 +246,7 @@
         })
       })
 
-      //Date range picker
-      $('#date_id').datetimepicker({
-          format: 'YYYY-MM-DD'
-      });
-
-      $('#date_jt').datetimepicker({
-          format: 'YYYY-MM-DD'
-      });
-
-
-      $('#datetime_id').datetimepicker({
-          // timePicker: true,
-          format: 'YYYY-MM-DD HH:mm',
-      });
+      $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
     </script>
 
     @stack('after-scripts')

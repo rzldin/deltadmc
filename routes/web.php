@@ -240,6 +240,18 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(['get', 'post'], 'booking/header_booking/{id}', 'BookingController@header_booking')->name('booking.header');
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');
     Route::post('/booking/doAdd', 'BookingController@booking_doAdd')->name('booking.doAdd');
+    Route::match(['get', 'post'], 'booking/booking_new/{id}', 'BookingController@new_version')->name('booking.new_version');
+    Route::post('/booking/booking_doUpdate', 'BookingController@doUpdate')->name('booking.doUpdate');
+    Route::post('/booking/roadCons_doAdd', 'BookingController@roadCons_doAdd')->name('booking.roadCons_doAdd');
+    Route::post('/booking/roadCons_doUpdate', 'BookingController@roadCons_doUpdate')->name('booking.roadCons_doUpdate');
+    Route::post('/booking/loadRoadCons','BookingController@loadRoadCons')->name('booking.loadRoadCons');
+    Route::post('booking/getRoadCons', 'BookingController@getRoadCons')->name('booking.getRoadCons');
+    Route::post('/booking/deleteRoadCons','BookingController@deleteRoadCons')->name('booking.deleteRoadCons');
+    Route::post('/booking/schedule_doAdd', 'BookingController@schedule_doAdd')->name('booking.schedule_doAdd');
+    Route::post('/booking/loadSchedule','BookingController@loadSchedule')->name('booking.loadSchedule');
+    Route::post('booking/getSchedule', 'BookingController@getSchedule')->name('booking.getSchedule');
+    Route::post('/booking/deleteSchedule','BookingController@deleteSchedule')->name('booking.deleteSchedule');
+    Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');

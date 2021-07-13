@@ -48,8 +48,16 @@
                                 <div class="container-fluid mt-3">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <form action="" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                                            <form action="{{ route('booking.doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                                                 {{ csrf_field() }}
+                                                <input type="hidden" name="status_final" id="status_final">
+                                                @if(count($errors)>0)
+                                                @foreach($errors->all() as $error)
+                                                <div class="alert alert-danger" role="alert">
+                                                    {{ $error }}
+                                                </div>  		
+                                                @endforeach
+                                            @endif
                                                 @if ($quote->activity == 'domestic')
                                                 {{\App\Http\Controllers\BookingController::edit_header_domestic($quote)}}
                                                 @elseif($quote->activity == 'export')
@@ -363,16 +371,16 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData()">
+                                            <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
-                                            <a href="{{ url('quotation/quote_new/'.$quote->id) }}" class="btn btn-info float-left mr-2"> 
+                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" class="btn btn-info float-left mr-2"> 
                                                 <i class="fa fa-plus"></i> New Version 
                                             </a>
-                                            <a href="" class="btn btn-danger float-left mr-2"> 
+                                            <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2"> 
                                                 <i class="fa fa-times"></i> Cancel
                                             </a>
-                                            <a href="" class="btn btn-primary float-left mr-2"> 
+                                            <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)"> 
                                                 <i class="fa fa-save"></i> Save 
                                             </a>
                                         </div>
@@ -381,22 +389,234 @@
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
                                 <section class="content">
-                                    <div class="container-fluid">
+                                    <div class="container-fluid mt-3">
                                       <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
+                                        <div class="col-md-12">
+                                            <div class="card card-primary">
                                                 <div class="card-header">
-                                                    <h5>Surat Jalan</h5>
+                                                    <a class="btn btn-dark btn-sm float-right" onclick="newRoad()"><i class="fa fa-plus"></i> Add Data</a>
                                                 </div>
                                                 <div class="card-body">
+                                                    <table id="myTable" class="table table-bordered table-striped" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <td width="15%">No. SJ</td>
+                                                                <td width="15%">Vehicle Type</th>
+                                                                <td width="10%">Vehicle No</th>
+                                                                <td width="20%">Driver</td>
+                                                                <td width="10%">Driver Phone</td>
+                                                                <td>Pickup Address</td>
+                                                                <td>Delivery Address</td>
+                                                                <td>Notes</td>
+                                                                <td>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="tblRoadCons">
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </section>                                
                             </div>
+                            <div class="modal fade" id="myModal" tabindex="-1" role="basic" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                                            <h4 class="modal-title">&nbsp;</h4>
+                                        </div>
+                                        <br>
+                                        <div class="modal-body">
+                                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                                  id="formRoad" enctype="multipart/form-data">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        No. SJ <font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="no_sj" name="no_sj" 
+                                                            class="form-control myline" style="margin-bottom:5px" placeholder="No Surat Jalan ....">
+                                                        <input type="hidden" id="id" name="id">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Vehicle Type<font color="#f00">*</font>
+                                                    </div>                                
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="vehicle_type" id="vehicle_type">
+                                                            <option value="" disabled selected>--Pilih--</option>
+                                                            @foreach ($vehicle_type as $row)
+                                                                <option value="{{ $row->id }}">{{ $row->type }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Vehicle<font color="#f00">*</font>
+                                                    </div>                                
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="vehicle_no" id="vehicle_no">
+                                                            <option value="" disabled selected>--Pilih--</option>
+                                                            @foreach ($vehicle as $row)
+                                                                <option value="{{ $row->id }}">{{ $row->vehicle_no }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Driver<font color="#f00">*</font>
+                                                    </div>                                
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="driver" name="driver" 
+                                                            class="form-control myline" style="margin-bottom:5px">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Driver Phone<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="driver_ph" name="driver_ph" class="form-control" placeholder="driver phone ...">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Pickup Address<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="pickup_addr" name="pickup_addr" class="form-control" placeholder="Pickup Address ...">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Delivery Address<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="deliv_addr" name="deliv_addr" class="form-control" placeholder="Delivery Address ...">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                       Notes<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="notes" name="notes" class="form-control" placeholder="Notes ...">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">                        
+                                            <button type="button" class="btn btn-primary" onClick="simpandataRoad();"><i class="fa fa-save"></i> Save</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="tab-pane fade" id="custom-content-below-messages" role="tabpanel" aria-labelledby="custom-content-below-messages-tab">
-                                Morbi turpis dolor, vulputate vitae felis non, tincidunt congue mauris. Phasellus volutpat augue id mi placerat mollis. Vivamus faucibus eu massa eget condimentum. Fusce nec hendrerit sem, ac tristique nulla. Integer vestibulum orci odio. Cras nec augue ipsum. Suspendisse ut velit condimentum, mattis urna a, malesuada nunc. Curabitur eleifend facilisis velit finibus tristique. Nam vulputate, eros non luctus efficitur, ipsum odio volutpat massa, sit amet sollicitudin est libero sed ipsum. Nulla lacinia, ex vitae gravida fermentum, lectus ipsum gravida arcu, id fermentum metus arcu vel metus. Curabitur eget sem eu risus tincidunt eleifend ac ornare magna.
+                                <section class="content">
+                                    <div class="container-fluid mt-3">
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="card card-primary">
+                                                <div class="card-header">
+                                                    <a class="btn btn-dark btn-sm float-right" onclick="newSchedule()"><i class="fa fa-plus"></i> Add Data</a>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                        <thead>
+                                                          <tr>
+                                                            <td>No.</th>
+                                                            <td>Schedule</td>
+                                                            <td>Description</th>
+                                                            <td>Time</td>
+                                                            <td>Notes</td>
+                                                            <td>Action</td>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody id="tblSchedule">
+                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section> 
+                            </div>
+                            <div class="modal fade" id="myModalx" tabindex="-1" role="basic" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                                            <h4 class="modal-title">&nbsp;</h4>
+                                        </div>
+                                        <br>
+                                        <div class="modal-body">
+                                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                                  id="formRoad" enctype="multipart/form-data">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Schedule<font color="#f00">*</font>
+                                                    </div>                                
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <select class="form-control select2bs4k" style="width: 100%;margin-bottom:5px;" name="schedulex" id="schedulex">
+                                                            <option value="" selected>--Pilih--</option>
+                                                            @foreach ($schedule as $row)
+                                                                <option value="{{ $row->id }}">{{ $row->schedule_type }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Description<font color="#f00">*</font>
+                                                    </div>                                
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="description_s" name="description_s" 
+                                                            class="form-control myline" style="margin-bottom:5px" placeholder="Description .. ">
+                                                        <input type="hidden" name="id_s" id="id_s">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                        Date<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        {{-- <input type="datetime-local" id="date_s" name="date_s" class="form-control"> --}}
+                                                        <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
+                                                            <input type="text" name="date_s" id="date_s" class="form-control datetimepicker-input" data-target="#reservationdatetime"/>
+                                                            <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" id="date_old" name="date_old">
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-4 col-xs-4">
+                                                       Notes<font color="#f00">*</font>
+                                                    </div>
+                                                    <div class="col-md-8 col-xs-8">
+                                                        <input type="text" id="notesx" name="notesx" class="form-control" placeholder="Notes ...">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">                        
+                                            <button type="button" class="btn btn-primary" onClick="simpandataSch();"><i class="fa fa-save"></i> Save</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-settings" role="tabpanel" aria-labelledby="custom-content-below-settings-tab">
                                 Pellentesque vestibulum commodo nibh nec blandit. Maecenas neque magna, iaculis tempus turpis ac, ornare sodales tellus. Mauris eget blandit dolor. Quisque tincidunt venenatis vulputate. Morbi euismod molestie tristique. Vestibulum consectetur dolor a vestibulum pharetra. Donec interdum placerat urna nec pharetra. Etiam eget dapibus orci, eget aliquet urna. Nunc at consequat diam. Nunc et felis ut nisl commodo dignissim. In hac habitasse platea dictumst. Praesent imperdiet accumsan ex sit amet facilisis.
@@ -410,6 +630,448 @@
 </section>
 @push('after-scripts')
     <script>
+
+        var dsState;
+
+        function client_detail(val){
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+
+                        $("#customer_addr").html(final[0]);
+                        $("#customer_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function shipper_detail(val){
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#shipper_addr").html(final[0]);
+                        $("#shipper_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+
+        function consignee_detail(val)
+        {
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#consignee_addr").html(final[0]);
+                        $("#consignee_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function not_detail(val)
+        {
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#not_addr").html(final[0]);
+                        $("#not_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function agent_detail(val)
+        {
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#agent_addr").html(final[0]);
+                        $("#agent_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function shipline_detail(val)
+        {
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#shipline_addr").html(final[0]);
+                        $("#shipline_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function vendor_detail(val)
+        {
+            if(val!= ''){
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: "id="+val,
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#vendor_addr").html(final[0]);
+                        $("#vendor_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
+        function newRoad(){
+            $('#id').val('');
+            $('#no_sj').val('');
+            $('#vehicle_type').val('').trigger('change');
+            $('#vehicle_no').val('').trigger('change');
+            $('#driver').val('');
+            $('#driver_ph').val('');
+            $('#pickup_addr').val('');
+            $('#deliv_addr').val('');
+            $('#notes').val('');
+
+            dsState = "Input";
+            
+            $("#myModal").find('.modal-title').text('Add Data');
+            $("#myModal").modal('show',{backdrop: 'true'}); 
+        }
+
+        function simpandataRoad(){
+            if($.trim($("#no_sj").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please enter No. Surat Jalan',
+                    icon: 'error'
+                })
+            }else if($.trim($("#vehicle_type").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select Vehicle Type',
+                    icon: 'error'
+                })
+            }else if($.trim($("#vehicle_no").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select Vehicle',
+                    icon: 'error'
+                })
+            }else if($.trim($("#driver").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input driver',
+                    icon: 'error'
+                })
+            }else if($.trim($("#driver_ph").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Driver Phone',
+                    icon: 'error'
+                })
+            }else if($.trim($("#pickup_addr").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Pickup Address',
+                    icon: 'error'
+                })
+            }else if($.trim($("#deliv_addr").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Delivery Address',
+                    icon: 'error'
+                })
+            }else{
+                if(dsState=="Input"){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('booking.roadCons_doAdd') }}",
+                        dataType: 'json',
+                        data : {
+                            booking_id:$('#booking_id').val(),
+                            no_sj : $('#no_sj').val(),
+                            vehicle_type : $('#vehicle_type').val(),
+                            vehicle_no : $('#vehicle_no').val(),
+                            driver : $('#driver').val(),
+                            driver_ph : $('#driver_ph').val(),
+                            pickup_addr : $('#pickup_addr').val(),
+                            deliv_addr : $('#deliv_addr').val(),
+                            notes : $('#notes').val()
+                        },
+                        success: function (result){
+                            $("#myModal").modal('hide'); 
+                            loadRoadCons({{ Request::segment(3) }}); 
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Add Data!'
+                            });
+                        }
+                    });              
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('booking.roadCons_doUpdate') }}",
+                        dataType: 'json',
+                        data : {
+                            id : $('#id').val(),
+                            no_sj : $('#no_sj').val(),
+                            vehicle_type : $('#vehicle_type').val(),
+                            vehicle_no : $('#vehicle_no').val(),
+                            driver : $('#driver').val(),
+                            driver_ph : $('#driver_ph').val(),
+                            pickup_addr : $('#pickup_addr').val(),
+                            deliv_addr : $('#deliv_addr').val(),
+                            notes : $('#notes').val()
+                        },
+                        success: function (result){
+                            $("#myModal").modal('hide'); 
+                            loadRoadCons({{ Request::segment(3) }}); 
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Update!'
+                            });
+                        }
+                    }); 
+                }
+            }
+            
+        };
+
+
+        function editDetailRoad(id){
+            dsState = "Edit";
+            $.ajax({
+                type: "POST",
+                url: "{{ route('booking.getRoadCons') }}",
+                dataType: 'json',
+                data : {id: id},
+                success: function (result){
+                    $('#id').val(result.id);
+                    $('#no_sj').val(result.no_sj);
+                    $('#vehicle_type').val(result.t_mvehicle_type_id).trigger("change");
+                    $('#vehicle_no').val(result.t_mvehicle_id).trigger("change");
+                    $('#driver').val(result.driver);
+                    $('#driver_ph').val(result.driver_phone);
+                    $('#pickup_addr').val(result.pickup_addr);
+                    $('#deliv_addr').val(result.delivery_addr);
+                    $('#notes').val(result.notes);
+                    $("#myModal").find('.modal-title').text('Edit Data');
+                    $("#myModal").modal('show',{backdrop: 'true'});           
+                }
+            });
+        };
+
+        function newSchedule(){
+            $('#id_s').val('');
+            $('#date_s').val('');
+            $('#description_s').val('');
+            $('#schedulex').val('').trigger('change');
+            $('#notesx').val('');
+
+            dsState = "Input";
+            
+            $("#myModalx").find('.modal-title').text('Add Data');
+            $("#myModalx").modal('show',{backdrop: 'true'}); 
+        }
+
+        function simpandataSch(){
+            if($.trim($("#schedulex").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please select Schedule',
+                    icon: 'error'
+                })
+            }else if($.trim($("#description_s").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please enter Description',
+                    icon: 'error'
+                })
+            }else if($.trim($("#date_s").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please enter Date',
+                    icon: 'error'
+                })
+            }else if($.trim($("#notesx").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Note',
+                    icon: 'error'
+                })
+            }else{
+                if(dsState=="Input"){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('booking.schedule_doAdd') }}",
+                        dataType: 'json',
+                        data : {
+                            booking_id:$('#booking_id').val(),
+                            schedule : $('#schedulex').val(),
+                            desc : $('#description_s').val(),
+                            date : $('#date_s').val(),
+                            notes : $('#notesx').val()
+                        },
+                        success: function (result){
+                            $("#myModalx").modal('hide'); 
+                            loadSchedule({{ Request::segment(3) }}); 
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Add Data!'
+                            });
+                        }
+                    });              
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('booking.schedule_doUpdate') }}",
+                        dataType: 'json',
+                        data : {
+                            id : $('#id_s').val(),
+                            schedule : $('#schedulex').val(),
+                            desc : $('#description_s').val(),
+                            date : $('#date_s').val(),
+                            date_old : $('#date_old').val(),
+                            notes : $('#notesx').val()
+                        },
+                        success: function (result){
+                            $("#myModalx").modal('hide'); 
+                            loadSchedule({{ Request::segment(3) }}); 
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Update!'
+                            });
+                        }
+                    }); 
+                }
+            }
+            
+        };
+
+        function editDetailSch(id){
+            dsState = "Edit";
+            var dateControl = document.querySelector('input[type="datetime-local"]');
+            $.ajax({
+                type: "POST",
+                url: "{{ route('booking.getSchedule') }}",
+                dataType: 'json',
+                data : {id: id},
+                success: function (result){
+                    //var d = moment(result.date).format('Y-m-dTH:i');
+                    var d = new Date(result.date)
+
+                    $('#id_s').val(result.id);
+                    $('#schedulex').val(result.t_mschedule_type_id).trigger("change");
+                    $('#description_s').val(result.desc);
+                    $('#date_s').val(result.date);
+                    $('#notesx').val(result.notes);
+                    $("#myModalx").find('.modal-title').text('Edit Data');
+                    $("#myModalx").modal('show',{backdrop: 'true'});           
+                }
+            });
+        };
+
+        /** Load Road Cons **/
+        function loadRoadCons(id){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.loadRoadCons') }}",
+                data:"id="+id,
+                dataType:"html",
+                success:function(result){
+                    var tabel = JSON.parse(result);
+                    $('#tblRoadCons').html(tabel);
+                }
+            })
+        }
+
+        /** Load Schedule **/
+        function loadSchedule(id){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.loadSchedule') }}",
+                data:"id="+id,
+                dataType:"html",
+                success:function(result){
+                    var tabel = JSON.parse(result);
+                    $('#tblSchedule').html(tabel);
+                }
+            })
+        }
+
+        /** Hapus Detail Road **/
+        function hapusDetailRoad(id){
+            var r=confirm("Anda yakin menghapus data ini?");
+            if (r==true){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.deleteRoadCons') }}",
+                    data:"id="+ id,
+                    success:function(result){
+                        loadRoadCons({{ Request::segment(3) }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Deleted!'
+                        });   
+                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal Menghapus data!');
+                    }, 
+                });
+            }
+        }
+
+        /** Hapus Detail Road **/
+        function hapusDetailSch(id){
+            var r=confirm("Anda yakin menghapus data ini?");
+            if (r==true){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.deleteSchedule') }}",
+                    data:"id="+ id,
+                    success:function(result){
+                        loadSchedule({{ Request::segment(3) }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Deleted!'
+                        });   
+                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal Menghapus data!');
+                    }, 
+                });
+            }
+        }
+
         /** Load Commodity **/
         function loadCommodity(id){
             $.ajax({
@@ -452,7 +1114,7 @@
             })
         }
 
-        /** Load Container **/
+        /** Load Document **/
         function loadDoc(id){
             $.ajax({
                 type:"POST",
@@ -1316,12 +1978,81 @@
             }
         }
 
+        function updateData(status)
+        {
+            let s = '';
+            if(status == 1){
+                s = 'simpan final';
+            }else{
+                s = 'mengupdate';
+            }
+
+            var r=confirm(`Anda yakin ingin ${s} data ini?`);
+            if(r == true){
+                $("#status_final").val(status);
+                if($.trim($("#booking_no").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Booking Number',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#booking_date").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Booking Date',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#customer").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Customer',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#shipper").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Shipper',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#consignee").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Consignee',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#notify_party").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please select Notify Party',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#agent").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Agent',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#shipping_line").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please select Shipping Line',
+                        icon: 'error'
+                    })
+                }else{
+                    $(this).prop('disabled', false).text('Please Wait ...');
+                    $('#formku').submit();
+                }
+            }
+            
+        }
 
         $(function() {
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});
             loadContainer({{ Request::segment(3) }});
             loadDoc({{ Request::segment(3) }}); 
+            loadRoadCons({{ Request::segment(3) }});
+            loadSchedule({{ Request::segment(3) }});
         });
     </script>
 @endpush

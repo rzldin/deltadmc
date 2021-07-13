@@ -20,20 +20,23 @@ class BookingController extends Controller
 
     public function edit_booking($id)
     {
-        $data['quote']      = BookingModel::get_bookingDetail($id)[0];
-        $data['doc']        = MasterModel::get_doc();
-        $data['company']    = MasterModel::company_data();
-        $data['inco']       = MasterModel::incoterms_get();
-        $data['uom']        = MasterModel::uom();
-        $data['container']  = MasterModel::container_get();
-        $data['loaded']     = MasterModel::loaded_get();
+        $data['quote']          = BookingModel::get_bookingDetail($id)[0];
+        $data['doc']            = MasterModel::get_doc();
+        $data['company']        = MasterModel::company_data();
+        $data['inco']           = MasterModel::incoterms_get();
+        $data['uom']            = MasterModel::uom();
+        $data['container']      = MasterModel::container_get();
+        $data['loaded']         = MasterModel::loaded_get();
+        $data['vehicle_type']   = MasterModel::vehicleType_get();
+        $data['vehicle']        = MasterModel::vehicle();
+        $data['schedule']       = MasterModel::schedule_get();
 
         return view('booking.edit_booking')->with($data);
     }
 
     public function header_booking($id)
     {
-        $quote = QuotationModel::get_detailQuote($id);
+        $quote                  = QuotationModel::get_detailQuote($id);
         $data['quote']          = $quote;
 
         return view('booking.header_booking')->with($data);
@@ -249,7 +252,7 @@ class BookingController extends Controller
                         'value_collect'         => $request->voc,
                         'freetime_detention'    => $request->fod,
                         'stuffing_date'         => Carbon::parse($request->stuf_date),
-                        'stuffing_place'        => $request->posx,
+                        'stuffing_place'        => $request->pos,
                         'delivery_of_goods'     => $request->dogs,
                         'valuta_comm'           => $request->valuta_com,
                         'value_comm'            => $request->value_commodity,
@@ -811,6 +814,311 @@ class BookingController extends Controller
                 't_mdoc_type_id'    => $request->doc,
                 'doc_no'            => $request->number,
                 'doc_date'          => Carbon::parse($request->date)
+            ]);
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function new_version($id)
+    {
+        return view();
+    }
+
+    public function doUpdate(Request $request)
+    {
+        try {
+            DB::table('t_booking')
+            ->where('id', $request->id_booking)
+            ->update([
+                't_mdoc_type_id'        => $request->doctype,
+                'custom_doc_no'         => $request->doc_no,
+                'custom_doc_date'       => Carbon::parse($request->doc_date),
+                'igm_no'                => $request->igm_number,
+                'igm_date'              => $request->igm_date,
+                'custom_pos'            => $request->pos,
+                'custom_subpos'         => $request->sub_pos,
+                'client_id'             => $request->customer,
+                'client_addr_id'        => $request->customer_addr,
+                'client_pic_id'         => $request->customer_pic,
+                'shipper_id'            => $request->shipper,
+                'shipper_addr_id'       => $request->shipper_addr,
+                'shipper_pic_id'        => $request->shipper_pic,
+                'consignee_id'          => $request->consignee,
+                'consignee_addr_id'     => $request->consignee_addr,
+                'consignee_pic_id'      => $request->consignee_pic,
+                'not_party_id'          => $request->notify_party,
+                'not_party_addr_id'     => $request->not_addr,
+                'not_party_pic_id'      => $request->not_pic,
+                'agent_id'              => $request->agent,
+                'agent_addr_id'         => $request->agent_addr,
+                'agent_pic_id'          => $request->agent_pic,
+                'shipping_line_id'      => $request->shipping_line,
+                'shpline_addr_id'       => $request->shipline_addr,
+                'shpline_pic_id'        => $request->shipline_pic,
+                'vendor_id'             => $request->vendor,
+                'vendor_addr_id'        => $request->vendor_addr,
+                'vendor_pic_id'         => $request->vendor_pic,
+                'carrier_id'            => $request->carrier,
+                'flight_number'         => $request->voyage,
+                'eta_date'              => Carbon::parse($request->eta),
+                'etd_date'              => Carbon::parse($request->etd),
+                'place_origin'          => $request->pfo,
+                'place_destination'     => $request->pod,
+                'pol_id'                => $request->pol,
+                'pol_custom_desc'       => $request->pol_desc,
+                'pod_id'                => $request->podisc,
+                'pod_custom_desc'       => $request->pod_desc,
+                'pot_id'                => $request->pot,
+                'final_flag'            => $request->status_final,
+                'fumigation_flag'       => $request->fumigation,
+                'insurance_flag'        => $request->insurance,
+                't_mincoterms_id'       => $request->incoterms,
+                't_mfreight_charges_id' => $request->freight_charges,
+                'place_payment'         => $request->pop,
+                'valuta_payment'        => $request->valuta_payment,
+                'value_prepaid'         => $request->vop,
+                'value_collect'         => $request->voc,
+                'freetime_detention'    => $request->fod,
+                'stuffing_date'         => Carbon::parse($request->stuf_date),
+                'stuffing_place'        => $request->pos,
+                'delivery_of_goods'     => $request->dogs,
+                'valuta_comm'           => $request->valuta_com,
+                'value_comm'            => $request->value_commodity,
+                'rates_comm'            => $request->exchange_rate,
+                'exchange_valuta_comm'  => $request->exchange_valuta,
+                'remarks'               => $request->remarks,
+                'mbl_shipper'           => $request->shipper_mbl,
+                'mbl_consignee'         => $request->cons_mbl,
+                'mbl_not_party'         => $request->notify_mbl,
+                'mbl_no'                => $request->mbl_number,
+                'mbl_date'              => Carbon::parse($request->mbl_date),
+                'valuta_mbl'            => $request->valuta_mbl,
+                'hbl_shipper'           => $request->shipper_hbl,
+                'hbl_consignee'         => $request->cons_hbl,
+                'hbl_not_party'         => $request->notify_hbl,
+                'hbl_no'                => $request->hbl_number,
+                'hbl_date'              => Carbon::parse($request->hbl_date),
+                'valuta_hbl'            => $request->valuta_hbl,
+                't_mbl_issued_id'       => $request->mbl_issued,
+                'total_commodity'       => $request->total_commo,
+                'total_package'         => $request->total_package,
+                'total_container'       => $request->total_container,
+            ]);
+
+            return redirect('booking/list')->with('status', 'Successfully Updated');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+
+    public function roadCons_doAdd(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_broad_cons')->insert([
+                't_booking_id'          => $request->booking_id,
+                'no_sj'                 => $request->no_sj,
+                't_mvehicle_type_id'    => $request->vehicle_type,
+                't_mvehicle_id'         => $request->vehicle_no,
+                'driver'                => $request->driver,
+                'driver_phone'          => $request->driver_ph,
+                'pickup_addr'           => $request->pickup_addr,
+                'delivery_addr'         => $request->deliv_addr,
+                'notes'                 => $request->notes,
+                'created_by'            => $user,
+                'created_on'            => $tanggal
+            ]);
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function loadRoadCons(Request $request)
+    {
+        $tabel = "";
+        $no = 2;
+        $data = BookingModel::getRoadCons($request['id']);
+
+            foreach($data as $row)
+            {
+                $tabel .= '<tr>';
+                $tabel .= '<td class="text-left">'.$row->no_sj.'</td>';
+                $tabel .= '<td class="text-left">'.$row->type.'</td>';
+                $tabel .= '<td class="text-left">'.$row->vehicle_no.'</td>';
+                $tabel .= '<td class="text-">'.$row->driver.'</td>';
+                $tabel .= '<td class="text-">'.$row->driver_phone.'</td>';
+                $tabel .= '<td class="text-">'.$row->pickup_addr.'</td>';
+                $tabel .= '<td class="text-">'.$row->delivery_addr.'</td>';
+                $tabel .= '<td class="text-">'.$row->notes.'</td>';
+                $tabel .= '<td>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
+                        . '" onclick="editDetailRoad('.$row->id.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
+                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                        . '" onclick="hapusDetailRoad('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-trash"></i> Delete </a>';
+                $tabel .= '</td>';
+                $tabel .= '</tr>';
+                $no++;
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($tabel);
+    }
+
+    public function getRoadCons(Request $request)
+    {
+        $data = BookingModel::roadConsDetail($request['id']);
+        return json_encode($data);
+    }
+
+    public function deleteRoadCons(Request $request)
+    {
+        try {
+            DB::table('t_broad_cons')->where('id', $request['id'])->delete();
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function roadCons_doUpdate(Request $request)
+    {
+        try {
+            DB::table('t_broad_cons')
+            ->where('id', $request->id)
+            ->update([
+                'no_sj'                 => $request->no_sj,
+                't_mvehicle_type_id'    => $request->vehicle_type,
+                't_mvehicle_id'         => $request->vehicle_no,
+                'driver'                => $request->driver,
+                'driver_phone'          => $request->driver_ph,
+                'pickup_addr'           => $request->pickup_addr,
+                'delivery_addr'         => $request->deliv_addr,
+                'notes'                 => $request->notes,
+            ]);
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+
+    public function schedule_doAdd(Request $request)
+    {
+        $cek = DB::table('t_bschedule')->where('t_booking_id', $request->booking_id)->orderBy('created_on', 'desc')->first();
+        if($cek == null){
+            $p = 1;
+        }else{
+            $p = $cek->position_no + 1;
+        }
+
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_bschedule')->insert([
+                't_booking_id'          => $request->booking_id,
+                't_mschedule_type_id'   => $request->schedule,
+                'position_no'           => $p,
+                'desc'                  => $request->desc,
+                'date'                  => Carbon::parse($request->date),
+                'notes'                 => $request->notes,
+                'created_by'            => $user,
+                'created_on'            => $tanggal
+            ]);
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+
+    public function loadSchedule(Request $request)
+    {
+        $tabel = "";
+        $no = 1;
+        $data = BookingModel::getSchedule($request['id']);
+
+            foreach($data as $row)
+            {
+                $tabel .= '<tr>';
+                $tabel .= '<td>'.$no++.'</td>';
+                $tabel .= '<td class="text-left">'.$row->schedule_type.'</td>';
+                $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel .= '<td class="text-left">'.Carbon::parse($row->date).'</td>';
+                $tabel .= '<td class="text-">'.$row->notes.'</td>';
+                $tabel .= '<td>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
+                        . '" onclick="editDetailSch('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                        . '" onclick="hapusDetailSch('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-trash"></i> Delete </a>';
+                $tabel .= '</td>';
+                $tabel .= '</tr>';
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode($tabel);
+    }
+
+
+    public function deleteSchedule(Request $request)
+    {
+        try {
+            DB::table('t_bschedule')->where('id', $request['id'])->delete();
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+
+    public function getSchedule(Request $request)
+    {
+        $data = BookingModel::scheduleDetail($request['id']);
+        return json_encode($data);
+    }
+
+    public function schedule_doUpdate(Request $request)
+    {
+        try {
+            DB::table('t_bschedule')
+            ->where('id', $request->id)
+            ->update([
+                't_mschedule_type_id'   => $request->schedule,
+                'desc'                  => $request->desc,
+                'date'                  => Carbon::parse($request->date),
+                'notes'                 => $request->notes,
             ]);
 
             $return_data = 'sukses';
