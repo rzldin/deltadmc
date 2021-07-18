@@ -747,7 +747,7 @@
                                 <label>Shipper</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="shipper_dtl" id="shipper_dtl" cols="30" rows="3" class="form-control">{{ $quote->mbl_shipper }}</textarea>
+                                <textarea name="shipper_mbl" id="shipper_mbl" cols="30" rows="3" class="form-control">{{ $quote->mbl_shipper }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -755,7 +755,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_dtl" id="cons_dtl" cols="30" rows="3" class="form-control">
+                                <textarea name="cons_mbl" id="cons_mbl" cols="30" rows="3" class="form-control">
                                     {{ $quote->mbl_consignee }}
                                 </textarea>
                             </div>
@@ -765,7 +765,7 @@
                                 <label>Notify Party</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="notify_dtl" id="notify_dtl" cols="30" rows="3" class="form-control">
+                                <textarea name="notify_mbl" id="notify_mbl" cols="30" rows="3" class="form-control">
                                     {{ $quote->mbl_not_party }}
                                 </textarea>
                             </div>
@@ -824,7 +824,7 @@
                                 <label>Shipper</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="shipper_dtl_awb" id="shipper_dtl" cols="30" rows="3" class="form-control">{{ $quote->hbl_shipper }}</textarea>
+                                <textarea name="shipper_hbl" id="shipper_hbl" cols="30" rows="3" class="form-control">{{ $quote->hbl_shipper }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -832,7 +832,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_dtl_awb" id="cons_dtl" cols="30" rows="3" class="form-control">
+                                <textarea name="cons_hbl" id="cons_hbl" cols="30" rows="3" class="form-control">
                                     {{ $quote->hbl_consignee }}
                                 </textarea>
                             </div>
@@ -842,7 +842,7 @@
                                 <label>Notify Party</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="notify_dtl_awb" id="notify_dtl" cols="30" rows="3" class="form-control">{{ $quote->hbl_not_party }}</textarea>
+                                <textarea name="notify_hbl" id="notify_hbl" cols="30" rows="3" class="form-control">{{ $quote->hbl_not_party }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -850,7 +850,7 @@
                                 <label>BL/AWB Number</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="awb_number" id="awb_number" placeholder="Enter BL/AWB Number ..." value="{{ $quote->hbl_no }}">
+                                <input type="text" class="form-control" name="hbl_number" id="awb_number" placeholder="Enter BL/AWB Number ..." value="{{ $quote->hbl_no }}">
                             </div>
                         </div>
                         <div class="row mb-3">

@@ -264,7 +264,7 @@ class MasterController extends Controller
     public function vehicle()
     {
         $data['list_data'] = MasterModel::vehicle();
-        $data['list_vendor'] = MasterModel::company();
+        $data['list_vendor'] = MasterModel::vendor();
         $data['list_type_vehicle'] = MasterModel::type_vehicle();
         return view('master.vehicle')->with($data);
     }

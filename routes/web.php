@@ -252,6 +252,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('booking/getSchedule', 'BookingController@getSchedule')->name('booking.getSchedule');
     Route::post('/booking/deleteSchedule','BookingController@deleteSchedule')->name('booking.deleteSchedule');
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
+    Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');

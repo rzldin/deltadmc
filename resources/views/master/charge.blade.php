@@ -30,9 +30,9 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Code</th>
-                                <th>Name</th>
+                                <th width="5%">No</th>
+                                <th width="15%">Code</th>
+                                <th width="50%">Name</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -192,7 +192,7 @@
                     $('#id').val(result.id);
                     $('#code').val(result.code);
                     $('#name').val(result.name);
-                    $('#charge_group').val(result.t_mcharge_group_id).change("trigger");
+                    $('#charge_group').val(result.t_mcharge_group_id).trigger("change");
                     $('#status').val(result.active_flag).prop("checked");
                     $("#myModal").find('.modal-title').text('Edit Data');
                     $("#myModal").modal('show',{backdrop: 'true'});           

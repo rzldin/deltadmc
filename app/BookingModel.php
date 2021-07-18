@@ -9,7 +9,12 @@ class BookingModel extends Model
 {
     public static function get_booking()
     {
-        return DB::select("SELECT a.*, b.client_name as company_b, c.client_name as company_c, d.client_name as company_d FROM t_booking a LEFT JOIN t_mcompany b ON a.client_id = b.id LEFT JOIN t_mcompany c ON a.consignee_id = c.id LEFT JOIN t_mcompany d ON a.shipper_id = d.id");
+        return DB::table('t_booking AS a')
+                ->leftJoin('t_mcompany AS b', 'a.client_id', '=', 'b.id')
+                ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
+                ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
+                ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
+                ->groupBy('a.booking_no')->get();
     }
 
     public static function get_bookingDetail($id)

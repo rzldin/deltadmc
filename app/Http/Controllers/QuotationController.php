@@ -399,6 +399,7 @@ class QuotationController extends Controller
                 't_mcarrier_id'     => $request->carrier,
                 'routing'           => $request->routing,
                 'transit_time'      => $request->transit,
+                'truck_size'        => $request->truck_size,
                 't_mcurrency_id'    => $request->currency,
                 'rate'              => $request->rate,
                 'cost'              => $request->cost,
@@ -428,23 +429,29 @@ class QuotationController extends Controller
         $tabel = "";
         $no = 2;
         $data = QuotationModel::get_quoteShipping($request['id']);
+        $quote = QuotationModel::get_detailQuote($request['id']);
         
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
                 $tabel .= '<td class="text-right"><input type="checkbox" class="form_control" name="cekShipping" id="cek_'.$no.'" value="'.$row->id.'"></td>';
                 $tabel .= '<td class="text-right">'.($no-1).'</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_carrier_'.$no.'">'.$row->code.'</label>';
-                    $tabel .= '<select id="carrier_'.$no.'" name="carrier" class="form-control select2bs44" ';
-                    $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                    $tabel .= '<option value=""></option>';
-                    $tabel .= '</select>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_routing_'.$no.'">'.$row->routing.'</label>';
-                $tabel .= '<input type="text" id="routing_'.$no.'" name="width" class="form-control" value="'.$row->routing.'" style="display:none"></td>';
-                $tabel .= '<td class="text-right"><label id="lbl_transit_'.$no.'">'.$row->transit_time.'</label>';
-                $tabel .= '<input type="text" id="transit_'.$no.'" name="transit" class="form-control" '
-                    . ' value="'.$row->transit_time.'" style="display:none"></td>';
+                if($quote->shipment_by == 'LAND'){
+                    $tabel .= '<td class="text-right"><label id="lbl_truck_size_'.$no.'">'.$row->truck_size.'</label>';
+                    $tabel .= '<input type="text" id="truck_size_'.$no.'" name="truck_size" class="form-control" value="'.$row->truck_size.'" style="display:none"></td>';     
+                }else{
+                    $tabel .= '<td class="text-right"><label id="lbl_carrier_'.$no.'">'.$row->code.'</label>';
+                        $tabel .= '<select id="carrier_'.$no.'" name="carrier" class="form-control select2bs44" ';
+                            $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
+                            $tabel .= '<option value=""></option>';
+                        $tabel .= '</select>';
+                    $tabel .= '</td>';
+                    $tabel .= '<td class="text-right"><label id="lbl_routing_'.$no.'">'.$row->routing.'</label>';
+                    $tabel .= '<input type="text" id="routing_'.$no.'" name="width" class="form-control" value="'.$row->routing.'" style="display:none"></td>';
+                    $tabel .= '<td class="text-right"><label id="lbl_transit_'.$no.'">'.$row->transit_time.'</label>';
+                    $tabel .= '<input type="text" id="transit_'.$no.'" name="transit" class="form-control" '
+                        . ' value="'.$row->transit_time.'" style="display:none"></td>';
+                }
                 $tabel .= '<td class="text-center"><label id="lbl_currency_'.$no.'">'.$row->code_currency.'</label>';
                     $tabel .= '<select id="currency_'.$no.'" name="currency" class="form-control select2bs44" ';
                     $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
@@ -563,6 +570,7 @@ class QuotationController extends Controller
                 't_mcarrier_id'     => $request->carrier,
                 'routing'           => $request->routing,
                 'transit_time'      => $request->transit,
+                'truck_size'        => $request->truck_size,
                 't_mcurrency_id'    => $request->currency,
                 'rate'              => $request->rate,
                 'cost'              => $request->cost,
@@ -869,6 +877,7 @@ class QuotationController extends Controller
         $tabel = "";
         $no = 2;
         $data = QuotationModel::get_quoteProfit($request['id']);
+        $quote = QuotationModel::get_detailQuote($request['id']);
         
             if(count($data) == 0){
                 $tabel .= '<tr><td colspan="7" class="text-center"><strong>Not Available.</strong></td></tr>';
@@ -876,9 +885,11 @@ class QuotationController extends Controller
                 foreach($data as $row)
                 {
                     $tabel .= '<tr>';
-                    $tabel .= '<td class="text-center"><strong>'.$row->carrier_code.'</strong></td>';
-                    $tabel .= '<td class="text-center"><strong>'.$row->routing.'</strong></td>';
-                    $tabel .= '<td class="text-center"><strong>'.$row->transit_time.'</strong></td>';
+                    if($quote->shipment_by != 'LAND'){
+                        $tabel .= '<td class="text-center"><strong>'.$row->carrier_code.'</strong></td>';
+                        $tabel .= '<td class="text-center"><strong>'.$row->routing.'</strong></td>';
+                        $tabel .= '<td class="text-center"><strong>'.$row->transit_time.'</strong></td>';
+                    }
                     $tabel .= '<td class="text-center"><strong>'.$row->code_currency .' '. number_format($row->total_cost,2,',','.').'</strong></td>';
                     $tabel .= '<td class="text-center"><strong>'.$row->code_currency.' '. number_format($row->total_sell,2,',','.').'</strong></td>';
                     $tabel .= '<td class="text-center"><strong>'.$row->code_currency.' '. number_format($row->total_profit,2,',','.').'</strong></td>';

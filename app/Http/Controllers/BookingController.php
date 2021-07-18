@@ -618,6 +618,7 @@ class BookingController extends Controller
         $tabel = "";
         $no = 2;
         $data = BookingModel::get_container($request['id']);
+        $booking = BookingModel::get_bookingDetail($request['id']);
         
             foreach($data as $row)
             {
@@ -639,7 +640,7 @@ class BookingController extends Controller
                     $tabel .= '</select>';
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-left"><label id="lbl_seal_no_'.$no.'">'.$row->seal_no.'</label><input type="text" id="seal_no_'.$no.'" name="seal_no" class="form-control" value="'.$row->seal_no.'" style="display:none"></td>';
-                if($row->vgm != null){
+                if($booking->activity == 'export'){
                     $tabel .= '<td class="text-left"><label id="lbl_vgm_'.$no.'">'.$row->vgm.'</label><input type="text" id="vgm_'.$no.'" name="vgm" class="form-control" value="'.$row->vgm.'" style="display:none"></td>';
                     $tabel .= '<td class="text-center"><label id="lbl_vgm_uom_'.$no.'">'.$row->uom_code.'</label>';
                         $tabel .= '<select id="vgm_uom_'.$no.'" name="vgm_uom" class="form-control select2bs44" ';
@@ -837,6 +838,7 @@ class BookingController extends Controller
 
     public function doUpdate(Request $request)
     {
+        //dd($request->all());
         try {
             DB::table('t_booking')
             ->where('id', $request->id_booking)
@@ -891,7 +893,7 @@ class BookingController extends Controller
                 'value_collect'         => $request->voc,
                 'freetime_detention'    => $request->fod,
                 'stuffing_date'         => Carbon::parse($request->stuf_date),
-                'stuffing_place'        => $request->pos,
+                'stuffing_place'        => $request->posx,
                 'delivery_of_goods'     => $request->dogs,
                 'valuta_comm'           => $request->valuta_com,
                 'value_comm'            => $request->value_commodity,
@@ -1133,6 +1135,45 @@ class BookingController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
+    }
+
+    public function loadSellCost(Request $request)
+    {
+        $tabel = "";
+        $no = 2;
+        $data = QuotationModel::get_quoteDetail($request['id']);
+        foreach($data as $row)
+            {
+                if($row->reimburse_flag == 1){
+                    $style = 'checked';
+                }else{
+                    $style = '';
+                }
+
+                $total = ($row->rate * $row->qty);
+                $tabel .= '<tr>';
+                $tabel .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'" class="form-control" id="cekx_'.$no.'"></td>';
+                $tabel .= '<td>'.$no++.'</td>';
+                $tabel .= '<td class="text-left">'.$row->code.'</td>';
+                $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel .= '<td><input type="checkbox" name="reimburs" class="form-control" id="reimburs_'.$no.'" '.$style.'></td>';
+                $tabel .= '<td class="text-left">'.$row->qty.'</td>';
+                $tabel .= '<td class="text-left">'.$row->code_currency.'</td>';
+                $tabel .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($total,2,',','.').'</td>';
+                $tabel .= '<td>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
+                        . '" onclick="editDetailSch('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                        . '" onclick="hapusDetailSch('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-trash"></i> Delete </a>';
+                $tabel .= '</td>';
+                $tabel .= '</tr>';
+            }
+
+        header('Content-Type: application/json');
+        echo json_encode($tabel);
     }
 
 

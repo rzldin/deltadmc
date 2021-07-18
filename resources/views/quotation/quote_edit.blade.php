@@ -396,28 +396,32 @@
                     </div>
                     <div class="card-body table-responsive p-0">
                        <table class="table table_lowm table-bordered" id="Table1">
-                           <thead>
-                               <tr>
-                                   <th width="1%">#</th>
-                                   <th width="2%">No</th>
-                                   <th width="15%">Carrier</th>
-                                   <th width="10%">Routing</th>
-                                   <th width="5%">Transit time(days)</th>
-                                   <th width="10%">Currency</th>
-                                   <th>Rate</th>
-                                   <th>Cost</th>
-                                   <th>Sell</th>
-                                   <th width="5%">Qty</th>
-                                   <th>Cost Value</th>
-                                   <th>Sell Value</th>
-                                   <th width="5%">Vat</th>
-                                   <th width="10%">Total</th>
-                                   <th width="10%">Note</th>
-                                   <th width="6%">Action</th>
-                               </tr>
-                           </thead>
-                           <tbody>
-                               <tbody id="tblShipping">
+                            <thead>
+                                <tr>
+                                    <th width="1%">#</th>
+                                    <th width="2%">No</th>
+                                    @if ($quote->shipment_by == 'LAND')
+                                    <th>Truck Size</th>
+                                    @else
+                                    <th width="15%">Carrier</th>
+                                    <th width="10%">Routing</th>
+                                    <th width="5%">Transit time(days)</th>
+                                    @endif
+                                    <th width="10%">Currency</th>
+                                    <th>Rate</th>
+                                    <th>Cost</th>
+                                    <th>Sell</th>
+                                    <th width="5%">Qty</th>
+                                    <th>Cost Value</th>
+                                    <th>Sell Value</th>
+                                    <th width="5%">Vat</th>
+                                    <th width="10%">Total</th>
+                                    <th width="10%">Note</th>
+                                    <th width="6%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tbody id="tblShipping">
 
                                </tbody>
                                <tr>
@@ -427,6 +431,11 @@
                                    <td>
                                         <i class="fa fa-plus"></i>
                                    </td>
+                                   @if ($quote->shipment_by == 'LAND')
+                                    <td>
+                                        <input type="text" class="form-control" name="truck_size" id="truck_size_1" placeholder="Truck Size ...">
+                                    </td>
+                                   @else
                                    <td>
                                         <select class="form-control select2bs44" name="carrier" id="carrier_1">
                                             <option value="">--Select Carrier--</option>
@@ -434,13 +443,14 @@
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
                                             @endforeach
                                         </select>
-                                   </td>
-                                   <td>
+                                    </td>
+                                    <td>
                                         <input type="text" class="form-control" name="routing" id="routing_1" placeholder="Routing ...">
-                                   </td>
-                                   <td>
+                                    </td>
+                                    <td>
                                         <input type="text" class="form-control" name="transit_time" id="transit_1" placeholder="Transit..." onkeyup="numberOnly(this)">
-                                   </td>
+                                    </td>
+                                   @endif
                                    <td>
                                         <select class="form-control select2bs44" name="currency" id="currency_1">
                                             <option value="">--Select Currency--</option>
@@ -592,9 +602,11 @@
                        <table class="table table_lowm table-bordered">
                            <thead>
                                <tr>
+                                   @if ($quote->shipment_by != 'LAND')
                                    <td class="text-center">Carrier</td>
                                    <td class="text-center">Routing</td>
                                    <td class="text-center">Transit Time</td>
+                                   @endif
                                    <td class="text-center">Total Cost</td>
                                    <td class="text-center">Total Sell</td>
                                    <td class="text-center">Total Profit</td>
@@ -882,6 +894,7 @@
                 $('#lbl_vat_'+id).hide();
                 $('#lbl_total_'+id).hide();
                 $('#lbl_note_'+id).hide();
+                $('#lbl_truck_size_'+id).hide();
 
                 $('#carrier_'+id).show();
                 $('#carrier_'+id).html(data[0])
@@ -899,6 +912,7 @@
                 $('#vat_'+id).show();
                 $('#total_'+id).show();
                 $('#note_'+id).show();
+                $('#truck_size_'+id).show();
 
                 $('#currency_'+id).show();
                 $("#currency_"+id).html(data[1]);
@@ -1030,22 +1044,7 @@
     /** Update Shipping **/
     function updateDetails(id_detail, id)
     {
-        if($.trim($("#carrier_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please Select Carrier!'
-            })
-        }else if($.trim($("#routing_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Routing!'
-            });
-        }else if($.trim($("#transit_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Transit Time!'
-            });
-        }else if($.trim($("#currency_"+id).val()) == ""){
+       if($.trim($("#currency_"+id).val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please select Currency!'
@@ -1103,7 +1102,8 @@
                     sell_val:$('#sell_val_'+id).val(),
                     vat:$('#vat_'+id).val(),
                     total:$('#total_'+id).val(),
-                    note:$('#note_'+id).val()
+                    note:$('#note_'+id).val(),
+                    truck_size:$('#truck_size_'+id).val()
                 },
                 success:function(result){
                     loadShipping({{ Request::segment(3) }}); 
@@ -1329,22 +1329,7 @@
 
     /** Save Detail Shipping **/
     function saveDetailxx(id){
-        if($.trim($("#carrier_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please Select Carrier!'
-            })
-        }else if($.trim($("#routing_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Routing!'
-            });
-        }else if($.trim($("#transit_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Transit Time!'
-            });
-        }else if($.trim($("#currency_"+id).val()) == ""){
+       if($.trim($("#currency_"+id).val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please select Currency!'
@@ -1397,7 +1382,8 @@
                 sell_val:$('#sell_val_'+id).val(),
                 vat:$('#vat_'+id).val(),
                 total:$('#total_'+id).val(),
-                note:$('#note_'+id).val()
+                note:$('#note_'+id).val(),
+                truck_size:$('#truck_size_'+id).val()
             },
             success:function(result){
                 $('#carrier_'+id).val('').trigger('change');
@@ -1412,7 +1398,8 @@
                 $('#sell_val_'+id).val('');
                 $('#vat_'+id).val('');
                 $('#total_'+id).val('');
-                $('#note_'+id).val('')
+                $('#note_'+id).val('');
+                $('#truck_size_'+id).val('');
                 loadShipping({{ Request::segment(3) }});
                 Toast.fire({
                     icon: 'success',

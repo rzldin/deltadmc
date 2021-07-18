@@ -30,11 +30,11 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>No. Pol</th>
-                                <th>Shipment Type</th>
-                                <th>Vehicle Type</th>
-                                <th>Vendor</th>
+                                <th width="5%">No</th>
+                                <th width="12%">Vehicle No</th>
+                                <th width="14%">Shipment Type</th>
+                                <th width="12%">Vehicle Type</th>
+                                <th width="30%">Vendor</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

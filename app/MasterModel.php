@@ -82,6 +82,11 @@ class MasterModel extends Model
         return DB::select("SELECT a.*, b.address_type, b.address, b.city, b.postal_code, b.postal_code, b.province, c.pic_desc, c.name as name_pic, c.phone1, c.phone2, c.fax as fax_pic, c.email as email_pic, d.country_code, d.country_name, d.country_phone_code FROM t_mcompany a LEFT JOIN t_maddress b ON a.id = b.t_mcompany_id LEFT JOIN t_mpic c ON a.id = c.t_mcompany_id LEFT JOIN t_mcountry d ON d.id = b.t_mcountry_id ORDER BY a.client_name");
     }
 
+    public static function vendor()
+    {
+        return DB::table('t_mcompany')->orderBy('client_name')->get();
+    }
+
     public static function company_data()
     {
         return DB::table('t_mcompany')->orderBy('client_name')->get();

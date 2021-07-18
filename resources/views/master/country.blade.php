@@ -30,10 +30,10 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Code</th>
-                                <th>Phone Code</th>
-                                <th>Name</th>
+                                <th width="5%">No</th>
+                                <th width="10%">Code</th>
+                                <th width="15%">Phone Code</th>
+                                <th width="50%">Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>

@@ -30,9 +30,9 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Code</th>
-                                <th>Desc</th>
+                                <th width="5%">No</th>
+                                <th width="35%">Code</th>
+                                <th width="35%">Desc</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

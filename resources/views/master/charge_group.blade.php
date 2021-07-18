@@ -25,11 +25,11 @@
                     <a class="btn btn-primary btn-sm" onclick="newData()"><i class="fa fa-plus"></i> Add Data</a>
                 </div>
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
-                    @if(count($errors)>0)
+                @if(count($errors)>0)
                     @foreach($errors->all() as $error)
                     <div class="alert alert-danger" role="alert">
-                    {{ $error }}
-                  </div>  		
+                        {{ $error }}
+                    </div>  		
                     @endforeach
                 @endif
                 <!-- /.card-header -->
@@ -37,9 +37,9 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Name</th>
-                                <th>Desc</th>
+                                <th width="5%">No</th>
+                                <th width="30%">Name</th>
+                                <th width="30%">Desc</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

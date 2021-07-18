@@ -28,19 +28,17 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     @if (isset($errors) && count($errors))
-
                     <ul>
                         @foreach($errors->all() as $error)
-                            <li>{{ $error }} </li>
+                        <li>{{ $error }} </li>
                         @endforeach
                     </ul>
-    
-            @endif
+                    @endif
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Freight Charge</th>
+                                <th width="5%">No</th>
+                                <th width="60%">Freight Charge</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

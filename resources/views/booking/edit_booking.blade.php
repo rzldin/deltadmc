@@ -632,15 +632,24 @@
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
                                                         <thead>
                                                           <tr>
+                                                            <td>#</td>
                                                             <td>No.</th>
-                                                            <td>Schedule</td>
+                                                            <td>Service/Fee</td>
                                                             <td>Description</th>
-                                                            <td>Time</td>
-                                                            <td>Notes</td>
+                                                            <td>Reimbursment</td>
+                                                            <td>Unit</td>
+                                                            <td>Currency</td>
+                                                            <td>rate/unit</td>
+                                                            <td>Total</td>
+                                                            <td>ROE</td>
+                                                            <td>Vat</td>
+                                                            <td>Amount</td>
+                                                            <td>Paid To</td>
+                                                            <td>Note</td>
                                                             <td>Action</td>
                                                           </tr>
                                                         </thead>
-                                                        <tbody id="tblSchedule">
+                                                        <tbody id="tblCost">
                                             
                                                         </tbody>
                                                     </table>
@@ -662,7 +671,7 @@
                                                             <td>Action</td>
                                                           </tr>
                                                         </thead>
-                                                        <tbody id="tblSchedule">
+                                                        <tbody id="tblSell">
                                             
                                                         </tbody>
                                                     </table>
@@ -1099,6 +1108,21 @@
                 success:function(result){
                     var tabel = JSON.parse(result);
                     $('#tblSchedule').html(tabel);
+                }
+            })
+        }
+
+        /** Load Schedule **/
+        function loadSellCost(id){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.loadSellCost') }}",
+                data:"id="+id,
+                dataType:"html",
+                success:function(result){
+                    var tabel = JSON.parse(result);
+                    $('#tblCost').html(tabel[0]);
+                    $('#tblSell').html(tabel[1]);
                 }
             })
         }
@@ -2126,6 +2150,7 @@
             loadDoc({{ Request::segment(3) }}); 
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
+            loadSellCost({{ $quote->t_quote_id }})
         });
     </script>
 @endpush
