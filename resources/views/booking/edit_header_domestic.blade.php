@@ -130,7 +130,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
                             <option value="" selected>-- Select Shipper --</option>
-                            @foreach ($shipper as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->shipper_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>
@@ -180,7 +180,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="consignee" id="consignee" onchange="consignee_detail(this.value)">
                             <option value="" selected>-- Select Consignee --</option>
-                            @foreach ($ppjk as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->consignee_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>
@@ -230,7 +230,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="notify_party" id="notify_party" onchange="not_detail(this.value)">
                             <option value="" selected>-- Select Notify Party --</option>
-                            @foreach ($ppjk as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->not_party_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>
@@ -280,7 +280,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="agent" id="agent" onchange="agent_detail(this.value)">
                             <option value="">-- Select Agent --</option>
-                            @foreach ($agent as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->agent_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>
@@ -330,7 +330,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipping_line" id="shipping_line" onchange="shipline_detail(this.value)">
                             <option value="">-- Select Shipping Line --</option>
-                            @foreach ($shipping_line as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->shipping_line_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>
@@ -396,7 +396,7 @@
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="vendor" id="vendor" onchange="vendor_detail(this.value)">
                             <option value="">-- Select Vendor --</option>
-                            @foreach ($vendor as $item)
+                            @foreach ($company as $item)
                             <option value="{{ $item->id }}" @if ($quote->vendor_id == $item->id)
                                 selected
                             @endif>{{ $item->client_name }}</option>

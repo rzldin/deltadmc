@@ -54,11 +54,6 @@ class BookingController extends Controller
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->customer_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->customer_id)->get();
         return view('booking.view_header_domestic')->with($data);
@@ -75,11 +70,6 @@ class BookingController extends Controller
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->customer_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->customer_id)->get();
         return view('booking.view_header_export')->with($data);
@@ -96,11 +86,6 @@ class BookingController extends Controller
         $data['carrier']        = MasterModel::carrier();
         $data['freight']        = MasterModel::freight_get();
         $data['port']           = MasterModel::port();
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->customer_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->customer_id)->get();
         return view('booking.view_header_import')->with($data);
@@ -118,11 +103,6 @@ class BookingController extends Controller
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
         $data['verse']          = $verse;
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->client_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->client_id)->get();
         return view('booking.edit_header_domestic')->with($data);
@@ -140,11 +120,6 @@ class BookingController extends Controller
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
         $data['verse']          = $verse;
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->client_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->client_id)->get();
         return view('booking.edit_header_export')->with($data);
@@ -162,11 +137,6 @@ class BookingController extends Controller
         $data['port']           = MasterModel::port();
         $data['carrier']        = MasterModel::carrier();
         $data['verse']          = $verse;
-        $data['shipper']        = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
-        $data['ppjk']           = DB::table('t_mcompany')->where('ppjk_flag', 1)->get();
-        $data['agent']          = DB::table('t_mcompany')->where('agent_flag', 1)->get();
-        $data['shipping_line']  = DB::table('t_mcompany')->where('shipping_line_flag', 1)->get();
-        $data['vendor']         = DB::table('t_mcompany')->where('vendor_flag', 1)->get();
         $data['cust_addr']      = DB::table('t_maddress')->where('t_mcompany_id', $quote->client_id)->get();
         $data['cust_pic']       = DB::table('t_mpic')->where('t_mcompany_id', $quote->client_id)->get();
         return view('booking.edit_header_import')->with($data);
@@ -847,7 +817,7 @@ class BookingController extends Controller
                 'custom_doc_no'         => $request->doc_no,
                 'custom_doc_date'       => Carbon::parse($request->doc_date),
                 'igm_no'                => $request->igm_number,
-                'igm_date'              => $request->igm_date,
+                'igm_date'              => Carbon::parse($request->igm_date),
                 'custom_pos'            => $request->pos,
                 'custom_subpos'         => $request->sub_pos,
                 'client_id'             => $request->customer,
@@ -1300,7 +1270,79 @@ class BookingController extends Controller
 
     public function getView(Request $request)
     {
-        dd($request->all());
+       $booking = DB::table('t_booking As a')
+                    ->leftJoin('t_quote AS b', 'a.t_quote_id', '=', 'b.id')
+                    ->leftJoin('t_mdoc_type AS tmdoc', 'a.t_mdoc_type_id', '=', 'tmdoc.id')
+                    ->leftJoin('t_mcompany AS c', 'a.client_id', '=', 'c.id')
+                    ->leftJoin('t_maddress As d', 'a.client_addr_id', '=', 'd.id')
+                    ->leftJoin('t_mpic AS e', 'a.client_pic_id', '=', 'e.id')
+                    ->leftJoin('t_mcompany AS f', 'a.shipper_id', '=', 'f.id')
+                    ->leftJoin('t_maddress As g', 'a.shipper_addr_id', '=', 'g.id')
+                    ->leftJoin('t_mpic AS h', 'a.shipper_pic_id', '=', 'h.id')
+                    ->leftJoin('t_mcompany AS i', 'a.consignee_id', '=', 'i.id')
+                    ->leftJoin('t_maddress As j', 'a.consignee_addr_id', '=', 'j.id')
+                    ->leftJoin('t_mpic AS k', 'a.consignee_pic_id', '=', 'k.id')
+                    ->leftJoin('t_mcompany AS l', 'a.not_party_id', '=', 'l.id')
+                    ->leftJoin('t_maddress As m', 'a.not_party_addr_id', '=', 'm.id')
+                    ->leftJoin('t_mpic AS n', 'a.not_party_pic_id', '=', 'n.id')
+                    ->leftJoin('t_mcompany AS o', 'a.agent_id', '=', 'o.id')
+                    ->leftJoin('t_maddress As p', 'a.agent_addr_id', '=', 'p.id')
+                    ->leftJoin('t_mpic AS q', 'a.agent_pic_id', '=', 'q.id')
+                    ->leftJoin('t_mcompany AS r', 'a.shipping_line_id', '=', 'r.id')
+                    ->leftJoin('t_maddress As s', 'a.shpline_addr_id', '=', 's.id')
+                    ->leftJoin('t_mpic AS t', 'a.shpline_pic_id', '=', 't.id')
+                    ->leftJoin('t_mcompany AS u', 'a.vendor_id', '=', 'u.id')
+                    ->leftJoin('t_maddress As v', 'a.vendor_addr_id', '=', 'v.id')
+                    ->leftJoin('t_mpic AS w', 'a.vendor_pic_id', '=', 'w.id')
+                    ->leftJoin('t_mcarrier AS carrier', 'a.carrier_id', '=', 'carrier.id')
+                    ->leftJoin('t_mport AS tm', 'a.pol_id', '=', 'tm.id')
+                    ->leftJoin('t_mport AS tm2', 'a.pod_id', '=', 'tm2.id')
+                    ->leftJoin('t_mport AS tm3', 'a.pot_id', '=', 'tm3.id')
+                    ->leftJoin('t_mfreight_charges AS tmc', 'a.t_mfreight_charges_id', '=', 'tmc.id')
+                    ->leftJoin('t_mincoterms AS tmin', 'a.t_mincoterms_id', '=', 'tmin.id')
+                    ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
+                    ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
+        
+        $profit     = QuotationModel::get_quoteProfit($booking->t_quote_id);
+        $quoteDtl   = QuotationModel::get_quoteDetail($booking->t_quote_id);
+        $schedule   = BookingModel::getSchedule($booking->t_quote_id);
+        $roadCons   = BookingModel::getRoadCons($booking->t_quote_id);
+        $document   = BookingModel::get_document($booking->t_quote_id);
+        $container  = BookingModel::get_container($booking->t_quote_id);
+        $packages   = BookingModel::get_packages($booking->t_quote_id);
+        $commodity  = BookingModel::get_commodity($booking->t_quote_id);
+        
+        $data['booking']    = $booking;
+        $data['profit']     = $profit;
+        $data['quoteDtl']   = $quoteDtl;
+        $data['schedule']   = $schedule;
+        $data['roadCons']   = $roadCons;
+        $data['doc']        = $document;
+        $data['container']  = $container;
+        $data['packages']   = $packages;
+        $data['commodity']  = $commodity;
+
+        return view('booking.view_booking')->with($data);
+    }
+
+    public function approved(Request $request)
+    {
+        try {
+            DB::table('t_booking')
+            ->where('id', $request->id)
+            ->update([
+                'status'            => 1,
+            ]);
+
+            $return_data = 'sukses';
+            $request->session()->flash('status', 'Approved!');
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
     }
 
 }

@@ -118,7 +118,7 @@
                     if(result){
                         if(status == 'view'){
                             $('#selectVersion').html(`<option value="${verse}"></option>`);
-                            $('#booking_no').val(quote_no);
+                            $('#booking_no').val(booking_no);
                             $('#formku').attr("action", "{{ route('booking.getView') }}");
                             $('#formku').submit(); 
                         }else{

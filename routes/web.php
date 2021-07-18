@@ -285,6 +285,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/viewVersion', 'BookingController@get_version')->name('booking.viewVersion');
     Route::post('/booking/cekVersion', 'BookingController@cek_version')->name('booking.cekVersion');
     Route::match(array('GET', 'POST'), '/booking/getView', 'BookingController@getView')->name('booking.getView');
+
+    #Approved Booking
+    Route::post('/booking/approved', 'BookingController@approved')->name('booking.Approve');
+
     
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

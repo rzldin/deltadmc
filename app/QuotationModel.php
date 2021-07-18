@@ -29,7 +29,7 @@ class QuotationModel extends Model
                 ->leftJoin('t_mcharge_code', 't_mcharge_code.id', '=', 't_quote_dtl.t_mcharge_code_id')
                 ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_dtl.t_quote_id')
                 ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_dtl.t_mcurrency_id')
-                ->select('t_quote_dtl.*', 't_mcharge_code.code', 't_mcurrency.code as code_currency')
+                ->select('t_quote_dtl.*', 't_mcharge_code.code', 't_mcurrency.code as code_currency', 't_mcharge_code.name as name_charge')
                 ->where('t_quote_dtl.t_quote_id', $id)->get();
     }
 
