@@ -253,6 +253,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/deleteSchedule','BookingController@deleteSchedule')->name('booking.deleteSchedule');
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
     Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
+    Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');
@@ -279,6 +280,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/deleteDoc','BookingController@deleteDoc')->name('booking.deleteDoc');
     Route::post('/booking/updateDoc', 'BookingController@updateDoc')->name('booking.updateDoc');
     Route::post('/booking/getDoc', 'BookingController@getDoc')->name('booking.getDoc');
+
+    #View Booking
+    Route::post('/booking/viewVersion', 'BookingController@get_version')->name('booking.viewVersion');
+    Route::post('/booking/cekVersion', 'BookingController@cek_version')->name('booking.cekVersion');
+    Route::match(array('GET', 'POST'), '/booking/getView', 'BookingController@getView')->name('booking.getView');
     
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

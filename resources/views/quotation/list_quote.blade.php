@@ -32,8 +32,8 @@
                             <tr>
                                 <th width="3%">No</th>
                                 <th width="15%">Quote No</th>
-                                <th width="8%">Date</th>
-                                <th>Latest Version</th>
+                                <th width="5%">Date</th>
+                                <th width="5%">Latest Version</th>
                                 <th>Customer</th>
                                 <th>PIC</th>
                                 <th>Activity</th>
@@ -67,9 +67,9 @@
                                 <td>
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
                                     <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->quote_no }}','{{ $row->version_no }}','edit', '{{ $row->id }}')" status="edit"><i class="fa fa-edit"></i> Edit </a>
-                                    @if ($row->status == 0)
-                                    <a class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete </a>                                        
-                                    @endif
+                                    {{-- @if ($row->status == 0)
+                                    <a href="{{ route('quotation.deleteQuote') }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete </a>                                        
+                                    @endif --}}
                                 </td>
                             </tr>
                             @endforeach

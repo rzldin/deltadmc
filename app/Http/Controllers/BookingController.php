@@ -640,7 +640,7 @@ class BookingController extends Controller
                     $tabel .= '</select>';
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-left"><label id="lbl_seal_no_'.$no.'">'.$row->seal_no.'</label><input type="text" id="seal_no_'.$no.'" name="seal_no" class="form-control" value="'.$row->seal_no.'" style="display:none"></td>';
-                if($booking->activity == 'export'){
+                if($booking[0]->activity == 'export'){
                     $tabel .= '<td class="text-left"><label id="lbl_vgm_'.$no.'">'.$row->vgm.'</label><input type="text" id="vgm_'.$no.'" name="vgm" class="form-control" value="'.$row->vgm.'" style="display:none"></td>';
                     $tabel .= '<td class="text-center"><label id="lbl_vgm_uom_'.$no.'">'.$row->uom_code.'</label>';
                         $tabel .= '<select id="vgm_uom_'.$no.'" name="vgm_uom" class="form-control select2bs44" ';
@@ -1140,8 +1140,14 @@ class BookingController extends Controller
     public function loadSellCost(Request $request)
     {
         $tabel = "";
+        $tabel1 = "";
         $no = 2;
         $data = QuotationModel::get_quoteDetail($request['id']);
+        $total = 0;
+        $amount = 0;
+        $amount2 = 0;
+        $a = 1;
+        $b = 2;
         foreach($data as $row)
             {
                 if($row->reimburse_flag == 1){
@@ -1150,31 +1156,151 @@ class BookingController extends Controller
                     $style = '';
                 }
 
-                $total = ($row->rate * $row->qty);
+                $total += ($row->rate * $row->qty);
+                $amount += ($row->cost_val * $total) + $row->vat;
+                $amount2 += ($row->sell_val * $total) + $row->vat;
+
+                // Cost
                 $tabel .= '<tr>';
-                $tabel .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'" class="form-control" id="cekx_'.$no.'"></td>';
-                $tabel .= '<td>'.$no++.'</td>';
+                $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
+                $tabel .= '<td>'.($no-1).'</td>';
                 $tabel .= '<td class="text-left">'.$row->code.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.'</td>';
-                $tabel .= '<td><input type="checkbox" name="reimburs" class="form-control" id="reimburs_'.$no.'" '.$style.'></td>';
+                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel .= '<td class="text-left">'.$row->code_currency.'</td>';
                 $tabel .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel .= '<td class="text-left">'.number_format($total,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($row->cost_val,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($row->vat,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($amount,2,',','.').'</td>';
+                if($row->paid_to == null){
+                    $tabel .= '<td class="text-left"><input type="text" name="paid_to" id="paid_to_'.$no.'" placeholder="Paid to..." class="form-control"></td>';
+                    $displayx = '';
+                }else{
+                    $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
+                    $displayx = 'display:none';
+                }
+                
+                $tabel .= '<td class="text-left">'.$row->notes.'</td>';
                 $tabel .= '<td>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetailSch('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+                        . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="margin-top:5px;'.$displayx.'"> '
+                        . '<i class="fa fa-save"></i> Update &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailSch('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
+
+                // Sell
+                $tabel1 .= '<tr>';
+                $tabel1 .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
+                $tabel1 .= '<td>'.($no-1).'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->code.'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
+                $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->code_currency.'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($total,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($row->sell_val,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($row->vat,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($amount2,2,',','.').'</td>';
+                if($row->bill_to == null){
+                    $tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
+                    $display = '';
+                }else{
+                    $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';
+                    $display = 'display:none';
+                }
+
+
+                $tabel1 .= '<td class="text-left">'.$row->notes.'</td>';
+                $tabel1 .= '<td>';
+                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+                        . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="margin-top:5px;'.$display.'"> '
+                        . '<i class="fa fa-save"></i> Update &nbsp; </a>';
+                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                        . '" onclick="hapusDetailSell('.$row->id.');" style="margin-top:5px"> '
+                        . '<i class="fa fa-trash"></i> Delete </a>';
+                $tabel1 .= '</td>';
+                $tabel1 .= '</tr>';
             }
 
         header('Content-Type: application/json');
-        echo json_encode($tabel);
+        echo json_encode([$tabel, $tabel1]);
     }
 
+    public function updateSell(Request $request)
+    {
+        try {
+            if($request->v == 1){
+                DB::table('t_quote_dtl')
+                ->where('id', $request->id)
+                ->update([
+                    'paid_to'   => $request->paid_to
+                ]);
+            }else{
+                DB::table('t_quote_dtl')
+                ->where('id', $request->id)
+                ->update([
+                    'bill_to'   => $request->bill_to
+                ]);
+            }
+           
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function cek_version(Request $request)
+    {
+        $quote = DB::select("SELECT * FROM t_booking WHERE booking_no = '".$request->booking_no."'");
+        if(count($quote) == 1){
+            $a = true;
+        }else{
+            $a = false;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($a);
+    }
+
+    public function get_version(Request $request)
+    {
+        $option = '';
+        $option1 = '';
+        
+        $quote = DB::select("SELECT * FROM t_booking WHERE booking_no = '".$request->booking_no."'");
+
+        foreach($quote as $row)
+        {
+            if($row->version_no == $request->verse)
+            {
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            $option .= '<option value="'.$row->version_no.'" '.$status.'>'.$row->version_no.'</option>';
+            $option1 .= '<option value="'.$row->id.'" '.$status.'>'.$row->version_no.'</option>';
+
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([$option,$option1]);
+    }
+
+
+    public function getView(Request $request)
+    {
+        dd($request->all());
+    }
 
 }

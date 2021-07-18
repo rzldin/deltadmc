@@ -641,7 +641,7 @@
                                                             <td>Currency</td>
                                                             <td>rate/unit</td>
                                                             <td>Total</td>
-                                                            <td>ROE</td>
+                                                            <td>Cost Val</td>
                                                             <td>Vat</td>
                                                             <td>Amount</td>
                                                             <td>Paid To</td>
@@ -663,11 +663,20 @@
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
                                                         <thead>
                                                           <tr>
+                                                            <td>#</td>
                                                             <td>No.</th>
-                                                            <td>Schedule</td>
+                                                            <td>Service/Fee</td>
                                                             <td>Description</th>
-                                                            <td>Time</td>
-                                                            <td>Notes</td>
+                                                            <td>Reimbursment</td>
+                                                            <td>Unit</td>
+                                                            <td>Currency</td>
+                                                            <td>rate/unit</td>
+                                                            <td>Total</td>
+                                                            <td>Sell Val</td>
+                                                            <td>Vat</td>
+                                                            <td>Amount</td>
+                                                            <td>Bill To</td>
+                                                            <td>Note</td>
                                                             <td>Action</td>
                                                           </tr>
                                                         </thead>
@@ -685,15 +694,13 @@
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
                                                         <thead>
                                                           <tr>
-                                                            <td>No.</th>
-                                                            <td>Schedule</td>
-                                                            <td>Description</th>
-                                                            <td>Time</td>
-                                                            <td>Notes</td>
-                                                            <td>Action</td>
+                                                            <td>Total Cost</th>
+                                                            <td>Total Sell</td>
+                                                            <td>Total Profit</th>
+                                                            <td>Profit PCT</td>
                                                           </tr>
                                                         </thead>
-                                                        <tbody id="tblSchedule">
+                                                        <tbody id="tblProfit">
                                             
                                                         </tbody>
                                                     </table>
@@ -1123,6 +1130,19 @@
                     var tabel = JSON.parse(result);
                     $('#tblCost').html(tabel[0]);
                     $('#tblSell').html(tabel[1]);
+                }
+            })
+        }
+
+        function loadProfit(id){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_loadProfit') }}",
+                data:"id="+id,
+                dataType:"html",
+                success:function(result){
+                    var tabel = JSON.parse(result);
+                    $('#tblProfit').html(tabel);
                 }
             })
         }
@@ -2143,6 +2163,32 @@
             
         }
 
+        /** Update Package **/
+        function updateDetailSell(id_detail, id, v)
+        {
+            
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.updateSell') }}",
+                data:{
+                    id:id_detail,
+                    bill_to:$('#bill_to_'+id).val(),
+                    paid_to:$('#paid_to_'+id).val(),
+                    v : v
+                },
+                success:function(result){
+                    loadSellCost({{ $quote->t_quote_id }})
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Sukses Update Data!'
+                    });
+                },error: function (xhr, ajaxOptions, thrownError) {           
+                    alert('Gagal Mengupdate data!');
+                },          
+            });
+        }
+
+
         $(function() {
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});
@@ -2151,6 +2197,7 @@
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
             loadSellCost({{ $quote->t_quote_id }})
+            loadProfit({{ $quote->t_quote_id }})
         });
     </script>
 @endpush

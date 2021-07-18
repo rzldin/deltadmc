@@ -55,8 +55,8 @@
                                 <td class="bg-success text-center">Approve</td>
                                 @endif
                                 <td>
-                                    <a class="btn btn-primary btn-sm" onclick="viewVersion('')"><i class="fa fa-file-alt"></i> View </a>
-                                    <a href="{{ url('booking/edit_booking/'.$row->id) }}" class="btn btn-info btn-sm"><i class="fa fa-edit"></i> Edit </a>
+                                    <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
+                                    <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'edit', '{{ $row->id }}')"><i class="fa fa-edit"></i> Edit </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -88,8 +88,8 @@
                             <select name="version" id="selectVersion" class="form-control select2bs44">
                                 
                             </select>
-                            <input type="hidden" name="quote_no" id="quote_no" value="">
-                            <input type="hidden" name="id_quote" id="id_quotex" value="">
+                            <input type="hidden" name="booking_no" id="booking_no" value="">
+                            <input type="hidden" name="id_booking" id="id_bx" value="">
                             <input type="hidden" id="status" value="">
                         </div>
                     </div>
@@ -105,5 +105,67 @@
 @endsection
 
 @push('after-scripts')
- 
+    <script>
+        var dsState;
+
+        function viewVersion(booking_no, verse, status, id){
+            $.ajax({
+                type: "POST",
+                url: "{{ route('booking.cekVersion') }}",
+                data:{booking_no:booking_no, verse:verse},
+                dataType:"json",
+                success: function (result) {
+                    if(result){
+                        if(status == 'view'){
+                            $('#selectVersion').html(`<option value="${verse}"></option>`);
+                            $('#booking_no').val(quote_no);
+                            $('#formku').attr("action", "{{ route('booking.getView') }}");
+                            $('#formku').submit(); 
+                        }else{
+                            $('#id_bx').val(id);
+                            $('#booking_no').val(booking_no);
+                            $('#formku').attr("action", `{{ url('booking/edit_booking/${id}') }}`);
+                            $('#formku').submit(); 
+                        }
+                    }else{  
+                        viewVersionx(booking_no, verse, status);
+                    } 
+                }
+            });
+        }
+
+        function viewVersionx(booking_no, verse, status){
+            dsState == "View";
+            $.ajax({
+                type: "POST",
+                url: "{{ route('booking.viewVersion') }}",
+                data:{booking_no:booking_no, verse:verse},
+                dataType:"html",
+                success: function (result) {
+                    var tabel = JSON.parse(result);
+
+                    if(status == 'view'){
+                        $('#selectVersion').html(tabel[0]);
+                    }else{
+                        $('#selectVersion').html(tabel[1]);
+                    }
+                    $('#booking_no').val(booking_no);
+                    $('#status').val(status);
+                    $("#myModal").find('.modal-title').text('Select Version');
+                    $("#myModal").modal('show',{backdrop: 'true'}); 
+                }
+            });
+        }
+
+        function simpandata()
+        {
+            let id = $('#selectVersion').val();
+            if($('#status').val() == 'view'){
+                $('#formku').attr("action", "{{ route('booking.getView') }}");
+            }else{
+                $('#formku').attr("action", `{{ url('booking/edit_booking/${id}') }}`);
+            }
+            $('#formku').submit();    
+        }
+    </script>
 @endpush
