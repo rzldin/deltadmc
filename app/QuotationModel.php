@@ -33,6 +33,16 @@ class QuotationModel extends Model
                 ->where('t_quote.quote_no', $quote_no)->get();
     }
 
+    public static function get_quoteDetailx($id)
+    {
+        return DB::table('t_quote_dtl')
+                ->leftJoin('t_mcharge_code', 't_mcharge_code.id', '=', 't_quote_dtl.t_mcharge_code_id')
+                ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_dtl.t_quote_id')
+                ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_dtl.t_mcurrency_id')
+                ->select('t_quote_dtl.*', 't_mcharge_code.name as name_charge', 't_mcurrency.code as code_currency', 't_mcharge_code.name as name_charge')
+                ->where('t_quote_dtl.t_quote_id', $id)->get();
+    }
+
     public static function get_quoteShipping($quote_no)
     {
         return DB::table('t_quote_shipg_dtl')

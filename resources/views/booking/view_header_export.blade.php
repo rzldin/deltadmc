@@ -121,7 +121,7 @@
             <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Client</label>
+                        <label>Client <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
@@ -134,7 +134,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="client-detail">
@@ -167,7 +167,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Shipper</label>
+                        <label>Shipper <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
@@ -178,7 +178,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipper-detail" style="display: none">
@@ -205,7 +205,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Consignee</label>
+                        <label>Consignee <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="consignee" id="consignee" onchange="consignee_detail(this.value)">
@@ -216,7 +216,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="consignee-detail" style="display: none">
@@ -243,7 +243,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Notify Party</label>
+                        <label>Notify Party <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="notify_party" id="notify_party" onchange="not_detail(this.value)">
@@ -254,7 +254,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="not-detail" style="display: none">
@@ -292,7 +292,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="agent-detail" style="display: none">
@@ -330,7 +330,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipline-detail" style="display: none">
@@ -360,7 +360,7 @@
                         <label>Place of Origin</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="pfo" id="pfo" class="form-control">
+                        <input type="text" name="pfo" id="pfo" class="form-control" value="{{ $quote->form_text }}">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -368,7 +368,7 @@
                         <label>Place of Destination</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="pod" id="pod" class="form-control">
+                        <input type="text" name="pod" id="pod" class="form-control" value="{{ $quote->to_text }}">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -384,7 +384,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="vendor-detail" style="display: none">
@@ -417,12 +417,12 @@
                         <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
                             <option value="" selected>-- Select Carrier --</option>
                             @foreach ($carrier as $item)
-                            <option value="{{ $item->id }}">{{ $item->code }}</option>   
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>   
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -855,7 +855,7 @@
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-5">
-                <div class="row mb-3">
+                {{-- <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Total Commodity</label>
                     </div>
@@ -878,7 +878,7 @@
                     <div class="col-md-8">
                         <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ...">
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

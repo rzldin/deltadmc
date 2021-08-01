@@ -25,7 +25,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
-                            <strong>{{ $quote->shipment_by }}</strong>
+                            <strong>{{ ucwords($quote->activity) }}</strong>
                         </h3>
                     </div>
                     <div class="card-body">
@@ -641,7 +641,7 @@
                                                             <td>Currency</td>
                                                             <td>rate/unit</td>
                                                             <td>Total</td>
-                                                            <td>Cost Val</td>
+                                                            <td>ROE</td>
                                                             <td>Vat</td>
                                                             <td>Amount</td>
                                                             <td>Paid To</td>
@@ -672,7 +672,7 @@
                                                             <td>Currency</td>
                                                             <td>rate/unit</td>
                                                             <td>Total</td>
-                                                            <td>Sell Val</td>
+                                                            <td>ROE</td>
                                                             <td>Vat</td>
                                                             <td>Amount</td>
                                                             <td>Bill To</td>
@@ -1198,7 +1198,8 @@
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
-                    $('#tblCommodity').html(tabel);
+                    $('#tblCommodity').html(tabel[0]);
+                    $('#total_commo').val(tabel[1]);
                 }
             })
         }
@@ -1212,7 +1213,8 @@
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
-                    $('#tblPackages').html(tabel);
+                    $('#tblPackages').html(tabel[0]);
+                    $('#total_package').val(tabel[1]);
                 }
             })
         }
@@ -1226,7 +1228,8 @@
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
-                    $('#tblContainer').html(tabel);
+                    $('#tblContainer').html(tabel[0]);
+                    $('#total_container').val(tabel[1])
                 }
             })
         }

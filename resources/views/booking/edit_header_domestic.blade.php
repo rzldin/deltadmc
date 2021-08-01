@@ -75,7 +75,7 @@
             <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Client</label>
+                        <label>Client <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="client_detail(this.value)">
@@ -88,7 +88,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="client-detail">
@@ -125,7 +125,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Shipper</label>
+                        <label>Shipper <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
@@ -138,7 +138,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipper-detail">
@@ -175,7 +175,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Consignee</label>
+                        <label>Consignee <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="consignee" id="consignee" onchange="consignee_detail(this.value)">
@@ -188,7 +188,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="consignee-detail">
@@ -225,7 +225,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Notify Party</label>
+                        <label>Notify Party <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="notify_party" id="notify_party" onchange="not_detail(this.value)">
@@ -238,7 +238,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="not-detail">
@@ -288,7 +288,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="agent-detail">
@@ -338,7 +338,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipline-detail">
@@ -404,7 +404,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="vendor-detail">
@@ -454,7 +454,7 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -542,7 +542,7 @@
                         <label>Total Commodity</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_commo" id="total_commo" placeholder="Total Commodity ..." value="{{ $quote->total_commodity }}">
+                        <input type="text" class="form-control" name="total_commo" id="total_commo" placeholder="Total Commodity ..." readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -550,7 +550,7 @@
                         <label>Total Package</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_package" id="total_package" placeholder="Total Package ..." value="{{ $quote->total_package }}">
+                        <input type="text" class="form-control" name="total_package" id="total_package" placeholder="Total Package ..." readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -558,7 +558,7 @@
                         <label>Total Container</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ..." value="{{ $quote->total_commodity }}">
+                        <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ..." readonly>
                     </div>
                 </div>
             </div>

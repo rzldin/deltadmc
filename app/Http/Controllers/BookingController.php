@@ -303,6 +303,7 @@ class BookingController extends Controller
         $tabel = "";
         $no = 2;
         $data = BookingModel::get_commodity($request['id']);
+        $totalCom = count($data);
         
             foreach($data as $row)
             {
@@ -380,7 +381,6 @@ class BookingController extends Controller
                     $tabel .= '</select>';
                     $tabel .= '</div>';
                 $tabel .= '</td>';
-                
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCom('.$row->uom_comm.','.$row->uom_packages.','.$row->weight_uom.','.$row->volume_uom.','.$no.');" style="margin-top:5px" id="btnEditCom_'.$no.'"> '
@@ -397,7 +397,7 @@ class BookingController extends Controller
             }
 
             header('Content-Type: application/json');
-            echo json_encode($tabel);
+            echo json_encode([$tabel, $totalCom]);
     }
 
     public function deleteCommodity(Request $request)
@@ -481,6 +481,7 @@ class BookingController extends Controller
         $tabel = "";
         $no = 2;
         $data = BookingModel::get_packages($request['id']);
+        $totalPackages = count($data);
         
             foreach($data as $row)
             {
@@ -511,7 +512,7 @@ class BookingController extends Controller
             }
 
             header('Content-Type: application/json');
-            echo json_encode($tabel);
+            echo json_encode([$tabel,$totalPackages]);
     }
 
 
@@ -589,6 +590,7 @@ class BookingController extends Controller
         $no = 2;
         $data = BookingModel::get_container($request['id']);
         $booking = BookingModel::get_bookingDetail($request['id']);
+        $totalContainer = count($data);
         
             foreach($data as $row)
             {
@@ -639,7 +641,7 @@ class BookingController extends Controller
             }
 
             header('Content-Type: application/json');
-            echo json_encode($tabel);
+            echo json_encode([$tabel, $totalContainer]);
     }
 
     public function deleteContainer(Request $request)

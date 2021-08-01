@@ -1029,7 +1029,7 @@
                         icon: 'success',
                         title: 'success deleted!'
                     })
-                    loadDetail({{ Request::segment(3) }});   
+                    loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});   
                     loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
@@ -1603,7 +1603,7 @@
                 },
                 success:function(result){
                     $('#detail-quote').modal('hide')
-                    loadDetail({{ Request::segment(3) }});
+                    loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});
                     loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                     Toast.fire({
                         icon: 'success',
@@ -1635,7 +1635,7 @@
                     },
                     success:function(result){
                         $('#detail-quote').modal('hide')
-                        loadDetail({{ Request::segment(3) }}); 
+                        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                         loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                         Toast.fire({
                             icon: 'success',
