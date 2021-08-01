@@ -852,9 +852,9 @@ class QuotationController extends Controller
                         $tabel .= '<td class="text-center"><strong>'.$row->routing.'</strong></td>';
                         $tabel .= '<td class="text-center"><strong>'.$row->transit_time.'</strong></td>';
                     }
-                    $tabel .= '<td class="text-center"><strong>'.$row->code_currency .' '. number_format($row->total_cost,2,',','.').'</strong></td>';
-                    $tabel .= '<td class="text-center"><strong>'.$row->code_currency.' '. number_format($row->total_sell,2,',','.').'</strong></td>';
-                    $tabel .= '<td class="text-center"><strong>'.$row->code_currency.' '. number_format($row->total_profit,2,',','.').'</strong></td>';
+                    $tabel .= '<td class="text-center"><strong>'. number_format($row->total_cost,2,',','.').'</strong></td>';
+                    $tabel .= '<td class="text-center"><strong>'. number_format($row->total_sell,2,',','.').'</strong></td>';
+                    $tabel .= '<td class="text-center"><strong>'. number_format($row->total_profit,2,',','.').'</strong></td>';
                     $tabel .= '<td class="text-center"><strong>'.$row->profit_pct.'%</strong></td>';
                     $tabel .= '</tr>';
                     $no++;
