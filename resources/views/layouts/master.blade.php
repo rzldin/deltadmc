@@ -211,6 +211,18 @@
         });
       });
 
+      $(function () {
+        $('#myTable2').DataTable({
+          "paging":false,
+          "lengthChange": true,
+          "searching": false,
+          "ordering": false,
+          "info": false,
+          "autoWidth": true,
+          "responsive": true,
+        });
+      });
+
       $(function(){
         $('.select2bs4').select2({
           theme: 'bootstrap4',

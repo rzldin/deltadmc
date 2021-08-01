@@ -86,14 +86,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
-                                        <option value="" selected>-- Select Customer --</option>
+                                        {{-- <option value="" selected>-- Select Customer --</option>
                                         @foreach ($company as $c)
                                         <option value="{{ $c->id }}">{{ $c->client_name }}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                 </div>
                                 <div class="col-md-2 mt-1">
-                                    <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                    <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -300,6 +300,14 @@
   @push('after-scripts')
 
   <script>
+
+    //Refresh Otomatis
+    $(document).ready(() => {
+        get_customer();
+
+    });
+
+
     function get_pic(val){
         if(val!= ''){
             $.ajax({
@@ -316,10 +324,19 @@
         }
     }
 
-    // function handleClick(myRadio) {
-    //     var currentValue = myRadio.value;
-    //     $('#loaded_id').val(currentValue);
-    // }
+    function get_customer()
+    {
+        $.ajax({
+            url: "{{ route('get.customer') }}",
+            type: "GET",
+            dataType: "html",
+            success: function(result) {
+                var final = JSON.parse(result);
+                $("#customer").html(final)
+            }
+        })
+    }
+
 
     $(function() {
       $('input[name=from]').on('input',function() {

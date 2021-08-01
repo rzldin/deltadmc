@@ -42,6 +42,20 @@ class QuotationController extends Controller
         echo json_encode($table);
     }
 
+    public function get_customer()
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Customer --</option>';
+        foreach($data as $d)
+        {
+            $table .= '<option value="'.$d->id.'">'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
     public function quote_doAdd(Request $request)
     {
         if($request->hazard == 'on'){
@@ -405,8 +419,8 @@ class QuotationController extends Controller
                 'cost'              => $request->cost,
                 'sell'              => $request->sell,
                 'qty'               => $request->qty,
-                'cost_val'          => $request->cost_val,
-                'sell_val'          => $request->sell_val,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
                 'subtotal'          => str_replace(',','', $request->total),
                 'notes'             => $request->note,
@@ -428,7 +442,7 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteShipping($request['id']);
+        $data = QuotationModel::get_quoteShipping($request['quote_no']);
         $quote = QuotationModel::get_detailQuote($request['id']);
 
         if(count($data) > 0){
@@ -440,11 +454,11 @@ class QuotationController extends Controller
                 if($quote->shipment_by == 'LAND'){
                     $tabel .= '<td>'.$row->truck_size.'</td>';     
                 }else{
-                    $tabel .= '<td><'.$row->code.'</td>';
+                    $tabel .= '<td>'.$row->name_carrier.'</td>';
                     $tabel .= '<td>'.$row->routing.'</td>';
                     $tabel .= '<td class="text-right">'.$row->transit_time.'</td>';
                 }
-                $tabel .= '<td class="text-center">'.$row->code_currency.'</td>';
+                $tabel .= '<td>'.$row->code_currency.'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
@@ -453,7 +467,7 @@ class QuotationController extends Controller
                 $tabel .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.$row->notes.'</td>';
+                $tabel .= '<td>'.$row->notes.'</td>';
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetails('.$row->id.');" style="margin-top:5px">'
@@ -472,7 +486,7 @@ class QuotationController extends Controller
                 $colspan = '15';
             }
             $tabel .= '<tr>';
-                $tabel .= '<td class="text-center" colspan='.$colspan.'>Nothin data.';
+                $tabel .= '<td class="text-center" colspan='.$colspan.'>Not Available data.';
                 $tabel .= '</td>';
             $tabel .= '</td>';
         }
@@ -498,37 +512,9 @@ class QuotationController extends Controller
 
     public function quote_getDetailShipping(Request $request)
     { 
-        $tabel1 = '';
-        $tabel2 = '';
-        $carrier = MasterModel::carrier();
-        $currency = MasterModel::currency();
-
-        foreach($carrier as $c)
-        {
-            if($c->id == $request['carrier'])
-            {
-                $status = 'selected';
-            }else{
-                $status = '';
-            }
-
-            $tabel1 .= '<option value="'.$c->id.'" '.$status.'>'.$c->code.'</option>';
-        }
-
-        foreach($currency as $cur)
-        {
-            if($c->id == $request['currency'])
-            {
-                $status = 'selected';
-            }else{
-                $status = '';
-            }
-
-            $tabel2 .= '<option value="'.$cur->id.'" '.$status.'>'.$cur->code.'</option>';
-        }
-
+        $data = QuotationModel::getShippingDetail($request->id);
         header('Content-Type: application/json');
-        echo json_encode([$tabel1, $tabel2]);
+        echo json_encode($data);
     }
 
     public function quote_updateShipping(Request $request)
@@ -546,8 +532,8 @@ class QuotationController extends Controller
                 'cost'              => $request->cost,
                 'sell'              => $request->sell,
                 'qty'               => $request->qty,
-                'cost_val'          => $request->cost_val,
-                'sell_val'          => $request->sell_val,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
                 'subtotal'          => str_replace(',','', $request->total),
                 'notes'             => $request->note
@@ -577,32 +563,100 @@ class QuotationController extends Controller
             $r = 0;
         }
 
-        try {
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-            DB::table('t_quote_dtl')->insert([
-                't_quote_id'        => $request->quote,
-                'position_no'       => $p,
-                't_mcharge_code_id' => $request->charge,
-                'desc'              => $request->desc,
-                'reimburse_flag'    => $r,
-                't_mcurrency_id'    => $request->currency,
-                'rate'              => $request->rate,
-                'cost'              => $request->cost,
-                'sell'              => $request->sell,
-                'qty'               => $request->qty,
-                'cost_val'          => $request->cost_val,
-                'sell_val'          => $request->sell_val,
-                'vat'               => $request->vat,
-                'subtotal'          => str_replace(',','', $request->total),
-                'notes'             => $request->note,
-                'created_by'        => $user,
-                'created_on'        => $tanggal
-            ]);
+        // try {
+        $user = Auth::user()->name;
+        $tanggal = Carbon::now();
+        DB::table('t_quote_dtl')->insert([
+            't_quote_id'        => $request->quote,
+            'position_no'       => $p,
+            't_mcharge_code_id' => $request->charge,
+            'desc'              => $request->desc,
+            'reimburse_flag'    => $r,
+            't_mcurrency_id'    => $request->currency,
+            'rate'              => $request->rate,
+            'cost'              => $request->cost,
+            'sell'              => $request->sell,
+            'qty'               => $request->qty,
+            'cost_val'          => str_replace(',', '', $request->cost_val),
+            'sell_val'          => str_replace(',','', $request->sell_val),
+            'vat'               => $request->vat,
+            'subtotal'          => str_replace(',','', $request->total),
+            'notes'             => $request->note,
+            'created_by'        => $user,
+            'created_on'        => $tanggal
+        ]);
 
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+
+        $result = array();
+        foreach ($data as $key)
+        {
+            $result = array_merge($result, $key);
+        }
+
+        $detail = $result;
+
+        $totalCost = 0;
+        $totalSell = 0;
+        foreach($detail as $row)
+        {   
+            $totalCost += $row->cost_val;
+            $totalSell += $row->sell_val;
+        }
+
+        $costV = $totalCost;
+        $sellV = $totalSell;
+        
+        #Insert Tabel t_quote_profit
+
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        if(count($detail) > 1){
+            foreach($data as $shipping){
+                $profit = ($shipping->sell_val + $sellV) - ($shipping->cost_val + $costV);
+                $totalSell = $shipping->sell_val + $sellV;
+                $user = Auth::user()->name;
+                $tanggal = Carbon::now();
+                    try {
+                        DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
+                        ->update([
+                            't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                            'total_cost'            => $shipping->cost_val + $costV,
+                            'total_sell'            => $totalSell,
+                            'total_profit'          => $profit,
+                            'profit_pct'            => ($profit*100)/$totalSell,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                        $return_data = 'sukses';
+                    } catch (\Exception $e) {
+                        $return_data = $e->getMessage();
+                    }
+                }
             $return_data = 'sukses';
-        } catch (\Exception $e) {
-            $return_data = $e->getMessage();
+        }else{
+            foreach($data as $shipping){
+                $profit = ($shipping->sell_val + $sellV) - ($shipping->cost_val + $costV);
+                $totalSell = $shipping->sell_val + $sellV;
+                $user = Auth::user()->name;
+                $tanggal = Carbon::now();
+                    try {
+                        DB::table('t_quote_profit')->insert([
+                            't_quote_id'            => $shipping->t_quote_id,
+                            't_quote_ship_dtl_id'   => $shipping->id,
+                            't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                            'total_cost'            => $shipping->cost_val + $costV,
+                            'total_sell'            => $totalSell,
+                            'total_profit'          => $profit,
+                            'profit_pct'            => ($profit*100)/$totalSell,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                        $return_data = 'sukses';
+                    } catch (\Exception $e) {
+                        $return_data = $e->getMessage();
+                    }
+                }
+            $return_data = 'sukses';
         }
 
         header('Content-Type: application/json');
@@ -614,82 +668,48 @@ class QuotationController extends Controller
         $tabel = "";
         $no = 2;
         $data = QuotationModel::get_quoteDetail($request['id']);
-        
-            foreach($data as $row)
+
+            if(count($data) > 0)
             {
-                $tabel .= '<tr>';
-                $tabel .= '<td class="text-right"><input type="checkbox" class="form_control" name="cekDetail" id="cekx_'.$no.'" value="'.$row->id.'"></td>';
-                $tabel .= '<td class="text-right">'.($no-1).'</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_charge_'.$no.'">'.$row->code.'</label>';
-                    $tabel .= '<select id="charge_'.$no.'" name="charge" class="form-control select2bs44" ';
-                    $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                    $tabel .= '<option value=""></option>';
-                    $tabel .= '</select>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_descx_'.$no.'">'.$row->desc.'</label>';
-                $tabel .= '<input type="text" id="descx_'.$no.'" name="desc" class="form-control" value="'.$row->desc.'" style="display:none"></td>';
-                if($row->reimburse_flag == 1){
-                    $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')"></td>';
-                    $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
-                }else{
-                    $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" onchange="reims('.$no.')"></td>';
-                    $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
+                foreach($data as $row)
+                {
+                    $tabel .= '<tr>';
+                    $tabel .= '<td class="text-right">'.($no-1).'</td>';
+                    $tabel .= '<td class="text-right">'.$row->name_charge.'</td>';
+                    $tabel .= '<td class="text-right">'.$row->desc.'</td>';
+                    if($row->reimburse_flag == 1){
+                        $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')"></td>';
+                        $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
+                    }else{
+                        $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" onchange="reims('.$no.')"></td>';
+                        $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
+                    }
+                    $tabel .= '<td class="text-center">'.$row->code_currency.'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.$row->qty.'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
+                    $tabel .= '<td class="text-right">'.$row->notes.'</td>';
+                    $tabel .= '<td style="text-align:center;">';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
+                            . '" onclick="editDetailx('.$row->id.');" style="margin-top:5px" id="btnEditx_'.$no.'"> '
+                            . '<i class="fa fa-edit"></i> Edit</a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                            . '" onclick="hapusDetailx('.$row->id.');" style="margin-top:5px"> '
+                            . '<i class="fa fa-trash"></i> Del&nbsp;&nbsp;</a>';
+                    $tabel .= '</td>';
+                    $tabel .= '</tr>';
+                    $no++;
                 }
-                $tabel .= '<td class="text-center"><label id="lbl_currencyx_'.$no.'">'.$row->code_currency.'</label>';
-                    $tabel .= '<select id="currencyx_'.$no.'" name="currency" class="form-control select2bs44" ';
-                    $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                    $tabel .= '<option value=""></option>';
-                    $tabel .= '</select>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_ratex_'.$no.'">'.number_format($row->rate,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="ratex_'.$no.'" name="rate" class="form-control" '
-                    . ' value="'.$row->rate.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_costx_'.$no.'">'.number_format($row->cost,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="costx_'.$no.'" name="cost" class="form-control" '
-                    . ' value="'.$row->cost.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_sellx_'.$no.'">'.number_format($row->sell,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="sellx_'.$no.'" name="sell" class="form-control" '
-                    . ' value="'.$row->sell.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_qtyx_'.$no.'">'.$row->qty.'</label>';
-                $tabel .= '<input type="text" id="qtyx_'.$no.'" name="qty" class="form-control" '
-                    . ' value="'.$row->qty.'" style="display:none" onkeyup="hitungx('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_costx_val_'.$no.'">'.number_format($row->cost_val,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="costx_val_'.$no.'" name="cost_val" class="form-control" '
-                    . ' value="'.$row->cost_val.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_sellx_val_'.$no.'">'.number_format($row->sell_val,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="sellx_val_'.$no.'" name="sell_val" class="form-control" '
-                    . ' value="'.$row->sell_val.'" style="display:none" onkeyup="hitungx('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_vatx_'.$no.'">'.number_format($row->vat,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="vatx_'.$no.'" name="vat" class="form-control" '
-                    . ' value="'.$row->vat.'" style="display:none" onkeyup="hitungx('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_totalx_'.$no.'">'.number_format($row->subtotal,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="totalx_'.$no.'" name="total" class="form-control" '
-                    . ' value="'.$row->subtotal.'" style="display:none" readonly>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_notex_'.$no.'">'.$row->notes.'</label>';
-                $tabel .= '<input class="form-control" name="note" id="notex_'.$no.'" style="display:none" value="'.$row->notes.'">';
-                $tabel .= '</td>';
-                $tabel .= '<td style="text-align:center;">';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetailx('.$row->t_mcharge_code_id.','.$row->t_mcurrency_id.','.$no.');" style="margin-top:5px" id="btnEditx_'.$no.'"> '
-                        . '<i class="fa fa-edit"></i> Edit</a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                        . '" onclick="updateDetailx('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdatex_'.$no.'"> '
-                        . '<i class="fa fa-save"></i>Updt</a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                        . '" onclick="hapusDetailx('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-trash"></i> Del&nbsp;&nbsp;</a>';
-                $tabel .= '</td>';
-                $tabel .= '</tr>';
-                $no++;
+
+            }else{
+                $tabel .= '<td colspan="15" class="text-center">Not Available.</td>';
             }
+        
 
             header('Content-Type: application/json');
             echo json_encode($tabel);
@@ -711,37 +731,9 @@ class QuotationController extends Controller
 
     public function quote_getDetailQ(Request $request)
     { 
-        $tabel1 = '';
-        $tabel2 = '';
-        $charge = MasterModel::charge();
-        $currency = MasterModel::currency();
-
-        foreach($charge as $c)
-        {
-            if($c->id == $request['charge'])
-            {
-                $status = 'selected';
-            }else{
-                $status = '';
-            }
-
-            $tabel1 .= '<option value="'.$c->id.'" '.$status.'>'.$c->code.'</option>';
-        }
-
-        foreach($currency as $cur)
-        {
-            if($c->id == $request['currency'])
-            {
-                $status = 'selected';
-            }else{
-                $status = '';
-            }
-
-            $tabel2 .= '<option value="'.$cur->id.'" '.$status.'>'.$cur->code.'</option>';
-        }
-
+        $data = QuotationModel::getDetailQuote($request->id);
         header('Content-Type: application/json');
-        echo json_encode([$tabel1, $tabel2]);
+        echo json_encode($data);
     }
 
     public function quote_updateDetail(Request $request)
@@ -764,8 +756,8 @@ class QuotationController extends Controller
                 'cost'              => $request->cost,
                 'sell'              => $request->sell,
                 'qty'               => $request->qty,
-                'cost_val'          => $request->cost_val,
-                'sell_val'          => $request->sell_val,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
                 'subtotal'          => str_replace(',','', $request->total),
                 'notes'             => $request->note,
@@ -846,8 +838,8 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteProfit($request['id']);
-        $quote = QuotationModel::get_detailQuote($request['id']);
+        $data = QuotationModel::get_quoteProfit($request->quote_no);
+        $quote = QuotationModel::get_detailQuote($request->id);
         
             if(count($data) == 0){
                 $tabel .= '<tr><td colspan="7" class="text-center"><strong>Not Available.</strong></td></tr>';

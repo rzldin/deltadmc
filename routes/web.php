@@ -199,6 +199,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/quotation/quote_doUpdate', 'QuotationController@quote_doUpdate')->name('quotation.quote_doUpdate');
     Route::get('quotation/quote_new/{id}', 'QuotationController@quote_new')->name('quotation.quote_new');
     Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
+    Route::match(array('GET', 'POST'), '/quotation/customer', 'QuotationController@get_customer')->name('get.customer');
 
     #Load Detail Dimension
     Route::post('/quotation/quote_addDimension', 'QuotationController@quote_addDimension')->name('quotation.quote_addDimension');

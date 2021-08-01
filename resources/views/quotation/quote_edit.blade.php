@@ -94,7 +94,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2 mt-1">
-                                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -160,7 +160,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2 mt-1">
-                                        <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -396,7 +396,7 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table_lowm table-bordered" id="Table1">
+                       <table class="table table-bordered table-striped" id="myTable2">
                             <thead>
                                 <tr>
                                     <th width="2%">No</th>
@@ -407,7 +407,7 @@
                                     <th width="10%">Routing</th>
                                     <th width="5%">Transit time(days)</th>
                                     @endif
-                                    <th width="10%">Currency</th>
+                                    <th width="8%">Currency</th>
                                     <th>Rate</th>
                                     <th>Cost</th>
                                     <th>Sell</th>
@@ -416,8 +416,8 @@
                                     <th>Sell Value</th>
                                     <th width="5%">Vat</th>
                                     <th width="10%">Total</th>
-                                    <th width="10%">Note</th>
-                                    <th width="6%">Action</th>
+                                    <th width="15%">Note</th>
+                                    <th width="8%">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tblShipping">
@@ -468,12 +468,12 @@
                                         Routing<font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="routing" id="routing" placeholder="Routing ...">
+                                        <input type="text" class="form-control" name="routing" id="routing" placeholder="Routing ..." onkeyup="this.value = this.value.toUpperCase()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                       Transit<font color="#f00">*</font>
+                                       Transit Time (Days)<font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" class="form-control" name="transit_time" id="transit" placeholder="Transit..." onkeyup="numberOnly(this)">
@@ -498,7 +498,7 @@
                                         Rate <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="rate" id="rate" placeholder="Rate ...">
+                                        <input type="text" class="form-control" name="rate" id="rate" placeholder="Rate ..." onkeyup="hitung()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -506,7 +506,7 @@
                                         Cost <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="cost" id="cost" placeholder="Cost ...">                     
+                                        <input type="text" class="form-control" name="cost" id="cost" placeholder="Cost ..." onkeyup="hitung()">                     
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -514,7 +514,7 @@
                                         Sell <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="sell" id="sell" placeholder="Sell ...">
+                                        <input type="text" class="form-control" name="sell" id="sell" placeholder="Sell ..." onkeyup="hitung()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -522,7 +522,7 @@
                                         Qty <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="qty" id="qty" placeholder="Qty ...">
+                                        <input type="text" class="form-control" name="qty" id="qty" placeholder="Qty ..." onkeyup="hitung()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -546,7 +546,7 @@
                                         Vat <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ...">
+                                        <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ..." onkeyup="hitungTotal()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -562,7 +562,7 @@
                                        Note
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="note" id="note" placeholder="Note ..." readonly>
+                                        <input type="text" class="form-control" name="note" id="note" placeholder="Note ...">
                                     </div>
                                 </div>
                             </form>
@@ -578,12 +578,12 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Detail quote</h3>
+                        <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table_lowm table-bordered" id="Table2">
+                       <table class="table table-bordered table-striped" id="myTable2">
                            <thead>
                                <tr>
-                                   <th>#</th>
                                    <th>No</th>
                                    <th>Service/Fee</th>
                                    <th>Description</th>
@@ -601,73 +601,147 @@
                                    <th width="6%">Action</th>
                                </tr>
                            </thead>
-                           <tbody>
-                               <tbody id="tblDetail">
-
-                               </tbody>
-                               <tr>
-                                   <td>
-                                        <input type="checkbox" name="cek" id="cekx_1">
-                                   </td>
-                                   <td>
-                                        <i class="fa fa-plus"></i>
-                                   </td>
-                                   <td>
-                                        <select class="form-control select2bs44" name="charge" id="charge_1">
+                           <tbody id="tblDetail">
+                               
+                           </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="detail-quote" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                            <h4 class="modal-title">&nbsp;</h4>
+                        </div>
+                        <br>
+                        <div class="modal-body">
+                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                  id="formRoad" enctype="multipart/form-data">
+                                {{ csrf_field() }}
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Service/Fee<font color="#f00">*</font>
+                                    </div>                                
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" name="charge" id="charge">
                                             <option value="">--Select Charge Code--</option>
                                             @foreach ($charge as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="id_dtl_quote" id="id_dtl_quote">
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Description<font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="desc" id="descx" placeholder="Desc ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Currency <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" name="currency" id="currencyx">
+                                            <option value="">--Select Currency--</option>
+                                            @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
                                             @endforeach
                                         </select>
-                                   </td>
-                                   <td>
-                                    <input type="text" class="form-control" name="desc" id="descx_1" placeholder="Desc ...">
-                                   </td>
-                                   <td align="center">
-                                        <input type="checkbox" name="reimbursx" id="reimburs_1" onchange="reims(1)">
-                                        <input type="hidden" name="reimbursxx" id="reimbursx_1" value="">
-                                   </td>
-                                   <td>
-                                    <select class="form-control select2bs44" name="currency" id="currencyx_1">
-                                        <option value="">--Select Currency--</option>
-                                        @foreach ($currency as $item)
-                                        <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
-                                        @endforeach
-                                    </select>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="rate" id="ratex_1" placeholder="Rate ..." onkeyup="numberOnly(this)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="cost" id="costx_1" placeholder="Cost ..." onkeyup="numberOnly(this)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="sell" id="sellx_1" placeholder="Sell ..." onkeyup="numberOnly(this)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="qty" id="qtyx_1" placeholder="Qty ..." onkeyup="hitungx(1)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="cost_value" id="costx_val_1" placeholder="Cost Value ..." onkeyup="numberOnly(this)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="sell_value" id="sellx_val_1" placeholder="Sell Value ..." onkeyup="hitungx(1)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="vat" id="vatx_1" placeholder="Vat ..." onkeyup="hitungx(1)">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="total" id="totalx_1" placeholder="Total ..." readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="note" id="notex_1" placeholder="Note ...">
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailxxx(1)"><i class="fa fa-plus"></i> Add</button>
-                                    </td>
-                               </tr>
-                           </tbody>
-                       </table>
+                                    </div>  
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Rate <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." onkeyup="hitungx()">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Cost <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx()">                     
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Sell <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="sell" id="sellx" placeholder="Sell ..." onkeyup="hitungx()">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Qty <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="qty" id="qtyx" placeholder="Qty ..." onkeyup="hitungx()">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Cost Value <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="cost_val" id="cost_valx" placeholder="Cost Value ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Sell Value <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="sell_val" id="sell_valx" placeholder="Sell Value ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Vat <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Total <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="total" id="totalx" placeholder="Total ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                       Note
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="note" id="notex" placeholder="Note ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                       Reimbursment<font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="checkbox" name="reimburs" id="reimburs" onclick="checkbox()">
+                                        <input type="hidden" name="reimbursxx" id="reimbursx" value="">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">                        
+                            <button type="button" class="btn btn-primary" onClick="saveDetailxxx();"><i class="fa fa-save"></i> Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -675,7 +749,6 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Profit Analysis</h3>
-                        <button type="button" class="btn btn-primary float-right" id="calculate" onclick="calculate()"><i class="fa fa-calculator"></i> Calculate</button>
                     </div>
                     <div class="card-body table-responsive p-0">
                        <table class="table table_lowm table-bordered">
@@ -727,6 +800,18 @@
   <script>
     var dsState;
 
+    function checkbox() 
+    {
+        var checked = false;
+        if (document.querySelector('#reimburs')) {
+            checked = true;
+            $('#reimbursx').val(1)
+        }else{
+            $('#reimbursx').val(0)
+        }
+        
+    }
+
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -734,7 +819,7 @@
 
     function reims(id)
     {
-        $(this).val($(this).attr('checked') ? $('#reimbursx_'+id).val(1) : $('#reimbursx_'+id).val(0) )
+        $(this).val($(this).attr('checked') ? $('#reimbursx').val(1) : $('#reimbursx').val(0) )
     }
     
     function get_pic(val){
@@ -789,11 +874,14 @@
 
 
     /** Load Dimension **/
-    function loadShipping(id){
+    function loadShipping(quote_no, id){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadShipping') }}",
-            data:"id="+id,
+            data:{
+                quote_no : quote_no,
+                id       : id
+            },
             dataType:"html",
             success:function(result){
                 var tabel = JSON.parse(result);
@@ -817,11 +905,14 @@
     }
 
     /** Load Profit **/
-    function loadProfit(id){
+    function loadProfit(val, id){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadProfit') }}",
-            data:"id="+id,
+            data:{
+                quote_no : val,
+                id : id
+            },
             dataType:"html",
             success:function(result){
                 var tabel = JSON.parse(result);
@@ -831,7 +922,8 @@
     }
 
     /** Add Shipping Detail **/
-    function newShipingDtl(){
+    function newShipingDtl()
+    {
         $('#id_s').val('');
         $('#truck_size').val('');
         $('#carrier').val('').trigger('change');
@@ -853,6 +945,32 @@
         $("#shipping-detail").find('.modal-title').text('Add Data');
         $("#shipping-detail").modal('show',{backdrop: 'true'}); 
     }
+
+
+    /** Add Detail Quote **/
+    function newDetailQuote()
+    {
+        $('#charge').val('').trigger('change');
+        $('#descx').val('');
+        $('#currencyx').val('').trigger('change');
+        $('#reimburs').prop('checked',false);
+        $('#reimbursx').val(0);
+        $('#ratex').val('');
+        $('#costx').val('');
+        $('#sellx').val('');
+        $('#qtyx').val('');
+        $('#cost_valx').val('');
+        $('#sell_valx').val('');
+        $('#vatx').val('');
+        $('#totalx').val('');
+        $('#notex').val('');
+
+        dsState = "Input";
+        
+        $("#detail-quote").find('.modal-title').text('Add Data');
+        $("#detail-quote").modal('show',{backdrop: 'true'}); 
+    }
+
 
     /*** Hapus Dimension **/
     function hapusDetaild(id){
@@ -881,7 +999,13 @@
                 url:"{{ route('quotation.quote_deleteShipping') }}",
                 data:"id="+ id,
                 success:function(result){
-                    loadShipping({{ Request::segment(3) }});   
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'success deleted!'
+                    })
+                    //loadShipping({{ Request::segment(3) }});  
+                    loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
                 }, 
@@ -903,6 +1027,7 @@
                         title: 'success deleted!'
                     })
                     loadDetail({{ Request::segment(3) }});   
+                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
                 }, 
@@ -973,117 +1098,91 @@
     }
 
     /*** Edit Dimension **/
-    function editDetails(carrier, currency, id){
+    function editDetails(id){
         $.ajax({
             url: "{{ route('quotation.quote_getDetailShipping') }}",
             type: "POST",
             data: {
-                carrier: carrier,
-                currency: currency
+                id: id
             },
             dataType: "html",
             success: function(result) {
                 let data = JSON.parse(result);
+                let cost_val = data.cost_val
+                let sell_val = data.sell_val
+                let subtotal = data.subtotal
+                cost_val = numberWithCommas(Number(cost_val));
+                sell_val = numberWithCommas(Number(sell_val));
+                subtotal = numberWithCommas(Number(subtotal));
+                $('#id_s').val(data.id);
+                $('#truck_size').val(data.truck_size);
+                $('#carrier').val(data.t_mcarrier_id).trigger('change');
+                $('#routing').val(data.routing);
+                $('#transit').val(data.transit_time);
+                $('#currency_ship_dtl').val(data.t_mcurrency_id).trigger('change');
+                $('#rate').val(Number(data.rate));
+                $('#cost').val(Number(data.cost));
+                $('#sell').val(Number(data.sell));
+                $('#qty').val(data.qty);
+                $('#cost_val').val(cost_val);
+                $('#sell_val').val(sell_val);
+                $('#vat').val(Number(data.vat));
+                $('#total').val(subtotal);
+                $('#note').val(data.notes);
 
-                $('#btnEdits_'+id).hide();
-                $('#lbl_carrier_'+id).hide();
-                $('#lbl_routing_'+id).hide();
-                $('#lbl_transit_'+id).hide();
-                $('#lbl_currency_'+id).hide();
-                $('#lbl_rate_'+id).hide();
-                $('#lbl_cost_'+id).hide();
-                $('#lbl_sell_'+id).hide();
-                $('#lbl_qty_'+id).hide();
-                $('#lbl_cost_val_'+id).hide();
-                $('#lbl_sell_val_'+id).hide();
-                $('#lbl_vat_'+id).hide();
-                $('#lbl_total_'+id).hide();
-                $('#lbl_note_'+id).hide();
-                $('#lbl_truck_size_'+id).hide();
-
-                $('#carrier_'+id).show();
-                $('#carrier_'+id).html(data[0])
-                $("#carrier_"+id).select2({
-                    theme: 'bootstrap4'
-                });
-                $('#routing_'+id).show();
-                $('#transit_'+id).show();
-                $('#rate_'+id).show();
-                $('#cost_'+id).show();
-                $('#sell_'+id).show();
-                $('#qty_'+id).show();
-                $('#cost_val_'+id).show();
-                $('#sell_val_'+id).show();
-                $('#vat_'+id).show();
-                $('#total_'+id).show();
-                $('#note_'+id).show();
-                $('#truck_size_'+id).show();
-
-                $('#currency_'+id).show();
-                $("#currency_"+id).html(data[1]);
-                $("#currency_"+id).select2({
-                    theme: 'bootstrap4'
-                });
-                $('#btnUpdates_'+id).show();
+                dsState = "Edit";
+                
+                $("#shipping-detail").find('.modal-title').text('Edit Data');
+                $("#shipping-detail").modal('show',{backdrop: 'true'}); 
+                
             }
         });
     }
 
      /*** Edit Detail Quote **/
-     function editDetailx(charge, currency,id){
-        let style = '';
-        let style2 = '';
-        let html = '';
-        let html2 = '';
+     function editDetailx(id){
         $.ajax({
             url: "{{ route('quotation.quote_getDetailQ') }}",
             type: "POST",
             data: {
-                charge: charge,
-                currency: currency
+                id: id,
             },
             dataType: "html",
             success: function(result) {
                 let data = JSON.parse(result);
+                let cost_val = data.cost_val
+                let sell_val = data.sell_val
+                let subtotal = data.subtotal
+                cost_val = numberWithCommas(Number(cost_val));
+                sell_val = numberWithCommas(Number(sell_val));
+                subtotal = numberWithCommas(Number(subtotal));
+
+                $('#charge').val(data.t_mcharge_code_id).trigger('change');
+                $('#descx').val(data.desc);
+                $('#id_dtl_quote').val(data.id);
+                $('#currencyx').val(data.t_mcurrency_id).trigger('change');
+                if(data.reimburse_flag == 1){
+                    $('#reimburs').prop('checked',true);
+                    $('#reimbursx').val(1);
+                }else{
+                    $('#reimburs').prop('checked',false);
+                    $('#reimbursx').val(0)
+                }
+                $('#ratex').val(Number(data.rate));
+                $('#costx').val(Number(data.cost));
+                $('#sellx').val(Number(data.sell));
+                $('#qtyx').val(data.qty);
+                $('#cost_valx').val(cost_val);
+                $('#sell_valx').val(sell_val);
+                $('#vatx').val(Number(data.vat));
+                $('#totalx').val(subtotal);
+                $('#notex').val(data.notes);
+
+                dsState = "Edit";
+        
+                $("#detail-quote").find('.modal-title').text('Edit Data');
+                $("#detail-quote").modal('show',{backdrop: 'true'});
                
-
-                $('#btnEditx_'+id).hide();
-                $('#lbl_charge_'+id).hide();
-                $('#lbl_descx_'+id).hide();
-                $('#lbl_currencyx_'+id).hide();
-                $('#lbl_ratex_'+id).hide();
-                $('#lbl_costx_'+id).hide();
-                $('#lbl_sellx_'+id).hide();
-                $('#lbl_qtyx_'+id).hide();
-                $('#lbl_costx_val_'+id).hide();
-                $('#lbl_sellx_val_'+id).hide();
-                $('#lbl_vatx_'+id).hide();
-                $('#lbl_totalx_'+id).hide();
-                $('#lbl_notex_'+id).hide();
-
-                $("#charge_"+id).show();
-                $("#charge_"+id).html(data[0]);
-                $("#charge_"+id).select2({
-                    theme: 'bootstrap4'
-                });
-                
-                $('#currencyx_'+id).show();
-                $('#currencyx_'+id).html(data[1]);
-                $("#currencyx_"+id).select2({
-                    theme: 'bootstrap4'
-                });
-
-                $('#descx_'+id).show();
-                $('#ratex_'+id).show();
-                $('#costx_'+id).show();
-                $('#sellx_'+id).show();
-                $('#qtyx_'+id).show();
-                $('#costx_val_'+id).show();
-                $('#sellx_val_'+id).show();
-                $('#vatx_'+id).show();
-                $('#totalx_'+id).show();
-                $('#notex_'+id).show();
-                $('#btnUpdatex_'+id).show();
             }
         });
     }
@@ -1145,197 +1244,50 @@
         }
     }
 
-
-    /** Update Shipping **/
-    function updateDetails(id_detail, id)
-    {
-       if($.trim($("#currency_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please select Currency!'
-            });
-        }else if($.trim($("#rate_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Rate!'
-            });
-        }else if($.trim($("#cost_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost!'
-            });
-        }else if($.trim($("#sell_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell!'
-            });
-        }else if($.trim($("#qty_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Qty!'
-            });
-        }else if($.trim($("#cost_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost Value!'
-            });
-        }else if($.trim($("#sell_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell Value!'
-            });
-        }else if($.trim($("#vat_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Vat!'
-            });
-        }else{
-            $.ajax({
-                type:"POST",
-                url:"{{ route('quotation.quote_updateShipping') }}",
-                data:{
-                    id:id_detail,
-                    carrier:$('#carrier_'+id).val(),
-                    routing:$('#routing_'+id).val(),
-                    transit:$('#transit_'+id).val(),
-                    currency:$('#currency_'+id).val(),
-                    rate:$('#rate_'+id).val(),
-                    cost:$('#cost_'+id).val(),
-                    sell:$('#sell_'+id).val(),
-                    qty:$('#qty_'+id).val(),
-                    cost_val:$('#cost_val_'+id).val(),
-                    sell_val:$('#sell_val_'+id).val(),
-                    vat:$('#vat_'+id).val(),
-                    total:$('#total_'+id).val(),
-                    note:$('#note_'+id).val(),
-                    truck_size:$('#truck_size_'+id).val()
-                },
-                success:function(result){
-                    loadShipping({{ Request::segment(3) }}); 
-                },error: function (xhr, ajaxOptions, thrownError) {           
-                    alert('Gagal Mengupdate Dimension!');
-                },          
-            });
-        }
-    }
-
-
-    /** Update Detail**/
-    function updateDetailx(id_detail, id)
-    {
-        if($.trim($("#charge_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please Select Charge!'
-            })
-        }else if($.trim($("#currencyx_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please Select Currency!'
-            });
-        }else if($.trim($("#ratex_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Rate!'
-            });
-        }else if($.trim($("#costx_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost!'
-            });
-        }else if($.trim($("#sellx_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell!'
-            });
-        }else if($.trim($("#qtyx_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Qty!'
-            });
-        }else if($.trim($("#costx_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost Value!'
-            });
-        }else if($.trim($("#sellx_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell Value!'
-            });
-        }else{
-            $.ajax({
-                type:"POST",
-                url:"{{ route('quotation.quote_updateDetail') }}",
-                data:{
-                    id:id_detail,
-                    charge:$('#charge_'+id).val(),
-                    desc:$('#descx_'+id).val(),
-                    reimburs:$('#reimbursx_'+id).val(),
-                    currency:$('#currencyx_'+id).val(),
-                    rate:$('#ratex_'+id).val(),
-                    cost:$('#costx_'+id).val(),
-                    sell:$('#sellx_'+id).val(),
-                    qty:$('#qtyx_'+id).val(),
-                    cost_val:$('#costx_val_'+id).val(),
-                    sell_val:$('#sellx_val_'+id).val(),
-                    vat:$('#vatx_'+id).val(),
-                    total:$('#totalx_'+id).val(),
-                    note:$('#notex_'+id).val()
-                },
-                success:function(result){
-                    loadDetail({{ Request::segment(3) }}); 
-                },error: function (xhr, ajaxOptions, thrownError) {           
-                    alert('Gagal Mengupdate!');
-                },          
-            });
-        }
-    }
-
     /** Calculate Profit **/
-    function calculate()
-    {
+    // function calculate()
+    // {
        
 				
-        if($('input[name="cekShipping"]:checked').val() == null){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Select Shipping',
-                icon: 'error'
-            })
-        }else{
-            let dtlQuote = [];
-            let shipping = [];
-            $('input[name="cekDetail"]:checked').each(function(){        
-                var valDtlQuote = $(this).val();
-                dtlQuote.push(valDtlQuote);
-            });
+    //     if($('input[name="cekShipping"]:checked').val() == null){
+    //         Swal.fire({
+    //             title: 'Error!',
+    //             text: 'Please Select Shipping',
+    //             icon: 'error'
+    //         })
+    //     }else{
+    //         let dtlQuote = [];
+    //         let shipping = [];
+    //         $('input[name="cekDetail"]:checked').each(function(){        
+    //             var valDtlQuote = $(this).val();
+    //             dtlQuote.push(valDtlQuote);
+    //         });
 
-            $('input[name="cekShipping"]:checked').each(function(){        
-                let valShipping = $(this).val();
-                shipping.push(valShipping);
-            });
-            $.ajax({
-                type: "POST",
-                url: "{{ route('quotation.quote_addProfit') }}",
-                data: {detail:dtlQuote, shipping:shipping},
-                dataType: 'json',
-                cache: false,
-                success: function (response) {
-                    $('input[name="cekShipping"').prop('checked', false);
-                    $('input[name="cekDetail"').prop('checked', false);
-                    loadProfit({{ Request::segment(3) }});
-                },
-                error: function (xhr, ajaxOptions, thrownError) {           
-                    alert('gagal')           
-                },
+    //         $('input[name="cekShipping"]:checked').each(function(){        
+    //             let valShipping = $(this).val();
+    //             shipping.push(valShipping);
+    //         });
+    //         $.ajax({
+    //             type: "POST",
+    //             url: "{{ route('quotation.quote_addProfit') }}",
+    //             data: {detail:dtlQuote, shipping:shipping},
+    //             dataType: 'json',
+    //             cache: false,
+    //             success: function (response) {
+    //                 $('input[name="cekShipping"').prop('checked', false);
+    //                 $('input[name="cekDetail"').prop('checked', false);
+    //                 loadProfit('{{ $quote->quote_no }}');
+    //             },
+    //             error: function (xhr, ajaxOptions, thrownError) {           
+    //                 alert('gagal')           
+    //             },
 
-            });
+    //         });
 
-        }
+    //     }
 
        
-    }
+    // }
 
     function numberOnly(root){
         var reet = root.value;    
@@ -1350,21 +1302,79 @@
             }  
     }
 
-    function hitung(id){
-        const cost = $('#qty_'+id).val()*$('#sell_val_'+id).val();
-        let total = Number(cost)+Number($('#vat_'+id).val());
-        total = total.toFixed(2)
-        total = numberWithCommas(Number(total));
-        $('#total_'+id).val(total);
+
+    /** Hitung Cost Val Shipping Detail **/
+    function hitung()
+    {
+        const cost = $('#qty').val()*Number($('#sell_val').val());
+        let nilai1 = $('#rate').val()*$('#cost').val();
+        let nilai2 = $('#rate').val()*$('#sell').val();
+
+        /** Menghitung Cost Value **/
+        let cost_val = Number(nilai1)*Number($('#qty').val());
+        cost_val = cost_val.toFixed(2)
+        cost_val = numberWithCommas(Number(cost_val));
+
+        /** Menghitung Cost Value **/
+        let sell_val = Number(nilai2)*Number($('#qty').val());
+        sell_val = sell_val.toFixed(2)
+        sell_val = numberWithCommas(Number(sell_val));
+
+        
+        $('#cost_val').val(cost_val);
+        $('#sell_val').val(sell_val);
+        hitungTotal();
+        
     }
 
-    function hitungx(id){
-        const cost = $('#qtyx_'+id).val()*$('#sellx_val_'+id).val();
-        let total = Number(cost)+Number($('#vatx_'+id).val());
+    /** Hitung Cost Val Detail Quote **/
+    function hitungx()
+    {
+        let nilai1 = $('#ratex').val()*$('#costx').val();
+        let nilai2 = $('#ratex').val()*$('#sellx').val();
+
+        /** Menghitung Cost Value **/
+        let cost_val = Number(nilai1)*Number($('#qtyx').val());
+        cost_val = cost_val.toFixed(2)
+        cost_val = numberWithCommas(Number(cost_val));
+
+        /** Menghitung Cost Value **/
+        let sell_val = Number(nilai2)*Number($('#qtyx').val());
+        sell_val = sell_val.toFixed(2)
+        sell_val = numberWithCommas(Number(sell_val));
+
+        
+        $('#cost_valx').val(cost_val);
+        $('#sell_valx').val(sell_val);
+        hitungTotalx();
+        
+    }
+
+    /** Hitung Total Shipping Detail **/
+    function hitungTotal()
+    {
+        let sellVal = $('#sell_val').val();
+        sellVal = sellVal.replace(/,/g, '') 
+        const cost = $('#qty').val()*sellVal;
+        let total = Number(cost)+Number($('#vat').val());
         total = total.toFixed(2)
         total = numberWithCommas(Number(total));
-        $('#totalx_'+id).val(total);
+        $('#total').val(total);
     }
+
+
+    /** Hitung Total Detail Quote **/
+    function hitungTotalx()
+    {
+        let sellVal = $('#sell_valx').val();
+        sellVal = sellVal.replace(/,/g, '') 
+        const cost = $('#qtyx').val()*sellVal;
+        let total = Number(cost)+Number($('#vatx').val());
+        total = total.toFixed(2)
+        total = numberWithCommas(Number(total));
+        $('#totalx').val(total);
+    }
+  
 
     /** Save Detail Dimension **/
     function saveDetailx(id){
@@ -1433,177 +1443,206 @@
     }
 
     /** Save Detail Shipping **/
-    function saveDetailxx(id){
-       if($.trim($("#currency_"+id).val()) == ""){
+    function saveDetailxx(){
+       if($.trim($("#currency_ship_dtl").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please select Currency!'
             });
-        }else if($.trim($("#rate_"+id).val()) == ""){
+        }else if($.trim($("#rate").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Rate!'
             });
-        }else if($.trim($("#cost_"+id).val()) == ""){
+        }else if($.trim($("#cost").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Cost!'
             });
-        }else if($.trim($("#sell_"+id).val()) == ""){
+        }else if($.trim($("#sell").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Sell!'
             });
-        }else if($.trim($("#qty_"+id).val()) == ""){
+        }else if($.trim($("#qty").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Qty!'
             });
-        }else if($.trim($("#cost_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost Value!'
-            });
-        }else if($.trim($("#sell_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell Value!'
-            });
         }else{
-            $.ajax({
-            type:"POST",
-            url:"{{ route('quotation.quote_addShipping') }}",
-            data:{
-                quote:{{ $quote->id }},
-                carrier:$('#carrier_'+id).val(),
-                routing:$('#routing_'+id).val(),
-                transit:$('#transit_'+id).val(),
-                currency:$('#currency_'+id).val(),
-                rate:$('#rate_'+id).val(),
-                cost:$('#cost_'+id).val(),
-                sell:$('#sell_'+id).val(),
-                qty:$('#qty_'+id).val(),
-                cost_val:$('#cost_val_'+id).val(),
-                sell_val:$('#sell_val_'+id).val(),
-                vat:$('#vat_'+id).val(),
-                total:$('#total_'+id).val(),
-                note:$('#note_'+id).val(),
-                truck_size:$('#truck_size_'+id).val()
-            },
-            success:function(result){
-                $('#carrier_'+id).val('').trigger('change');
-                $('#routing_'+id).val('');
-                $('#transit_'+id).val('');
-                $('#currency_'+id).val('').trigger('change');
-                $('#rate_'+id).val('');
-                $('#cost_'+id).val('');
-                $('#sell_'+id).val('');
-                $('#qty_'+id).val('');
-                $('#cost_val_'+id).val('');
-                $('#sell_val_'+id).val('');
-                $('#vat_'+id).val('');
-                $('#total_'+id).val('');
-                $('#note_'+id).val('');
-                $('#truck_size_'+id).val('');
-                loadShipping({{ Request::segment(3) }});
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Sukses Add Data!'
+            if(dsState == "Input"){
+                $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_addShipping') }}",
+                data:{
+                    quote:{{ $quote->id }},
+                    carrier:$('#carrier').val(),
+                    routing:$('#routing').val(),
+                    transit:$('#transit').val(),
+                    currency:$('#currency_ship_dtl').val(),
+                    rate:$('#rate').val(),
+                    cost:$('#cost').val(),
+                    sell:$('#sell').val(),
+                    qty:$('#qty').val(),
+                    cost_val:$('#cost_val').val(),
+                    sell_val:$('#sell_val').val(),
+                    vat:$('#vat').val(),
+                    total:$('#total').val(),
+                    note:$('#note').val(),
+                    truck_size:$('#truck_size').val()
+                },
+                success:function(result){
+                    $('#shipping-detail').modal('hide')
+                    //loadShipping({{ Request::segment(3) }});
+                    loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
+                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Sukses Add Data!'
+                    });
+                },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal menambahkan item!');
+                    },  
                 });
-            },error: function (xhr, ajaxOptions, thrownError) {           
-                    alert('Gagal menambahkan item!');
-                },  
-            });
+            }else{
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('quotation.quote_updateShipping') }}",
+                    data:{
+                        id:$('#id_s').val(),
+                        carrier:$('#carrier').val(),
+                        routing:$('#routing').val(),
+                        transit:$('#transit').val(),
+                        currency:$('#currency_ship_dtl').val(),
+                        rate:$('#rate').val(),
+                        cost:$('#cost').val(),
+                        sell:$('#sell').val(),
+                        qty:$('#qty').val(),
+                        cost_val:$('#cost_val').val(),
+                        sell_val:$('#sell_val').val(),
+                        vat:$('#vat').val(),
+                        total:$('#total').val(),
+                        note:$('#note').val(),
+                        truck_size:$('#truck_size').val()
+                    },
+                    success:function(result){
+                        $('#shipping-detail').modal('hide')
+                        //loadShipping({{ Request::segment(3) }}); 
+                        loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
+                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Sukses Update Data!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal Mengupdate Dimension!');
+                    },          
+                });
+            }
         }
     }
 
      /** Save Detail Quote **/
-     function saveDetailxxx(id){
+     function saveDetailxxx(){
 
-        if($.trim($("#charge_"+id).val()) == ""){
+        if($.trim($("#charge").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please Select Charge!'
             })
-        }else if($.trim($("#currencyx_"+id).val()) == ""){
+        }else if($.trim($("#currencyx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please Select Currency!'
             });
-        }else if($.trim($("#ratex_"+id).val()) == ""){
+        }else if($.trim($("#ratex").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Rate!'
             });
-        }else if($.trim($("#costx_"+id).val()) == ""){
+        }else if($.trim($("#costx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Cost!'
             });
-        }else if($.trim($("#sellx_"+id).val()) == ""){
+        }else if($.trim($("#sellx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Sell!'
             });
-        }else if($.trim($("#qtyx_"+id).val()) == ""){
+        }else if($.trim($("#qtyx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Qty!'
             });
-        }else if($.trim($("#costx_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Cost Value!'
-            });
-        }else if($.trim($("#sellx_val_"+id).val()) == ""){
-            Toast.fire({
-                icon: 'error',
-                title: 'Please input Sell Value!'
-            });
         }else{
-            $.ajax({
-            type:"POST",
-            url:"{{ route('quotation.quote_addDetail') }}",
-            data:{
-                quote:{{ $quote->id }},
-                charge:$('#charge_'+id).val(),
-                desc:$('#descx_'+id).val(),
-                reimburs:$('#reimbursx_'+id).val(),
-                currency:$('#currencyx_'+id).val(),
-                rate:$('#ratex_'+id).val(),
-                cost:$('#costx_'+id).val(),
-                sell:$('#sellx_'+id).val(),
-                qty:$('#qtyx_'+id).val(),
-                cost_val:$('#costx_val_'+id).val(),
-                sell_val:$('#sellx_val_'+id).val(),
-                vat:$('#vatx_'+id).val(),
-                total:$('#totalx_'+id).val(),
-                note:$('#notex_'+id).val()
-            },
-            success:function(result){
-                $('#charge_'+id).val('').trigger('change');
-                $('#descx_'+id).val('');
-                $('#reimburs_'+id).val('');
-                $('#reimburs_'+id).prop('checked',false);
-                $('#currencyx_'+id).val('').trigger('change');
-                $('#ratex_'+id).val('');
-                $('#costx_'+id).val('');
-                $('#sellx_'+id).val('');
-                $('#qtyx_'+id).val('');
-                $('#costx_val_'+id).val('');
-                $('#sellx_val_'+id).val('');
-                $('#vatx_'+id).val('');
-                $('#totalx_'+id).val('');
-                $('#notex_'+id).val('')
-                loadDetail({{ Request::segment(3) }});
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Sukses Add Data!'
+            if(dsState == "Input")
+            {
+                $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_addDetail') }}",
+                data:{
+                    quote:{{ $quote->id }},
+                    quote_no : $('#quote_no').val(),
+                    charge:$('#charge').val(),
+                    desc:$('#descx').val(),
+                    reimburs:$('#reimbursx').val(),
+                    currency:$('#currencyx').val(),
+                    rate:$('#ratex').val(),
+                    cost:$('#costx').val(),
+                    sell:$('#sellx').val(),
+                    qty:$('#qtyx').val(),
+                    cost_val:$('#cost_valx').val(),
+                    sell_val:$('#sell_valx').val(),
+                    vat:$('#vatx').val(),
+                    total:$('#totalx').val(),
+                    note:$('#notex').val()
+                },
+                success:function(result){
+                    $('#detail-quote').modal('hide')
+                    loadDetail({{ Request::segment(3) }});
+                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Sukses Add Data!'
+                    });
+                },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal menambahkan item!');
+                    },  
                 });
-            },error: function (xhr, ajaxOptions, thrownError) {           
-                    alert('Gagal menambahkan item!');
-                },  
-            });
+            }else{
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('quotation.quote_updateDetail') }}",
+                    data:{
+                        id:$('#id_dtl_quote').val(),
+                        charge:$('#charge').val(),
+                        desc:$('#descx').val(),
+                        reimburs:$('#reimbursx').val(),
+                        currency:$('#currencyx').val(),
+                        rate:$('#ratex').val(),
+                        cost:$('#costx').val(),
+                        sell:$('#sellx').val(),
+                        qty:$('#qtyx').val(),
+                        cost_val:$('#cost_valx').val(),
+                        sell_val:$('#sell_valx').val(),
+                        vat:$('#vatx').val(),
+                        total:$('#totalx').val(),
+                        note:$('#notex').val()
+                    },
+                    success:function(result){
+                        $('#detail-quote').modal('hide')
+                        loadDetail({{ Request::segment(3) }}); 
+                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Sukses Update Data!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('Gagal Mengupdate!');
+                    },          
+                });
+            }
         }
     }
 
@@ -1713,9 +1752,9 @@
 
     $(function() {
         loadDimension({{ Request::segment(3) }});
-        loadShipping({{ Request::segment(3) }});
+        loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
         loadDetail({{ Request::segment(3) }});
-        loadProfit({{ Request::segment(3) }}); 
+        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
     });
   </script>
       
