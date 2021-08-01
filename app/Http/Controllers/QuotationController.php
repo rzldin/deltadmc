@@ -430,76 +430,34 @@ class QuotationController extends Controller
         $no = 2;
         $data = QuotationModel::get_quoteShipping($request['id']);
         $quote = QuotationModel::get_detailQuote($request['id']);
-        
+
+        if(count($data) > 0){
+
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
-                $tabel .= '<td class="text-right"><input type="checkbox" class="form_control" name="cekShipping" id="cek_'.$no.'" value="'.$row->id.'"></td>';
                 $tabel .= '<td class="text-right">'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
-                    $tabel .= '<td class="text-right"><label id="lbl_truck_size_'.$no.'">'.$row->truck_size.'</label>';
-                    $tabel .= '<input type="text" id="truck_size_'.$no.'" name="truck_size" class="form-control" value="'.$row->truck_size.'" style="display:none"></td>';     
+                    $tabel .= '<td>'.$row->truck_size.'</td>';     
                 }else{
-                    $tabel .= '<td class="text-right"><label id="lbl_carrier_'.$no.'">'.$row->code.'</label>';
-                        $tabel .= '<select id="carrier_'.$no.'" name="carrier" class="form-control select2bs44" ';
-                            $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                            $tabel .= '<option value=""></option>';
-                        $tabel .= '</select>';
-                    $tabel .= '</td>';
-                    $tabel .= '<td class="text-right"><label id="lbl_routing_'.$no.'">'.$row->routing.'</label>';
-                    $tabel .= '<input type="text" id="routing_'.$no.'" name="width" class="form-control" value="'.$row->routing.'" style="display:none"></td>';
-                    $tabel .= '<td class="text-right"><label id="lbl_transit_'.$no.'">'.$row->transit_time.'</label>';
-                    $tabel .= '<input type="text" id="transit_'.$no.'" name="transit" class="form-control" '
-                        . ' value="'.$row->transit_time.'" style="display:none"></td>';
+                    $tabel .= '<td><'.$row->code.'</td>';
+                    $tabel .= '<td>'.$row->routing.'</td>';
+                    $tabel .= '<td class="text-right">'.$row->transit_time.'</td>';
                 }
-                $tabel .= '<td class="text-center"><label id="lbl_currency_'.$no.'">'.$row->code_currency.'</label>';
-                    $tabel .= '<select id="currency_'.$no.'" name="currency" class="form-control select2bs44" ';
-                    $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                    $tabel .= '<option value=""></option>';
-                    $tabel .= '</select>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_rate_'.$no.'">'.number_format($row->rate,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="rate_'.$no.'" name="rate" class="form-control" '
-                    . ' value="'.$row->rate.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_cost_'.$no.'">'.number_format($row->cost,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="cost_'.$no.'" name="cost" class="form-control" '
-                    . ' value="'.$row->cost.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_sell_'.$no.'">'.number_format($row->sell,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="sell_'.$no.'" name="sell" class="form-control" '
-                    . ' value="'.$row->sell.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_qty_'.$no.'">'.$row->qty.'</label>';
-                $tabel .= '<input type="text" id="qty_'.$no.'" name="qty" class="form-control" '
-                    . ' value="'.$row->qty.'" style="display:none" onkeyup="hitung('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_cost_val_'.$no.'">'.number_format($row->cost_val,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="cost_val_'.$no.'" name="cost_val" class="form-control" '
-                    . ' value="'.$row->cost_val.'" style="display:none">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_sell_val_'.$no.'">'.number_format($row->sell_val,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="sell_val_'.$no.'" name="sell_val" class="form-control" '
-                    . ' value="'.$row->sell_val.'" style="display:none" onkeyup="hitung('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_vat_'.$no.'">'.number_format($row->vat,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="vat_'.$no.'" name="vat" class="form-control" '
-                    . ' value="'.$row->vat.'" style="display:none" onkeyup="hitung('.$no.')">';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_total_'.$no.'">'.number_format($row->subtotal,2,',','.').'</label>';
-                $tabel .= '<input type="text" id="total_'.$no.'" name="total" class="form-control" '
-                    . ' value="'.$row->subtotal.'" style="display:none" readonly>';
-                $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_note_'.$no.'">'.$row->notes.'</label>';
-                $tabel .= '<textarea class="form-control" name="note" id="note_'.$no.'" cols="3" style="display:none">'.$row->notes.'</textarea>';
-                $tabel .= '</td>';
+                $tabel .= '<td class="text-center">'.$row->code_currency.'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.$row->qty.'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.$row->notes.'</td>';
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetails('.$row->t_mcarrier_id.','.$row->t_mcurrency_id.','.$no.');" style="margin-top:5px" id="btnEdits_'.$no.'"> '
+                        . '" onclick="editDetails('.$row->id.');" style="margin-top:5px">'
                         . '<i class="fa fa-edit"></i> Edit</a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                        . '" onclick="updateDetails('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdates_'.$no.'"> '
-                        . '<i class="fa fa-save"></i> Update </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetails('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Del&nbsp;&nbsp;</a>';
@@ -507,6 +465,18 @@ class QuotationController extends Controller
                 $tabel .= '</tr>';
                 $no++;
             }
+        }else{
+            if($quote->shipment_by == 'LAND'){
+                $colspan = '13';
+            }else{
+                $colspan = '15';
+            }
+            $tabel .= '<tr>';
+                $tabel .= '<td class="text-center" colspan='.$colspan.'>Nothin data.';
+                $tabel .= '</td>';
+            $tabel .= '</td>';
+        }
+        
 
             header('Content-Type: application/json');
             echo json_encode($tabel);

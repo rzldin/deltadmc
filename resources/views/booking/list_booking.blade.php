@@ -22,7 +22,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-sm" href=""><i class="fa fa-plus"></i> Create Booking</a>
+                    <a class="btn btn-primary btn-sm" href="{{ route('quotation.list') }}"><i class="fa fa-plus"></i> Create Booking</a>
                 </div>
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->

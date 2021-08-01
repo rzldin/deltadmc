@@ -393,12 +393,12 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Shipping Detail</h3>
+                        <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
                        <table class="table table_lowm table-bordered" id="Table1">
                             <thead>
                                 <tr>
-                                    <th width="1%">#</th>
                                     <th width="2%">No</th>
                                     @if ($quote->shipment_by == 'LAND')
                                     <th>Truck Size</th>
@@ -420,78 +420,157 @@
                                     <th width="6%">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tbody id="tblShipping">
+                            <tbody id="tblShipping">
 
-                               </tbody>
-                               <tr>
-                                   <td>
-                                       <input type="checkbox" name="cek" id="cek_1">
-                                   </td>
-                                   <td>
-                                        <i class="fa fa-plus"></i>
-                                   </td>
-                                   @if ($quote->shipment_by == 'LAND')
-                                    <td>
-                                        <input type="text" class="form-control" name="truck_size" id="truck_size_1" placeholder="Truck Size ...">
-                                    </td>
-                                   @else
-                                   <td>
-                                        <select class="form-control select2bs44" name="carrier" id="carrier_1">
+                            </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="shipping-detail" tabindex="-1" role="basic" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                            <h4 class="modal-title">&nbsp;</h4>
+                        </div>
+                        <br>
+                        <div class="modal-body">
+                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                  id="formRoad" enctype="multipart/form-data">
+                                {{ csrf_field() }}
+                                @if ($quote->shipment_by == 'LAND')
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Truck Size<font color="#f00">*</font>
+                                    </div>                                
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="truck_size" id="truck_size" placeholder="Truck Size ...">
+                                    </div>
+                                </div>
+                                @else
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Carrier<font color="#f00">*</font>
+                                    </div>                                
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" name="carrier" id="carrier">
                                             <option value="">--Select Carrier--</option>
                                             @foreach ($carrier as $item)
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
                                             @endforeach
                                         </select>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="routing" id="routing_1" placeholder="Routing ...">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="transit_time" id="transit_1" placeholder="Transit..." onkeyup="numberOnly(this)">
-                                    </td>
-                                   @endif
-                                   <td>
-                                        <select class="form-control select2bs44" name="currency" id="currency_1">
+                                    </div>
+                                    <input type="hidden" name="id_s" id="id_s">
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Routing<font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="routing" id="routing" placeholder="Routing ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                       Transit<font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="transit_time" id="transit" placeholder="Transit..." onkeyup="numberOnly(this)">
+                                    </div>
+                                </div>
+                                @endif
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Currency <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" name="currency" id="currency_ship_dtl">
                                             <option value="">--Select Currency--</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
                                             @endforeach
                                         </select>
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="rate" id="rate_1" placeholder="Rate ..." onkeyup="numberOnly(this)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="cost" id="cost_1" placeholder="Cost ..." onkeyup="numberOnly(this)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="sell" id="sell_1" placeholder="Sell ..." onkeyup="numberOnly(this)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="qty" id="qty_1" placeholder="Qty ..." onkeyup="hitung(1)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="cost_value" id="cost_val_1" placeholder="Cost Value ..." onkeyup="numberOnly(this)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="sell_value" id="sell_val_1" placeholder="Sell Value ..." onkeyup="hitung(1)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="vat" id="vat_1" placeholder="Vat ..." onkeyup="hitung(1)">
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="total" id="total_1" placeholder="Total ..." readonly>
-                                   </td>
-                                   <td>
-                                        <input type="text" class="form-control" name="note" id="note_1" placeholder="Note ...">
-                                   </td>
-                                   <td>
-                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailxx(1)"><i class="fa fa-plus"></i> Add</button>
-                                   </td>
-                               </tr>
-                           </tbody>
-                       </table>
+                                    </div>  
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Rate <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="rate" id="rate" placeholder="Rate ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Cost <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="cost" id="cost" placeholder="Cost ...">                     
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Sell <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="sell" id="sell" placeholder="Sell ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Qty <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="qty" id="qty" placeholder="Qty ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Cost Value <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="cost_val" id="cost_val" placeholder="Cost Value ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Sell Value <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="sell_val" id="sell_val" placeholder="Sell Value ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Vat <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ...">
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                        Total <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="total" id="total" placeholder="Total ..." readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-4 col-xs-4">
+                                       Note
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text" class="form-control" name="note" id="note" placeholder="Note ..." readonly>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">                        
+                            <button type="button" class="btn btn-primary" onClick="saveDetailxx();"><i class="fa fa-save"></i> Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -646,6 +725,9 @@
   @push('after-scripts')
 
   <script>
+    var dsState;
+
+
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -653,7 +735,6 @@
     function reims(id)
     {
         $(this).val($(this).attr('checked') ? $('#reimbursx_'+id).val(1) : $('#reimbursx_'+id).val(0) )
-        //$(this).val($(this).attr('checked') ? alert('1') : alert('0') )
     }
     
     function get_pic(val){
@@ -747,6 +828,30 @@
                 $('#tblProfit').html(tabel);
             }
         })
+    }
+
+    /** Add Shipping Detail **/
+    function newShipingDtl(){
+        $('#id_s').val('');
+        $('#truck_size').val('');
+        $('#carrier').val('').trigger('change');
+        $('#routing').val('');
+        $('#transit').val('');
+        $('#currency_ship_dtl').val('').trigger('change');
+        $('#rate').val('');
+        $('#cost').val('');
+        $('#sell').val('');
+        $('#qty').val('');
+        $('#cost_val').val('');
+        $('#sell_val').val('');
+        $('#vat').val('');
+        $('#total').val('');
+        $('#note').val('');
+
+        dsState = "Input";
+        
+        $("#shipping-detail").find('.modal-title').text('Add Data');
+        $("#shipping-detail").modal('show',{backdrop: 'true'}); 
     }
 
     /*** Hapus Dimension **/
