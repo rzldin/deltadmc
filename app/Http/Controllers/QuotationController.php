@@ -667,7 +667,7 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteDetail($request['id']);
+        $data = QuotationModel::get_quoteDetail($request->quote_no);
 
             if(count($data) > 0)
             {

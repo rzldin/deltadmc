@@ -891,11 +891,14 @@
     }
 
     /** Load Dimension **/
-    function loadDetail(id){
+    function loadDetail(val, id){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadDetail') }}",
-            data:"id="+id,
+            data:{
+                quote_no : val,
+                id : id
+            },
             dataType:"html",
             success:function(result){
                 var tabel = JSON.parse(result);
@@ -1753,7 +1756,7 @@
     $(function() {
         loadDimension({{ Request::segment(3) }});
         loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-        loadDetail({{ Request::segment(3) }});
+        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});
         loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
     });
   </script>
