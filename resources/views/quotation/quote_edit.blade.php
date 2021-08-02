@@ -248,9 +248,7 @@
                                         <select class="form-control select2bs44" name="uom_volume" id="uom_volume" style="width: 100%;">
                                             <option selected>-- Select UOM --</option>
                                         @foreach ($uom as $u)
-                                            <option value="{{ $u->id }}" @if ($volume_uom->id == $u->id)
-                                                selected
-                                            @endif>{{ $u->uom_code }}</option>
+                                            <option value="{{ $u->id }}" <?=((isset($volume_uom) && $volume_uom->id == $u->id)? 'selected':'');?>>{{ $u->uom_code }}</option>
                                         @endforeach
                                         </select>
                                     </div>
@@ -729,11 +727,11 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                       Reimbursment<font color="#f00">*</font>
+                                       Reimbursment
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="checkbox" name="reimburs" id="reimburs" onclick="checkbox()">
-                                        <input type="hidden" name="reimbursxx" id="reimbursx" value="">
+                                        <input type="hidden" name="reimbursx" id="reimbursx" value="">
                                     </div>
                                 </div>
                             </form>
@@ -802,13 +800,14 @@
 
     function checkbox() 
     {
-        var checked = false;
-        if (document.querySelector('#reimburs')) {
-            checked = true;
+        // var checked = false;
+        if($('#reimburs:checkbox:checked').length > 0) {
+            // checked = true;
             $('#reimbursx').val(1)
         }else{
             $('#reimbursx').val(0)
         }
+        console.log($('#reimbursx').val());
         
     }
 
