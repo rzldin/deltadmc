@@ -694,6 +694,11 @@
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
                                                         <thead>
                                                           <tr>
+                                                            @if ($quote->shipment_by != 'LAND')
+                                                            <td class="text-center">Carrier</td>
+                                                            <td class="text-center">Routing</td>
+                                                            <td class="text-center">Transit Time</td>
+                                                            @endif
                                                             <td>Total Cost</th>
                                                             <td>Total Sell</td>
                                                             <td>Total Profit</th>
