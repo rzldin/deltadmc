@@ -18,3 +18,5 @@ TOTAL = UNIT * COST VAL
 roe  = RATE
 AMOUNT = TOTAL * ROE + VAT
 PAID TO = COMPANY, KELUARIN CODE PERUSAHAAN
+
+pieces, weight, volume ga mandatory

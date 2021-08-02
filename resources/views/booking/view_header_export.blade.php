@@ -153,7 +153,7 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label>Customer PIC</label>
+                            <label>Client PIC</label>
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="customer_pic" id="customer_pic">
@@ -360,7 +360,7 @@
                         <label>Place of Origin</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="pfo" id="pfo" class="form-control" value="{{ $quote->form_text }}">
+                        <input type="text" name="pfo" id="pfo" class="form-control" value="{{ $quote->from_text }}">
                     </div>
                 </div>
                 <div class="row mb-3">

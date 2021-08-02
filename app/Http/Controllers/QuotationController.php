@@ -243,10 +243,10 @@ class QuotationController extends Controller
                         ['t_quote.version_no', '=', $request->version],
                     ])->first();
 
-        $dimension  = QuotationModel::get_quoteDimension($quote->id);;
-        $shipping   = QuotationModel::get_quoteShipping($quote->id);
-        $quoteDtl   = QuotationModel::get_quoteDetail($quote->id);
-        $profit     = QuotationModel::get_quoteProfit($quote->id);
+        $dimension  = QuotationModel::get_quoteDimension($quote->quote_no);;
+        $shipping   = QuotationModel::get_quoteShipping($quote->quote_no);
+        $quoteDtl   = QuotationModel::get_quoteDetail($quote->quote_no);
+        $profit     = QuotationModel::get_quoteProfit($quote->quote_no);
 
         $data['loaded']     = MasterModel::loaded_get();
         $data['uom']        = MasterModel::uom();

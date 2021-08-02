@@ -339,7 +339,7 @@
                                @foreach ($shipping as $row)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $row->code }}</td>
+                                    <td>{{ $row->code_currency }}</td>
                                     <td>{{ $row->routing }}</td>
                                     <td>{{ $row->transit_time }}</td>
                                     <td>{{ $row->code_currency }}</td>
@@ -388,7 +388,7 @@
                                @foreach ($quoteDtl as $row)
                                    <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $row->code }}</td>
+                                        <td>{{ $row->code_currency }}</td>
                                         <td>{{ $row->desc }}</td>
                                         <td><input type="checkbox"  @if ($row->reimburse_flag == 1)checked @endif></td>
                                         <td>{{ $row->code_currency }}</td>
