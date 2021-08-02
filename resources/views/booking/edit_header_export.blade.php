@@ -720,9 +720,7 @@
                                         <label for="">Delivery Of Goods</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <textarea name="dogs" id="dogs" cols="70" rows="3" class="form-control">
-                                            {{ $quote->delivery_of_goods }}
-                                        </textarea>
+                                        <textarea name="dogs" id="dogs" cols="70" rows="3" class="form-control">{{ $quote->delivery_of_goods }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -755,9 +753,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_mbl" id="cons_mbl" cols="30" rows="3" class="form-control">
-                                    {{ $quote->mbl_consignee }}
-                                </textarea>
+                                <textarea name="cons_mbl" id="cons_mbl" cols="30" rows="3" class="form-control">{{ $quote->mbl_consignee }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -765,9 +761,7 @@
                                 <label>Notify Party</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="notify_mbl" id="notify_mbl" cols="30" rows="3" class="form-control">
-                                    {{ $quote->mbl_not_party }}
-                                </textarea>
+                                <textarea name="notify_mbl" id="notify_mbl" cols="30" rows="3" class="form-control">{{ $quote->mbl_not_party }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -832,9 +826,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_hbl" id="cons_hbl" cols="30" rows="3" class="form-control">
-                                    {{ $quote->hbl_consignee }}
-                                </textarea>
+                                <textarea name="cons_hbl" id="cons_hbl" cols="30" rows="3" class="form-control">{{ $quote->hbl_consignee }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">

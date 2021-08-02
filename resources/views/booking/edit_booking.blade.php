@@ -78,11 +78,11 @@
                                                     <h3 class="card-title">Commodity</h3>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                   <table class="table table_lowm table-bordered" id="Table1">
+                                                   <table class="table table_lowm table-bordered" id="myTable2" width="200%">
                                                        <thead>
                                                            <tr>
                                                                <th width="1%">#</th>
-                                                               <th width="15%">Hs Code</th>
+                                                               <th width="10%">Hs Code</th>
                                                                <th>Description</th>
                                                                <th>Origin</th>
                                                                <th width="15%">Qty Commodity</th>
@@ -90,7 +90,7 @@
                                                                <th width="15%">Weight</th>
                                                                <th >Netto</th>
                                                                <th width="15%">Volume</th>
-                                                               <th width="8%">Action</th>
+                                                               <th width="5%">Action</th>
                                                            </tr>
                                                        </thead>
                                                        <tbody>
@@ -235,24 +235,28 @@
                                                     <h3 class="card-title">Container</h3>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                   <table class="table table_lowm table-bordered" id="Table1">
+                                                    @if ($quote->activity == 'export')
+                                                    <table class="table table_lowm table-bordered" id="myTable3" width="200%">
+                                                    @else
+                                                    <table class="table table_lowm table-bordered" width="100%">
+                                                    @endif
                                                        <thead>
                                                            <tr>
                                                                <th width="1%">#</th>
-                                                               <th width="20%">Container Number</th>
-                                                               <th width="15%">Size</th>
-                                                               <th width="15%">Loaded Type</th>
-                                                               <th width="15%">Container Type</th>
-                                                               <th>Seal No</th>
+                                                               <th width="10%">Container Number</th>
+                                                               <th width="5%">Size</th>
+                                                               <th width="10%">Loaded Type</th>
+                                                               <th width="10%">Container Type</th>
+                                                               <th width="10%">Seal No</th>
                                                                @if ($quote->activity == 'export')
-                                                                <th>VGM</th>
-                                                                <th>Uom</th>
-                                                                <th>Resp.Party</th>
-                                                                <th>Auth.Person</th>
-                                                                <th>M.o.w</th>
-                                                                <th width="15%">Weighing Party</th>
+                                                                <th width="10%">VGM</th>
+                                                                <th width="7%">Uom</th>
+                                                                <th width="10%">Resp.Party</th>
+                                                                <th width="10%">Auth.Person</th>
+                                                                <th width="8%">M.o.w</th>
+                                                                <th width="10%">Weighing Party</th>
                                                                @endif
-                                                               <th width="10%">Action</th>
+                                                               <th width="15%">Action</th>
                                                            </tr>
                                                        </thead>
                                                        <tbody>
@@ -724,6 +728,10 @@
 </section>
 @push('after-scripts')
     <script>
+
+        $(document).ready(function(){
+            $(".dataTables_empty").hide();
+        })
 
         var dsState;
 

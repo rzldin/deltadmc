@@ -220,8 +220,32 @@
           "info": false,
           "autoWidth": true,
           "responsive": true,
+          language : {
+            "zeroRecords": " "             
+          },
         });
       });
+
+      $(document).ready(function(){
+        $(".dataTables_empty").hide();
+      })
+
+      $(function () {
+        $('#myTable3').DataTable({
+          "paging":false,
+          "lengthChange": false,
+          "searching": false,
+          "ordering": false,
+          "info": false,
+          "autoWidth": true,
+          "responsive": true,
+          language : {
+            "zeroRecords": " "             
+          },
+        });
+      });
+
+      
 
       $(document).ready(function () {
       $('#dtHorizontalExample').DataTable({
