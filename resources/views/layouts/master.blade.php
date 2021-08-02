@@ -223,6 +223,14 @@
         });
       });
 
+      $(document).ready(function () {
+      $('#dtHorizontalExample').DataTable({
+      "scrollX": true
+      });
+      // $('.dataTables_length').addClass('bs-select');
+      });
+
+
       $(function(){
         $('.select2bs4').select2({
           theme: 'bootstrap4',

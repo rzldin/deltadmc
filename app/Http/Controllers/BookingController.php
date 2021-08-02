@@ -1114,8 +1114,10 @@ class BookingController extends Controller
         $tabel = "";
         $tabel1 = "";
         $no = 2;
-        $data = QuotationModel::get_quoteDetail($request['id']);
+        $data       = QuotationModel::get_quoteDetail($request['quote_no']);
+        $company    = MasterModel::company_data();
         $total = 0;
+        $total2 = 0;
         $amount = 0;
         $amount2 = 0;
         $a = 1;
@@ -1128,26 +1130,34 @@ class BookingController extends Controller
                     $style = '';
                 }
 
-                $total += ($row->rate * $row->qty);
-                $amount += ($row->cost_val * $total) + $row->vat;
-                $amount2 += ($row->sell_val * $total) + $row->vat;
+                $total += ($row->qty * $row->cost_val);
+                $total2 += ($row->qty * $row->sell_val);
+                $amount += ($total * $row->rate) + $row->vat;
+                $amount2 += ($total2 * $row->rate) + $row->vat;
 
                 // Cost
                 $tabel .= '<tr>';
                 $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
                 $tabel .= '<td>'.($no-1).'</td>';
-                $tabel .= '<td class="text-left">'.$row->code.'</td>';
+                $tabel .= '<td class="text-left">'.$row->name_charge.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.'</td>';
                 $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel .= '<td class="text-left">'.$row->code_currency.'</td>';
-                $tabel .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($row->cost,2,',','.').'</td>';
                 $tabel .= '<td class="text-left">'.number_format($total,2,',','.').'</td>';
-                $tabel .= '<td class="text-left">'.number_format($row->cost_val,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel .= '<td class="text-left">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-left">'.number_format($amount,2,',','.').'</td>';
                 if($row->paid_to == null){
-                    $tabel .= '<td class="text-left"><input type="text" name="paid_to" id="paid_to_'.$no.'" placeholder="Paid to..." class="form-control"></td>';
+                    //$tabel .= '<td class="text-left"><input type="text" name="paid_to" id="paid_to_'.$no.'" placeholder="Paid to..." class="form-control"></td>';
+                    $tabel .= '<td>';
+                    $tabel .= '<select id="paid_to_'.$no.'" name="paid_to" class="form-control select2bs44"style="margin-bottom:5px;>';
+                    foreach($company as $item){
+                        $tabel .= '<option value="'.$item->client_name.'">'.$item->client_code.'</option>';
+                    }
+                    $tabel .= '</select>';
+                    $tabel .= '</td>';
                     $displayx = '';
                 }else{
                     $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
@@ -1169,18 +1179,27 @@ class BookingController extends Controller
                 $tabel1 .= '<tr>';
                 $tabel1 .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
                 $tabel1 .= '<td>'.($no-1).'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->code.'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->name_charge.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
                 $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->code_currency.'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($row->sell,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.number_format($total2,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-left">'.number_format($row->rate,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-left">'.number_format($total,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-left">'.number_format($row->sell_val,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-left">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-left">'.number_format($amount2,2,',','.').'</td>';
                 if($row->bill_to == null){
-                    $tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
+                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
+                    $tabel1 .= '<td>';
+                    $tabel1 .= '<select id="bill_to_'.$no.'" name="bill_to" class="form-control select2bs44" ';
+                    $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;>';
+                    $tabel1 .= '<option value="">--Select Company--</option>';
+                    foreach($company as $item){
+                        $tabel1 .= '<option value="'.$item->client_name.'">'.$item->client_code.'</option>';
+                    }
+                    $tabel1 .= '</select>';
+                    $tabel1 .= '</td>';
                     $display = '';
                 }else{
                     $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';

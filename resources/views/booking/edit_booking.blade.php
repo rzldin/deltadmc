@@ -628,29 +628,29 @@
                                                 <div class="card-header">
                                                     <h5>Cost</h5>
                                                 </div>
-                                                <div class="card-body">
-                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                <div class="card-body table-responsive p-0">
+                                                    <table class="table table-bordered table-striped" id="myTable2" width="200%">
                                                         <thead>
-                                                          <tr>
-                                                            <td>#</td>
-                                                            <td>No.</th>
-                                                            <td>Service/Fee</td>
-                                                            <td>Description</th>
-                                                            <td>Reimbursment</td>
-                                                            <td>Unit</td>
-                                                            <td>Currency</td>
-                                                            <td>rate/unit</td>
-                                                            <td>Total</td>
-                                                            <td>ROE</td>
-                                                            <td>Vat</td>
-                                                            <td>Amount</td>
-                                                            <td>Paid To</td>
-                                                            <td>Note</td>
-                                                            <td>Action</td>
-                                                          </tr>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>No.</th>
+                                                                <th>Service/Fee</th>
+                                                                <th>Description</th>
+                                                                <th>Reimbursment</th>
+                                                                <th>Unit</th>
+                                                                <th>Currency</th>
+                                                                <th>rate/unit</th>
+                                                                <th>Total</th>
+                                                                <th>ROE</th>
+                                                                <th>Vat</th>
+                                                                <th>Amount</th>
+                                                                <th style="width:50%;">Paid To</th>
+                                                                <th>Note</th>
+                                                                <th>Action</th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody id="tblCost">
-                                            
+                                                            
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -659,25 +659,25 @@
                                                 <div class="card-header">
                                                     <h5>Sell</h5>
                                                 </div>
-                                                <div class="card-body">
-                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                <div class="card-body table-responsive p-0">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 200%">
                                                         <thead>
                                                           <tr>
-                                                            <td>#</td>
-                                                            <td>No.</th>
-                                                            <td>Service/Fee</td>
-                                                            <td>Description</th>
-                                                            <td>Reimbursment</td>
-                                                            <td>Unit</td>
-                                                            <td>Currency</td>
-                                                            <td>rate/unit</td>
-                                                            <td>Total</td>
-                                                            <td>ROE</td>
-                                                            <td>Vat</td>
-                                                            <td>Amount</td>
-                                                            <td>Bill To</td>
-                                                            <td>Note</td>
-                                                            <td>Action</td>
+                                                            <th>#</th>
+                                                            <th>No.</th>
+                                                            <th>Service/Fee</th>
+                                                            <th>Description</th>
+                                                            <th>Reimbursment</th>
+                                                            <th>Unit</th>
+                                                            <th>Currency</th>
+                                                            <th>rate/unit</th>
+                                                            <th>Total</th>
+                                                            <th>ROE</th>
+                                                            <th>Vat</th>
+                                                            <th>Amount</th>
+                                                            <th style="width:10%;">Bill To</th>
+                                                            <th>Note</th>
+                                                            <th>Action</th>
                                                           </tr>
                                                         </thead>
                                                         <tbody id="tblSell">
@@ -1120,11 +1120,11 @@
         }
 
         /** Load Schedule **/
-        function loadSellCost(id){
+        function loadSellCost(val){
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadSellCost') }}",
-                data:"id="+id,
+                data:"quote_no="+val,
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -1134,11 +1134,14 @@
             })
         }
 
-        function loadProfit(id){
+        function loadProfit(val, id){
             $.ajax({
                 type:"POST",
                 url:"{{ route('quotation.quote_loadProfit') }}",
-                data:"id="+id,
+                data:{
+                    quote_no : val,
+                    id       : id
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2180,7 +2183,7 @@
                     v : v
                 },
                 success:function(result){
-                    loadSellCost({{ $quote->t_quote_id }})
+                    loadSellCost('{{ $quote->quote_no }}')
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Update Data!'
@@ -2199,8 +2202,8 @@
             loadDoc({{ Request::segment(3) }}); 
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
-            loadSellCost({{ $quote->t_quote_id }})
-            loadProfit({{ $quote->t_quote_id }})
+            loadSellCost('{{ $quote->quote_no }}')
+            loadProfit('{{ $quote->quote_no }}', {{ $quote->t_quote_id }})
         });
     </script>
 @endpush
