@@ -20,3 +20,18 @@ AMOUNT = TOTAL * ROE + VAT
 PAID TO = COMPANY, KELUARIN CODE PERUSAHAAN
 
 pieces, weight, volume ga mandatory
+
+quotation 
+
+detail kebawa semua, shipping line option
+
+quote ke booking hanya yg final
+
+create booking order, cek dulu di tbl shippine line hanya boleh 1. shipping line harusnya pindah ke booking order.
+ada booking tanpa quotation -> jadi nambah menu nomination (dibawah menu booking) -> klik buat form booking. -> quote number isinya tulisan 'nomination'.
+
+Copy booking (hanya booking nya aja, gaperlu copy quotation). Booking numbernya beda. (tandain copy dari booking id mana). Kecuali kolom2 eta, etd, tanggal.
+
+Print quotation bikinin tampilan print. table shipping line(qty, sale, total), detail qoutes, profit analysis as total (hanya sale nya aja).
+
+Print booking bikinin tampilan print. dikiri tabel cost, kanan tabel sale. informasi keluarin semuanya.
