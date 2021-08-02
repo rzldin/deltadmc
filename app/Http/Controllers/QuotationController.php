@@ -841,8 +841,14 @@ class QuotationController extends Controller
         $data = QuotationModel::get_quoteProfit($request->quote_no);
         $quote = QuotationModel::get_detailQuote($request->id);
         
+            if($quote->shipment_by != 'LAND'){
+                $colspan = 7;
+            }else{
+                $colspan = 4;
+            }
             if(count($data) == 0){
-                $tabel .= '<tr><td colspan="7" class="text-center"><strong>Not Available.</strong></td></tr>';
+                
+                $tabel .= '<tr><td colspan="'.$colspan.'" class="text-center"><strong>Not Available.</strong></td></tr>';
             }else{
                 foreach($data as $row)
                 {
