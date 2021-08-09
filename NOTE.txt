@@ -23,7 +23,9 @@ pieces, weight, volume ga mandatory
 
 quotation 
 
-detail kebawa semua, shipping line option
+alur aplikasi, orang buat jika create booking, di cek dulu jika shipping detail jika lebih dari 1, ada warning alert quotation lebih dari satu, baru dibikinin booking order
+kolom lain yang gaada digabungin ke note, 
+detail kebawa semua, shipping line option (mindahin ke booking, shipping detail ga kebawa)
 
 quote ke booking hanya yg final
 
@@ -35,3 +37,39 @@ Copy booking (hanya booking nya aja, gaperlu copy quotation). Booking numbernya 
 Print quotation bikinin tampilan print. table shipping line(qty, sale, total), detail qoutes, profit analysis as total (hanya sale nya aja).
 
 Print booking bikinin tampilan print. dikiri tabel cost, kanan tabel sale. informasi keluarin semuanya.
+
+
+#Buat charges and fee di booking
+Ada charges namanya shipping
+
+service/fee nya dari charges code air freight/OCEAN FREIGHT
+
+descriptionnya carriernya apa
+
+carrier dari quote detail, langsung diisi ke carrier di booking
+booking number bikin mandatory
+
+#quotation
+di preview quotation bikinin pdf cetakan
+
+-- Shiping detail diatas
+
+A
+1. carrier  sell qty sell value vat total
+2. carrier
+
+-- Detail quote
+1. service/fee Sell qty sell value vat total
+
+-- Total
+1. carrier routing transit time sell
+
+#booking - charges and view(landscape cost di kiri, sell di kanan)
+preview booking
+
+#copy booking
+note, copy from booking no berapa
+
+air freight/sea freight tergantung jenis pengiriman dari shipment_by
+
+shipment by, kalo sea, ga boleh pelabuhan udara, kalo air ga boleh laut

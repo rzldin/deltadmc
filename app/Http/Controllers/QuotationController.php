@@ -42,6 +42,19 @@ class QuotationController extends Controller
         echo json_encode($table);
     }
 
+    public function get_port(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::get_port($request['type']);
+        foreach($data as $d)
+        {
+            $table .= '<option id="'.$d->id.'" value="'.$d->port_name.' - '.$d->address.'"></option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
     public function get_customer()
     {
         $table = '';
@@ -450,13 +463,13 @@ class QuotationController extends Controller
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
-                $tabel .= '<td class="text-right">'.($no-1).'</td>';
+                $tabel .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
                     $tabel .= '<td>'.$row->truck_size.'</td>';     
                 }else{
                     $tabel .= '<td>'.$row->name_carrier.'</td>';
                     $tabel .= '<td>'.$row->routing.'</td>';
-                    $tabel .= '<td class="text-right">'.$row->transit_time.'</td>';
+                    $tabel .= '<td>'.$row->transit_time.'</td>';
                 }
                 $tabel .= '<td>'.$row->code_currency.'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
@@ -469,12 +482,12 @@ class QuotationController extends Controller
                 $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
                 $tabel .= '<td>'.$row->notes.'</td>';
                 $tabel .= '<td style="text-align:center;">';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetails('.$row->id.');" style="margin-top:5px">'
-                        . '<i class="fa fa-edit"></i> Edit</a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                        . '" onclick="hapusDetails('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-trash"></i> Del&nbsp;&nbsp;</a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
+                        . '" onclick="editDetails('.$row->id.');">'
+                        . '<i class="fa fa-edit"></i></a>';
+                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
+                        . '" onclick="hapusDetails('.$row->id.');" style="margin-left:5px"> '
+                        . '<i class="fa fa-trash"></i></a>';
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -500,6 +513,7 @@ class QuotationController extends Controller
     {
         try {
             DB::table('t_quote_shipg_dtl')->where('id', $request['id'])->delete();
+            DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $request['id'])->delete();
 
             $return_data = 'sukses';
         } catch (\Exception $e) {
@@ -513,6 +527,13 @@ class QuotationController extends Controller
     public function quote_getDetailShipping(Request $request)
     { 
         $data = QuotationModel::getShippingDetail($request->id);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
+
+    public function quote_getCurrencyCode(Request $request)
+    { 
+        $data = QuotationModel::getCurrencyCode($request->id);
         header('Content-Type: application/json');
         echo json_encode($data);
     }
@@ -608,7 +629,6 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-
         $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
         if(count($detail) > 1){
             foreach($data as $shipping){
@@ -674,9 +694,9 @@ class QuotationController extends Controller
                 foreach($data as $row)
                 {
                     $tabel .= '<tr>';
-                    $tabel .= '<td class="text-right">'.($no-1).'</td>';
-                    $tabel .= '<td class="text-right">'.$row->name_charge.'</td>';
-                    $tabel .= '<td class="text-right">'.$row->desc.'</td>';
+                    $tabel .= '<td>'.($no-1).'</td>';
+                    $tabel .= '<td>'.$row->name_charge.'</td>';
+                    $tabel .= '<td>'.$row->desc.'</td>';
                     if($row->reimburse_flag == 1){
                         $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')"></td>';
                         $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
@@ -684,7 +704,7 @@ class QuotationController extends Controller
                         $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" onchange="reims('.$no.')"></td>';
                         $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
                     }
-                    $tabel .= '<td class="text-center">'.$row->code_currency.'</td>';
+                    $tabel .= '<td>'.$row->code_currency.'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
@@ -693,14 +713,14 @@ class QuotationController extends Controller
                     $tabel .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
-                    $tabel .= '<td class="text-right">'.$row->notes.'</td>';
+                    $tabel .= '<td>'.$row->notes.'</td>';
                     $tabel .= '<td style="text-align:center;">';
-                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                            . '" onclick="editDetailx('.$row->id.');" style="margin-top:5px" id="btnEditx_'.$no.'"> '
-                            . '<i class="fa fa-edit"></i> Edit</a>';
-                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                            . '" onclick="hapusDetailx('.$row->id.');" style="margin-top:5px"> '
-                            . '<i class="fa fa-trash"></i> Del&nbsp;&nbsp;</a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
+                            . '" onclick="editDetailx('.$row->id.');" id="btnEditx_'.$no.'"> '
+                            . '<i class="fa fa-edit"></i></a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
+                            . '" onclick="hapusDetailx('.$row->id.');" style="margin-left:2px"> '
+                            . '<i class="fa fa-trash"></i></a>';
                     $tabel .= '</td>';
                     $tabel .= '</tr>';
                     $no++;
@@ -841,6 +861,7 @@ class QuotationController extends Controller
         $data = QuotationModel::get_quoteProfit($request->quote_no);
         $quote = QuotationModel::get_detailQuote($request->id);
         
+        
             if($quote->shipment_by != 'LAND'){
                 $colspan = 7;
             }else{
@@ -947,6 +968,16 @@ class QuotationController extends Controller
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
 
+    }
+
+    public function quote_preview($no,$id)
+    {
+        $data['shipping']       = QuotationModel::get_quoteShipping($no);
+        $data['detail_quote']   = QuotationModel::get_quoteDetail($no);
+        $data['profit']         = QuotationModel::get_quoteProfit($no);
+        $data['quote']          = QuotationModel::get_detailQuote($id);
+
+        return view('quotation.quote_preview')->with($data);
     }
 
 }

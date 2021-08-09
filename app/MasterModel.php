@@ -127,6 +127,11 @@ class MasterModel extends Model
         return DB::table('t_mport')->where('id', $id)->first();
     }
 
+    public static function get_port($type)
+    {
+        return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id WHERE a.port_type='".$type."' ORDER BY a.port_name");
+    }
+
     public static function currency()
     {
         return DB::table('t_mcurrency')->orderBy('name')->get();

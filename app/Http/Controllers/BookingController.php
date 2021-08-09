@@ -43,6 +43,19 @@ class BookingController extends Controller
         
     }
 
+    public function nomination()
+    {   
+        $data['doc']            = MasterModel::get_doc();
+        $data['company']        = MasterModel::company_data();
+        $data['cust_addr']      = DB::table('t_maddress')->get();
+        $data['cust_pic']       = DB::table('t_mpic')->get();
+        $data['carrier']        = MasterModel::carrier();
+        $data['port']           = MasterModel::port();
+        $data['currency']       = MasterModel::currency();
+        $data['freight']        = MasterModel::freight_get();
+        return view('booking.nomination')->with($data);
+    }
+
     public static function header_domestic($quote)
     {
         $data['quote']          = $quote;

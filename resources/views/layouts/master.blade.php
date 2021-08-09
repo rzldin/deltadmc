@@ -36,11 +36,16 @@
       <!-- summernote -->
       <link rel="stylesheet" href="{{ asset('admin/plugins/summernote/summernote-bs4.min.css') }}">
       <style>
-        .disabledx {
-          opacity: .4;
-          pointer-events: none;
-          cursor: no-drop !important;
-        }
+          .disabledx {
+            opacity: .4;
+            pointer-events: none;
+            cursor: no-drop !important;
+          }
+
+          #myTable2 tbody th, #myTable2 tbody td {
+              padding: 4px 8px;
+          }
+
       </style>
       <!-- jQuery -->
       <script src="{{ asset('admin/plugins/jquery/jquery.min.js') }}"></script>

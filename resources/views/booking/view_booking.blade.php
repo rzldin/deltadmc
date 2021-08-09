@@ -1338,6 +1338,7 @@
                 <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $booking->id }}')"><i class="fa fa-check"></i> Approve</a>
                 @endif
                 <a href="{{ route('booking.list') }}" class="btn btn-secondary float-left"><i class="fa fa-angle-left"></i> Back</a>
+                <a class="btn btn-info float-left ml-2"><i class="fa fa-copy"></i> Copy Booking</a>
             </div>
         </div>
     </div>

@@ -46,7 +46,7 @@
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>Quote Number</label>
+                                        <label>Quote Number <font color="red">*</font></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}">
@@ -131,9 +131,9 @@
                                     <div class="col-md-8">
                                         <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ..." value="{{ $quote->from_text }}">
                                         <datalist id="fromx">
-                                            @foreach ($port as $p)
-                                            <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                            @endforeach
+                                            {{-- @foreach ($port as $p)
+                                            <option id="{{ $p->id }}" value="{{ $p->port_name }} - {{ $p->address  }}"></option>
+                                            @endforeach --}}
                                         </datalist>
                                         <input type="hidden" name="from_id" id="from_id">
                                     </div>
@@ -168,7 +168,7 @@
                                         <label>Shipment By</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;">
+                                        <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;" onchange="get_fromto(this.value)">
                                             <option selected>-- Select Shipment --</option>
                                             <option value="SEA" @if ($quote->shipment_by == "SEA")
                                                 selected
@@ -204,9 +204,9 @@
                                     <div class="col-md-8">
                                         <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}">
                                         <datalist id="tox">
-                                            @foreach ($port as $p)
+                                            {{-- @foreach ($port as $p)
                                             <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                            @endforeach
+                                            @endforeach --}}
                                             <input type="hidden" name="to_id" id="to_id">
                                         </datalist>
                                     </div>
@@ -394,28 +394,28 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2">
+                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 300% @else width: 240% @endif">
                             <thead>
                                 <tr>
                                     <th width="2%">No</th>
                                     @if ($quote->shipment_by == 'LAND')
-                                    <th>Truck Size</th>
+                                    <th width="15%">Truck Size</th>
                                     @else
                                     <th width="15%">Carrier</th>
                                     <th width="10%">Routing</th>
                                     <th width="5%">Transit time(days)</th>
                                     @endif
-                                    <th width="8%">Currency</th>
-                                    <th>Rate</th>
-                                    <th>Cost</th>
-                                    <th>Sell</th>
+                                    <th width="5%">Currency</th>
+                                    <th width="6%">Rate</th>
+                                    <th width="6%">Cost</th>
+                                    <th width="6%">Sell</th>
                                     <th width="5%">Qty</th>
-                                    <th>Cost Value</th>
-                                    <th>Sell Value</th>
+                                    <th width="6%">Cost Value</th>
+                                    <th width="6%">Sell Value</th>
                                     <th width="5%">Vat</th>
-                                    <th width="10%">Total</th>
-                                    <th width="15%">Note</th>
-                                    <th width="8%">Action</th>
+                                    <th width="7%">Total</th>
+                                    <th width="12%">Note</th>
+                                    <th width="5%">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tblShipping">
@@ -437,6 +437,7 @@
                             <form class="eventInsForm" method="post" target="_self" name="formku" 
                                   id="formRoad" enctype="multipart/form-data">
                                 {{ csrf_field() }}
+                                <input type="hidden" name="id_s" id="id_s">
                                 @if ($quote->shipment_by == 'LAND')
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
@@ -459,7 +460,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <input type="hidden" name="id_s" id="id_s">
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
@@ -483,7 +483,7 @@
                                         Currency <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <select class="form-control select2bs44" name="currency" id="currency_ship_dtl">
+                                        <select class="form-control select2bs44" name="currency" id="currency_ship_dtl" onchange="get_rate(this.value)">
                                             <option value="">--Select Currency--</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
@@ -579,25 +579,25 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2">
+                       <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
                            <thead>
-                               <tr>
-                                   <th>No</th>
-                                   <th>Service/Fee</th>
-                                   <th>Description</th>
-                                   <th>Reimbursment</th>
-                                   <th>Currency</th>
-                                   <th>Rate</th>
-                                   <th>Cost</th>
-                                   <th>Sell</th>
-                                   <th>Qty</th>
-                                   <th>Cost Value</th>
-                                   <th>Sell Value</th>
-                                   <th>Vat</th>
-                                   <th>Total</th>
-                                   <th>Note</th>
-                                   <th width="6%">Action</th>
-                               </tr>
+                                <tr>
+                                    <th width="2%">No</th>
+                                    <th width="10%">Service/Fee</th>
+                                    <th width="10%">Description</th>
+                                    <th width="5%">Reimbursment</th>
+                                    <th width="5%">Currency</th>
+                                    <th width="6%">Rate</th>
+                                    <th width="6%">Cost</th>
+                                    <th width="6%">Sell</th>
+                                    <th width="5%">Qty</th>
+                                    <th width="6%">Cost Value</th>
+                                    <th width="6%">Sell Value</th>
+                                    <th width="5%">Vat</th>
+                                    <th width="7%">Total</th>
+                                    <th width="12%">Note</th>
+                                    <th width="5%">Action</th>
+                                </tr>
                            </thead>
                            <tbody id="tblDetail">
                                
@@ -645,7 +645,7 @@
                                         Currency <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <select class="form-control select2bs44" name="currency" id="currencyx">
+                                        <select class="form-control select2bs44" name="currency" id="currencyx" onchange="get_rate(this.value)">
                                             <option value="">--Select Currency--</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
@@ -776,7 +776,7 @@
                 <a href="{{ url('quotation/quote_new/'.$quote->id) }}" class="btn btn-info float-left mr-2"> 
                     <i class="fa fa-plus"></i> New Version 
                 </a>
-                <a href="" class="btn btn-primary float-left mr-2"> 
+                <a href="{{ url('quotation/preview/'.$quote->quote_no.'/'.$quote->id) }}" target="_blank" class="btn btn-primary float-left mr-2"> 
                     <i class="fa fa-file"></i> Preview Quotation 
                 </a>
                 <a href="" class="btn btn-danger float-left mr-2 @if ($quote->final_flag !== 1)
@@ -784,7 +784,7 @@
                 @endif"> 
                     <i class="fa fa-envelope"></i> Send Email 
                 </a>
-                <a href="{{ url('booking/header_booking/'.$quote->id) }}" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
+                <a onclick="createBooking()" class="btn btn-success float-left mr-2 @if ($quote->final_flag !== 1)
                     disabledx
                 @endif"> 
                     <i class="fa fa-plus"></i> Create Booking Order 
@@ -832,6 +832,43 @@
                     var final = JSON.parse(result);
                     
                     $("#pic").html(final);
+                }
+            });
+        }
+    }
+
+    function get_rate(val)
+    {
+        $.ajax({
+            type:"POST",
+            url:"{{ route('quotation.quote_getCurrencyCode') }}",
+            data:{
+                id : val
+            },
+            success:function(result){
+                let text = JSON.parse(result)
+                let code = text.code
+
+                if(code == 'IDR'){
+                    $('#rate').val(1);
+                    $('#ratex').val(1);
+                }
+            }
+        });
+    }
+
+    function get_fromto(val)
+    {
+        if(val!= ''){
+            $.ajax({
+                url: "{{ route('get.port') }}",
+                type: "POST",
+                data: "type="+val,
+                dataType: "html",
+                success: function(result) {
+                    var port = JSON.parse(result);
+                    $("#fromx").html(port);
+                    $("#tox").html(port);
                 }
             });
         }
@@ -1646,6 +1683,24 @@
                 });
             }
         }
+    }
+
+    function createBooking()
+    {
+        var table = document.getElementById("tblShipping");
+        var countTbl = table.rows.length;
+
+        if(countTbl > 1){
+            Swal.fire({
+                title: 'Error!',
+                text: 'shipping details match not be more then one!',
+                icon: 'error'
+            })
+        }else{
+            window.location.href = "{{ url('booking/header_booking/'.$quote->id) }}";
+        }
+
+
     }
 
     function updateData()

@@ -198,7 +198,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(array('GET', 'POST'), '/quotation/quote_edit/{id}', 'QuotationController@quote_edit')->name('quotation.quote_edit');
     Route::post('/quotation/quote_doUpdate', 'QuotationController@quote_doUpdate')->name('quotation.quote_doUpdate');
     Route::get('quotation/quote_new/{id}', 'QuotationController@quote_new')->name('quotation.quote_new');
+    Route::match(array('GET', 'POST'), 'quotation/preview/{no}/{id}', 'QuotationController@quote_preview');
     Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
+    Route::post('get/port', 'QuotationController@get_port')->name('get.port');
+    Route::post('/quotation/quote_getCurrencyCode', 'QuotationController@quote_getCurrencyCode')->name('quotation.quote_getCurrencyCode');
     Route::match(array('GET', 'POST'), '/quotation/customer', 'QuotationController@get_customer')->name('get.customer');
 
     #Load Detail Dimension
@@ -237,6 +240,8 @@ Route::group(['middleware' => 'auth'], function(){
 
     /** Booking */
     Route::get('booking/list', 'BookingController@index')->name('booking.list');
+    Route::get('booking/nomination', 'BookingController@nomination')->name('booking.nomination');
+    Route::get('booking/nomination_doAdd', 'BookingController@addNomination')->name('booking.nomination_doAdd');
     Route::match(array('GET', 'POST'), 'booking/edit_booking/{id}', 'BookingController@edit_booking')->name('booking.edit');
     Route::match(['get', 'post'], 'booking/header_booking/{id}', 'BookingController@header_booking')->name('booking.header');
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');

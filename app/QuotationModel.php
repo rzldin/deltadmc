@@ -78,6 +78,11 @@ class QuotationModel extends Model
         return DB::table('t_quote_shipg_dtl')->where('id', $id)->first();
     }
 
+    public static function getCurrencyCode($id)
+    {
+        return DB::table('t_mcurrency')->where('id', $id)->first();
+    }
+
     public static function getDetailQuote($id)
     {
         return DB::table('t_quote_dtl')->where('id', $id)->first();
