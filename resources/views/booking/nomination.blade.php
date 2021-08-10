@@ -101,7 +101,7 @@
                                                             <label>Activity <font color="red">*</font></label>
                                                         </div>
                                                         <div class="col-md-8">
-                                                            <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity">
+                                                            <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity" onchange="get_activity(this.value)">
                                                                 <option value="" selected>-- Select Activity --</option>
                                                                 <option value="export">EXPORT</option>
                                                                 <option value="import">IMPORT</option>
@@ -537,15 +537,16 @@
                                                 <label>ETA</label>
                                             </div>
                                             <div class="col-md-8">
-                                                <div class="input-group date" id="reservationdatez" data-target-input="nearest">
+                                                <div class="input-group date" id="ETA" data-target-input="nearest">
                                                     <input type="text" name="eta" id="eta" class="form-control datetimepicker-input" data-target="#reservationdate"/>
-                                                    <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
+                                                    <div class="input-group-append" data-target="#ETA" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
+                                                {{-- <input type="date" class="form-control"> --}}
                                             </div>
                                         </div>
-                                        <div class="row mb-3 port2">
+                                        <div class="row mb-3 port-of-loading">
                                             <div class="col-md-4">
                                                 <label>Port Of Loading</label>
                                             </div>
@@ -561,7 +562,7 @@
                                                 <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 pol2">
+                                        <div class="row mb-3 pol-custom-desc">
                                             <div class="col-md-4">
                                                 <label>POL Custom Desc</label>
                                             </div>
@@ -569,7 +570,7 @@
                                                 <input type="text" name="pol_desc" id="pol_desc" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="row mb-3 pot2">
+                                        <div class="row mb-3 port-of-transit">
                                             <div class="col-md-4">
                                                 <label>Port Of Transit</label>
                                             </div>
@@ -585,7 +586,7 @@
                                                 <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 pod2">
+                                        <div class="row mb-3 port-of-discharge">
                                             <div class="col-md-4">
                                                 <label>Port Of Discharge</label>
                                             </div>
@@ -601,7 +602,7 @@
                                                 <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 podesc2">
+                                        <div class="row mb-3 pod-custom-desc">
                                             <div class="col-md-4">
                                                 <label>POD Custom Desc</label>
                                             </div>
@@ -720,8 +721,107 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="card card-secondary commodity-of-terms">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Commodity Of Terms</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label>Incoterms</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control select2bs44" style="width: 100%;" name="incoterms" id="incoterms">
+                                                                    @foreach ($inco as $row)
+                                                                    <option value="{{ $row->id }}">{{ $row->incoterns_code }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label for="">Value Of Commodity</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control" name="value_commodity" id="value_commodity" placeholder="Enter Value Of Commodity ...">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label>Valuta Of Commodity</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control select2bs44" style="width: 100%;" name="valuta_com" id="valuta_com">
+                                                                    <option value="" selected>-- Select Valuta --</option>
+                                                                    @foreach ($currency as $item)
+                                                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label for="">Exchange Rates</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <input type="text" class="form-control" name="exchange_rate" id="exchange_rate" placeholder="Enter Exchange Rate ...">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-md-4">
+                                                                <label>Exchange Valuta</label>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta">
+                                                                    <option value="" selected>-- Select Valuta --</option>
+                                                                    @foreach ($currency as $item)
+                                                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
+                                    <div class="col-md-6 domestic">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label>Stuffing Date</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="input-group date" id="stuffingDate" data-target-input="nearest">
+                                                            <input type="text" name="stuf_date" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                            <div class="input-group-append" data-target="#stuffingDate" data-toggle="datetimepicker">
+                                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label for="">Place Of Stuffing</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea name="pos" id="pos" cols="70" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label for="">Delivery Of Goods</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea name="dogs" id="dogs" cols="70" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -869,15 +969,29 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-3 print-hbl-awb">
+                        <div class="row">
                             <div class="col-md-6">
+                                <div class="row mb-3 bl-issued">
+                                    <div class="col-md-4">
+                                        <label>B/L Issued</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" style="width: 100%;" name="mbl_issued" id="mbl_issued">
+                                            <option value="" selected>-- Select B/L Issued --</option>
+                                            @foreach ($mbl_issued as $item)
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 print-hbl-awb">
                                 <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
                                 <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
                                 <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
                             </div>
                         </div>
+                        <br>
                         <div class="row remarks">
                             <div class="col-md-2">
                                 <label>Remarks</label>
@@ -905,12 +1019,95 @@
         $(".shipment-information").hide();
         $(".freight-charges").hide();
         $(".stuffing-information").hide();
+        $(".port-of-loading").hide();
+        $(".pol-custom-desc").hide();
+        $(".port-of-transit").hide();
+        $(".port-of-discharge").hide();
+        $(".pod-custom-desc").hide();
+        $(".domestic").hide();
+        $(".commodity-of-terms").hide();
         $(".master-bl-information").hide();
         $(".house-awb-information").hide();
+        $(".bl-issued").hide();
         $(".print-hbl-awb").hide();
         $(".remarks").hide();
     })
+
+    function get_activity(val)
+    {
+        if(val == 'export'){
+            $(".customs-information").show();
+            $(".only-import").hide();
+            $(".shipment-information").show();
+            $(".freight-charges").show();
+            $(".stuffing-information").show();
+            $(".port-of-loading").show();
+            $(".pol-custom-desc").show();
+            $(".port-of-transit").show();
+            $(".port-of-discharge").show();
+            $(".pod-custom-desc").show();
+            $(".domestic").hide();
+            $(".commodity-of-terms").hide();
+            $(".master-bl-information").show();
+            $(".house-awb-information").show();
+            $(".bl-issued").show();
+            $(".print-hbl-awb").show();
+            $(".remarks").show();
+        }else if(val == 'import'){
+            $(".customs-information").show();
+            $(".only-import").show();
+            $(".shipment-information").show();
+            $(".freight-charges").show();
+            $(".stuffing-information").hide();
+            $(".port-of-loading").show();
+            $(".pol-custom-desc").show();
+            $(".port-of-transit").show();
+            $(".port-of-discharge").show();
+            $(".pod-custom-desc").show();
+            $(".domestic").hide();
+            $(".commodity-of-terms").show();
+            $(".master-bl-information").show();
+            $(".house-awb-information").show();
+            $(".bl-issued").hide();
+            $(".print-hbl-awb").show();
+            $(".remarks").show();
+        }else if(val == 'domestic'){
+            $(".customs-information").hide();
+            $(".only-import").hide();
+            $(".shipment-information").show();
+            $(".freight-charges").hide();
+            $(".stuffing-information").hide();
+            $(".port-of-loading").hide();
+            $(".pol-custom-desc").hide();
+            $(".port-of-transit").hide();
+            $(".port-of-discharge").hide();
+            $(".pod-custom-desc").hide();
+            $(".domestic").show();
+            $(".commodity-of-terms").hide();
+            $(".master-bl-information").hide();
+            $(".house-awb-information").hide();
+            $(".bl-issued").hide();
+            $(".print-hbl-awb").hide();
+            $(".remarks").show();
+        }
+    }
     
+
+    function client_detail(val){
+        if(val!= ''){
+            $.ajax({
+                url: "{{ route('booking.detail') }}",
+                type: "POST",
+                data: "id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#customer_addr").html(final[0]);
+                    $("#customer_pic").html(final[1]);
+                }
+            });
+        }
+    }
 
     function shipper_detail(val){
         if(val!= ''){

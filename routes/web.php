@@ -199,6 +199,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/quotation/quote_doUpdate', 'QuotationController@quote_doUpdate')->name('quotation.quote_doUpdate');
     Route::get('quotation/quote_new/{id}', 'QuotationController@quote_new')->name('quotation.quote_new');
     Route::match(array('GET', 'POST'), 'quotation/preview/{no}/{id}', 'QuotationController@quote_preview');
+    Route::get('booking/copy_booking/{id}', 'BookingController@copy_booking');
     Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
     Route::post('get/port', 'QuotationController@get_port')->name('get.port');
     Route::post('/quotation/quote_getCurrencyCode', 'QuotationController@quote_getCurrencyCode')->name('quotation.quote_getCurrencyCode');

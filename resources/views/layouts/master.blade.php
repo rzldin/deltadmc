@@ -46,6 +46,10 @@
               padding: 4px 8px;
           }
 
+          #myTable tbody th, #myTable tbody td {
+              padding: 4px 8px;
+          }
+
       </style>
       <!-- jQuery -->
       <script src="{{ asset('admin/plugins/jquery/jquery.min.js') }}"></script>
@@ -191,7 +195,14 @@
     $('#reservationdatec').datetimepicker({
         format: 'L'
     });
-    
+
+    $('#ETA').datetimepicker({
+        format: 'L'
+    });
+
+    $('#stuffingDate').datetimepicker({
+        format : 'L'
+    })
       $(function () {
         $('#myTable').DataTable({
           "paging": true,

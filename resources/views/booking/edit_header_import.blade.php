@@ -11,7 +11,9 @@
                         <label>Booking Number</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" readonly>
+                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($quote->booking_no != null)
+                        readonly
+                        @endif>
                         <input type="hidden" name="id_booking" value="{{ $quote->id }}">
                     </div>
                 </div>
@@ -39,17 +41,25 @@
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-5">
+                <?php 
+                    if($quote->nomination_flag == 1){
+                        $quote_no = 'Nomination';
+                    }else{
+                        $quote_no = $quote->quote_no;
+                    }
+                ?>
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Quote Number</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}" readonly>
-                        <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->id }}">
+                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote_no }}" readonly>
+                        <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->t_quote_id }}">
                         <input type="hidden" name="activity" id="activityx" value="{{ $quote->activity }}">
                     </div>
                 </div>
                 <div class="row mb-3">
+                    @if ($quote->nomination_flag == 0)
                     <div class="col-md-4">
                         <label>Quote Date</label>
                     </div>
@@ -61,6 +71,17 @@
                             </div>
                         </div>
                     </div>
+                    @else
+                    <div class="col-md-12">
+                        Note : Jenis Quote <strong>'Nomination'</strong>  
+                    </div>
+                    @endif
+
+                    @if($quote->copy_booking != null)
+                    <div class="col-md-12 mt-3">
+                        Note : Copy From <strong>{{ $quote->copy_booking }}</strong>  
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

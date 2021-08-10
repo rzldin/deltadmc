@@ -31,8 +31,8 @@
                         <thead>
                             <tr>
                                 <th width="3%">No</th>
-                                <th width="15%">Quote No</th>
-                                <th width="5%">Date</th>
+                                <th width="10%">Quote No</th>
+                                <th width="7%">Date</th>
                                 <th width="5%">Latest Version</th>
                                 <th>Customer</th>
                                 <th>PIC</th>
@@ -52,9 +52,9 @@
                                 <td class="text-center">{{ $row->version_no }}</td>
                                 <td>{{ $row->client_name }}</td>
                                 <td>{{ $row->name_pic }}</td>
-                                <td>{{ ucwords($row->activity) }}</td>
-                                <td>{{ $row->loaded_type }}</td>
-                                <td>{{ $row->shipment_by }}</td>
+                                <td class="text-center">{{ ucwords($row->activity) }}</td>
+                                <td class="text-center">{{ $row->loaded_type }}</td>
+                                <td class="text-center">{{ $row->shipment_by }}</td>
                                 @if ($row->status == 1)
                                     <td class="bg-success text-center">
                                         Approved

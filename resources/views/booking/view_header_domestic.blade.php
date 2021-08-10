@@ -37,17 +37,25 @@
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-5">
+                <?php 
+                    if($quote->nomination_flag == 1){
+                        $quote_no = 'Nomination';
+                    }else{
+                        $quote_no = $quote->quote_no;
+                    }
+                ?>
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Quote Number</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}" readonly>
+                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote_no }}" readonly>
                         <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->id }}">
                         <input type="hidden" name="activity" value="{{ $quote->activity }}">
                     </div>
                 </div>
                 <div class="row mb-3">
+                    @if ($quote->nomination_flag == 0)
                     <div class="col-md-4">
                         <label>Quote Date</label>
                     </div>
@@ -59,6 +67,11 @@
                             </div>
                         </div>
                     </div>
+                    @else
+                    <div class="col-md-12">
+                        Note : Jenis Quote <strong>'Nomination'</strong>  
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -369,7 +382,9 @@
                         <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
                             <option value="" selected>-- Select Carrier --</option>
                             @foreach ($carrier as $row)
-                            <option value="{{ $row->id }}">{{ $row->name }}</option>
+                            <option value="{{ $row->id }}" @if ($quote->carrier_id == $row->id)
+                                selected
+                            @endif>{{ $row->name }}</option>
                             @endforeach
                         </select>
                     </div>

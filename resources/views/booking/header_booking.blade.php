@@ -193,48 +193,6 @@
                 text: 'Please input Booking Number',
                 icon: 'error'
             })
-        }else if($.trim($("#booking_date").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Select Booking Date',
-                icon: 'error'
-            })
-        }else if($.trim($("#customer").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Select Customer',
-                icon: 'error'
-            })
-        }else if($.trim($("#shipper").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Select Shipper',
-                icon: 'error'
-            })
-        }else if($.trim($("#consignee").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Select Consignee',
-                icon: 'error'
-            })
-        }else if($.trim($("#notify_party").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select Notify Party',
-                icon: 'error'
-            })
-        }else if($.trim($("#agent").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input Agent',
-                icon: 'error'
-            })
-        }else if($.trim($("#shipping_line").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select Shipping Line',
-                icon: 'error'
-            })
         }else{
             $(this).prop('disabled', true).text('Please Wait ...');
             $('#formku').submit();

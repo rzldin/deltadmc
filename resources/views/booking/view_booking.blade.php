@@ -88,28 +88,41 @@
                                                         </div>
                                                         <div class="col-md-1"></div>
                                                         <div class="col-md-5">
+                                                            <?php 
+                                                                if($booking->nomination_flag == 1){
+                                                                    $quote_no = 'Nomination';
+                                                                }else{
+                                                                    $quote_no = $booking->quote_no;
+                                                                }
+                                                            ?>
                                                             <div class="row mb-3">
                                                                 <div class="col-md-4">
                                                                     <label>Quote Number</label>
                                                                 </div>
                                                                 <div class="col-md-8">
-                                                                    <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $booking->quote_no }}" readonly>
+                                                                    <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote_no }}" readonly>
                                                                     <input type="hidden" name="id_quote" id="id_quote" value="{{ $booking->t_quote_id }}">
                                                                     <input type="hidden" name="activity" id="activityx" value="{{ $booking->activity }}">
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-3">
+                                                                @if ($booking->nomination_flag == 0)
                                                                 <div class="col-md-4">
                                                                     <label>Quote Date</label>
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                        <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($booking->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" disabled/>
+                                                                        <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($booking->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
                                                                         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                @else
+                                                                <div class="col-md-12">
+                                                                    Note : Jenis Quote <strong>'Nomination'</strong>  
+                                                                </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -576,7 +589,7 @@
                                                                         </div>
                                                                         <div class="col-md-8">
                                                                             <div class="input-group date" id="reservationdatexx" data-target-input="nearest">
-                                                                                <input type="text" name="stuf_date" id="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                                                <input type="text" name="stuf_date" id="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
                                                                                 <div class="input-group-append" data-target="#reservationdatexx" data-toggle="datetimepicker" aria-disabled="true">
                                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                                 </div>
@@ -912,7 +925,7 @@
                                                                     <label>Total Commodity</label>
                                                                 </div>
                                                                 <div class="col-md-8">
-                                                                    <input type="text" class="form-control" name="total_commo" id="total_commo" placeholder="Total Commodity ..." value="{{ $booking->total_commodity }}" readonly>
+                                                                    <input type="text" class="form-control" name="total_commo" id="total_commo" placeholder="Total Commodity ..." value="{{ count($commodity) }}" readonly>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-3">
@@ -920,7 +933,7 @@
                                                                     <label>Total Package</label>
                                                                 </div>
                                                                 <div class="col-md-8">
-                                                                    <input type="text" class="form-control" name="total_package" id="total_package" placeholder="Total Package ..." value="{{ $booking->total_package }}" readonly>
+                                                                    <input type="text" class="form-control" name="total_package" id="total_package" placeholder="Total Package ..." value="{{ count($packages) }}" readonly>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-3">
@@ -928,7 +941,7 @@
                                                                     <label>Total Container</label>
                                                                 </div>
                                                                 <div class="col-md-8">
-                                                                    <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ..." value="{{ $booking->total_container }}" readonly>
+                                                                    <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ..." value="{{ count($container) }}" readonly>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1338,7 +1351,7 @@
                 <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $booking->id }}')"><i class="fa fa-check"></i> Approve</a>
                 @endif
                 <a href="{{ route('booking.list') }}" class="btn btn-secondary float-left"><i class="fa fa-angle-left"></i> Back</a>
-                <a class="btn btn-info float-left ml-2"><i class="fa fa-copy"></i> Copy Booking</a>
+                <a href="{{ url('booking/copy_booking/'.$booking->id) }}"  class="btn btn-info float-left ml-2"><i class="fa fa-copy"></i> Copy Booking</a>
             </div>
         </div>
     </div>
@@ -1370,6 +1383,14 @@
                     });
                 }
             });
+        }
+
+        function copyBooking(val)
+        {
+            var r=confirm(`Anda yakin ingin mengcopy dari data no booking : ${val}?`);
+            if(r == true){
+                window.location.href = "{{ url('booking/copy_booking/'.$booking->id) }}";
+            }
         }
     </script>
 @endpush

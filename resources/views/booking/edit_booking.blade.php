@@ -633,24 +633,24 @@
                                                     <h5>Cost</h5>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                    <table class="table table-bordered table-striped" id="myTable2" width="200%">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th>No.</th>
-                                                                <th>Service/Fee</th>
-                                                                <th>Description</th>
-                                                                <th>Reimbursment</th>
-                                                                <th>Unit</th>
-                                                                <th>Currency</th>
-                                                                <th>rate/unit</th>
-                                                                <th>Total</th>
-                                                                <th>ROE</th>
-                                                                <th>Vat</th>
-                                                                <th>Amount</th>
-                                                                <th style="width:50%;">Paid To</th>
-                                                                <th>Note</th>
-                                                                <th>Action</th>
+                                                                <th width="3%">No.</th>
+                                                                <th width="15%">Service/Fee</th>
+                                                                <th width="7%">Description</th>
+                                                                <th width="7%">Reimbursment</th>
+                                                                <th width="5%">Unit</th>
+                                                                <th width="5%">Currency</th>
+                                                                <th width="7%">rate/unit</th>
+                                                                <th width="8%">Total</th>
+                                                                <th width="8%">ROE</th>
+                                                                <th width="8%">Vat</th>
+                                                                <th width="8%">Amount</th>
+                                                                <th width="10%">Paid To</th>
+                                                                <th width="7%">Note</th>
+                                                                <th width="7%">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblCost">
@@ -2130,48 +2130,6 @@
                     Swal.fire({
                         title: 'Error!',
                         text: 'Please input Booking Number',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#booking_date").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Select Booking Date',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#customer").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Select Customer',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#shipper").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Select Shipper',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#consignee").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Select Consignee',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#notify_party").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please select Notify Party',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#agent").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please input Agent',
-                        icon: 'error'
-                    })
-                }else if($.trim($("#shipping_line").val()) == ""){
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please select Shipping Line',
                         icon: 'error'
                     })
                 }else{
