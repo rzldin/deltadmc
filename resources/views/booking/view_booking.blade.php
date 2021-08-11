@@ -1219,52 +1219,44 @@
                                                 <div class="card-header">
                                                     <h5>Cost</h5>
                                                 </div>
-                                                <div class="card-body">
-                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                <div class="card-body table-responsive p-0">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 200%">
                                                         <thead>
                                                           <tr>
-                                                            <td>No.</th>
-                                                            <td>Service/Fee</td>
-                                                            <td>Description</th>
-                                                            <td>Reimbursment</td>
-                                                            <td>Unit</td>
-                                                            <td>Currency</td>
-                                                            <td>rate/unit</td>
-                                                            <td>Total</td>
-                                                            <td>Cost Val</td>
-                                                            <td>Vat</td>
-                                                            <td>Amount</td>
-                                                            <td>Paid To</td>
-                                                            <td>Note</td>
+                                                            <th width="3%">No.</th>
+                                                            <th width="10%">Service/Fee</th>
+                                                            <th width="15%">Description</th>
+                                                            <th width="5%">Reimbursment</th>
+                                                            <th width="5%">Unit</th>
+                                                            <th width="5%">Currency</th>
+                                                            <th width="7%">rate/unit</th>
+                                                            <th width="8%">Total</th>
+                                                            <th width="8%">ROE</th>
+                                                            <th width="8%">Vat</th>
+                                                            <th width="8%">Amount</th>
+                                                            <th width="10%">Paid To</th>
+                                                            <th width="10%">Note</th>
                                                           </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @php
-                                                                $total = 0;
-                                                                $amount = 0;
-                                                            @endphp
-                                                            @foreach  ($quoteDtl as $item)
-                                                            @php
-                                                                $total += ($item->rate * $item->qty);
-                                                                $amount += ($item->cost_val * $total) + $item->vat;
-                                                            @endphp     
+                                                            @foreach  ($quoteDtl as $row)   
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $item->name_charge }}</td>
-                                                                <td>{{ $item->desc }}</td>
+                                                                <td>{{ $row->charge_name }}</td>
+                                                                <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                                                 <td class="text-center">
-                                                                    <input type="checkbox" style="width:50px;" @if ($item->reimburse_flag == 1)
+                                                                    <input type="checkbox" style="width:50px;" @if ($row->reimburse_flag == 1)
                                                                         checked
                                                                     @endif>
                                                                 </td>
-                                                                <td>{{ $item->qty }}</td>
-                                                                <td>{{ $item->code_currency }}</td>
-                                                                <td>{{ number_format($item->rate,2,',','.') }}</td>
-                                                                <td>{{ number_format($total,2,',','.') }}</td>
-                                                                <td>{{ number_format($item->cost_val,2,',','.') }}</td>
-                                                                <td>{{ number_format($item->vat,2,',','.') }}</td>
-                                                                <td>{{ number_format($amount,2,',','.') }}</td>
-                                                                <td></td>
+                                                                <td>{{ $row->qty }}</td>
+                                                                <td>{{ $row->code_cur }}</td>
+                                                                <td>{{ number_format($row->cost_val,2,',','.') }}</td>
+                                                                <td>{{ number_format(($row->qty * $row->cost_val),2,',','.') }}</td>
+                                                                <td>{{ number_format($row->rate,2,',','.') }}</td>
+                                                                <td>{{ number_format($row->vat,2,',','.') }}</td>
+                                                                <td>{{ number_format((($row->qty * $row->cost_val) * $row->rate) + $row->vat,2,',','.') }}</td>
+                                                                <td>{{ $row->paid_to }}</td>
                                                                 <td></td>
                                                             </tr>
                                                             @endforeach
@@ -1276,8 +1268,8 @@
                                                 <div class="card-header">
                                                     <h5>Sell</h5>
                                                 </div>
-                                                <div class="card-body">
-                                                    <table id="myTablex" class="table table-bordered table-striped" width="100%">
+                                                <div class="card-body table-responsive p-0">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
                                                         <thead>
                                                           <tr>
                                                             <td>No.</th>
@@ -1296,32 +1288,24 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @php
-                                                                $total = 0;
-                                                                $amount = 0;
-                                                            @endphp
-                                                            @foreach  ($quoteDtl as $item)
-                                                            @php
-                                                                $total += ($item->rate * $item->qty);
-                                                                $amount += ($item->sell_val * $total) + $item->vat;
-                                                            @endphp     
+                                                            @foreach  ($quoteDtl as $row)   
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $item->name_charge }}</td>
-                                                                <td>{{ $item->desc }}</td>
+                                                                <td>{{ $row->charge_name }}</td>
+                                                                <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                                                 <td class="text-center">
-                                                                    <input type="checkbox" style="width:50px;" @if ($item->reimburse_flag == 1)
+                                                                    <input type="checkbox" style="width:50px;" @if ($row->reimburse_flag == 1)
                                                                         checked
                                                                     @endif>
                                                                 </td>
-                                                                <td>{{ $item->qty }}</td>
-                                                                <td>{{ $item->code_currency }}</td>
-                                                                <td>{{ number_format($item->rate,2,',','.') }}</td>
-                                                                <td>{{ number_format($total,2,',','.') }}</td>
-                                                                <td>{{ number_format($item->sell_val,2,',','.') }}</td>
-                                                                <td>{{ number_format($item->vat,2,',','.') }}</td>
-                                                                <td>{{ number_format($amount,2,',','.') }}</td>
-                                                                <td></td>
+                                                                <td>{{ $row->qty }}</td>
+                                                                <td>{{ $row->code_cur }}</td>
+                                                                <td>{{ number_format($row->sell_val,2,',','.') }}</td>
+                                                                <td>{{ number_format(($row->qty * $row->sell_val),2,',','.') }}</td>
+                                                                <td>{{ number_format($row->rate,2,',','.') }}</td>
+                                                                <td>{{ number_format($row->vat,2,',','.') }}</td>
+                                                                <td>{{ number_format((($row->qty * $row->sell_val) * $row->rate) + $row->vat,2,',','.') }}</td>
+                                                                <td>{{ $row->bill_to }}</td>
                                                                 <td></td>
                                                             </tr>
                                                             @endforeach

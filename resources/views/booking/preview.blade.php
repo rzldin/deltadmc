@@ -7,7 +7,7 @@
         <table border="0" cellpadding="0" width="100%" cellspacing="0" style="font-family:Microsoft Sans Serif">
             <tr>
                 <td width="44%">
-                    <h4>Sell</h4>
+                    <h4>Cost</h4>
                     <table width="100%" cellspacing="0" border="1" style="font-size: 7px">
                         <thead>
                             <tr>
@@ -52,7 +52,7 @@
                 </td>
                 <td width="2%"></td>
                 <td width="44%">
-                    <h4>Cost</h4>
+                    <h4>Sell</h4>
                     <table width="100%" cellspacing="0" border="1" style="font-size: 7px">
                         <thead>
                             <tr>
@@ -67,7 +67,7 @@
                                 <th>Roe</th>
                                 <th>Vat</th>
                                 <th>Amount</th>
-                                <th>Paid To</th>
+                                <th>Bill To</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,11 +85,11 @@
                                 <td>{{ $row->qty }}</td>
                                 <td>{{ $row->code_cur }}</td>
                                 <td>{{ number_format($row->sell_val,2,',','.') }}</td>
-                                <td>{{ number_format(($row->qty * $row->cost_val),2,',','.') }}</td>
+                                <td>{{ number_format(($row->qty * $row->sell_val),2,',','.') }}</td>
                                 <td>{{ number_format($row->rate,2,',','.') }}</td>
                                 <td>{{ number_format($row->vat,2,',','.') }}</td>
                                 <td>{{ number_format(($total * $row->rate) + $row->vat,2,',','.') }}</td>
-                                <td>{{ $row->paid_to }}</td>
+                                <td>{{ $row->bill_to }}</td>
                             </tr>
                             @endforeach
                         </tbody>

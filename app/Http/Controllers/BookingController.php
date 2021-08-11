@@ -1435,7 +1435,8 @@ class BookingController extends Controller
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
         
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
-        $quoteDtl   = QuotationModel::get_quoteDetail($booking->quote_no);
+        //$quoteDtl   = QuotationModel::get_quoteDetail($booking->quote_no);
+        $quoteDtl   = BookingModel::getChargesDetail($booking->id);
         $schedule   = BookingModel::getSchedule($booking->id);
         $roadCons   = BookingModel::getRoadCons($booking->id);
         $document   = BookingModel::get_document($booking->id);
@@ -1489,6 +1490,7 @@ class BookingController extends Controller
         $container  = BookingModel::get_container($booking->id);
         $packages   = BookingModel::get_packages($booking->id);
         $commodity  = BookingModel::get_commodity($booking->id);
+        $sellcost   = BookingModel::getChargesDetail($booking->id);
 
         $user = Auth::user()->name;
         $tanggal = Carbon::now();
@@ -1660,6 +1662,32 @@ class BookingController extends Controller
                 'position_no'           => $schedule->position_no,
                 'desc'                  => $schedule->desc,
                 'notes'                 => $schedule->notes,
+                'created_by'            => $user,
+                'created_on'            => $tanggal
+            ]);
+        }
+
+        #Insert ChargesDetail
+        foreach($sellcost as $sellcost){
+            DB::table('t_bcharges_dtl')->insert([
+                't_booking_id'          => $id,
+                'position_no'           => $sellcost->position_no,
+                't_mcharge_code_id'     => $sellcost->t_mcharge_code_id,
+                'desc'                  => $sellcost->desc,
+                'reimburse_flag'        => $sellcost->reimburse_flag,
+                'currency'              => $sellcost->currency,
+                'rate'                  => $sellcost->rate,
+                'cost'                  => $sellcost->cost,
+                'sell'                  => $sellcost->sell,
+                'qty'                   => $sellcost->qty,
+                'cost_val'              => $sellcost->cost_val,
+                'sell_val'              => $sellcost->sell_val,
+                'vat'                   => $sellcost->vat,
+                'subtotal'              => $sellcost->subtotal,
+                'routing'               => $sellcost->routing,
+                'transit_time'          => $sellcost->transit_time,
+                'paid_to'               => $sellcost->paid_to,
+                'bill_to'               => $sellcost->bill_to,
                 'created_by'            => $user,
                 'created_on'            => $tanggal
             ]);
