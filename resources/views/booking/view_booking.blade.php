@@ -70,7 +70,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                        <input type="text" name="booking_date" id="booking_date" value="{{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                        <input type="text" name="booking_date" id="booking_date" value="{{ \Carbon\Carbon::parse($booking->booking_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -95,6 +95,7 @@
                                                                     $quote_no = $booking->quote_no;
                                                                 }
                                                             ?>
+                                                            @if ($booking->copy_booking == null)
                                                             <div class="row mb-3">
                                                                 <div class="col-md-4">
                                                                     <label>Quote Number</label>
@@ -112,7 +113,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                        <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($booking->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
+                                                                        <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($booking->quote_date)->format('m/d/Y') }}" data-target="#reservationdate" readonly/>
                                                                         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -124,6 +125,13 @@
                                                                 </div>
                                                                 @endif
                                                             </div>
+                                                            @else
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-12 mt-3">
+                                                                    Note : Copy From <strong>{{ $booking->copy_booking }}</strong>  
+                                                                </div>
+                                                            </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -159,7 +167,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdateDOC" data-target-input="nearest">
-                                                                        <input type="text" name="doc_date" id="doc_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->custom_doc_date)->format('d/m/Y') }}" disabled/>
+                                                                        <input type="text" name="doc_date" id="doc_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->custom_doc_date)->format('m/d/Y') }}" disabled/>
                                                                         <div class="input-group-append" data-target="#reservationdateDOC" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -177,7 +185,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdateDOC" data-target-input="nearest">
-                                                                        <input type="text" name="doc_date" id="doc_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->custom_doc_date)->format('d/m/Y') }}" disabled/>
+                                                                        <input type="text" name="doc_date" id="doc_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->custom_doc_date)->format('m/d/Y') }}" disabled/>
                                                                         <div class="input-group-append" data-target="#reservationdateDOC" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -201,7 +209,7 @@
                                                                     <label>IGM Date</label>
                                                                 </div>
                                                                 <div class="col-md-8">
-                                                                    <input type="text" name="igm_date" id="igm_date" value="{{ \Carbon\Carbon::parse($booking->igm_date)->format('d/m/Y') }}" class="form-control" disabled/>
+                                                                    <input type="text" name="igm_date" id="igm_date" value="{{ \Carbon\Carbon::parse($booking->igm_date)->format('m/d/Y') }}" class="form-control" disabled/>
                                                                 </div>
                                                             </div>
                                                             <div class="row mb-3">
@@ -263,8 +271,18 @@
                                                                 <div class="col-md-4">
                                                                     <label>Shipper</label>
                                                                 </div>
-                                                                <div class="col-md-8">
+                                                                <div class="col-md-5">
                                                                     <input type="text" class="form-control" value="{{ $booking->company_f }}" readonly>
+                                                                </div>
+                                                                <div class="col-md-3 mt-2">
+                                                                    <div class="icheck-primary d-inline">
+                                                                        <input type="checkbox" id="checkboxPrimary1" name="legal_doc" @if ($booking->legal_f == 1)
+                                                                            checked
+                                                                        @endif>
+                                                                        <label for="checkboxPrimary1">
+                                                                            Legal Doc
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="shipper-detail">
@@ -455,7 +473,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                                                                        <input type="text" name="etd" id="etd" value="{{ \Carbon\Carbon::parse($booking->etd_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                        <input type="text" name="etd" id="etd" value="{{ \Carbon\Carbon::parse($booking->etd_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                         <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -468,7 +486,7 @@
                                                                 </div>
                                                                 <div class="col-md-8">
                                                                     <div class="input-group date" id="reservationdatez" data-target-input="nearest">
-                                                                        <input type="text" name="eta" id="eta" value="{{ \Carbon\Carbon::parse($booking->eta_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                        <input type="text" name="eta" id="eta" value="{{ \Carbon\Carbon::parse($booking->eta_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                         <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                         </div>
@@ -589,7 +607,7 @@
                                                                         </div>
                                                                         <div class="col-md-8">
                                                                             <div class="input-group date" id="reservationdatexx" data-target-input="nearest">
-                                                                                <input type="text" name="stuf_date" id="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
+                                                                                <input type="text" name="stuf_date" id="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                                 <div class="input-group-append" data-target="#reservationdatexx" data-toggle="datetimepicker" aria-disabled="true">
                                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                                 </div>
@@ -629,7 +647,7 @@
                                                                                 </div>
                                                                                 <div class="col-md-8">
                                                                                     <div class="input-group date" id="reservationdatexx" data-target-input="nearest">
-                                                                                        <input type="text" name="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('d/m/Y') }}" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                                        <input type="text" name="stuf_date" value="{{ \Carbon\Carbon::parse($booking->stuffing_date)->format('m/d/Y') }}" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                                         <div class="input-group-append" data-target="#reservationdatexx" data-toggle="datetimepicker">
                                                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                                         </div>
@@ -762,7 +780,7 @@
                                                                         </div>
                                                                         <div class="col-md-8">
                                                                             <div class="input-group date" id="reservationdateMBL" data-target-input="nearest">
-                                                                                <input type="text" name="mbl_date" value="{{ \Carbon\Carbon::parse($booking->mbl_date)->format('d/m/Y') }}" id="mbl_date" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                                <input type="text" name="mbl_date" value="{{ \Carbon\Carbon::parse($booking->mbl_date)->format('m/d/Y') }}" id="mbl_date" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                                 <div class="input-group-append" data-target="#reservationdateMBL" data-toggle="datetimepicker">
                                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                                 </div>
@@ -828,7 +846,7 @@
                                                                         </div>
                                                                         <div class="col-md-8">
                                                                             <div class="input-group date" id="reservationdateAWB" data-target-input="nearest">
-                                                                                <input type="text" name="hbl_date" id="hbl_date" value="{{ \Carbon\Carbon::parse($booking->hbl_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                                <input type="text" name="hbl_date" id="hbl_date" value="{{ \Carbon\Carbon::parse($booking->hbl_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                                 <div class="input-group-append" data-target="#reservationdateAWB" data-toggle="datetimepicker">
                                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                                 </div>
@@ -1180,7 +1198,7 @@
                                                                 <td>{{ $loop->iteration }}</td>
                                                                 <td>{{ $item->schedule_type }}</td>
                                                                 <td>{{ $item->desc }}</td>
-                                                                <td>{{ \Carbon\Carbon::parse($item->date)->format('d/m/Y') }}</td>
+                                                                <td>{{ \Carbon\Carbon::parse($item->date)->format('m/d/Y') }}</td>
                                                                 <td>{{ $item->notes }}</td>
                                                             </tr>
                                                             @endforeach
@@ -1246,8 +1264,8 @@
                                                                 <td>{{ number_format($item->cost_val,2,',','.') }}</td>
                                                                 <td>{{ number_format($item->vat,2,',','.') }}</td>
                                                                 <td>{{ number_format($amount,2,',','.') }}</td>
-                                                                <td>{{ $item->paid_to }}</td>
-                                                                <td>{{ $item->notes }}</td>
+                                                                <td></td>
+                                                                <td></td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
@@ -1303,8 +1321,8 @@
                                                                 <td>{{ number_format($item->sell_val,2,',','.') }}</td>
                                                                 <td>{{ number_format($item->vat,2,',','.') }}</td>
                                                                 <td>{{ number_format($amount,2,',','.') }}</td>
-                                                                <td>{{ $item->bill_to }}</td>
-                                                                <td>{{ $item->notes }}</td>
+                                                                <td></td>
+                                                                <td></td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
@@ -1351,7 +1369,7 @@
                 <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $booking->id }}')"><i class="fa fa-check"></i> Approve</a>
                 @endif
                 <a href="{{ route('booking.list') }}" class="btn btn-secondary float-left"><i class="fa fa-angle-left"></i> Back</a>
-                <a href="{{ url('booking/copy_booking/'.$booking->id) }}"  class="btn btn-info float-left ml-2"><i class="fa fa-copy"></i> Copy Booking</a>
+                <a onclick="copyBooking('{{ $booking->booking_no }}')"  class="btn btn-info float-left ml-2"><i class="fa fa-copy"></i> Copy Booking</a>
             </div>
         </div>
     </div>

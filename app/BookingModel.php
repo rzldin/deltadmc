@@ -19,7 +19,7 @@ class BookingModel extends Model
 
     public static function get_bookingDetail($id)
     {
-        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by FROM t_booking a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE a.id='".$id."'");
+        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag FROM t_booking a LEFT JOIN t_quote b ON a.t_quote_id = b.id LEFT JOIN t_mcompany c ON a.shipper_id = c.id WHERE a.id='".$id."'");
     }
 
     public static function get_commodity($id)
@@ -60,6 +60,11 @@ class BookingModel extends Model
     public static function scheduleDetail($id)
     {
         return DB::table('t_bschedule')->where('id', $id)->first();
+    }
+
+    public static function getChargesDetail($id)
+    {
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur from t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id LEFT JOIN t_mcurrency d ON a.currency = d.id WHERE a.t_booking_id='".$id."'");
     }
 
 

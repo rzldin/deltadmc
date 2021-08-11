@@ -122,9 +122,6 @@
                                 <div class="col-md-8">
                                     <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ...">
                                     <datalist id="fromx">
-                                        @foreach ($port as $p)
-                                        <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                        @endforeach
                                     </datalist>
                                     <input type="hidden" name="from_id" id="from_id">
                                 </div>
@@ -158,7 +155,7 @@
                                 <label>Shipment By</label>
                             </div>
                             <div class="col-md-8">
-                                <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;">
+                                <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;" onchange="get_fromto(this.value)">
                                     <option selected>-- Select Shipment --</option>
                                     <option value="SEA">SEA</option>
                                     <option value="AIR">AIR</option>
@@ -186,11 +183,8 @@
                             <div class="col-md-8">
                                 <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ...">
                                 <datalist id="tox">
-                                    @foreach ($port as $p)
-                                    <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                    @endforeach
-                                    <input type="hidden" name="to_id" id="to_id">
                                 </datalist>
+                                <input type="hidden" name="to_id" id="to_id">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -367,6 +361,23 @@
                     $(root).val(reet);   
                 }   
             }  
+    }
+
+    function get_fromto(val)
+    {
+        if(val!= ''){
+            $.ajax({
+                url: "{{ route('get.port') }}",
+                type: "POST",
+                data: "type="+val,
+                dataType: "html",
+                success: function(result) {
+                    var port = JSON.parse(result);
+                    $("#fromx").html(port);
+                    $("#tox").html(port);
+                }
+            });
+        }
     }
 
     $("#saveData").click(function(){

@@ -168,6 +168,18 @@
         format: 'L'
     });
 
+    $('#bookingdate').datetimepicker({
+        format: 'L'
+    });
+
+    $('#docdate').datetimepicker({
+        format: 'L'
+    });
+
+    $('#igmdate').datetimepicker({
+        format: 'L'
+    });
+
     $('#reservationdatex').datetimepicker({
         format: 'L'
     });

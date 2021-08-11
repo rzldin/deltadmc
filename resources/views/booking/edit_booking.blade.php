@@ -638,8 +638,8 @@
                                                             <tr>
                                                                 <th>#</th>
                                                                 <th width="3%">No.</th>
-                                                                <th width="15%">Service/Fee</th>
-                                                                <th width="7%">Description</th>
+                                                                <th width="10%">Service/Fee</th>
+                                                                <th width="10%">Description</th>
                                                                 <th width="7%">Reimbursment</th>
                                                                 <th width="5%">Unit</th>
                                                                 <th width="5%">Currency</th>
@@ -715,6 +715,8 @@
                                                     </table>
                                                 </div>
                                             </div>
+                                            <br>
+                                            <a href="javascript:;" class="btn btn-primary float-right"><i class="fa fa-file"></i> Preview Booking</a>
                                         </div>
                                     </div>
                                 </section> 
@@ -761,6 +763,12 @@
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
+                        var check = final[2];
+                        if(check.legal_doc_flag == 1){
+                            $('input[type="checkbox"]').attr("checked", "checked");
+                        }else{
+                            $('input[type="checkbox"]').attr("checked", false)
+                        }
                         $("#shipper_addr").html(final[0]);
                         $("#shipper_pic").html(final[1]);
                     }
@@ -1133,11 +1141,14 @@
         }
 
         /** Load Schedule **/
-        function loadSellCost(val){
+        function loadSellCost(val, id){
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadSellCost') }}",
-                data:"quote_no="+val,
+                data:{
+                    quote_no : val,
+                    id : id
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2154,7 +2165,7 @@
                     v : v
                 },
                 success:function(result){
-                    loadSellCost('{{ $quote->quote_no }}')
+                    loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Update Data!'
@@ -2173,7 +2184,7 @@
             loadDoc({{ Request::segment(3) }}); 
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
-            loadSellCost('{{ $quote->quote_no }}')
+            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
             loadProfit('{{ $quote->quote_no }}', {{ $quote->t_quote_id }})
         });
     </script>

@@ -165,6 +165,7 @@ class BookingController extends Controller
         $table1 = '';
         $address = MasterModel::get_address($request['id']);
         $pic = MasterModel::get_pic($request['id']);
+        $table2 = MasterModel::company_get($request['id']);
         $table .= '<option value="">-- Select Address --</option>';
         $table1 .= '<option value="">-- Select PIC --</option>';
 
@@ -179,15 +180,49 @@ class BookingController extends Controller
         }
 
         header('Content-Type: application/json');
-        echo json_encode([$table, $table1]);
+        echo json_encode([$table, $table1, $table2]);
     }
 
     public function booking_doAdd(Request $request)
     {
+        if($request->legal_doc == "on"){
+            DB::table('t_mcompany')
+            ->where('id', $request->shipper)
+            ->update(['legal_doc_flag' => 1]);
+        }
+
         if($request->quote_no == 'Nomination'){
             $nomination_flag = 1;
         }else{
             $nomination_flag = 0;
+        }
+
+        #Doc Date
+        if($request->doc_date != null){
+            $doc_date = Carbon::parse($request->doc_date);
+        }else{
+            $doc_date = null;
+        }
+
+        #Igm Date
+        if($request->igm_date != null){
+            $igm_date = Carbon::parse($request->igm_date);
+        }else{
+            $igm_date = null;
+        }
+
+        #Mbl Date
+        if($request->mbl_date != null){
+            $mbl_date = Carbon::parse($request->mbl_date);
+        }else{
+            $mbl_date = null;
+        }
+
+        #Hbl Date
+        if($request->hbl_date != null){
+            $hbl_date = Carbon::parse($request->hbl_date);
+        }else{
+            $hbl_date = null;
         }
 
         try{
@@ -202,9 +237,9 @@ class BookingController extends Controller
                         'nomination_flag'       => $nomination_flag,
                         't_mdoc_type_id'        => $request->doctype,
                         'custom_doc_no'         => $request->doc_no,
-                        'custom_doc_date'       => Carbon::parse($request->doc_date),
+                        'custom_doc_date'       => $doc_date,
                         'igm_no'                => $request->igm_number,
-                        'igm_date'              => Carbon::parse($request->igm_date),
+                        'igm_date'              => $igm_date,
                         'custom_pos'            => $request->pos,
                         'custom_subpos'         => $request->sub_pos,
                         'client_id'             => $request->customer,
@@ -260,13 +295,13 @@ class BookingController extends Controller
                         'mbl_consignee'         => $request->cons_mbl,
                         'mbl_not_party'         => $request->notify_mbl,
                         'mbl_no'                => $request->mbl_number,
-                        'mbl_date'              => Carbon::parse($request->mbl_date),
+                        'mbl_date'              => $mbl_date,
                         'valuta_mbl'            => $request->valuta_mbl,
                         'hbl_shipper'           => $request->shipper_hbl,
                         'hbl_consignee'         => $request->cons_hbl,
                         'hbl_not_party'         => $request->notify_hbl,
                         'hbl_no'                => $request->hbl_number,
-                        'hbl_date'              => Carbon::parse($request->hbl_date),
+                        'hbl_date'              => $hbl_date,
                         'valuta_hbl'            => $request->valuta_hbl,
                         't_mbl_issued_id'       => $request->mbl_issued,
                         'total_commodity'       => $request->total_commo,
@@ -758,6 +793,11 @@ class BookingController extends Controller
         
             foreach($data as $row)
             {
+                if($row->doc_date != null){
+                    $date = Carbon::parse($row->doc_date)->format('m/d/Y');
+                }else{
+                    $date = '';
+                }
                 $tabel .= '<tr>';
                 $tabel .= '<td class="text-left">'.($no-1).'</td>';
                 $tabel .= '<td class="text-left"><label id="lbl_docx_'.$no.'">'.$row->name.'</label>';
@@ -768,8 +808,8 @@ class BookingController extends Controller
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-left"><label id="lbl_doc_number_'.$no.'">'.$row->doc_no.'</label>';
                 $tabel .= '<input type="text" id="doc_number_'.$no.'" name="doc_number" class="form-control" value="'.$row->doc_no.'" style="display:none"></td>';
-                $tabel .= '<td class="text-center"><label id="lbl_doc_date_'.$no.'">'.Carbon::parse($row->doc_date)->format('d/m/Y').'</label>';
-                $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.Carbon::parse($row->doc_date)->format('d/m/Y').'" style="display:none">';
+                $tabel .= '<td class="text-center"><label id="lbl_doc_date_'.$no.'">'.$date.'</label>';
+                $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.$date.'" style="display:none">';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
@@ -1136,10 +1176,52 @@ class BookingController extends Controller
 
     public function loadSellCost(Request $request)
     {
+        $shipping   = QuotationModel::get_quoteShipping($request->quote_no);
+        $dtlQuote   = QuotationModel::get_quoteDetail($request->quote_no);
+       
+        $user       = Auth::user()->name;
+        $tanggal    = Carbon::now();
+        $shp = $shipping[0];
+        $cek = DB::table('t_bcharges_dtl')->where('t_booking_id', $request->id)->get();
+        $no = 1;
+
+        if(count($cek) == 0 && count($dtlQuote) > 0){
+            foreach($dtlQuote as $row)
+            {
+
+                try {
+                    DB::table('t_bcharges_dtl')
+                    ->insert([
+                        't_booking_id'          => $request->id,
+                        'position_no'           => $no++,
+                        't_mcharge_code_id'     => $row->t_mcharge_code_id,
+                        'desc'                  => $shp->name_carrier,
+                        'reimburse_flag'        => $row->reimburse_flag,
+                        'currency'              => $row->t_mcurrency_id,
+                        'rate'                  => $row->rate,
+                        'cost'                  => $row->cost,
+                        'sell'                  => $row->sell,
+                        'qty'                   => $row->qty,
+                        'cost_val'              => $row->qty * $row->cost_val,
+                        'sell_val'              => $row->qty * $row->sell_val,
+                        'vat'                   => $row->vat,
+                        'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
+                        'routing'               => $shp->routing,
+                        'transit_time'          => $shp->transit_time,
+                        'created_by'            => $user,
+                        'created_on'            => $tanggal
+                    ]);
+                    $return_data = 'sukses';
+                } catch (\Exception $e) {
+                    $return_data = $e->getMessage();
+                }
+            }
+        }
+
         $tabel = "";
         $tabel1 = "";
         $no = 2;
-        $data       = QuotationModel::get_quoteDetail($request['quote_no']);
+        $data       = BookingModel::getChargesDetail($request->id);
         $company    = MasterModel::company_data();
         $total = 0;
         $total2 = 0;
@@ -1147,6 +1229,7 @@ class BookingController extends Controller
         $amount2 = 0;
         $a = 1;
         $b = 2;
+        //dd($data);
         foreach($data as $row)
             {
                 if($row->reimburse_flag == 1){
@@ -1155,22 +1238,22 @@ class BookingController extends Controller
                     $style = '';
                 }
 
-                $total += ($row->qty * $row->cost_val);
+                $total = ($row->qty * $row->cost_val);
                 $total2 += ($row->qty * $row->sell_val);
-                $amount += ($total * $row->rate) + $row->vat;
+                $amount = ($total * $row->rate) + $row->vat;
                 $amount2 += ($total2 * $row->rate) + $row->vat;
 
                 // Cost
                 $tabel .= '<tr>';
                 $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
                 $tabel .= '<td>'.($no-1).'</td>';
-                $tabel .= '<td class="text-left">'.$row->name_charge.'</td>';
-                $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
+                $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
                 $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
-                $tabel .= '<td class="text-left">'.$row->code_currency.'</td>';
-                $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format($total,2,',','.').'</td>';
+                $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost_val),2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
@@ -1189,7 +1272,7 @@ class BookingController extends Controller
                     $displayx = 'display:none';
                 }
                 
-                $tabel .= '<td class="text-left">'.$row->notes.'</td>';
+                $tabel .= '<td class="text-left"></td>';
                 $tabel .= '<td>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
                         . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
@@ -1204,12 +1287,12 @@ class BookingController extends Controller
                 $tabel1 .= '<tr>';
                 $tabel1 .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
                 $tabel1 .= '<td>'.($no-1).'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->name_charge.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
                 $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->code_currency.'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
+                $tabel1 .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($total2,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
@@ -1232,7 +1315,7 @@ class BookingController extends Controller
                 }
 
 
-                $tabel1 .= '<td class="text-left">'.$row->notes.'</td>';
+                $tabel1 .= '<td class="text-left"></td>';
                 $tabel1 .= '<td>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                         . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="margin-top:5px;'.$display.'"> '
@@ -1253,13 +1336,13 @@ class BookingController extends Controller
     {
         try {
             if($request->v == 1){
-                DB::table('t_quote_dtl')
+                DB::table('t_bcharges_dtl')
                 ->where('id', $request->id)
                 ->update([
                     'paid_to'   => $request->paid_to
                 ]);
             }else{
-                DB::table('t_quote_dtl')
+                DB::table('t_bcharges_dtl')
                 ->where('id', $request->id)
                 ->update([
                     'bill_to'   => $request->bill_to
@@ -1348,7 +1431,7 @@ class BookingController extends Controller
                     ->leftJoin('t_mfreight_charges AS tmc', 'a.t_mfreight_charges_id', '=', 'tmc.id')
                     ->leftJoin('t_mincoterms AS tmin', 'a.t_mincoterms_id', '=', 'tmin.id')
                     ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
-                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
         
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
@@ -1413,7 +1496,6 @@ class BookingController extends Controller
         try {
         # Insert Booking
         $id =   DB::table('t_booking')->insertGetId([
-            't_quote_id'            => $booking->t_quote_id,
             'version_no'            => $booking->version_no,
             'activity'              => $booking->activity,
             'nomination_flag'       => $booking->nomination_flag,

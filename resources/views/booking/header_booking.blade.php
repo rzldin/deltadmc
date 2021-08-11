@@ -82,7 +82,12 @@
                 dataType: "html",
                 success: function(result) {
                     var final = JSON.parse(result);
-
+                    var check = final[2];
+                    if(check.legal_doc_flag == 1){
+                        $('input[type="checkbox"]').attr("checked", "checked");
+                    }else{
+                        $('input[type="checkbox"]').attr("checked", false)
+                    }
                     $('.shipper-detail').show();
                     $("#shipper_addr").html(final[0]);
                     $("#shipper_pic").html(final[1]);

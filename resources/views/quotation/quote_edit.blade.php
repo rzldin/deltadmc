@@ -131,9 +131,6 @@
                                     <div class="col-md-8">
                                         <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ..." value="{{ $quote->from_text }}">
                                         <datalist id="fromx">
-                                            {{-- @foreach ($port as $p)
-                                            <option id="{{ $p->id }}" value="{{ $p->port_name }} - {{ $p->address  }}"></option>
-                                            @endforeach --}}
                                         </datalist>
                                         <input type="hidden" name="from_id" id="from_id">
                                     </div>

@@ -219,7 +219,7 @@
                     <div class="col-md-4">
                         <label>Shipper<font color="red">*</font></label>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-5">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
                             <option value="" selected>-- Select Shipper --</option>
                             @foreach ($company as $item)
@@ -229,6 +229,14 @@
                     </div>
                     <div class="col-md-1 mt-1">
                         <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <div class="icheck-primary d-inline">
+                            <input type="checkbox" id="checkboxPrimary1" name="legal_doc">
+                            <label for="checkboxPrimary1">
+                                Legal Doc
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="shipper-detail" style="display: none">
