@@ -1239,9 +1239,9 @@ class BookingController extends Controller
                 }
 
                 $total = ($row->qty * $row->cost_val);
-                $total2 += ($row->qty * $row->sell_val);
+                $total2 = ($row->qty * $row->sell_val);
                 $amount = ($total * $row->rate) + $row->vat;
-                $amount2 += ($total2 * $row->rate) + $row->vat;
+                $amount2 = ($total2 * $row->rate) + $row->vat;
 
                 // Cost
                 $tabel .= '<tr>';
@@ -1670,6 +1670,13 @@ class BookingController extends Controller
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
             //return $e->getMessage();
         }
+    }
+
+    public function booking_preview($id)
+    {
+        $data['sell_cost']       = BookingModel::getChargesDetail($id);
+
+        return view('booking.preview')->with($data);
     }
 
 }

@@ -630,7 +630,8 @@
                                         <div class="col-md-12">
                                             <div class="card card-primary">
                                                 <div class="card-header">
-                                                    <h5>Cost</h5>
+                                                    <h5 class="card-title">Cost</h5>
+                                                    <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
@@ -715,8 +716,6 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <br>
-                                            <a href="javascript:;" class="btn btn-primary float-right"><i class="fa fa-file"></i> Preview Booking</a>
                                         </div>
                                     </div>
                                 </section> 

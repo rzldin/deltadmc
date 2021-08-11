@@ -261,6 +261,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
     Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
     Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
+    Route::match(array('GET', 'POST'), 'booking/preview/{id}', 'BookingController@booking_preview');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');
