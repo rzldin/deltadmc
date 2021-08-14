@@ -50,7 +50,7 @@
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>Quote Number</label>
+                                    <label>Quote Number <font color="red">*</font></label>
                                 </div>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ...">
@@ -64,12 +64,17 @@
                                     <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $v }}" onkeyup="numberOnly(this);" readonly>
                                 </div>
                                 <div class="col-md-4 mt-2">
-                                    <input type="checkbox" name="final" id="final" style="margin-right: 5px"><label> FINAL</label>
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="final" name="final">
+                                        <label for="final">
+                                            FINAL
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label>Date</label>
+                                    <label>Date <font color="red">*</font></label>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
@@ -82,14 +87,11 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label>Customer</label>
+                                    <label>Customer <font color="red">*</font></label>
                                 </div>
                                 <div class="col-md-6">
                                     <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
-                                        {{-- <option value="" selected>-- Select Customer --</option>
-                                        @foreach ($company as $c)
-                                        <option value="{{ $c->id }}">{{ $c->client_name }}</option>
-                                        @endforeach --}}
+                                        
                                     </select>
                                 </div>
                                 <div class="col-md-2 mt-1">
@@ -98,7 +100,7 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label>Activity</label>
+                                    <label>Activity <font color="red">*</font></label>
                                 </div>
                                 <div class="col-md-4">
                                     <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity">
@@ -110,8 +112,12 @@
                                 </div>
                                 <div class="col-md-4" style="padding: 10px">
                                     @foreach ($loaded as $l)
-                                    <input type="radio" name="loaded" id="loaded" value="{{ $l->id }}">
-                                    <label>{{ $l->loaded_type }}</label>
+                                    <div class="icheck-primary d-inline">
+                                        <input type="radio" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}">
+                                        <label for="loaded_{{ $l->id }}">
+                                            {{ $l->loaded_type }}
+                                        </label>
+                                    </div>
                                     @endforeach
                                 </div>
                             </div>
@@ -139,7 +145,7 @@
                         <div class="col-sm-5">
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label>PIC</label>
+                                <label>PIC <font color="red">*</font></label>
                             </div>
                             <div class="col-md-6">
                                 <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
@@ -152,7 +158,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label>Shipment By</label>
+                                <label>Shipment By <font color="red">*</font></label>
                             </div>
                             <div class="col-md-8">
                                 <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;" onchange="get_fromto(this.value)">
@@ -405,24 +411,6 @@
                 text: 'Please Select Activity',
                 icon: 'error'
             })
-        }else if($.trim($("#loaded").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Choose One Loaded Type',
-                icon: 'error'
-            })
-        }else if($.trim($("#from").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input From',
-                icon: 'error'
-            })
-        }else if($.trim($("#commodity").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input Commodity',
-                icon: 'error'
-            })
         }else if($.trim($("#pic").val()) == ""){
             Swal.fire({
                 title: 'Error!',
@@ -439,48 +427,6 @@
             Swal.fire({
                 title: 'Error!',
                 text: 'Please select Shipment',
-                icon: 'error'
-            })
-        }else if($.trim($("#terms").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select Incoterms',
-                icon: 'error'
-            })
-        }else if($.trim($("#to").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Input To',
-                icon: 'error'
-            })
-        }else if($.trim($("#pieces").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input Pieces',
-                icon: 'error'
-            })
-        }else if($.trim($("#weight").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input Weight',
-                icon: 'error'
-            })
-        }else if($.trim($("#uom_weight").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select UOM Weight',
-                icon: 'error'
-            })
-        }else if($.trim($("#volume").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please input Volume',
-                icon: 'error'
-            })
-        }else if($.trim($("#uom_volume").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please select UOM Volume',
                 icon: 'error'
             })
         }else{

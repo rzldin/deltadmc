@@ -632,15 +632,16 @@ class QuotationController extends Controller
         $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
         if(count($detail) > 1){
             foreach($data as $shipping){
-                $profit = ($shipping->sell_val + $sellV) - ($shipping->cost_val + $costV);
-                $totalSell = $shipping->sell_val + $sellV;
+                $totalCost  = $shipping->cost_val + $costV;
+                $totalSell  = $shipping->sell_val + $sellV;
+                $profit     = $totalSell - $totalCost;
                 $user = Auth::user()->name;
                 $tanggal = Carbon::now();
                     try {
                         DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
                         ->update([
                             't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                            'total_cost'            => $shipping->cost_val + $costV,
+                            'total_cost'            => $totalCost,
                             'total_sell'            => $totalSell,
                             'total_profit'          => $profit,
                             'profit_pct'            => ($profit*100)/$totalSell,
@@ -655,8 +656,9 @@ class QuotationController extends Controller
             $return_data = 'sukses';
         }else{
             foreach($data as $shipping){
-                $profit = ($shipping->sell_val + $sellV) - ($shipping->cost_val + $costV);
+                $totalCost  = $shipping->cost_val + $costV;
                 $totalSell = $shipping->sell_val + $sellV;
+                $profit = $totalSell - $totalCost;
                 $user = Auth::user()->name;
                 $tanggal = Carbon::now();
                     try {
@@ -664,7 +666,7 @@ class QuotationController extends Controller
                             't_quote_id'            => $shipping->t_quote_id,
                             't_quote_ship_dtl_id'   => $shipping->id,
                             't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                            'total_cost'            => $shipping->cost_val + $costV,
+                            'total_cost'            => $totalCost,
                             'total_sell'            => $totalSell,
                             'total_profit'          => $profit,
                             'profit_pct'            => ($profit*100)/$totalSell,

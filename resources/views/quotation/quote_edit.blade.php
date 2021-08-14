@@ -61,9 +61,14 @@
                                         <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $quote->version_no }}" onkeyup="numberOnly(this);" readonly>
                                     </div>
                                     <div class="col-md-4 mt-2">
-                                        <input type="checkbox" name="final" id="final" style="margin-right: 5px" @if ($quote->final_flag == 1)
-                                            checked
-                                        @endif><label> FINAL</label>
+                                        <div class="icheck-primary d-inline">
+                                            <input type="checkbox" id="final" name="final" @if ($quote->final_flag == 1)
+                                                checked
+                                            @endif>
+                                            <label for="final">
+                                                FINAL
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -72,7 +77,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate"/>
+                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" data-target="#reservationdate"/>
                                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
@@ -83,7 +88,7 @@
                                     <div class="col-md-4">
                                         <label>Customer</label>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-7">
                                         <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
                                             <option value="" selected>-- Select Customer --</option>
                                             @foreach ($company as $c)
@@ -93,7 +98,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 mt-1">
+                                    <div class="col-md-1 mt-1">
                                         <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                     </div>
                                 </div>
@@ -117,10 +122,14 @@
                                     </div>
                                     <div class="col-md-4" style="padding: 10px">
                                         @foreach ($loaded as $l)
-                                        <input type="radio" name="loaded" id="loaded" value="{{ $l->id }}" @if ($l->id == $quote->t_mloaded_type_id)
-                                            checked
-                                        @endif>
-                                        <label>{{ $l->loaded_type }}</label>
+                                        <div class="icheck-primary d-inline">
+                                            <input type="radio" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}"  @if ($l->id == $quote->t_mloaded_type_id)
+                                                checked
+                                            @endif>
+                                            <label for="loaded_{{ $l->id }}">
+                                                {{ $l->loaded_type }}
+                                            </label>
+                                        </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -150,13 +159,13 @@
                                     <div class="col-md-4">
                                         <label>PIC</label>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-7">
                                         <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
                                             <option>-- Select Customer First --</option>
                                             <option value="{{ $quote->id_pic }}" selected>{{ $quote->name_pic }}</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-2 mt-1">
+                                    <div class="col-md-1 mt-1">
                                         <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                     </div>
                                 </div>
@@ -391,7 +400,7 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 300% @else width: 240% @endif">
+                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 150% @else width: 100% @endif">
                             <thead>
                                 <tr>
                                     <th width="2%">No</th>
@@ -400,7 +409,7 @@
                                     @else
                                     <th width="15%">Carrier</th>
                                     <th width="10%">Routing</th>
-                                    <th width="5%">Transit time(days)</th>
+                                    <th width="5%" style="font-size: 12px">Transit time(days)</th>
                                     @endif
                                     <th width="5%">Currency</th>
                                     <th width="6%">Rate</th>
@@ -576,7 +585,7 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
+                       <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                            <thead>
                                 <tr>
                                     <th width="2%">No</th>

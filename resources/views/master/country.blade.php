@@ -45,7 +45,7 @@
                                 <td>{{ $list->country_phone_code }}</td>
                                 <td>{{ $list->country_name }}</td>
                                 <td>
-                                    <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Update </a>
+                                    <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>
                                     <a href="{{ '/master/country_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
                                 </td>
                             </tr>
@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="country_code" name="country_code" 
-                                class="form-control myline" style="margin-bottom:5px" maxlength="25" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" maxlength="25" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Country Code ..">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="country_phone_code" name="country_phone_code" 
-                                class="form-control myline" style="margin-bottom:5px" maxlength="50">
+                                class="form-control myline" style="margin-bottom:5px" maxlength="50" placeholder="Input Country Phone Code ..">
                         </div>
                     </div>
                     <div class="row">
@@ -94,7 +94,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="country_name" name="country_name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Country Name ..">
                         </div>
                     </div>
                 </form>

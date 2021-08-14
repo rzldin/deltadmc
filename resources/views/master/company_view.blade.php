@@ -3,18 +3,18 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Company Detail</h1>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Company Detail</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('master.company') }}">Company</a></li>
+                    <li class="breadcrumb-item active">Detail</li>
+                </ol>
+            </div>
         </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('master.company') }}">Company</a></li>
-            <li class="breadcrumb-item active">Detail</li>
-          </ol>
-        </div>
-      </div>
     </div>
 </section>
 <section class="content">
@@ -78,14 +78,34 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Status <font color="#f00">*</font>
+                                        Legal Doc
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <div class="custom-control custom-checkbox">
+                                            <div class="icheck-primary d-inline">
+                                                <input type="checkbox" id="legal_doc" name="legal_doc" value="1" @if ($company->legal_doc_flag == 1) checked
+                                                @endif disabled>
+                                                <label for="legal_doc">
+                                                    LEGAL DOC
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Status
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox11" name="status" value="1" @if ($company->active_flag == 1) checked
-                                                
-                                            @endif>
-                                            <label for="customCheckbox1" class="custom-control-label">ACTIVE</label>
+                                            <div class="icheck-primary d-inline">
+                                                <input type="checkbox" id="status" name="status" value="1" @if ($company->active_flag == 1)
+                                                    checked
+                                                @endif disabled>
+                                                <label for="status">
+                                                    ACTIVE
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -97,22 +117,38 @@
                                         <!-- checkbox -->
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="customer" value="1" @if ($company->customer_flag == 1) checked @endif>
-                                                <label for="customCheckbox1" class="custom-control-label">CUSTOMER</label>
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="customer" name="customer" value="1" @if ($company->customer_flag == 1) checked @endif disabled>
+                                                    <label for="customer">
+                                                        CUSTOMER
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="custom-control custom-checkbox mt-2">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
-                                                @endif>
-                                                <label for="customCheckbox2" class="custom-control-label">VENDOR</label>
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
+                                                    @endif disabled>
+                                                    <label for="vendor">
+                                                        VENDOR
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="custom-control custom-checkbox mt-2">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="buyer" value="1" @if ($company->buyer_flag == 1) checked
-                                                @endif>
-                                                <label for="customCheckbox3" class="custom-control-label">BUYER</label>
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="buyer" name="buyer" value="1" @if ($company->buyer_flag == 1) checked
+                                                    @endif disabled>
+                                                    <label for="buyer">
+                                                        BUYER
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div class="custom-control custom-checkbox mt-2">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="seler" value="1" @if ($company->seller_flag == 1) checked @endif>
-                                                <label for="customCheckbox4" class="custom-control-label">SELLER</label>
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="seller" name="seller" value="1" @if ($company->seller_flag == 1) checked @endif disabled>
+                                                    <label for="seller">
+                                                        SELLER
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -120,16 +156,28 @@
                                         <!-- radio -->
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="shipper" value="1" @if ($company->shipping_line_flag == 1) checked @endif>
-                                                <label for="customCheckbox5" class="custom-control-label">SHIPPER</label>
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="shipper" name="shipper" value="1" @if ($company->shipping_line_flag == 1) checked @endif disabled>
+                                                    <label for="shipper">
+                                                        SHIPPER
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox6" name="agent" value="1" @if ($company->agent_flag == 1) checked @endif>
-                                                <label for="customCheckbox6" class="custom-control-label">AGENT</label>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="agent" name="agent" value="1" @if ($company->agent_flag == 1) checked @endif disabled>
+                                                    <label for="agent">
+                                                        AGENT
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox7" name="ppjk" value="1" @if ($company->ppjk_flag == 1) checked @endif>
-                                                <label for="customCheckbox7" class="custom-control-label">PPJK</label>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="ppjk" name="ppjk" value="1" @if ($company->ppjk_flag == 1) checked @endif disabled>
+                                                    <label for="ppjk">
+                                                        PPJK
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

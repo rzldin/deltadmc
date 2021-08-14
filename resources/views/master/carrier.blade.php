@@ -53,7 +53,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Update </a>
+                                    <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>
                                     <a href="{{ '/master/carrier_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
                                 </td>
                             </tr>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="code" name="code" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Code ..">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="name" name="name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Name ...">
                         </div>
                     </div>
                     <div class="row">
@@ -111,20 +111,24 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Lloyds Code<font color="#f00">*</font>
+                            Lloyds Code
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="llyods" name="llyods" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Llyods Code ...">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Status<font color="#f00">*</font>
-                        </div>
+                            Status
+                        </div>                                
                         <div class="col-md-8 col-xs-8">
-                            <label for="status">
-                            <input type="checkbox" id="status" name="status" checked> <b>Active</b></label>
+                            <div class="icheck-primary d-inline">
+                                <input type="checkbox" id="status" name="status" checked>
+                                <label for="status">
+                                    Active
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </form>

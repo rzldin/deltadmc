@@ -79,6 +79,12 @@ class MasterController extends Controller
         try {
             DB::table('t_mcountry')->where('id', $id)->delete();
 
+            #Delete Address Company
+            DB::table('t_maddress')->where('t_mcompany_id', $id)->delete();
+
+            #Delete PIC Company
+            DB::table('t_mpic')->where('t_mcompany_id', $id)->delete();
+
             return redirect()->route('master.country')->with('status', 'Successfully deleted');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
@@ -553,8 +559,13 @@ class MasterController extends Controller
 
     public function company_doAdd(Request $request)
     {
-
         #Get Status Value
+        if($request->legal_doc == 1){
+            $legal_doc = 1;
+        }else{
+            $legal_doc = 0;
+        }
+
         if($request->status == 1){
             $status = 1;
         }else{
@@ -619,6 +630,7 @@ class MasterController extends Controller
                     'npwp'                  => $request->npwp,
                     't_maccount_id'         => $request->account,
                     'sales_by'              => $request->sales,
+                    'legal_doc_flag'        => $legal_doc,
                     'customer_flag'         => $cust,
                     'vendor_flag'           => $ven,
                     'buyer_flag'            => $buyer,
@@ -696,87 +708,96 @@ class MasterController extends Controller
 
     public function company_doUpdate(Request $request)
     {
-       #Get Status Value
-       if($request->status == 1){
-        $status = 1;
-    }else{
-        $status = 0;
-    }
 
-    #Get Customer Value
-    if($request->customer == 1){
-        $cust = 1;
-    }else{
-        $cust = 0;
-    }
-
-    #Get Vendor Value
-    if($request->vendor == 1){
-        $ven = 1;
-    }else{
-        $ven = 0;
-    }
-
-    #Get Buyer Value
-    if($request->buyer == 1){
-        $buyer = 1;
-    }else{
-        $buyer = 0;
-    }
-
-    #Get Seller Value
-    if($request->seller == 1){
-        $seller = 1;
-    }else{
-        $seller = 0;
-    }
-
-    #Get Shipper Value
-    if($request->shipper == 1){
-        $shipper = 1;
-    } else {
-        $shipper = 0;
-    }
-
-    #Get agent Value
-    if($request->agent == 1){
-        $agent = 1;
-    }else{
-        $agent = 0;
-    }
-
-    #Get PPJK Value
-    if($request->ppjk == 1){
-        $ppjk = 1;
-    }else{
-        $ppjk = 0;
-    }
-
-    try {
-        $user = Auth::user()->name;
-        $tanggal = Carbon::now();
-        DB::table('t_mcompany')->where('id', $request->id)->update([
-            'client_code'           => $request->client_code,
-            'client_name'           => $request->client_name,
-            'npwp'                  => $request->npwp,
-            't_maccount_id'         => $request->account,
-            'sales_by'              => $request->sales,
-            'customer_flag'         => $cust,
-            'vendor_flag'           => $ven,
-            'buyer_flag'            => $buyer,
-            'seller_flag'           => $seller,
-            'shipping_line_flag'    => $shipper,
-            'agent_flag'            => $agent,
-            'ppjk_flag'             => $ppjk,
-            'active_flag'           => $status,
-            'updated_by'            => $user,
-            'updated_on'            => $tanggal
-        ]);
-
-            return redirect()->route('master.company')->with('status', 'Successfully updated');
-        } catch (\Exception $e) {
-            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+         #Get Legal Doc Value
+        if($request->legal_doc == 1){
+            $legal_doc = 1;
+        }else{
+            $legal_doc = 0;
         }
+
+        #Get Status Value
+        if($request->status == 1){
+            $status = 1;
+        }else{
+            $status = 0;
+        }
+
+        #Get Customer Value
+        if($request->customer == 1){
+            $cust = 1;
+        }else{
+            $cust = 0;
+        }
+
+        #Get Vendor Value
+        if($request->vendor == 1){
+            $ven = 1;
+        }else{
+            $ven = 0;
+        }
+
+        #Get Buyer Value
+        if($request->buyer == 1){
+            $buyer = 1;
+        }else{
+            $buyer = 0;
+        }
+
+        #Get Seller Value
+        if($request->seller == 1){
+            $seller = 1;
+        }else{
+            $seller = 0;
+        }
+
+        #Get Shipper Value
+        if($request->shipper == 1){
+            $shipper = 1;
+        } else {
+            $shipper = 0;
+        }
+
+        #Get agent Value
+        if($request->agent == 1){
+            $agent = 1;
+        }else{
+            $agent = 0;
+        }
+
+        #Get PPJK Value
+        if($request->ppjk == 1){
+            $ppjk = 1;
+        }else{
+            $ppjk = 0;
+        }
+
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_mcompany')->where('id', $request->id)->update([
+                'client_code'           => $request->client_code,
+                'client_name'           => $request->client_name,
+                'npwp'                  => $request->npwp,
+                't_maccount_id'         => $request->account,
+                'sales_by'              => $request->sales,
+                'legal_doc_flag'        => $legal_doc,
+                'customer_flag'         => $cust,
+                'vendor_flag'           => $ven,
+                'buyer_flag'            => $buyer,
+                'seller_flag'           => $seller,
+                'shipping_line_flag'    => $shipper,
+                'agent_flag'            => $agent,
+                'ppjk_flag'             => $ppjk,
+                'active_flag'           => $status,
+                'updated_by'            => $user,
+                'updated_on'            => $tanggal
+            ]);
+
+                return redirect()->route('master.company')->with('status', 'Successfully updated');
+            } catch (\Exception $e) {
+                return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+            }
     }
 
     public function company_addAddress(Request $request)

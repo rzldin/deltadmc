@@ -3,34 +3,34 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Company Detail</h1>
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Company Detail</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Company Detail</li>
+                </ol>
+            </div>
         </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item active">Company Detail</li>
-          </ol>
-        </div>
-      </div>
     </div>
 </section>
 <section class="content">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <div class="card-title">
-                        Headers
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <div class="card-title">
+                            Headers
+                        </div>
                     </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="container">
-                        <form action="{{ url('master/company_doUpdate/'.$company->id) }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" enctype="multipart/form-data">
-                            {{ csrf_field() }}
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="container">
+                            <form action="{{ url('master/company_doUpdate/'.$company->id) }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" enctype="multipart/form-data">
+                                {{ csrf_field() }}
                             <div class="col-md-8">
                                 <br>
                                 <div class="row">
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                       NPWP <font color="#f00">*</font>
+                                        NPWP <font color="#f00">*</font>
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp" 
@@ -63,7 +63,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                       Account <font color="#f00">*</font>
+                                        Account <font color="#f00">*</font>
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account" id="account">
@@ -77,7 +77,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                       Sales By <font color="#f00">*</font>
+                                        Sales By <font color="#f00">*</font>
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="sales" id="sales">
@@ -92,68 +92,115 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Status <font color="#f00">*</font>
-                                     </div>                                
-                                     <div class="col-md-8 col-xs-8">
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="customCheckbox11" name="status" value="1" @if ($company->active_flag == 1) checked
-                                                    
+                                        Legal Doc
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <div class="custom-control custom-checkbox">
+                                            <div class="icheck-primary d-inline">
+                                                <input type="checkbox" id="legal_doc" name="legal_doc" value="1" @if ($company->legal_doc_flag == 1)
+                                                    checked
                                                 @endif>
-                                                <label for="customCheckbox1" class="custom-control-label">ACTIVE</label>
+                                                <label for="legal_doc">
+                                                    LEGAL DOC
+                                                </label>
                                             </div>
-                                     </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Status
+                                    </div>                                
+                                    <div class="col-md-8 col-xs-8">
+                                        <div class="custom-control custom-checkbox">
+                                            <div class="icheck-primary d-inline">
+                                                <input type="checkbox" id="status" name="status" value="1" @if ($company->active_flag == 1)
+                                                    checked
+                                                @endif>
+                                                <label for="status">
+                                                    ACTIVE
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Add To
                                     </div>
                                     <div class="col-md-4">
-                                      <!-- checkbox -->
-                                      <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                          <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="customer" value="1" @if ($company->customer_flag == 1) checked @endif>
-                                          <label for="customCheckbox1" class="custom-control-label">CUSTOMER</label>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="customer" name="customer" value="1" @if ($company->customer_flag == 1) checked @endif>
+                                                    <label for="customer">
+                                                        CUSTOMER
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
+                                                    @endif>
+                                                    <label for="vendor">
+                                                        VENDOR
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="buyer" name="buyer" value="1" @if ($company->buyer_flag == 1) checked
+                                                    @endif>
+                                                    <label for="buyer">
+                                                        BUYER
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="seller" name="seller" value="1" @if ($company->seller_flag == 1) checked @endif>
+                                                    <label for="seller">
+                                                        SELLER
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="custom-control custom-checkbox mt-2">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
-                                            @endif>
-                                            <label for="customCheckbox2" class="custom-control-label">VENDOR</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox mt-2">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="buyer" value="1" @if ($company->buyer_flag == 1) checked
-                                            @endif>
-                                            <label for="customCheckbox3" class="custom-control-label">BUYER</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox mt-2">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="seler" value="1" @if ($company->seller_flag == 1) checked @endif>
-                                            <label for="customCheckbox4" class="custom-control-label">SELLER</label>
-                                          </div>
-                                      </div>
                                     </div>
                                     <div class="col-md-4">
-                                      <!-- radio -->
-                                      <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="shipper" value="1" @if ($company->shipping_line_flag == 1) checked @endif>
-                                            <label for="customCheckbox5" class="custom-control-label">SHIPPER</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox6" name="agent" value="1" @if ($company->agent_flag == 1) checked @endif>
-                                            <label for="customCheckbox6" class="custom-control-label">AGENT</label>
-                                          </div>
-                                          <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox7" name="ppjk" value="1" @if ($company->ppjk_flag == 1) checked @endif>
-                                            <label for="customCheckbox7" class="custom-control-label">PPJK</label>
-                                          </div>
-                                      </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="shipper" name="shipper" value="1" @if ($company->shipping_line_flag == 1) checked @endif>
+                                                    <label for="shipper">
+                                                        SHIPPER
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="agent" name="agent" value="1" @if ($company->agent_flag == 1) checked @endif>
+                                                    <label for="agent">
+                                                        AGENT
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="ppjk" name="ppjk" value="1" @if ($company->ppjk_flag == 1) checked @endif>
+                                                    <label for="ppjk">
+                                                        PPJK
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                     </div>
+                    </form>
                 </div>
-            </form>
             </div>
-        </div>
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
@@ -163,131 +210,131 @@
                     </div>
                     <div class="card-body table-responsive p-0">
                         <table class="table table_lowm table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th width="5%">#</th>
-                                            <th>Address Type</th>
-                                            <th>Country</th>
-                                            <th>Province</th>
-                                            <th>City</th>
-                                            <th>Postal Code</th> 
-                                            <th>Address</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tbody id="tblDetail">
-                                        </tbody>
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Address Type</th>
+                                    <th>Country</th>
+                                    <th>Province</th>
+                                    <th>City</th>
+                                    <th>Postal Code</th> 
+                                    <th>Address</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tbody id="tblDetail">
+                                </tbody>
 
-                                        <tr>
-                                            <td><i class="fa fa-plus"></i></td>
-                                            <td>
-                                                <select class="form-control select2bs44" name="address_type" id="address_type_1">
-                                                    <option value="" selected>Silahkan Pilih ...</option>
-                                                    <option value="UTAMA">UTAMA</option>
-                                                    <option value="GUDANG">GUDANG</option>
-                                                    <option value="INVOICE">INVOICE</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-control select2bs44" name="country" id="country_1">
-                                                    <option value="" selected>Silahkan Pilih ...</option>
-                                                    @foreach ($list_country as $country)
-                                                        <option value="{{ $country->id }}">{{ $country->country_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="province" id="province_1" placeholder="Input Province..." onkeyup="this.value = this.value.toUpperCase()">
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="city" id="city_1" placeholder="Input City ..." onkeyup="this.value = this.value.toUpperCase()">
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="postal_code" id="postal_code_1" placeholder="Input Postal Code ..." onkeyup="this.value = this.value.toUpperCase()">
-                                            </td>
-                                            <td>
-                                                <textarea name="address" class="form-control" id="address_1" rows="3" onkeyup="this.value = this.value.toUpperCase()"></textarea>
-                                            </td>
-                                            <td>
-                                                <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetail(1)"><i class="fa fa-plus"></i> Add </button>
-                                            </td>
-                                        </tr>
-                                     </tbody>
-                                </table>
-                            </div>
+                                <tr>
+                                    <td><i class="fa fa-plus"></i></td>
+                                    <td>
+                                        <select class="form-control select2bs44" name="address_type" id="address_type_1">
+                                            <option value="" selected>Silahkan Pilih ...</option>
+                                            <option value="UTAMA">UTAMA</option>
+                                            <option value="GUDANG">GUDANG</option>
+                                            <option value="INVOICE">INVOICE</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control select2bs44" name="country" id="country_1">
+                                            <option value="" selected>Silahkan Pilih ...</option>
+                                            @foreach ($list_country as $country)
+                                                <option value="{{ $country->id }}">{{ $country->country_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="province" id="province_1" placeholder="Input Province..." onkeyup="this.value = this.value.toUpperCase()">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="city" id="city_1" placeholder="Input City ..." onkeyup="this.value = this.value.toUpperCase()">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="postal_code" id="postal_code_1" placeholder="Input Postal Code ..." onkeyup="this.value = this.value.toUpperCase()">
+                                    </td>
+                                    <td>
+                                        <textarea name="address" class="form-control" id="address_1" rows="3" onkeyup="this.value = this.value.toUpperCase()"></textarea>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetail(1)"><i class="fa fa-plus"></i> Add </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-tittle">
-                                <i class="fa fa-user-plus"></i> PIC
-                            </div>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table_lowm table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th width="5%">#</th>
-                                                <th>Name</th>
-                                                <th>Phone 1</th>
-                                                <th>Phone 2</th>
-                                                <th>Fax</th>
-                                                <th>Email</th> 
-                                                <th>PIC Desc</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tbody id="tblDetailx">
-                                            </tbody>
-    
-                                            <tr>
-                                                <td><i class="fa fa-plus"></i></td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="pic_name" id="pic_name_1" placeholder="Input Name.." onkeyup="this.value = this.value.toUpperCase()">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="phone1" id="phonex_1" placeholder="Input Phone Number ..." onkeyup="numberOnly(this);">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="phone2" id="phonexx_1" placeholder="Input Phone Number 2 ..." onkeyup="numberOnly(this);">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" name="fax" id="fax_1" placeholder="Input Fax ...">
-                                                </td>
-                                                <td>
-                                                    <input type="email" class="form-control" name="email" id="email_1" placeholder="Input Email ...">
-                                                </td>
-                                                <td>
-                                                    <textarea name="desc" class="form-control" id="pic_desc_1" rows="3" onkeyup="this.value = this.value.toUpperCase()" placeholder="PIC Desc..."></textarea>
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-block btn-outline-success btn-xs" onclick="savexDetail(1)"><i class="fa fa-plus"></i> Add </button>
-                                                </td>
-                                            </tr>
-                                         </tbody>
-                                    </table>
-                                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-tittle">
+                            <i class="fa fa-user-plus"></i> PIC
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
-                          <i class="fa fa-angle-left"></i> Kembali 
-                        </a>
-                        <button type="button" class="btn btn-primary mb-4 float-left" id="update_company_detail">
-                          <i class="fa fa-save"></i> Save
-                        </button>
-                      </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table_lowm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Name</th>
+                                    <th>Phone 1</th>
+                                    <th>Phone 2</th>
+                                    <th>Fax</th>
+                                    <th>Email</th> 
+                                    <th>PIC Desc</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tbody id="tblDetailx">
+                            </tbody>
+
+                                <tr>
+                                    <td><i class="fa fa-plus"></i></td>
+                                    <td>
+                                        <input type="text" class="form-control" name="pic_name" id="pic_name_1" placeholder="Input Name.." onkeyup="this.value = this.value.toUpperCase()">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="phone1" id="phonex_1" placeholder="Input Phone Number ..." onkeyup="numberOnly(this);">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="phone2" id="phonexx_1" placeholder="Input Phone Number 2 ..." onkeyup="numberOnly(this);">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="fax" id="fax_1" placeholder="Input Fax ...">
+                                    </td>
+                                    <td>
+                                        <input type="email" class="form-control" name="email" id="email_1" placeholder="Input Email ...">
+                                    </td>
+                                    <td>
+                                        <textarea name="desc" class="form-control" id="pic_desc_1" rows="3" onkeyup="this.value = this.value.toUpperCase()" placeholder="PIC Desc..."></textarea>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="savexDetail(1)"><i class="fa fa-plus"></i> Add </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
+                    <i class="fa fa-angle-left"></i> Kembali 
+                </a>
+                <button type="button" class="btn btn-primary mb-4 float-left" id="update_company_detail">
+                    <i class="fa fa-save"></i> Save
+                </button>
+            </div>
         </div>
     </div>
 </section>

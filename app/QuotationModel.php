@@ -32,7 +32,8 @@ class QuotationModel extends Model
                 ->leftJoin('t_mcarrier', 't_quote_shipg_dtl.t_mcarrier_id', '=', 't_mcarrier.id')
                 ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_dtl.t_mcurrency_id')
                 ->select('t_quote_dtl.*', 't_mcharge_code.name as name_charge', 't_mcurrency.code as code_currency', 't_mcharge_code.name as name_charge', 't_mcarrier.code as code_carrier')
-                ->where('t_quote.quote_no', $quote_no)->get();
+                ->where('t_quote.quote_no', $quote_no)
+                ->groupBy('t_quote_dtl.id')->get();
     }
 
     public static function get_quoteDetailx($id)
