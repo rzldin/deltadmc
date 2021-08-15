@@ -417,39 +417,89 @@ class QuotationController extends Controller
         }else{
             $p = $cek->position_no + 1;
         }
-        try {
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-            DB::table('t_quote_shipg_dtl')->insert([
-                't_quote_id'        => $request->quote,
-                'position_no'       => $p,
-                't_mcarrier_id'     => $request->carrier,
-                'routing'           => $request->routing,
-                'transit_time'      => $request->transit,
-                'truck_size'        => $request->truck_size,
-                't_mcurrency_id'    => $request->currency,
-                'rate'              => $request->rate,
-                'cost'              => $request->cost,
-                'sell'              => $request->sell,
-                'qty'               => $request->qty,
-                'cost_val'          => str_replace(',','', $request->cost_val),
-                'sell_val'          => str_replace(',','', $request->sell_val),
-                'vat'               => $request->vat,
-                'subtotal'          => str_replace(',','', $request->total),
-                'notes'             => $request->note,
-                'created_by'        => $user,
-                'created_on'        => $tanggal
-            ]);
 
-            $return_data = 'sukses';
-        } catch (\Exception $e) {
-            $return_data = $e->getMessage();
+        $user = Auth::user()->name;
+        $tanggal = Carbon::now();
+        DB::table('t_quote_shipg_dtl')->insert([
+            't_quote_id'        => $request->quote,
+            'position_no'       => $p,
+            't_mcarrier_id'     => $request->carrier,
+            'routing'           => $request->routing,
+            'transit_time'      => $request->transit,
+            'truck_size'        => $request->truck_size,
+            't_mcurrency_id'    => $request->currency,
+            'rate'              => $request->rate,
+            'cost'              => $request->cost,
+            'sell'              => $request->sell,
+            'qty'               => $request->qty,
+            'cost_val'          => str_replace(',','', $request->cost_val),
+            'sell_val'          => str_replace(',','', $request->sell_val),
+            'vat'               => $request->vat,
+            'subtotal'          => str_replace(',','', $request->total),
+            'notes'             => $request->note,
+            'created_by'        => $user,
+            'created_on'        => $tanggal
+        ]);
+
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+
+        $result = array();
+        foreach ($data as $key)
+        {
+            $result = array_merge($result, $key);
         }
 
+        $detail = $result;
+
+        $totalCost = 0;
+        $totalSell = 0;
+        foreach($detail as $row)
+        {   
+            $totalCost += $row->cost_val;
+            $totalSell += $row->sell_val;
+        }
+
+        $costV = $totalCost;
+        $sellV = $totalSell;
+        
+        #Insert Tabel t_quote_profit
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        if(count($detail) >= 1){
+            foreach($data as $shipping){
+                $cekProfit = DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->get();
+
+                $totalCost  = $shipping->cost_val + $costV;
+                $totalSell  = $shipping->sell_val + $sellV;
+                $profit     = $totalSell - $totalCost;
+                $user = Auth::user()->name;
+                $tanggal = Carbon::now();
+                    if(count($cekProfit) == 0){
+                        try {
+                            DB::table('t_quote_profit')->insert([
+                                't_quote_id'            => $shipping->t_quote_id,
+                                't_quote_ship_dtl_id'   => $shipping->id,
+                                't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                                'total_cost'            => $totalCost,
+                                'total_sell'            => $totalSell,
+                                'total_profit'          => $profit,
+                                'profit_pct'            => ($profit*100)/$totalSell,
+                                'created_by'            => $user,
+                                'created_on'            => $tanggal
+                            ]);
+                            $return_data = 'sukses';
+                        } catch (\Exception $e) {
+                            $return_data = $e->getMessage();
+                        }
+                    }
+                }
+            }
+            
+        $return_data = 'sukses';
         header('Content-Type: application/json');
         echo json_encode($return_data);
     }
 
+    
 
     public function quote_loadShipping(Request $request)
     {
@@ -739,6 +789,7 @@ class QuotationController extends Controller
                 foreach($data as $row)
                 {
                     $tabel .= '<tr>';
+                    $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" name="deleteAll" id="delete_'.$no.'" value="'.$row->id.'"></td>';
                     $tabel .= '<td>'.($no-1).'</td>';
                     $tabel .= '<td>'.$row->name_charge.'</td>';
                     $tabel .= '<td>'.$row->desc.'</td>';
@@ -786,7 +837,6 @@ class QuotationController extends Controller
         DB::table('t_quote_dtl')->where('id', $request->id)->delete();
 
         $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
-
         $result = array();
         foreach ($data as $key)
         {
@@ -806,15 +856,18 @@ class QuotationController extends Controller
         $costV = $totalCost;
         $sellV = $totalSell;
         
-        #Insert Tabel t_quote_profit
+        #Insert And Delete Tabel t_quote_profit
         $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
-        
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;
             $totalSell  = $shipping->sell_val + $sellV;
             $profit     = $totalSell - $totalCost;
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
+
+            if(count($detail) < 1){
+                DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->delete();
+            }else{
                 try {
                     DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
                     ->update([
@@ -831,10 +884,74 @@ class QuotationController extends Controller
                     $return_data = $e->getMessage();
                 }
             }
+                
+        }
             
         $return_data = 'sukses';
 
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
 
+    public function quote_deleteAll(Request $request)
+    {
+        $id = $request->detail;
+        foreach($id as $id){
+            DB::table('t_quote_dtl')->where('id', $id)->delete();
+        }
+
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $result = array();
+        foreach ($data as $key)
+        {
+            $result = array_merge($result, $key);
+        }
+
+        $detail = $result;
+
+        $totalCost = 0;
+        $totalSell = 0;
+        foreach($detail as $row)
+        {   
+            $totalCost += $row->cost_val;
+            $totalSell += $row->sell_val;
+        }
+
+        $costV = $totalCost;
+        $sellV = $totalSell;
+        
+        #Insert And Delete Tabel t_quote_profit
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        foreach($data as $shipping){
+            $totalCost  = $shipping->cost_val + $costV;
+            $totalSell  = $shipping->sell_val + $sellV;
+            $profit     = $totalSell - $totalCost;
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+
+            if(count($detail) < 1){
+                DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->delete();
+            }else{
+                try {
+                    DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
+                    ->update([
+                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                        'total_cost'            => $totalCost,
+                        'total_sell'            => $totalSell,
+                        'total_profit'          => $profit,
+                        'profit_pct'            => ($profit*100)/$totalSell,
+                        'created_by'            => $user,
+                        'created_on'            => $tanggal
+                    ]);
+                    $return_data = 'sukses';
+                } catch (\Exception $e) {
+                    $return_data = $e->getMessage();
+                }
+            }
+                
+        }
+            
+        $return_data = 'sukses';
 
         header('Content-Type: application/json');
         echo json_encode($return_data);

@@ -582,12 +582,14 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Detail quote</h3>
+                        <a class="btn btn-danger btn-sm float-right ml-2" onclick="deleteAllQuoteDetail()"><i class="fa fa-trash"></i> Delete All</a>
                         <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
                        <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                            <thead>
                                 <tr>
+                                    <th width="1%">#</th>
                                     <th width="2%">No</th>
                                     <th width="10%">Service/Fee</th>
                                     <th width="10%">Description</th>
@@ -640,7 +642,7 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                        Description<font color="#f00">*</font>
+                                        Description
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" class="form-control" name="desc" id="descx" placeholder="Desc ...">
@@ -1083,6 +1085,51 @@
         }
     }
 
+    /** Delete All Quote Detail **/
+    function deleteAllQuoteDetail()
+    {
+        if($('input[name="deleteAll"]:checked').val() == null){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please Select Min One Quote Detail',
+                icon: 'error'
+            })
+        }else{
+            var r=confirm("Anda yakin menghapus semua data yang telah dipilih?");
+            if(r==true){
+                let dtlQuote = [];
+                $('input[name="deleteAll"]:checked').each(function(){        
+                    var valDtlQuote = $(this).val();
+                    dtlQuote.push(valDtlQuote);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('quotation.quote_deleteAll') }}",
+                    data: {
+                        detail:dtlQuote,
+                        quote_no : $('#quote_no').val()
+                    },
+                    dataType: 'json',
+                    cache: false,
+                    success: function (response) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'success deleted!'
+                        })
+
+                        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});   
+                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {           
+                        alert('gagal')           
+                    },
+
+                });
+            }
+        }
+    }
+
     /*** Edit Dimension **/
     function editDetaild(height_uom, wight_uom,id){
         let style = '';
@@ -1291,6 +1338,7 @@
             });
         }
     }
+
 
     /** Calculate Profit **/
     // function calculate()
@@ -1537,7 +1585,8 @@
                     vat:$('#vat').val(),
                     total:$('#total').val(),
                     note:$('#note').val(),
-                    truck_size:$('#truck_size').val()
+                    truck_size:$('#truck_size').val(),
+                    quote_no : $('#quote_no').val()
                 },
                 success:function(result){
                     $('#shipping-detail').modal('hide')

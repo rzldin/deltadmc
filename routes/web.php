@@ -224,6 +224,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/quotation/quote_addDetail', 'QuotationController@quote_addDetail')->name('quotation.quote_addDetail');
     Route::post('/quotation/quote_loadDetail','QuotationController@quote_loadDetail')->name('quotation.quote_loadDetail');
     Route::post('/quotation/quote_deleteDetail','QuotationController@quote_deleteDetail')->name('quotation.quote_deleteDetail');
+    Route::post('/quotation/quote_deleteAll','QuotationController@quote_deleteAll')->name('quotation.quote_deleteAll');
     Route::post('/quotation/quote_getDetailQ', 'QuotationController@quote_getDetailQ')->name('quotation.quote_getDetailQ');
     Route::post('/quotation/quote_updateDetail', 'QuotationController@quote_updateDetail')->name('quotation.quote_updateDetail');
 
