@@ -48,7 +48,6 @@
                         $quote_no = $quote->quote_no;
                     }
                 ?>
-                @if ($quote->copy_booking == null)
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Quote Number</label>
@@ -72,19 +71,17 @@
                             </div>
                         </div>
                     </div>
+                    @if ($quote->copy_booking != null)
+                    <div class="col-md-12 mt-3">
+                        Note : Copy From <strong>{{ $quote->copy_booking }}</strong>  
+                    </div>
+                    @endif
                     @else
                     <div class="col-md-12">
                         Note : Jenis Quote <strong>'Nomination'</strong>  
                     </div>
                     @endif
                 </div>
-                @else
-                <div class="row mb-3">
-                    <div class="col-md-12 mt-3">
-                        Note : Copy From <strong>{{ $quote->copy_booking }}</strong>  
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>

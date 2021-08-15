@@ -78,7 +78,7 @@
                                                     <h3 class="card-title">Commodity</h3>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                   <table class="table table_lowm table-bordered" id="myTable2" width="200%">
+                                                   <table class="table table_lowm table-bordered" id="myTable2" width="140%">
                                                        <thead>
                                                            <tr>
                                                                <th width="1%">#</th>
@@ -634,7 +634,7 @@
                                                     <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 300%">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
@@ -665,7 +665,7 @@
                                                     <h5>Sell</h5>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 200%">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                                         <thead>
                                                           <tr>
                                                             <th>#</th>

@@ -185,6 +185,11 @@ class BookingController extends Controller
 
     public function booking_doAdd(Request $request)
     {
+        $shipping   = QuotationModel::get_quoteShipping($request->quote_no);
+        $dtlQuote   = QuotationModel::get_quoteDetail($request->quote_no);
+        $shp = $shipping[0];
+        $no = 1;
+
         if($request->legal_doc == "on"){
             DB::table('t_mcompany')
             ->where('id', $request->shipper)
@@ -310,6 +315,33 @@ class BookingController extends Controller
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
+                
+                    #Insert Charges Detail
+                    foreach($dtlQuote as $row)
+                    {
+                        DB::table('t_bcharges_dtl')
+                        ->insert([
+                            't_booking_id'          => $id,
+                            'position_no'           => $no++,
+                            't_mcharge_code_id'     => $row->t_mcharge_code_id,
+                            'desc'                  => $shp->name_carrier,
+                            'reimburse_flag'        => $row->reimburse_flag,
+                            'currency'              => $row->t_mcurrency_id,
+                            'rate'                  => $row->rate,
+                            'cost'                  => $row->cost,
+                            'sell'                  => $row->sell,
+                            'qty'                   => $row->qty,
+                            'cost_val'              => $row->qty * $row->cost_val,
+                            'sell_val'              => $row->qty * $row->sell_val,
+                            'vat'                   => $row->vat,
+                            'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
+                            'routing'               => $shp->routing,
+                            'transit_time'          => $shp->transit_time,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                    }
+
             return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
@@ -1176,48 +1208,6 @@ class BookingController extends Controller
 
     public function loadSellCost(Request $request)
     {
-        $shipping   = QuotationModel::get_quoteShipping($request->quote_no);
-        $dtlQuote   = QuotationModel::get_quoteDetail($request->quote_no);
-       
-        $user       = Auth::user()->name;
-        $tanggal    = Carbon::now();
-        $shp = $shipping[0];
-        $cek = DB::table('t_bcharges_dtl')->where('t_booking_id', $request->id)->get();
-        $no = 1;
-
-        if(count($cek) == 0 && count($dtlQuote) > 0){
-            foreach($dtlQuote as $row)
-            {
-
-                try {
-                    DB::table('t_bcharges_dtl')
-                    ->insert([
-                        't_booking_id'          => $request->id,
-                        'position_no'           => $no++,
-                        't_mcharge_code_id'     => $row->t_mcharge_code_id,
-                        'desc'                  => $shp->name_carrier,
-                        'reimburse_flag'        => $row->reimburse_flag,
-                        'currency'              => $row->t_mcurrency_id,
-                        'rate'                  => $row->rate,
-                        'cost'                  => $row->cost,
-                        'sell'                  => $row->sell,
-                        'qty'                   => $row->qty,
-                        'cost_val'              => $row->qty * $row->cost_val,
-                        'sell_val'              => $row->qty * $row->sell_val,
-                        'vat'                   => $row->vat,
-                        'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
-                        'routing'               => $shp->routing,
-                        'transit_time'          => $shp->transit_time,
-                        'created_by'            => $user,
-                        'created_on'            => $tanggal
-                    ]);
-                    $return_data = 'sukses';
-                } catch (\Exception $e) {
-                    $return_data = $e->getMessage();
-                }
-            }
-        }
-
         $tabel = "";
         $tabel1 = "";
         $no = 2;
@@ -1318,11 +1308,11 @@ class BookingController extends Controller
                 $tabel1 .= '<td class="text-left"></td>';
                 $tabel1 .= '<td>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                        . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="margin-top:5px;'.$display.'"> '
-                        . '<i class="fa fa-save"></i> Update &nbsp; </a>';
+                        . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
+                        . '<i class="fa fa-save"></i></a>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                        . '" onclick="hapusDetailSell('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-trash"></i> Delete </a>';
+                        . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
+                        . '<i class="fa fa-trash"></i></a>';
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
                 $no++;
@@ -1498,6 +1488,8 @@ class BookingController extends Controller
         try {
         # Insert Booking
         $id =   DB::table('t_booking')->insertGetId([
+            't_quote_id'            => $booking->t_quote_id,
+            'booking_date'          => Carbon::parse($booking->booking_date),
             'version_no'            => $booking->version_no,
             'activity'              => $booking->activity,
             'nomination_flag'       => $booking->nomination_flag,

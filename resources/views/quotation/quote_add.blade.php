@@ -89,12 +89,12 @@
                                 <div class="col-md-4">
                                     <label>Customer <font color="red">*</font></label>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-7">
                                     <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
                                         
                                     </select>
                                 </div>
-                                <div class="col-md-2 mt-1">
+                                <div class="col-md-1 mt-1">
                                     <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                 </div>
                             </div>
@@ -147,12 +147,12 @@
                             <div class="col-md-4">
                                 <label>PIC <font color="red">*</font></label>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-7">
                                 <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
                                     <option>-- Select Customer First --</option>
                                 </select>
                             </div>
-                            <div class="col-md-2 mt-1">
+                            <div class="col-md-1 mt-1">
                                 <a href="{{ url('master/company_add') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                             </div>
                         </div>

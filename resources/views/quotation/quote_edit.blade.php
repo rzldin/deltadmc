@@ -400,7 +400,7 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 150% @else width: 100% @endif">
+                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 150% @else width: 105% @endif">
                             <thead>
                                 <tr>
                                     <th width="2%">No</th>
@@ -1058,14 +1058,17 @@
         }
     }
 
-    /*** Hapus Shipping **/
+    /*** Hapus Detail Quote **/
     function hapusDetailx(id){
         var r=confirm("Anda yakin menghapus data ini?");
         if (r==true){
             $.ajax({
                 type:"POST",
                 url:"{{ route('quotation.quote_deleteDetail') }}",
-                data:"id="+ id,
+                data:{
+                    id : id,
+                    quote_no : $('#quote_no').val()
+                },
                 success:function(result){
                     Toast.fire({
                         icon: 'success',
@@ -1568,7 +1571,8 @@
                         vat:$('#vat').val(),
                         total:$('#total').val(),
                         note:$('#note').val(),
-                        truck_size:$('#truck_size').val()
+                        truck_size:$('#truck_size').val(),
+                        quote_no:$('#quote_no').val()
                     },
                     success:function(result){
                         $('#shipping-detail').modal('hide')
@@ -1673,7 +1677,8 @@
                         sell_val:$('#sell_valx').val(),
                         vat:$('#vatx').val(),
                         total:$('#totalx').val(),
-                        note:$('#notex').val()
+                        note:$('#notex').val(),
+                        quote_no:$('#quote_no').val()
                     },
                     success:function(result){
                         $('#detail-quote').modal('hide')
