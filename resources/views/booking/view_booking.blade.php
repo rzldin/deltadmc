@@ -555,7 +555,7 @@
                                                                                     <label>Place Of Payment</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ $booking->place_payment }}" readonly>
+                                                                                    <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ number_format($booking->place_payment,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -563,7 +563,7 @@
                                                                                     <label>Valuta Of Payment</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" class="form-control" value="{{ $booking->valuta_payment }}" readonly>
+                                                                                    <input type="text" class="form-control" value="{{ number_format($booking->valuta_payment,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -571,7 +571,7 @@
                                                                                     <label>Value Of Prepaid</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ $booking->value_prepaid }}" readonly>
+                                                                                    <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ number_format($booking->value_prepaid,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -579,7 +579,7 @@
                                                                                     <label>Value Of Collect</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ $booking->value_collect }}" readonly>
+                                                                                    <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ number_format($booking->value_collect,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -693,7 +693,7 @@
                                                                                     <label for="">Value Of Commodity</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" class="form-control" name="value_commodity" id="value_commodity" placeholder="Enter Value Of Commodity ..." value="{{ $booking->value_comm }}" readonly>
+                                                                                    <input type="text" class="form-control" name="value_commodity" id="value_commodity" placeholder="Enter Value Of Commodity ..." value="{{ number_format($booking->value_comm,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -701,7 +701,7 @@
                                                                                     <label>Valuta Of Commodity</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" value="{{ $booking->valuta_comm }}" class="form-control" readonly>
+                                                                                    <input type="text" value="{{ $booking->valuta_code }}" class="form-control" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -709,7 +709,7 @@
                                                                                     <label for="">Exchange Rates</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" class="form-control" value="{{ $booking->rates_comm }}" readonly>
+                                                                                    <input type="text" class="form-control" value="{{ number_format($booking->rates_comm,2,',','.') }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">
@@ -717,7 +717,7 @@
                                                                                     <label>Exchange Valuta</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" value="{{ $booking->exchange_valuta_comm }}" class="form-control" readonly>
+                                                                                    <input type="text" value="{{ $booking->exchange_code }}" class="form-control" readonly>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -880,7 +880,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
-                                                    <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
+                                                    <a class="btn btn-md btn-dark" onclick="print_hbl({{ $booking->id }})"><i class="fa fa-print"></i> Print HBL</a>
                                                     <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
                                                 </div>
                                             </div>
@@ -1355,8 +1355,71 @@
         </div>
     </div>
 </section>
+<!--- Modal Form -->
+<div class="modal fade" id="HBLMODAL" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="formku" 
+                      id="formku" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Number of original prints HBL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" id="original_hbl" onkeyup="numberOnly(this)" maxlength="2">
+                            <input type="hidden" id="hbl_print_id">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Number of Copy Non nego prints HBL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" id="copy_non_nego_hbl" onkeyup="numberOnly(this)" maxlength="2">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                        
+                <button type="button" class="btn btn-primary" onClick="cetak_hbl();"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 @push('after-scripts')
     <script>
+        function print_hbl(id)
+        {
+            $('#original_hbl').val('');
+            $('#copy_non_nego_hbl').val('');
+            $("#HBLMODAL").find('.modal-title').text('Print HBL');
+            $('#hbl_print_id').val(id)
+            $("#HBLMODAL").modal('show',{backdrop: 'true'}); 
+        }
+
+        function cetak_hbl()
+        {
+            let id = $('#hbl_print_id').val();
+            let original_hbl = $('#original_hbl').val();
+            let copy_non_nego_hbl = $('#copy_non_nego_hbl').val();
+
+            var anchor = document.createElement('a');
+            anchor.href = `{{ url('booking/cetak_hbl/${id}/${original_hbl}/${copy_non_nego_hbl}') }}`;
+            anchor.target="_blank";
+            anchor.click();
+
+            $("#HBLMODAL").modal('hide');
+        }
+
+
         function approve(id)
         {
             Swal.fire({

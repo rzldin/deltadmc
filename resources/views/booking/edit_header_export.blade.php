@@ -669,7 +669,7 @@
                                         <label>Place Of Payment</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ $quote->place_payment }}">
+                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ number_format($quote->place_payment) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -680,7 +680,7 @@
                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_payment" id="valuta_payment">
                                             <option value="" selected>-- Select Valuta --</option>
                                             @foreach ($currency as $item)
-                                            <option value="{{ $item->code }}" @if ($quote->valuta_payment == $item->code)
+                                            <option value="{{ $item->id }}" @if ($quote->valuta_payment == $item->id)
                                                 selected
                                             @endif>{{ $item->code }}</option>
                                             @endforeach
@@ -692,7 +692,7 @@
                                         <label>Value Of Prepaid</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ $quote->value_prepaid }}">
+                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ number_format($quote->value_prepaid) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -700,7 +700,7 @@
                                         <label>Value Of Collect</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ $quote->value_collect }}">
+                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ number_format($quote->value_collect) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -927,7 +927,7 @@
     </div>
     <div class="col-md-6">
         <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
-        <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
+        <a class="btn btn-md btn-dark" onclick="print_hbl({{ $quote->id }})"><i class="fa fa-print"></i> Print HBL</a>
         <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
     </div>
 </div>

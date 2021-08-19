@@ -707,7 +707,7 @@
                                         <label>Place Of Payment</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ $quote->place_payment }}">
+                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ number_format($quote->place_payment) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -730,7 +730,7 @@
                                         <label>Value Of Prepaid</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ $quote->value_prepaid }}">
+                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ number_format($quote->value_prepaid) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -738,7 +738,7 @@
                                         <label>Value Of Collect</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ $quote->value_collect }}">
+                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ number_format($quote->value_collect) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -779,7 +779,7 @@
                                         <label for="">Value Of Commodity</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" name="value_commodity" id="value_commodity" placeholder="Enter Value Of Commodity ..." value="{{ $quote->value_comm }}">
+                                        <input type="text" class="form-control" name="value_commodity" id="value_commodity" placeholder="Enter Value Of Commodity ..." value="{{ number_format($quote->value_comm) }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -790,7 +790,22 @@
                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_com" id="valuta_com">
                                             <option value="" selected>-- Select Valuta --</option>
                                             @foreach ($currency as $item)
-                                            <option value="{{ $item->code }}" @if ($quote->valuta_comm == $item->code)
+                                            <option value="{{ $item->id }}" @if ($quote->valuta_comm == $item->id)
+                                                selected
+                                            @endif>{{ $item->code }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Exchange Valuta</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta" onchange="get_rate(this.value)">
+                                            <option value="" selected>-- Select Valuta --</option>
+                                            @foreach ($currency as $item)
+                                            <option value="{{ $item->id }}" @if ($quote->exchange_valuta_comm == $item->id)
                                                 selected
                                             @endif>{{ $item->code }}</option>
                                             @endforeach
@@ -802,22 +817,7 @@
                                         <label for="">Exchange Rates</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" name="exchange_rate" id="exchange_rate" placeholder="Enter Exchange Rate ..." value="{{ $quote->rates_comm }}">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Exchange Valuta</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta">
-                                            <option value="" selected>-- Select Valuta --</option>
-                                            @foreach ($currency as $item)
-                                            <option value="{{ $item->code }}" @if ($quote->exchange_valuta_comm == $item->code)
-                                                selected
-                                            @endif>{{ $item->code }}</option>
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" name="exchange_rate" id="exchange_rate" placeholder="Enter Exchange Rate ..." value="{{ number_format($quote->rates_comm) }}">
                                     </div>
                                 </div>
                             </div>
@@ -981,7 +981,7 @@
     </div>
     <div class="col-md-6">
         <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
-        <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
+        <a class="btn btn-md btn-dark" onclick="print_hbl({{ $quote->id }})"><i class="fa fa-print"></i> Print HBL</a>
         <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
     </div>
 </div>

@@ -9,6 +9,7 @@ use App\MasterModel;
 use App\BookingModel;
 use Carbon\Carbon;
 use DB;
+use PDF;
 
 class BookingController extends Controller
 {
@@ -1421,7 +1422,9 @@ class BookingController extends Controller
                     ->leftJoin('t_mfreight_charges AS tmc', 'a.t_mfreight_charges_id', '=', 'tmc.id')
                     ->leftJoin('t_mincoterms AS tmin', 'a.t_mincoterms_id', '=', 'tmin.id')
                     ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
-                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
+                    ->leftJoin('t_muom AS tmuom', 'a.valuta_comm', '=', 'tmuom.id')
+                    ->leftJoin('t_muom AS tmuom2', 'a.exchange_valuta_comm', '=', 'tmuom2.id')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code')
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
         
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
@@ -1697,6 +1700,49 @@ class BookingController extends Controller
         $data['sell_cost']       = BookingModel::getChargesDetail($id);
 
         return view('booking.preview')->with($data);
+    }
+
+    public function cetak_hbl($id, $hbl1, $hbl2)
+    {
+        //$booking = DB::table('t_booking')->where('id', $id)->first();
+        $booking = DB::table('t_booking As a')
+                    ->leftJoin('t_quote AS b', 'a.t_quote_id', '=', 'b.id')
+                    ->leftJoin('t_mdoc_type AS tmdoc', 'a.t_mdoc_type_id', '=', 'tmdoc.id')
+                    ->leftJoin('t_mcompany AS c', 'a.client_id', '=', 'c.id')
+                    ->leftJoin('t_maddress As d', 'a.client_addr_id', '=', 'd.id')
+                    ->leftJoin('t_mpic AS e', 'a.client_pic_id', '=', 'e.id')
+                    ->leftJoin('t_mcompany AS f', 'a.shipper_id', '=', 'f.id')
+                    ->leftJoin('t_maddress As g', 'a.shipper_addr_id', '=', 'g.id')
+                    ->leftJoin('t_mpic AS h', 'a.shipper_pic_id', '=', 'h.id')
+                    ->leftJoin('t_mcompany AS i', 'a.consignee_id', '=', 'i.id')
+                    ->leftJoin('t_maddress As j', 'a.consignee_addr_id', '=', 'j.id')
+                    ->leftJoin('t_mpic AS k', 'a.consignee_pic_id', '=', 'k.id')
+                    ->leftJoin('t_mcompany AS l', 'a.not_party_id', '=', 'l.id')
+                    ->leftJoin('t_maddress As m', 'a.not_party_addr_id', '=', 'm.id')
+                    ->leftJoin('t_mpic AS n', 'a.not_party_pic_id', '=', 'n.id')
+                    ->leftJoin('t_mcompany AS o', 'a.agent_id', '=', 'o.id')
+                    ->leftJoin('t_maddress As p', 'a.agent_addr_id', '=', 'p.id')
+                    ->leftJoin('t_mpic AS q', 'a.agent_pic_id', '=', 'q.id')
+                    ->leftJoin('t_mcompany AS r', 'a.shipping_line_id', '=', 'r.id')
+                    ->leftJoin('t_maddress As s', 'a.shpline_addr_id', '=', 's.id')
+                    ->leftJoin('t_mpic AS t', 'a.shpline_pic_id', '=', 't.id')
+                    ->leftJoin('t_mcompany AS u', 'a.vendor_id', '=', 'u.id')
+                    ->leftJoin('t_maddress As v', 'a.vendor_addr_id', '=', 'v.id')
+                    ->leftJoin('t_mpic AS w', 'a.vendor_pic_id', '=', 'w.id')
+                    ->leftJoin('t_mcarrier AS carrier', 'a.carrier_id', '=', 'carrier.id')
+                    ->leftJoin('t_mport AS tm', 'a.pol_id', '=', 'tm.id')
+                    ->leftJoin('t_mport AS tm2', 'a.pod_id', '=', 'tm2.id')
+                    ->leftJoin('t_mport AS tm3', 'a.pot_id', '=', 'tm3.id')
+                    ->leftJoin('t_mfreight_charges AS tmc', 'a.t_mfreight_charges_id', '=', 'tmc.id')
+                    ->leftJoin('t_mincoterms AS tmin', 'a.t_mincoterms_id', '=', 'tmin.id')
+                    ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
+                    ->where('a.id', '=', $id)->first();
+        $packages = DB::table('t_bpackages AS a')->leftJoin('t_muom AS b', 'a.qty_uom', '=', 'b.id')->select('a.*', 'b.uom_code as code')->where('t_booking_id', $id)->get();
+                    
+        $pdf = PDF::loadview('booking.cetak_hbl_pdf', ['booking' => $booking, 'packages' => $packages, 'origin' =>$hbl1, 'copy' => $hbl2]);
+    	//return $pdf->download('hbl-pdf');
+        return $pdf->stream();
     }
 
 }

@@ -727,6 +727,45 @@
         </div>
     </div>
 </section>
+<!--- Modal Form -->
+<div class="modal fade" id="HBLMODAL" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="formku" 
+                      id="formku" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Number of original prints HBL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" id="original_hbl" onkeyup="numberOnly(this)" maxlength="2">
+                            <input type="hidden" id="hbl_print_id">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Number of Copy Non nego prints HBL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" id="copy_non_nego_hbl" onkeyup="numberOnly(this)" maxlength="2">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                        
+                <button type="button" class="btn btn-primary" onClick="cetak_hbl();"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 @push('after-scripts')
     <script>
 
@@ -859,6 +898,71 @@
                     }
                 });
             }
+        }
+
+        function get_rate(val)
+        {
+            $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_getCurrencyCode') }}",
+                data:{
+                    id : val
+                },
+                success:function(result){
+                    let text = JSON.parse(result)
+                    let code = text.code
+
+                    if(code == 'IDR'){
+                        $('#exchange_rate').val(1);
+                        //$('#ratex').val(1);
+                    }
+                }
+            });
+        }
+
+        function print_hbl(id)
+        {
+            $('#original_hbl').val('');
+            $('#copy_non_nego_hbl').val('');
+            $("#HBLMODAL").find('.modal-title').text('Print HBL');
+            $('#hbl_print_id').val(id)
+            $("#HBLMODAL").modal('show',{backdrop: 'true'}); 
+        }
+
+        function cetak_hbl()
+        {
+            let id = $('#hbl_print_id').val();
+            let original_hbl = $('#original_hbl').val();
+            let copy_non_nego_hbl = $('#copy_non_nego_hbl').val();
+
+            //window.open('http://www.smkproduction.eu5.org', '_blank');
+
+            var anchor = document.createElement('a');
+            anchor.href = `{{ url('booking/cetak_hbl/${id}/${original_hbl}/${copy_non_nego_hbl}') }}`;
+            anchor.target="_blank";
+            anchor.click();
+
+            $("#HBLMODAL").modal('hide');
+
+
+            // $.ajax({
+            //     type: "POST",
+            //     url: "}",
+            //     dataType: 'json',
+            //     data : {
+            //         id : id,
+            //         original_hbl : original_hbl,
+            //         copy_non_nego_hbl : copy_non_nego_hbl
+            //     },
+            //     success: function (result){
+            //         $("#HBLMODAL").modal('hide'); 
+            //         loadRoadCons({{ Request::segment(3) }}); 
+            //         Toast.fire({
+            //             icon: 'success',
+            //             title: 'Print...!'
+            //         });
+            //     }
+            // });  
         }
 
         function newRoad(){
