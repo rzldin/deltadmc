@@ -1745,4 +1745,11 @@ class BookingController extends Controller
         return $pdf->stream();
     }
 
+
+    public function cetak_hawb($id)
+    {
+        $pdf = PDF::loadview('booking.cetak_awb_pdf');
+        return $pdf->stream();
+    }
+
 }

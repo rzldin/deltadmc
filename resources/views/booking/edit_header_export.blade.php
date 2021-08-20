@@ -669,7 +669,7 @@
                                         <label>Place Of Payment</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ number_format($quote->place_payment) }}">
+                                        <input type="text" name="pop" id="pop" class="form-control" placeholder="Enter Place Of Payment" value="{{ number_format($quote->place_payment,2,',','.') }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -692,7 +692,7 @@
                                         <label>Value Of Prepaid</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ number_format($quote->value_prepaid) }}">
+                                        <input type="text" name="vop" id="vop" class="form-control" placeholder="Enter Value of prepaid" value="{{ number_format($quote->value_prepaid,2,',','.') }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -700,7 +700,7 @@
                                         <label>Value Of Collect</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ number_format($quote->value_collect) }}">
+                                        <input type="text" name="voc" id="voc" class="form-control" placeholder="Enter Value of Collect" value="{{ number_format($quote->value_collect,2,',','.') }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -928,7 +928,7 @@
     <div class="col-md-6">
         <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
         <a class="btn btn-md btn-dark" onclick="print_hbl({{ $quote->id }})"><i class="fa fa-print"></i> Print HBL</a>
-        <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
+        <a href="{{ url('booking/cetak_awb/'.$quote->id) }}" class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
     </div>
 </div>
 <div class="card card-primary">
