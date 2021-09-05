@@ -39,7 +39,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="client_code" name="client_code" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Company Code...">
+                                            class="form-control myline" style="margin-bottom:5px" placeholder="Input Company Code...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -48,7 +48,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="client_name" name="client_name" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()"  placeholder="Input Company Name...">
+                                            class="form-control myline" style="margin-bottom:5px"  placeholder="Input Company Name...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -57,7 +57,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()"  placeholder="NPWP...">
+                                            class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -202,6 +202,26 @@
 
 @push('after-scripts')
     <script>
+        
+        $('#client_name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#client_code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#npwp').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        /** Save Data **/
         $("#saveData").click(function(){
             if($.trim($("#client_code").val()) == ""){
                 Swal.fire({

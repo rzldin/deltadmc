@@ -39,7 +39,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="client_code" name="client_code" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Company Code..." value="{{ $company->client_code }}">
+                                            class="form-control myline" style="margin-bottom:5px" placeholder="Input Company Code..." value="{{ $company->client_code }}">
                                         <input type="hidden" id="id_company" name="id_company" value="{{ $company->id }}">
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="client_name" name="client_name" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()"  placeholder="Input Company Name..." value="{{ $company->client_name }}">
+                                            class="form-control myline" style="margin-bottom:5px"  placeholder="Input Company Name..." value="{{ $company->client_name }}">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -58,7 +58,7 @@
                                     </div>                                
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp" 
-                                            class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()"  placeholder="NPWP..." value="{{ $company->npwp }}">
+                                            class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP..." value="{{ $company->npwp }}">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -209,7 +209,7 @@
                         </div>
                     </div>
                     <div class="card-body table-responsive p-0">
-                        <table class="table table_lowm table-bordered">
+                        <table class="table table_lowm table-bordered" width="100%">
                             <thead>
                                 <tr>
                                     <th width="5%">#</th>
@@ -246,16 +246,16 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="province" id="province_1" placeholder="Input Province..." onkeyup="this.value = this.value.toUpperCase()">
+                                        <input type="text" class="form-control" name="province" id="province_1" placeholder="Input Province...">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="city" id="city_1" placeholder="Input City ..." onkeyup="this.value = this.value.toUpperCase()">
+                                        <input type="text" class="form-control" name="city" id="city_1" placeholder="Input City ...">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="postal_code" id="postal_code_1" placeholder="Input Postal Code ..." onkeyup="this.value = this.value.toUpperCase()">
+                                        <input type="text" class="form-control" name="postal_code" id="postal_code_1" placeholder="Input Postal Code ...">
                                     </td>
                                     <td>
-                                        <textarea name="address" class="form-control" id="address_1" rows="3" onkeyup="this.value = this.value.toUpperCase()"></textarea>
+                                        <textarea name="address" class="form-control" id="address_1" rows="3"></textarea>
                                     </td>
                                     <td>
                                         <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
@@ -298,7 +298,7 @@
                                 <tr>
                                     <td><i class="fa fa-plus"></i></td>
                                     <td>
-                                        <input type="text" class="form-control" name="pic_name" id="pic_name_1" placeholder="Input Name.." onkeyup="this.value = this.value.toUpperCase()">
+                                        <input type="text" class="form-control" name="pic_name" id="pic_name_1" placeholder="Input Name..">
                                     </td>
                                     <td>
                                         <input type="text" class="form-control" name="phone1" id="phonex_1" placeholder="Input Phone Number ..." onkeyup="numberOnly(this);">
@@ -310,10 +310,11 @@
                                         <input type="text" class="form-control" name="fax" id="fax_1" placeholder="Input Fax ...">
                                     </td>
                                     <td>
-                                        <input type="email" class="form-control" name="email" id="email_1" placeholder="Input Email ...">
+                                        <input type="email" class="form-control" name="email" id="email_1" placeholder="Input Email ..." onkeyup="ValidateEmail();">
+                                        <span id="lblError_1" style="color: red"></span>
                                     </td>
                                     <td>
-                                        <textarea name="desc" class="form-control" id="pic_desc_1" rows="3" onkeyup="this.value = this.value.toUpperCase()" placeholder="PIC Desc..."></textarea>
+                                        <textarea name="desc" class="form-control" id="pic_desc_1" rows="3" placeholder="PIC Desc..."></textarea>
                                     </td>
                                     <td>
                                         <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
@@ -326,14 +327,14 @@
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="mt-3">
-                <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
-                    <i class="fa fa-angle-left"></i> Kembali 
-                </a>
-                <button type="button" class="btn btn-primary mb-4 float-left" id="update_company_detail">
-                    <i class="fa fa-save"></i> Save
-                </button>
+                <div class="mt-3">
+                    <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
+                        <i class="fa fa-angle-left"></i> Back 
+                    </a>
+                    <button type="button" class="btn btn-primary mb-4 float-right" id="update_company_detail">
+                        <i class="fa fa-save"></i> Save
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -342,6 +343,72 @@
 
 @push('after-scripts')
     <script>
+
+        $('#client_name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#client_code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#npwp').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#province_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#city_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#postal_code_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#address_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#pic_name_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#pic_desc_1').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+
+        function ValidateEmail() {
+            let email = $("#email_1").val();
+            let lblError = document.getElementById("lblError_1");
+            lblError.innerHTML = "";
+            let expr = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            if (!expr.test(email)) {
+                lblError.innerHTML = "Invalid email address.";
+            }
+        }
+
         
         $("#update_company_detail").click(function(){
             if($.trim($("#client_code").val()) == ""){
@@ -400,32 +467,65 @@
                             style = '';
                         }
                         tabel += `<tr>
-                            <td class="text-center">${no-1}</td>
-                            <td><label id="lbl_address_type_${no}">${data.address_type}</label>
+                            <td class="text-center" style="font-size:12px;">${no-1}</td>
+                            <td><label id="lbl_address_type_${no}" style="font-size:12px;">${data.address_type}</label>
                             <select id="address_type_${no}" name="address_type" class="form-control" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
                                 <option value="" >--Silahkan Pilih --</option>
                                 
                             </select>
                             </td>
-                            <td class="text-center"><label id="lbl_country_${no}">${data.country_name}</label><select id="country_${no}" name="country" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
+                            <td><label id="lbl_country_${no}" style="font-size:12px;">${data.country_name}</label><select id="country_${no}" name="country" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
                                 <option value="">--Silahkan Pilih--</option>
                             </select></td>
-                            <td class="text-center"><label id="lbl_province_${no}">${data.province}</label><input type="text" id="province_${no}" name="province" class="form-control" value="${data.province}" style="display:none" onkeyup="this.value = this.value.toUpperCase()"></td>
-                            <td class="text-center"><label id="lbl_city_${no}">${data.city}</label><input type="text" id="city_${no}" name="city" class="form-control" value="${data.city}" style="display:none" onkeyup="this.value = this.value.toUpperCase()"></td>
-                            <td class="text-center"><label id="lbl_postal_code_${no}">${data.postal_code}</label><input type="text" id="postal_code_${no}" name="postal_code" class="form-control" style="display:none" value="${data.postal_code}" onkeyup="this.value = this.value.toUpperCase()"></td>
-                            <td class="text-center"><label id="lbl_address_${no}">${data.address}</label>
-                            <input type="text" id="address_${no}" name="address" class="form-control" style="display:none" value="${data.address}" onkeyup="this.value = this.value.toUpperCase()"></td>
+                            <td><label id="lbl_province_${no}" style="font-size:12px;">${data.province}</label><input type="text" id="province_${no}" name="province" class="form-control" value="${data.province}" onkeyup="province_font('${no}')" style="display:none"></td>
+                            <td><label id="lbl_city_${no}" style="font-size:12px;">${data.city}</label><input type="text" id="city_${no}" name="city" class="form-control" value="${data.city}" style="display:none" onkeyup="city_font('${no}')"></td>
+                            <td><label id="lbl_postal_code_${no}" style="font-size:12px;">${data.postal_code}</label><input type="text" id="postal_code_${no}" name="postal_code" class="form-control" style="display:none" value="${data.postal_code}" onkeyup="postal_code_font('${no}')"></td>
+                            <td><label id="lbl_address_${no}" style="font-size:12px;">${data.address}</label>
+                            <input type="text" id="address_${no}" name="address" class="form-control" style="display:none" value="${data.address}" onkeyup="address_font('${no}')"></td>
                             <td class="text-center" id="td_status_${no}"><label id="lbl_status_${no}">${status}</label>
                            </td>
-                            '<td style="text-align:center;"><a href="javascript:;" class="btn btn-xs btn-circle btn-primary" onclick="editDetail('${data.t_mcountry_id}','${data.address_type}','${no}','${style}');" style="margin-top:5px" id="btnEdit_${no}"><i class="fa fa-edit"></i> Edit &nbsp; </a><a href="javascript:;" class="btn btn-xs btn-circle btn-success" onclick="updateDetail('${data.id}','${no}');" style="margin-top:5px; display:none" id="btnUpdate_${no}"><i class="fa fa-save"></i> Update </a><a href="javascript:;" class="btn btn-xs btn-circle btn-danger" onclick="hapusDetail(${data.id});" style="margin-top:5px">
-                            <i class="fa fa-trash"></i> Delete </a></td>
+                            '<td style="text-align:center;"><a href="javascript:;" class="btn btn-xs btn-circle btn-primary" onclick="editDetail('${data.t_mcountry_id}','${data.address_type}','${no}','${style}');" style="margin-top:5px;" id="btnEdit_${no}"><i class="fa fa-edit"></i></a><a href="javascript:;" class="btn btn-xs btn-circle btn-success" onclick="updateDetail('${data.id}','${no}');" style="margin-top:5px; display:none" id="btnUpdate_${no}"><i class="fa fa-save"></i></a><a href="javascript:;" class="btn btn-xs btn-circle btn-danger" onclick="hapusDetail(${data.id});" style="margin-top:5px">
+                            <i class="fa fa-trash"></i> </a></td>
                         </tr>;
                         `
                         no++;
-                   })
+                    })
                     $('#tblDetail').html(tabel);
                 }
             })
+        }
+
+
+        function province_font(id){
+            $('#province_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
+        }
+
+        function city_font(id){
+            $('#city_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
+        }
+
+        function postal_code_font(id){
+            $('#postal_code_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
+        }
+
+        function address_font(id){
+            $('#address_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
         }
 
 
@@ -450,27 +550,27 @@
                             style = '';
                         }
                         tabel += `<tr>
-                            <td class="text-center">${no-1}</td>
-                            <td><label id="lbl_pic_name_${no}">${data.name}</label>
-                                <input type="text" id="pic_name_${no}" name="pic_name" class="form-control" value="${data.name}" style="display:none" onkeyup="this.value = this.value.toUpperCase()">
+                            <td class="text-center" style="font-size:12px;">${no-1}</td>
+                            <td><label id="lbl_pic_name_${no}" style="font-size:12px;">${data.name}</label>
+                                <input type="text" id="pic_name_${no}" name="pic_name" class="form-control" value="${data.name}" style="display:none" onkeyup="pic_font('${no}')">
                             </td>
-                            <td class="text-center"><label id="lbl_phonex_${no}">${data.phone1}</label>
+                            <td><label id="lbl_phonex_${no}" style="font-size:12px;">${data.phone1}</label>
                             <input type="text" id="phonex_${no}" name="phone1" class="form-control" value="${data.phone1}" style="display:none" onkeyup="numberOnly(this);">
                             </td>
-                            <td class="text-center"><label id="lbl_phonexx_${no}">${data.phone2}</label>
+                            <td><label id="lbl_phonexx_${no}" style="font-size:12px;">${data.phone2}</label>
                             <input type="text" id="phonexx_${no}" name="phone2" class="form-control" value="${data.phone2}" style="display:none" onkeyup="numberOnly(this);">
                             </td>
-                            <td class="text-center"><label id="lbl_fax_${no}">${data.fax}</label>
+                            <td><label id="lbl_fax_${no}" style="font-size:12px;">${data.fax}</label>
                             <input type="text" id="fax_${no}" name="fax" class="form-control" value="${data.fax}" style="display:none"></td>
-                            <td class="text-center"><label id="lbl_email_${no}">${data.email}</label>
-                            <input type="email" id="email_${no}" name="email" class="form-control" style="display:none" value="${data.email}">
+                            <td><label id="lbl_email_${no}" style="font-size:12px;">${data.email}</label>
+                            <input type="email" id="email_${no}" name="email" class="form-control" style="display:none" value="${data.email}" onkeyup="emailVerif('${no}')"><span id="lblError_${no}" style="color: red"></span>
                             </td>
-                            <td class="text-center"><label id="lbl_pic_desc_${no}">${data.pic_desc}</label>
-                            <input type="text" id="pic_desc_${no}" name="desc" class="form-control" style="display:none" value="${data.pic_desc}"></td>
+                            <td><label id="lbl_pic_desc_${no}" style="font-size:12px;">${data.pic_desc}</label>
+                            <input type="text" id="pic_desc_${no}" name="desc" class="form-control" style="display:none" value="${data.pic_desc}" onkeyup="pic_desc_font('${no}')"></td>
                             <td class="text-center" id="td_statusx_${no}"><label id="lbl_statusx_${no}">${status}</label>
                            </td>
-                            '<td style="text-align:center;"><a href="javascript:;" class="btn btn-xs btn-circle btn-primary" onclick="editDetailx('${no}','${style}');" style="margin-top:5px" id="btnEditx_${no}"><i class="fa fa-edit"></i> Edit &nbsp; </a><a href="javascript:;" class="btn btn-xs btn-circle btn-success" onclick="updateDetailx('${data.id}','${no}');" style="margin-top:5px; display:none" id="btnUpdatex_${no}"><i class="fa fa-save"></i> Update </a><a href="javascript:;" class="btn btn-xs btn-circle btn-danger" onclick="hapusDetailx(${data.id});" style="margin-top:5px">
-                            <i class="fa fa-trash"></i> Delete </a></td>
+                            '<td style="text-align:center;"><a href="javascript:;" class="btn btn-xs btn-circle btn-primary" onclick="editDetailx('${no}','${style}');" style="margin-top:5px" id="btnEditx_${no}"><i class="fa fa-edit"></i></a><a href="javascript:;" class="btn btn-xs btn-circle btn-success" onclick="updateDetailx('${data.id}','${no}');" style="margin-top:5px; display:none" id="btnUpdatex_${no}"><i class="fa fa-save"></i> </a><a href="javascript:;" class="btn btn-xs btn-circle btn-danger" onclick="hapusDetailx(${data.id});" style="margin-top:5px">
+                            <i class="fa fa-trash"></i> </a></td>
                         </tr>;
                         `
                         no++;
@@ -480,6 +580,31 @@
             })
         }
 
+        function pic_font(id){
+            $('#pic_name_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
+        }
+
+        function pic_desc_font(id){
+            $('#pic_desc_'+id).keyup(function(){
+                let position = this.selectionStart
+                this.value = this.value.toUpperCase();
+                this.selectionEnd = position;
+            });
+        }
+
+        function emailVerif(id) {
+            let email = $("#email_"+id).val();
+            let lblError = document.getElementById("lblError_"+id);
+            lblError.innerHTML = "";
+            let expr = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            if (!expr.test(email)) {
+                lblError.innerHTML = "Invalid email address.";
+            }
+        }
 
         function hapusDetail(id){
             var r=confirm("Anda yakin menghapus address?");

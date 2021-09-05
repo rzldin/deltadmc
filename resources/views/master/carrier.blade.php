@@ -83,7 +83,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="code" name="code" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Code ..">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Code ..">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="name" name="name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Name ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Name ...">
                         </div>
                     </div>
                     <div class="row">
@@ -115,7 +115,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="llyods" name="llyods" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Llyods Code ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Llyods Code ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -146,11 +146,23 @@
     <script>
         var dsState;
 
+        $('#code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
         function newData(){
             $('#id').val('');
             $('#code').val('');
             $('#name').val('');
-            $('#flag').val('');
+            $('#flag').val('').trigger("change");
             $('#lloyds_code').val('');
             dsState = "Input";
             

@@ -56,7 +56,7 @@
                                 </td>
                                 <td>
                                     <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>
-                                    <a href="{{ '/master/carrier_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
+                                    <a href="{{ '/master/vehicle_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -85,7 +85,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="nopol" name="nopol" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Vehicle No ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Vehicle No ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -156,12 +156,18 @@
     <script>
         var dsState;
 
+        $('#nopol').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
         function newData(){
             $('#id').val('');
-            $('#code').val('');
-            $('#name').val('');
-            $('#flag').val('');
-            $('#lloyds_code').val('');
+            $('#nopol').val('');
+            $('#type').val('').trigger("change");
+            $('#vendor').val('').trigger("change");
+            $('#shipment').val('').trigger("change");
             dsState = "Input";
             
             $("#myModal").find('.modal-title').text('Add Data');

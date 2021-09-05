@@ -1789,12 +1789,6 @@
                 text: 'Please Select Activity',
                 icon: 'error'
             })
-        }else if($.trim($("#loaded").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please Choose One Loaded Type',
-                icon: 'error'
-            })
         }else if($.trim($("#from").val()) == ""){
             Swal.fire({
                 title: 'Error!',

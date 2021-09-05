@@ -88,7 +88,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="name" name="name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Name ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Name ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                             Desc
                         </div>                                
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="desc" id="desc" rows="3" class="form-control myline"></textarea>
+                            <input type="text" name="desc" id="desc" class="form-control myline" placeholder="Desc ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -127,6 +127,12 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

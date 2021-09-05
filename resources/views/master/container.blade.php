@@ -85,7 +85,7 @@
                            Container Type<font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="code" id="code" rows="3" class="form-control" placeholder="Input Container Type ..." onkeyup="this.value = this.value.toUpperCase()"></textarea>
+                            <input type="text" name="code" id="code" class="form-control myline" placeholder="Input Container Type ..."></input>
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="desc" name="desc" 
-                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -125,6 +125,18 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#desc').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

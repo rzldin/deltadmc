@@ -82,10 +82,10 @@
                     {{ csrf_field() }}
                     <div class="row">
                         <div class="col-md-4 col-xs-4">
-                           Loade Type<font color="#f00">*</font>
+                           Loaded Type<font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="loaded" id="loaded" rows="3" class="form-control" placeholder="Input Loaded Type ..."></textarea>
+                            <input type="text" name="loaded" id="loaded" class="form-control myline" style="margin-bottom:5px;" placeholder="Input Loaded Type ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="desc" name="desc" 
-                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -125,6 +125,18 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#loaded').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#desc').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

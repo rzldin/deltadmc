@@ -85,7 +85,7 @@
                            Vehicle Type<font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="code" id="code" rows="3" class="form-control" placeholder="Input Vehicle Type ..." onkeyup="this.value = this.value.toUpperCase()"></textarea>
+                            <input type="text" name="type" id="type" class="form-control myline" style="margin-bottom: 5px" placeholder="Input Vehicle Type ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="desc" name="desc" 
-                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -126,9 +126,15 @@
     <script>
         var dsState;
 
+        $('#type').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
         function newData(){
             $('#id').val('');
-            $('#code').val('');
+            $('#type').val('');
             $('#desc').val('');
             dsState = "Input";
             
@@ -137,7 +143,7 @@
         }
 
         function simpandata(){
-            if($.trim($("#code").val()) == ""){
+            if($.trim($("#type").val()) == ""){
                 Swal.fire({
                     title: 'Error!',
                     text: 'Please enter Vehicle Type!',
@@ -164,7 +170,7 @@
                 data : {id: id},
                 success: function (result){
                     $('#id').val(result.id);
-                    $('#code').val(result.type);
+                    $('#type').val(result.type);
                     $('#desc').val(result.description);
                     $('#status').val(result.active_flag);
 

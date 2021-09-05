@@ -75,7 +75,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="country_code" name="country_code" 
-                                class="form-control myline" style="margin-bottom:5px" maxlength="25" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Country Code ..">
+                                class="form-control myline" style="margin-bottom:5px" maxlength="25" placeholder="Input Country Code ..">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="country_name" name="country_name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Country Name ..">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Country Name ..">
                         </div>
                     </div>
                 </form>
@@ -111,6 +111,18 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#country_code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#country_name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

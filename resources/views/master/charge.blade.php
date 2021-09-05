@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="code" name="code" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Code ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Code ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="name" name="name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Name ..">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Name ..">
                         </div>
                     </div>
                     <div class="row">
@@ -135,10 +135,24 @@
     <script>
         var dsState;
 
+        $('#code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+
         function newData(){
             $('#id').val('');
             $('#code').val('');
             $('#name').val('');
+            $('#charge_group').val('').trigger("change");
             dsState = "Input";
             
             $("#myModal").find('.modal-title').text('Add Data');

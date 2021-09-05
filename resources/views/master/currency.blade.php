@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="code" name="code" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Code ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Code ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -91,15 +91,15 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="name" name="name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Name ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Name ...">
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Desc <font color="#f00">*</font>
+                            Desc
                         </div>                                
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="desc" id="desc" class="form-control" rows="3" placeholder="Input Desc..."></textarea>
+                            <input type="text" name="desc" id="desc" class="form-control myline" placeholder="Input Desc...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -129,6 +129,18 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#code').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

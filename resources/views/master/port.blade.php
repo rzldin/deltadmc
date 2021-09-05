@@ -83,7 +83,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="port" name="port" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Port Code ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Port Code ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="port_name" name="port_name" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Port Name ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Port Name ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -127,7 +127,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="province" name="province" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Province ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Province ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -136,7 +136,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="city" name="city" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input City ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input City ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -145,7 +145,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="postal_code" name="postal_code" 
-                                class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" placeholder="Input Postal Code ...">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Postal Code ...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -184,12 +184,36 @@
     <script>
         var dsState;
 
+        $('#port').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+        
+        $('#port_name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#province').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
+        $('#city').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
         function newData(){
             $('#id').val('');
             $('#port').val('');
             $('#port_name').val('');
-            $('#port_type').val('');
-            $('#country').val('');
+            $('#port_type').val('').trigger("change");
+            $('#country').val('').trigger("change");
             $('#province').val('');
             $('#city').val('');
             $('#postal_code').val('');

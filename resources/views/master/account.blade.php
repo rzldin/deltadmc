@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="account_number" name="account_number" 
-                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Account Number ..." onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Account Number ..." onkeyup="numberOnly(this);">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="account_name" name="account_name" 
-                                class="form-control myline" placeholder="Input Account Name .." style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" placeholder="Input Account Name .." style="margin-bottom:5px">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -191,13 +191,19 @@
     <script>
         var dsState;
 
+        $('#account_name').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
+
         function newData(){
             $('#id').val('');
             $('#account_number').val('');
             $('#account_name').val('');
-            $('#account_type').val();
-            $('#segment').val('');
-            $('#parent_account').val('');
+            $('#account_type').val('').trigger("change");
+            $('#segment').val('').trigger("change");
+            $('#parent_account').val('').trigger("change");
             $('#beginning_balance').val('');
             $('#start_date').val('');
             dsState = "Input";

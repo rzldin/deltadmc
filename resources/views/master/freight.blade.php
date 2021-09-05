@@ -85,7 +85,7 @@
                            Freight Charge<font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <textarea name="freight" id="freight" rows="3" class="form-control" placeholder="Input Freight Charge ..."></textarea>
+                            <input type="text" name="freight" id="freight" class="form-control myline" style="margin-bottom:5px" placeholder="Input Freight Charge ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="desc" name="desc" 
-                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()">
+                                class="form-control myline" placeholder="Input Description .." style="margin-bottom:5px">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -125,6 +125,12 @@
 @push('after-scripts')
     <script>
         var dsState;
+
+        $('#desc').keyup(function(){
+            let position = this.selectionStart
+            this.value = this.value.toUpperCase();
+            this.selectionEnd = position;
+        });
 
         function newData(){
             $('#id').val('');

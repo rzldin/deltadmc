@@ -10,7 +10,7 @@ $(".hapus-link").on("click", function (e) {
 	e.preventDefault();
 	const href = $(this).attr("href");
 	Swal.fire({
-		title: "Konfirmasi",
+		title: "Confirm",
 		text: "Are you sure?",
 		icon: "warning",
 		showCancelButton: true,

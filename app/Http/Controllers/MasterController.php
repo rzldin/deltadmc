@@ -1642,14 +1642,14 @@ class MasterController extends Controller
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
             DB::table('t_mvehicle_type')->insert([
-                'type'                  => $request->code,
+                'type'                  => $request->type,
                 'description'           => $request->desc,
                 'active_flag'           => $status,
                 'created_by'            => $user,
                 'created_on'            => $tanggal
             ]);
 
-            return redirect()->route('master.vehicle_type')->with('status', 'Successfully added');
+            return redirect()->route('master.vehicleType')->with('status', 'Successfully added');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
@@ -1673,12 +1673,12 @@ class MasterController extends Controller
             DB::table('t_mvehicle_type')
             ->where('id', $request->id)
             ->update([
-                'type'                => $request->code,
+                'type'                => $request->type,
                 'description'         => $request->desc,
                 'active_flag'         => $status
             ]);
 
-            return redirect()->route('master.vehicle_type')->with('status', 'Successfully updated');
+            return redirect()->route('master.vehicleType')->with('status', 'Successfully updated');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
@@ -1689,7 +1689,7 @@ class MasterController extends Controller
         try {
             DB::table('t_mvehicle_type')->where('id', $id)->delete();
 
-            return redirect()->route('master.vehicle_type')->with('status', 'Successfully Deleted!');
+            return redirect()->route('master.vehicleType')->with('status', 'Successfully Deleted!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
