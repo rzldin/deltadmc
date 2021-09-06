@@ -98,7 +98,7 @@
                             Version
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <select name="version" id="selectVersion" class="form-control select2bs44">
+                            <select name="id" id="selectVersion" class="form-control select2bs44">
                                 
                             </select>
                             <input type="hidden" name="quote_no" id="quote_no" value="">
@@ -130,7 +130,7 @@
                 success: function (result) {
                     if(result){
                         if(status == 'view'){
-                            $('#selectVersion').html(`<option value="${verse}"></option>`);
+                            $('#selectVersion').html(`<option value="${id}"></option>`);
                             $('#quote_no').val(quote_no);
                             $('#formku').attr("action", "{{ route('quotation.getView') }}");
                             $('#formku').submit(); 
@@ -141,29 +141,31 @@
                             $('#formku').submit(); 
                         }
                     }else{  
-                        viewVersionx(quote_no, verse, status);
+                        viewVersionx(quote_no, verse, status, id);
                     } 
                 }
             });
         }
 
-        function viewVersionx(quote_no, verse, status){
+        function viewVersionx(quote_no, verse, status, id){
             dsState == "View";
             $.ajax({
                 type: "POST",
                 url: "{{ route('quotation.viewVersion') }}",
-                data:{quote_no:quote_no, verse:verse},
+                data:{
+                    quote_no:quote_no, 
+                    verse:verse,
+                    id:id
+                },
                 dataType:"html",
                 success: function (result) {
                     var tabel = JSON.parse(result);
 
-                    if(status == 'view'){
-                        $('#selectVersion').html(tabel[0]);
-                    }else{
-                        $('#selectVersion').html(tabel[1]);
-                    }
+                    $('#selectVersion').html(tabel);
+
                     $('#quote_no').val(quote_no);
                     $('#status').val(status);
+                    $('#id_quotex').val(id);
                     $("#myModal").find('.modal-title').text('Select Version');
                     $("#myModal").modal('show',{backdrop: 'true'}); 
                 }

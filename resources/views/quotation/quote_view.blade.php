@@ -69,8 +69,8 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate"/>
-                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker" aria-disabled="true">
+                                            <input type="text" name="date" id="datex" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
                                         </div>
@@ -320,10 +320,13 @@
                            <thead>
                                <tr>
                                    <th width="2%">No</th>
+                                   @if ($quote->shipment_by == 'LAND')
+                                   <th width="15%">Truck Size</th>
+                                   @else
                                    <th width="15%">Carrier</th>
                                    <th width="10%">Routing</th>
-                                   <th width="5%">Transit time(days)</th>
-                                   <th width="10%">Currency</th>
+                                   <th width="5%" style="font-size: 12px">Transit time(days)</th>
+                                   @endif
                                    <th>Rate</th>
                                    <th>Cost</th>
                                    <th>Sell</th>
@@ -339,10 +342,13 @@
                                @foreach ($shipping as $row)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $row->code_currency }}</td>
+                                    @if ($quote->shipment_by == 'LAND')
+                                    <td>{{ $row->truck_size }}</td>
+                                    @else
+                                    <td>{{ $row->name_carrier }}</td>
                                     <td>{{ $row->routing }}</td>
                                     <td>{{ $row->transit_time }}</td>
-                                    <td>{{ $row->code_currency }}</td>
+                                    @endif
                                     <td>{{ number_format($row->rate,2,',','.') }}</td>
                                     <td>{{ number_format($row->cost,2,',','.') }}</td>
                                     <td>{{ number_format($row->sell,2,',','.') }}</td>

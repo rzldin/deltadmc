@@ -901,11 +901,14 @@
     });
 
     /** Load Dimension **/
-    function loadDimension(id){
+    function loadDimension(id, val){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadDimension') }}",
-            data:"id="+id,
+            data:{
+                id : id,
+                val : val
+            },
             dataType:"html",
             success:function(result){
                 // console.log(result)
@@ -917,14 +920,14 @@
     }
 
 
-    /** Load Dimension **/
-    function loadShipping(quote_no, id){
+    /** Load Shipping **/
+    function loadShipping(id, val){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadShipping') }}",
             data:{
-                quote_no : quote_no,
-                id       : id
+                id : id,
+                val : val
             },
             dataType:"html",
             success:function(result){
@@ -934,14 +937,14 @@
         })
     }
 
-    /** Load Dimension **/
-    function loadDetail(val, id){
+    /** Load Detail Quote **/
+    function loadDetail(id, val){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadDetail') }}",
             data:{
-                quote_no : val,
-                id : id
+                id : id,
+                val : val
             },
             dataType:"html",
             success:function(result){
@@ -952,12 +955,11 @@
     }
 
     /** Load Profit **/
-    function loadProfit(val, id){
+    function loadProfit(id){
         $.ajax({
             type:"POST",
             url:"{{ route('quotation.quote_loadProfit') }}",
             data:{
-                quote_no : val,
                 id : id
             },
             dataType:"html",
@@ -1028,7 +1030,7 @@
                 url:"{{ route('quotation.quote_deleteDimension') }}",
                 data:"id="+ id,
                 success:function(result){
-                    loadDimension({{ Request::segment(3) }});   
+                    loadDimension({{ Request::segment(3) }}, 'a');   
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
                 }, 
@@ -1049,10 +1051,9 @@
                     Toast.fire({
                         icon: 'success',
                         title: 'success deleted!'
-                    })
-                    //loadShipping({{ Request::segment(3) }});  
-                    loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
-                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    })  
+                    loadShipping({{ Request::segment(3) }}, 'a'); 
+                    loadProfit({{ Request::segment(3) }}); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
                 }, 
@@ -1076,8 +1077,8 @@
                         icon: 'success',
                         title: 'success deleted!'
                     })
-                    loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});   
-                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    loadDetail({{ Request::segment(3) }}, 'a');   
+                    loadProfit({{ Request::segment(3) }}); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Menghapus Dimension!');
                 }, 
@@ -1118,8 +1119,8 @@
                             title: 'success deleted!'
                         })
 
-                        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});   
-                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                        loadDetail({{ Request::segment(3) }}, 'a');   
+                        loadProfit({{ Request::segment(3) }}); 
                     },
                     error: function (xhr, ajaxOptions, thrownError) {           
                         alert('gagal')           
@@ -1331,7 +1332,7 @@
                     pieces:$('#pieces_'+id).val()
                 },
                 success:function(result){
-                    loadDimension({{ Request::segment(3) }}); 
+                    loadDimension({{ Request::segment(3) }}, 'a'); 
                 },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal Mengupdate Dimension!');
                 },          
@@ -1526,7 +1527,7 @@
                 $('#wight_'+id).val('');
                 $('#wight_uom_'+id).val('').trigger('change');
                 $('#pieces_'+id).val('');
-                loadDimension({{ Request::segment(3) }});
+                loadDimension({{ Request::segment(3) }}, 'a');
                 Toast.fire({
                     icon: 'success',
                     title: 'Sukses Add Data!'
@@ -1590,9 +1591,8 @@
                 },
                 success:function(result){
                     $('#shipping-detail').modal('hide')
-                    //loadShipping({{ Request::segment(3) }});
-                    loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    loadShipping({{ Request::segment(3) }}, 'a');
+                    loadProfit({{ Request::segment(3) }}); 
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Add Data!'
@@ -1625,9 +1625,8 @@
                     },
                     success:function(result){
                         $('#shipping-detail').modal('hide')
-                        //loadShipping({{ Request::segment(3) }}); 
-                        loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                        loadShipping({{ Request::segment(3) }}, 'a');
+                        loadProfit({{ Request::segment(3) }}); 
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
@@ -1698,8 +1697,8 @@
                 },
                 success:function(result){
                     $('#detail-quote').modal('hide')
-                    loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-                    loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                    loadDetail({{ Request::segment(3) }}, 'a');
+                    loadProfit({{ Request::segment(3) }}); 
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Add Data!'
@@ -1731,8 +1730,8 @@
                     },
                     success:function(result){
                         $('#detail-quote').modal('hide')
-                        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
-                        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+                        loadDetail({{ Request::segment(3) }}, 'a'); 
+                        loadProfit({{ Request::segment(3) }}); 
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
@@ -1862,10 +1861,10 @@
     }
 
     $(function() {
-        loadDimension({{ Request::segment(3) }});
-        loadShipping('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-        loadDetail('{{ $quote->quote_no }}', {{ Request::segment(3) }});
-        loadProfit('{{ $quote->quote_no }}', {{ Request::segment(3) }}); 
+        loadDimension({{ Request::segment(3) }}, 'a');
+        loadShipping({{ Request::segment(3) }}, 'a');
+        loadDetail({{ Request::segment(3) }}, 'a');
+        loadProfit({{ Request::segment(3) }}); 
     });
   </script>
       

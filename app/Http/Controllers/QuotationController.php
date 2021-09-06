@@ -142,6 +142,102 @@ class QuotationController extends Controller
                     'created_by'            => $user,
                     'created_on'            => $tanggal
                 ]);
+            
+            #Jika New Version
+            if($request->new_version !== "")
+            {
+                #Add Tabel Dimension Info
+                $dataDimensi = QuotationModel::get_quoteDimension($request->id_quote);
+
+                foreach ($dataDimensi as $dd)
+                {
+                    $idShip = DB::table('t_quote_dimension')->insertGetId([
+                        't_quote_id'        => $id,
+                        'position_no'       => $dd->position_no,
+                        'length'            => $dd->length,
+                        'width'             => $dd->width,
+                        'height'            => $dd->height,
+                        'height_uom_id'     => $dd->height_uom_id,
+                        'pieces'            => $dd->pieces,
+                        'wight'             => $dd->wight,
+                        'wight_uom_id'      => $dd->wight_uom_id,
+                        'created_by'        => $user,
+                        'created_on'        => $tanggal
+                    ]);
+                }
+
+                #Add Tabel Quote Shipping detail
+                $dataShipping = QuotationModel::get_quoteShipping($request->id_quote);
+
+                foreach ($dataShipping as $row)
+                {
+                    DB::table('t_quote_shipg_dtl')->insert([
+                        't_quote_id'        => $id,
+                        'position_no'       => $row->position_no,
+                        't_mcarrier_id'     => $row->t_mcarrier_id,
+                        'routing'           => $row->routing,
+                        'transit_time'      => $row->transit_time,
+                        'truck_size'        => $row->truck_size,
+                        't_mcurrency_id'    => $row->t_mcurrency_id,
+                        'rate'              => $row->rate,
+                        'cost'              => $row->cost,
+                        'sell'              => $row->sell,
+                        'qty'               => $row->qty,
+                        'cost_val'          => $row->cost_val,
+                        'sell_val'          => $row->sell_val,
+                        'vat'               => $row->vat,
+                        'subtotal'          => $row->subtotal,
+                        'notes'             => $row->notes,
+                        'created_by'        => $user,
+                        'created_on'        => $tanggal
+                    ]);
+                }
+
+                #Add Tabel Detail Quote
+                $dataDetailQuote = QuotationModel::get_quoteDetail($request->id_quote);
+
+                foreach ($dataDetailQuote as $dq)
+                {
+                    DB::table('t_quote_dtl')->insert([
+                        't_quote_id'        => $id,
+                        'position_no'       => $dq->position_no,
+                        't_mcharge_code_id' => $dq->t_mcharge_code_id,
+                        'desc'              => $dq->desc,
+                        'reimburse_flag'    => $dq->reimburse_flag,
+                        't_mcurrency_id'    => $dq->t_mcurrency_id,
+                        'rate'              => $dq->rate,
+                        'cost'              => $dq->cost,
+                        'sell'              => $dq->sell,
+                        'qty'               => $dq->qty,
+                        'cost_val'          => $dq->cost_val,
+                        'sell_val'          => $dq->sell_val,
+                        'vat'               => $dq->vat,
+                        'subtotal'          => $dq->subtotal,
+                        'notes'             => $dq->notes,
+                        'created_by'        => $user,
+                        'created_on'        => $tanggal
+                    ]);
+                }
+
+                #Add Tabel Profit
+                $dataProfit = QuotationModel::get_quoteProfit($request->id_quote);
+
+                foreach ($dataProfit as $dp)
+                {
+                    DB::table('t_quote_profit')->insert([
+                        't_quote_id'            => $id,
+                        't_quote_ship_dtl_id'   => $idShip,
+                        't_mcurrency_id'        => $dp->t_mcurrency_id,
+                        'total_cost'            => $dp->total_cost,
+                        'total_sell'            => $dp->total_sell,
+                        'total_profit'          => $dp->total_profit,
+                        'profit_pct'            => $dp->profit_pct,
+                        'created_by'            => $user,
+                        'created_on'            => $tanggal
+                    ]);
+                }
+
+            }
 
             return redirect('quotation/quote_edit/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
@@ -232,13 +328,12 @@ class QuotationController extends Controller
                 $status = '';
             }
 
-            $option .= '<option value="'.$row->version_no.'" '.$status.'>'.$row->version_no.'</option>';
-            $option1 .= '<option value="'.$row->id.'" '.$status.'>'.$row->version_no.'</option>';
+            $option .= '<option value="'.$row->id.'" '.$status.'>'.$row->version_no.'</option>';
 
         }
 
         header('Content-Type: application/json');
-        echo json_encode([$option,$option1]);
+        echo json_encode($option);
     }
 
     public function quote_getView(Request $request)
@@ -251,15 +346,12 @@ class QuotationController extends Controller
                 ->leftJoin('t_muom', 't_quote.weight_uom_id', '=', 't_muom.id')
                 ->leftJoin('t_mincoterms', 't_quote.terms', '=', 't_mincoterms.id')
                 ->select('t_quote.*', 't_mcompany.client_name', 't_mloaded_type.loaded_type', 't_mpic.name as name_pic','t_mport.port_name', 't_muom.uom_code', 't_mpic.id as id_pic', 't_mincoterms.incoterns_code')
-                ->where([
-                        ['t_quote.quote_no', '=', $request->quote_no],
-                        ['t_quote.version_no', '=', $request->version],
-                    ])->first();
+                ->where('t_quote.id', $request->id)->first();
 
-        $dimension  = QuotationModel::get_quoteDimension($quote->quote_no);;
-        $shipping   = QuotationModel::get_quoteShipping($quote->quote_no);
-        $quoteDtl   = QuotationModel::get_quoteDetail($quote->quote_no);
-        $profit     = QuotationModel::get_quoteProfit($quote->quote_no);
+        $dimension  = QuotationModel::get_quoteDimension($request->id);;
+        $shipping   = QuotationModel::get_quoteShipping($request->id);
+        $quoteDtl   = QuotationModel::get_quoteDetail($request->id);
+        $profit     = QuotationModel::get_quoteProfit($request->id);
 
         $data['loaded']     = MasterModel::loaded_get();
         $data['uom']        = MasterModel::uom();
@@ -311,7 +403,7 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteDimension($request['id']);
+        $data = QuotationModel::get_quoteDimension($request->id);
         
             foreach($data as $row)
             {
@@ -345,17 +437,20 @@ class QuotationController extends Controller
                     $tabel .= '</select>';
                 $tabel .= '</td>';
                 
-                $tabel .= '<td style="text-align:center;">';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetaild('.$row->height_uom_id.','.$row->wight_uom_id.','.$no.');" style="margin-top:5px" id="btnEditd_'.$no.'"> '
-                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                        . '" onclick="updateDetaild('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdated_'.$no.'"> '
-                        . '<i class="fa fa-save"></i> Update </a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                        . '" onclick="hapusDetaild('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-trash"></i> Delete </a>';
-                $tabel .= '</td>';
+                if($request->val == 'a'){
+                    $tabel .= '<td style="text-align:center;">';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
+                            . '" onclick="editDetaild('.$row->height_uom_id.','.$row->wight_uom_id.','.$no.');" style="margin-top:5px" id="btnEditd_'.$no.'"> '
+                            . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+                            . '" onclick="updateDetaild('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdated_'.$no.'"> '
+                            . '<i class="fa fa-save"></i> Update </a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                            . '" onclick="hapusDetaild('.$row->id.');" style="margin-top:5px"> '
+                            . '<i class="fa fa-trash"></i> Delete </a>';
+                    $tabel .= '</td>';
+                }
+
                 $tabel .= '</tr>';
                 $no++;
             }
@@ -505,7 +600,7 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteShipping($request['quote_no']);
+        $data = QuotationModel::get_quoteShipping($request['id']);
         $quote = QuotationModel::get_detailQuote($request['id']);
 
         if(count($data) > 0){
@@ -531,14 +626,17 @@ class QuotationController extends Controller
                 $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
                 $tabel .= '<td>'.$row->notes.'</td>';
-                $tabel .= '<td style="text-align:center;">';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
-                        . '" onclick="editDetails('.$row->id.');">'
-                        . '<i class="fa fa-edit"></i></a>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
-                        . '" onclick="hapusDetails('.$row->id.');" style="margin-left:5px"> '
-                        . '<i class="fa fa-trash"></i></a>';
-                $tabel .= '</td>';
+
+                if($request->val == 'a'){
+                    $tabel .= '<td style="text-align:center;">';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
+                            . '" onclick="editDetails('.$row->id.');">'
+                            . '<i class="fa fa-edit"></i></a>';
+                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
+                            . '" onclick="hapusDetails('.$row->id.');" style="margin-left:5px"> '
+                            . '<i class="fa fa-trash"></i></a>';
+                    $tabel .= '</td>';
+                }
                 $tabel .= '</tr>';
                 $no++;
             }
@@ -782,14 +880,16 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteDetail($request->quote_no);
+        $data = QuotationModel::get_quoteDetail($request->id);
 
             if(count($data) > 0)
             {
                 foreach($data as $row)
                 {
                     $tabel .= '<tr>';
-                    $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" name="deleteAll" id="delete_'.$no.'" value="'.$row->id.'"></td>';
+                    if($request->val == 'a'){
+                        $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" name="deleteAll" id="delete_'.$no.'" value="'.$row->id.'"></td>';
+                    }
                     $tabel .= '<td>'.($no-1).'</td>';
                     $tabel .= '<td>'.$row->name_charge.'</td>';
                     $tabel .= '<td>'.$row->desc.'</td>';
@@ -810,14 +910,18 @@ class QuotationController extends Controller
                     $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                     $tabel .= '<td class="text-right">'.number_format($row->subtotal,2,',','.').'</td>';
                     $tabel .= '<td>'.$row->notes.'</td>';
-                    $tabel .= '<td style="text-align:center;">';
-                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
-                            . '" onclick="editDetailx('.$row->id.');" id="btnEditx_'.$no.'"> '
-                            . '<i class="fa fa-edit"></i></a>';
-                    $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
-                            . '" onclick="hapusDetailx('.$row->id.');" style="margin-left:2px"> '
-                            . '<i class="fa fa-trash"></i></a>';
-                    $tabel .= '</td>';
+
+                    if($request->val == 'a'){
+                        $tabel .= '<td style="text-align:center;">';
+                        $tabel .= '<a href="javascript:;" class="btn btn-xs btn-primary'
+                                . '" onclick="editDetailx('.$row->id.');" id="btnEditx_'.$no.'"> '
+                                . '<i class="fa fa-edit"></i></a>';
+                        $tabel .= '<a href="javascript:;" class="btn btn-xs btn-danger'
+                                . '" onclick="hapusDetailx('.$row->id.');" style="margin-left:2px"> '
+                                . '<i class="fa fa-trash"></i></a>';
+                        $tabel .= '</td>';
+                    }
+
                     $tabel .= '</tr>';
                     $no++;
                 }
@@ -1108,7 +1212,7 @@ class QuotationController extends Controller
     {
         $tabel = "";
         $no = 2;
-        $data = QuotationModel::get_quoteProfit($request->quote_no);
+        $data = QuotationModel::get_quoteProfit($request->id);
         $quote = QuotationModel::get_detailQuote($request->id);
         
         

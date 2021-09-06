@@ -23,14 +23,11 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <!-- left column -->
             <div class="col-md-12">
-                <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Header</h3>
                     </div>
-                    <!-- /.card-header -->
                     @if(count($errors)>0)
                         @foreach($errors->all() as $error)
                         <div class="alert alert-danger" role="alert">
@@ -51,6 +48,7 @@
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}">
                                         <input type="hidden" name="id_quote" name="id_quote" value="{{ Request::segment(3) }}">
+                                        <input type="hidden" name="new_version" value="new">
                                     </div>
                                 </div>
                                 <div class="row mb-3 mt-3">
@@ -315,12 +313,133 @@
                         </div>
                     </div>
                 <!-- /.card-body -->
-                    <div class="card-footer">
-                        <button type="button" class="btn btn-primary float-right" id="saveData"><i class="fa fa-paper-plane"></i> Submit</button>
-                    </div>
-                </form>
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Dimension Info</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table_lowm table-bordered" id="Table2">
+                            <thead>
+                                <tr>
+                                    <th width="1%">No</th>
+                                    <th width="10%">Length</th>
+                                    <th width="10%">Width</th>
+                                    <th width="10%">Height</th>
+                                    <th width="15%">UOM</th>
+                                    <th width="10%">Pieces</th>
+                                    <th width="9%">Wight</th>
+                                    <th width="15%">UOM</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblDimension">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Shipping Detail</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                       <table class="table table_lowm table-bordered" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 150% @else width: 105% @endif">
+                           <thead>
+                               <tr>
+                                   <th width="2%">No</th>
+                                   @if ($quote->shipment_by == 'LAND')
+                                   <th width="15%">Truck Size</th>
+                                   @else
+                                   <th width="15%">Carrier</th>
+                                   <th width="10%">Routing</th>
+                                   <th width="5%" style="font-size: 12px">Transit time(days)</th>
+                                   @endif
+                                   <th width="10%">Currency</th>
+                                   <th>Rate</th>
+                                   <th>Cost</th>
+                                   <th>Sell</th>
+                                   <th width="5%">Qty</th>
+                                   <th>Cost Value</th>
+                                   <th>Sell Value</th>
+                                   <th width="5%">Vat</th>
+                                   <th width="10%">Total</th>
+                                   <th width="10%">Note</th>
+                               </tr>
+                           </thead>
+                           <tbody id="tblShipping">
+                           </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Detail quote</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                       <table class="table table_lowm table-bordered" id="myTable2" style="width: 150%">
+                           <thead>
+                               <tr>
+                                   <th>No</th>
+                                   <th>Service/Fee</th>
+                                   <th>Description</th>
+                                   <th>Reimbursment</th>
+                                   <th>Currency</th>
+                                   <th>Rate</th>
+                                   <th>Cost</th>
+                                   <th>Sell</th>
+                                   <th>Qty</th>
+                                   <th>Cost Value</th>
+                                   <th>Sell Value</th>
+                                   <th>Vat</th>
+                                   <th>Total</th>
+                                   <th>Note</th>
+                               </tr>
+                           </thead>
+                           <tbody id="tblDetail">
+                           </tbody>
+                       </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Profit Analysis</h3>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                       <table class="table table_lowm table-bordered">
+                           <thead>
+                               <tr>
+                                   @if ($quote->shipment_by != 'LAND')
+                                   <td class="text-center">Carrier</td>
+                                   <td class="text-center">Routing</td>
+                                   <td class="text-center">Transit Time</td>
+                                   @endif
+                                   <td class="text-center">Total Cost</td>
+                                   <td class="text-center">Total Sell</td>
+                                   <td class="text-center">Total Profit</td>
+                                   <td class="text-center">Profil PCT</td>
+                               </tr>
+                           </thead>
+                           <tbody id="tblProfit">
+                           </tbody>
+                       </table>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url('quotation/quote_edit/'.$quote->id) }}" class="btn btn-default float-left mr-2"> 
+                      <i class="fa fa-angle-left"></i> Back 
+                    </a>
+                    <button type="button" class="btn btn-primary float-right" id="saveData"><i class="fa fa-paper-plane"></i> Submit</button>
+                </div>
+            </div>
+        </form>
         </div>
     </div>
 </section>
@@ -336,6 +455,78 @@
     {
         $(this).val($(this).attr('checked') ? $('#reimbursx_'+id).val(1) : $('#reimbursx_'+id).val(0) )
         //$(this).val($(this).attr('checked') ? alert('1') : alert('0') )
+    }
+
+    /** Load Dimension **/
+    function loadDimension(id, val){
+        $.ajax({
+            type:"POST",
+            url:"{{ route('quotation.quote_loadDimension') }}",
+            data:{
+                id : id,
+                val : val
+            },
+            dataType:"html",
+            success:function(result){
+                if(result == '""'){
+                    $('#tblDimension').html(`<tr><td colspan="14" class="text-center"><strong>Not Available.</strong></td></tr>`)
+                }else{
+                    var tabel = JSON.parse(result);
+                    console.log(tabel);
+                    $('#tblDimension').html(tabel);
+                }
+            }
+        })
+    }
+
+    /** Load Shipping **/
+    function loadShipping(id, val){
+        $.ajax({
+            type:"POST",
+            url:"{{ route('quotation.quote_loadShipping') }}",
+            data:{
+                id : id,
+                val : val
+            },
+            dataType:"html",
+            success:function(result){
+                var tabel = JSON.parse(result);
+                $('#tblShipping').html(tabel);
+            }
+        })
+    }
+
+    /** Load Detail Quote **/
+    function loadDetail(id, val){
+        $.ajax({
+            type:"POST",
+            url:"{{ route('quotation.quote_loadDetail') }}",
+            data:{
+                id : id,
+                val : val
+            },
+            dataType:"html",
+            success:function(result){
+                var tabel = JSON.parse(result);
+                $('#tblDetail').html(tabel);
+            }
+        })
+    }
+
+    /** Load Profit **/
+    function loadProfit(id){
+        $.ajax({
+            type:"POST",
+            url:"{{ route('quotation.quote_loadProfit') }}",
+            data:{
+                id : id
+            },
+            dataType:"html",
+            success:function(result){
+                var tabel = JSON.parse(result);
+                $('#tblProfit').html(tabel);
+            }
+        })
     }
     
     function get_pic(val){
@@ -510,6 +701,13 @@
             $(this).prop('disabled', true).text('Please Wait ...');
             $('#formku').submit();
         }
+    });
+
+    $(function() {
+        loadDimension({{ Request::segment(3) }}, 'b');
+        loadShipping({{ Request::segment(3) }}, 'b');
+        loadDetail({{ Request::segment(3) }}, 'b');
+        loadProfit({{ Request::segment(3) }}); 
     });
 
   </script>
