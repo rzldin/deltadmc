@@ -1326,9 +1326,9 @@ class QuotationController extends Controller
 
     public function quote_preview($no,$id)
     {
-        $data['shipping']       = QuotationModel::get_quoteShipping($no);
-        $data['detail_quote']   = QuotationModel::get_quoteDetail($no);
-        $data['profit']         = QuotationModel::get_quoteProfit($no);
+        $data['shipping']       = QuotationModel::get_quoteShipping($id);
+        $data['detail_quote']   = QuotationModel::get_quoteDetail($id);
+        $data['profit']         = QuotationModel::get_quoteProfit($id);
         $data['quote']          = QuotationModel::get_detailQuote($id);
 
         return view('quotation.quote_preview')->with($data);
