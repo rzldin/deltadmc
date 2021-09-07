@@ -898,37 +898,32 @@
                     icon: 'error',
                     title: 'Please input Email!'
                 });
-            }else if($.trim($("#pic_desc_"+id).val()) == ""){
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Please input PIC Desc!'
-                });
             }else{
                 $.ajax({
-                type:"POST",
-                url:"{{ route('master.company_addPic') }}",
-                data:{
-                    company:{{ $company->id }},
-                    pic_name:$('#pic_name_'+id).val(),
-                    phone1:$('#phonex_'+id).val(),
-                    phone2:$('#phonexx_'+id).val(),
-                    email:$('#email_'+id).val(),
-                    fax:$('#fax_'+id).val(),
-                    desc:$('#pic_desc_'+id).val(),
-                    status:$('#status_'+id).val()
-                },
-                success:function(result){
-                    console.log(result);
-                    $('#pic_name_'+id).val('');
-                    $("#phonex_"+id).val('');
-                    $('#phonexx_'+id).val('');
-                    $('#email_'+id).val('');
-                    $('#fax_'+id).val('');
-                    $('#pic_desc_'+id).val('');
-                    loadDetailx($('#id_company').val());
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                    type:"POST",
+                    url:"{{ route('master.company_addPic') }}",
+                    data:{
+                        company:{{ $company->id }},
+                        pic_name:$('#pic_name_'+id).val(),
+                        phone1:$('#phonex_'+id).val(),
+                        phone2:$('#phonexx_'+id).val(),
+                        email:$('#email_'+id).val(),
+                        fax:$('#fax_'+id).val(),
+                        desc:$('#pic_desc_'+id).val(),
+                        status:$('#status_'+id).val()
+                    },
+                    success:function(result){
+                        console.log(result);
+                        $('#pic_name_'+id).val('');
+                        $("#phonex_"+id).val('');
+                        $('#phonexx_'+id).val('');
+                        $('#email_'+id).val('');
+                        $('#fax_'+id).val('');
+                        $('#pic_desc_'+id).val('');
+                        loadDetailx($('#id_company').val());
+                    },error: function (xhr, ajaxOptions, thrownError) {           
                         alert('Gagal menambahkan PIC!');
-				    },  
+                    },  
                 });
             }
         }

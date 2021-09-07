@@ -19,13 +19,23 @@ class QuotationController extends Controller
 
     public function quote_add(Request $request)
     {
+        $sales = DB::table('t_mmatrix')
+        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+        ->select('users.name as user_name', 'users.id as user_id')
+        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+        ->where('t_mmatrix.active_flag', '1')->get();
+        
+        $list_account = MasterModel::account_get();
+        $list_country = MasterModel::country();
+        $list_sales   = $sales;
         $version = $request->segment(3);
         $loaded = MasterModel::loaded_get();
         $company = MasterModel::company_data();
         $inco = MasterModel::incoterms_get();
         $port = MasterModel::port();
         $uom = MasterModel::uom();
-        return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded'));
+        return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded', 'list_account', 'list_country', 'list_sales'));
     }
 
     public function get_pic(Request $request)
@@ -35,7 +45,13 @@ class QuotationController extends Controller
         $table .= '<option value="">-- Select PIC --</option>';
         foreach($data as $d)
         {
-            $table .= '<option value="'.$d->id.'">'.$d->name.'</option>';
+            if($request->pic_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status ='';
+            }
+
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->name.'</option>';
         }
 
         header('Content-Type: application/json');
@@ -55,14 +71,26 @@ class QuotationController extends Controller
         echo json_encode($table);
     }
 
-    public function get_customer()
+    public function get_customer(Request $request)
     {
         $table = '';
         $data = MasterModel::company_data();
         $table .= '<option value="">-- Select Customer --</option>';
+        
         foreach($data as $d)
         {
-            $table .= '<option value="'.$d->id.'">'.$d->client_name.'</option>';
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            if($request->company_id == ''){
+                $table .= '<option value="'.$d->id.'">'.$d->client_name.'</option>';
+            }else{
+                $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+            }
+
         }
 
         header('Content-Type: application/json');
@@ -71,6 +99,7 @@ class QuotationController extends Controller
 
     public function quote_doAdd(Request $request)
     {
+
         if($request->hazard == 'on'){
             $h = 1;
         }else{
@@ -115,7 +144,7 @@ class QuotationController extends Controller
                     'quote_no'              => $request->quote_no,
                     'version_no'            => $request->version,
                     'quote_date'            => Carbon::parse($request->date),
-                    'customer_id'           => $request->customer,
+                    'customer_id'           => $request->customer_add,
                     'activity'              => $request->activity,
                     't_mloaded_type_id'     => $request->loaded,
                     't_mpic_id'             => $request->pic,
@@ -151,7 +180,7 @@ class QuotationController extends Controller
 
                 foreach ($dataDimensi as $dd)
                 {
-                    $idShip = DB::table('t_quote_dimension')->insertGetId([
+                    DB::table('t_quote_dimension')->insertGetId([
                         't_quote_id'        => $id,
                         'position_no'       => $dd->position_no,
                         'length'            => $dd->length,
@@ -171,7 +200,7 @@ class QuotationController extends Controller
 
                 foreach ($dataShipping as $row)
                 {
-                    DB::table('t_quote_shipg_dtl')->insert([
+                    $idShip = DB::table('t_quote_shipg_dtl')->insertGetId([
                         't_quote_id'        => $id,
                         'position_no'       => $row->position_no,
                         't_mcarrier_id'     => $row->t_mcarrier_id,
@@ -248,6 +277,17 @@ class QuotationController extends Controller
     public function quote_edit($id)
     {       
         $quote = QuotationModel::get_detailQuote($id);
+
+        $sales = DB::table('t_mmatrix')
+        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+        ->select('users.name as user_name', 'users.id as user_id')
+        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+        ->where('t_mmatrix.active_flag', '1')->get();
+        
+        $data['list_account'] = MasterModel::account_get();
+        $data['list_country'] = MasterModel::country();
+        $data['list_sales']   = $sales;
         
         $data['loaded'] = MasterModel::loaded_get();
         $data['company'] = MasterModel::company_data();
@@ -1291,7 +1331,7 @@ class QuotationController extends Controller
                 'quote_no'              => $request->quote_no,
                 'version_no'            => $request->version,
                 'quote_date'            => Carbon::parse($request->date),
-                'customer_id'           => $request->customer,
+                'customer_id'           => $request->customer_add,
                 'activity'              => $request->activity,
                 't_mloaded_type_id'     => $request->loaded,
                 't_mpic_id'             => $request->pic,
