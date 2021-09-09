@@ -58,6 +58,49 @@ class QuotationController extends Controller
         echo json_encode($table);
     }
 
+    public function get_pic_b(Request $request)
+    {
+        $table      = '';
+        $cek        = '';
+        $table2     = '';
+        $data       = MasterModel::get_pic($request['id']);
+        $data2      = MasterModel::get_address($request['id']);
+        $cekData    = MasterModel::company_get($request['id']);
+
+        $table .= '<option value="">-- Select PIC --</option>';
+        foreach($data as $d)
+        {
+            if($request->pic_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status ='';
+            }
+
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->name.'</option>';
+        }
+
+        $table2 .= '<option value="" selected>-- Select Client Address --</option>';
+        foreach($data2 as $row)
+        {
+            $table2 .= '<option value="'.$row->id.'">'.$row->address_type.' - '.$row->address.'</option>';
+        }
+
+        if($cekData->legal_doc_flag == 1){
+            $cek .= '<input type="checkbox" id="checkboxPrimary1" name="legal_doc" checked disabled>
+                    <label for="checkboxPrimary1">
+                        Legal Doc
+                    </label>';
+        }else{
+            $cek .= '<input type="checkbox" id="checkboxPrimary1" name="legal_doc" disabled>
+                    <label for="checkboxPrimary1">
+                        Legal Doc
+                    </label>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([$table, $table2, $cek]);
+    }
+
     public function get_port(Request $request)
     {
         $table = '';
@@ -65,6 +108,20 @@ class QuotationController extends Controller
         foreach($data as $d)
         {
             $table .= '<option id="'.$d->id.'" value="'.$d->port_name.' - '.$d->address.'"></option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
+    public function get_port_b()
+    {
+        $table  = '';
+        $data   = MasterModel::port();
+        $table  = '<option> -- Select -- </option>';
+        foreach($data as $row)
+        {
+            $table .= '<option value="'.$row->id.'">'.$row->port_name.'</option>';
         }
 
         header('Content-Type: application/json');
@@ -85,16 +142,169 @@ class QuotationController extends Controller
                 $status = '';
             }
 
-            if($request->company_id == ''){
-                $table .= '<option value="'.$d->id.'">'.$d->client_name.'</option>';
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+        
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
+    public function get_carrier(Request $request)
+    {
+        $table  = '';
+        $data   = MasterModel::carrier();
+        $table .= '<option value="">-- Select Carrier --</option>';
+        
+        foreach($data as $row)
+        {
+            if($request->carrier_id == $row->id){
+                $status = 'selected';
             }else{
-                $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+                $status = '';
             }
 
+            $table .= '<option value="'.$row->id.'"'.$status.'>'.$row->name.'</option>';
+        }
+        
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
+
+    public function get_shipper(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Shipper --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
         }
 
         header('Content-Type: application/json');
         echo json_encode($table);
+
+    }
+
+    public function get_consignee(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Consignee --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+            
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+
+    }
+
+
+    public function get_notify_party(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Notify Party --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+            
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
+
+    public function get_agent(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Agent --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+            
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+    }
+
+
+    public function get_shipping_line(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Shipping Line --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+            
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+
+    }
+
+
+    public function get_vendor(Request $request)
+    {
+        $table = '';
+        $data = MasterModel::company_data();
+        $table .= '<option value="">-- Select Vendor --</option>';
+        
+        foreach($data as $d)
+        {
+            if($request->company_id == $d->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+            
+            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($table);
+
     }
 
     public function quote_doAdd(Request $request)
@@ -198,6 +408,8 @@ class QuotationController extends Controller
                 #Add Tabel Quote Shipping detail
                 $dataShipping = QuotationModel::get_quoteShipping($request->id_quote);
 
+                $a = array();
+
                 foreach ($dataShipping as $row)
                 {
                     $idShip = DB::table('t_quote_shipg_dtl')->insertGetId([
@@ -220,6 +432,8 @@ class QuotationController extends Controller
                         'created_by'        => $user,
                         'created_on'        => $tanggal
                     ]);
+
+                    array_push($a, $idShip);
                 }
 
                 #Add Tabel Detail Quote
@@ -250,12 +464,13 @@ class QuotationController extends Controller
 
                 #Add Tabel Profit
                 $dataProfit = QuotationModel::get_quoteProfit($request->id_quote);
-
+                $i = 0; 
                 foreach ($dataProfit as $dp)
                 {
+                    
                     DB::table('t_quote_profit')->insert([
                         't_quote_id'            => $id,
-                        't_quote_ship_dtl_id'   => $idShip,
+                        't_quote_ship_dtl_id'   => $a[$i],
                         't_mcurrency_id'        => $dp->t_mcurrency_id,
                         'total_cost'            => $dp->total_cost,
                         'total_sell'            => $dp->total_sell,
@@ -264,6 +479,7 @@ class QuotationController extends Controller
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
+                    $i++;
                 }
 
             }
@@ -305,6 +521,17 @@ class QuotationController extends Controller
     public function quote_new($id)
     {       
         $quote = QuotationModel::get_detailQuote($id);
+
+        $sales = DB::table('t_mmatrix')
+        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+        ->select('users.name as user_name', 'users.id as user_id')
+        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+        ->where('t_mmatrix.active_flag', '1')->get();
+        
+        $data['list_account'] = MasterModel::account_get();
+        $data['list_country'] = MasterModel::country();
+        $data['list_sales']   = $sales;
         
         $data['loaded'] = MasterModel::loaded_get();
         $data['company'] = MasterModel::company_data();
@@ -576,7 +803,7 @@ class QuotationController extends Controller
             'created_on'        => $tanggal
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
 
         $result = array();
         foreach ($data as $key)
@@ -598,7 +825,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         if(count($detail) >= 1){
             foreach($data as $shipping){
                 $cekProfit = DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->get();
@@ -688,6 +915,7 @@ class QuotationController extends Controller
             }
             $tabel .= '<tr>';
                 $tabel .= '<td class="text-center" colspan='.$colspan.'>Not Available data.';
+                $tabel .= '<input type="hidden" id="tabel-shipping-cek" value="true">';
                 $tabel .= '</td>';
             $tabel .= '</td>';
         }
@@ -747,7 +975,7 @@ class QuotationController extends Controller
             'notes'             => $request->note
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE a.t_quote_id = '".$request->quote."'");
 
         $result = array();
         foreach ($data as $key)
@@ -769,7 +997,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;
@@ -838,7 +1066,7 @@ class QuotationController extends Controller
             'created_on'        => $tanggal
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
 
         $result = array();
         foreach ($data as $key)
@@ -860,7 +1088,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         if(count($detail) > 1){
             foreach($data as $shipping){
                 $totalCost  = $shipping->cost_val + $costV;
@@ -980,7 +1208,7 @@ class QuotationController extends Controller
         
         DB::table('t_quote_dtl')->where('id', $request->id)->delete();
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         $result = array();
         foreach ($data as $key)
         {
@@ -1001,7 +1229,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert And Delete Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;
             $totalSell  = $shipping->sell_val + $sellV;
@@ -1044,7 +1272,7 @@ class QuotationController extends Controller
             DB::table('t_quote_dtl')->where('id', $id)->delete();
         }
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         $result = array();
         foreach ($data as $key)
         {
@@ -1065,7 +1293,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert And Delete Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;
             $totalSell  = $shipping->sell_val + $sellV;
@@ -1134,7 +1362,7 @@ class QuotationController extends Controller
             'notes'             => $request->note,
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
 
         $result = array();
         foreach ($data as $key)
@@ -1156,7 +1384,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.quote_no = '".$request->quote_no."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
         
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;

@@ -201,9 +201,18 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(array('GET', 'POST'), 'quotation/preview/{no}/{id}', 'QuotationController@quote_preview');
     Route::get('booking/copy_booking/{id}', 'BookingController@copy_booking');
     Route::post('get/pic', 'QuotationController@get_pic')->name('get.pic');
+    Route::post('get/pic_b', 'QuotationController@get_pic_b')->name('get.pic_b');
     Route::post('get/port', 'QuotationController@get_port')->name('get.port');
+    Route::get('get/port_b', 'QuotationController@get_port_b')->name('get.port_b');
     Route::post('/quotation/quote_getCurrencyCode', 'QuotationController@quote_getCurrencyCode')->name('quotation.quote_getCurrencyCode');
     Route::match(array('GET', 'POST'), '/quotation/customer', 'QuotationController@get_customer')->name('get.customer');
+    Route::match(array('GET', 'POST'), '/quotation/shipper', 'QuotationController@get_shipper')->name('get.shipper');
+    Route::match(array('GET', 'POST'), '/quotation/consignee', 'QuotationController@get_consignee')->name('get.consignee');
+    Route::match(array('GET', 'POST'), '/quotation/notify_party', 'QuotationController@get_notify_party')->name('get.notify_party');
+    Route::match(array('GET', 'POST'), '/quotation/agent', 'QuotationController@get_agent')->name('get.agent');
+    Route::match(array('GET', 'POST'), '/quotation/shipping_line', 'QuotationController@get_shipping_line')->name('get.shipping_line');
+    Route::match(array('GET', 'POST'), '/quotation/vendor', 'QuotationController@get_vendor')->name('get.vendor');
+    Route::match(array('GET', 'POST'), '/quotation/get_list_carrier', 'QuotationController@get_carrier')->name('get.carrier');
 
     #Load Detail Dimension
     Route::post('/quotation/quote_addDimension', 'QuotationController@quote_addDimension')->name('quotation.quote_addDimension');

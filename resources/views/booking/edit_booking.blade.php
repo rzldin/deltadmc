@@ -775,12 +775,114 @@
 
         var dsState;
 
+        function get_customer(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#customer_add").html(final)
+                }
+            })
+        }
+
+        function get_shipper(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#shipper").html(final)
+                }
+            })
+        }
+
+        function get_consignee(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#consignee").html(final)
+                }
+            })
+        }
+
+        function get_notParty(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#notify_party").html(final)
+                }
+            })
+        }
+
+        function get_agent(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#agent").html(final)
+                }
+            })
+        }
+
+        function get_shipline(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#shipping_line").html(final)
+                }
+            })
+        }
+
+        function get_vendor(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#vendor").html(final)
+                }
+            })
+        }
+
         function client_detail(val){
             if(val!= ''){
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->client_pic_id }},
+                        addr_id : {{ $quote->client_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -797,16 +899,15 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->shipper_pic_id }},
+                        addr_id : {{ $quote->shipper_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
                         var check = final[2];
-                        if(check.legal_doc_flag == 1){
-                            $('input[type="checkbox"]').attr("checked", "checked");
-                        }else{
-                            $('input[type="checkbox"]').attr("checked", false)
-                        }
                         $("#shipper_addr").html(final[0]);
                         $("#shipper_pic").html(final[1]);
                     }
@@ -821,7 +922,11 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->consignee_pic_id }},
+                        addr_id : {{ $quote->consignee_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -838,7 +943,11 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->not_party_pic_id }},
+                        addr_id : {{ $quote->not_party_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -855,7 +964,11 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->agent_pic_id }},
+                        addr_id : {{ $quote->agent_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -872,7 +985,11 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->shpline_pic_id }},
+                        addr_id : {{ $quote->shpline_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -889,7 +1006,11 @@
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
-                    data: "id="+val,
+                    data: {
+                        id      : val,
+                        pic_id  : {{ $quote->vendor_pic_id }},
+                        addr_id : {{ $quote->vendor_addr_id }}
+                    },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
@@ -2281,6 +2402,27 @@
 
 
         $(function() {
+            get_customer({{ $quote->client_id }});
+            client_detail({{ $quote->client_id }});
+
+            get_shipper({{ $quote->shipper_id }});
+            shipper_detail({{ $quote->shipper_id }})
+
+            get_consignee({{ $quote->consignee_id }})
+            consignee_detail({{ $quote->consignee_id }})
+
+            get_notParty({{ $quote->not_party_id }})
+            not_detail({{ $quote->not_party_id }})
+
+            get_agent({{ $quote->agent_id }})
+            agent_detail({{ $quote->agent_id }})
+
+            get_shipline({{ $quote->shipping_line_id }})
+            shipline_detail({{ $quote->shipping_line_id }})
+
+            get_vendor({{ $quote->vendor_id }})
+            vendor_detail({{ $quote->vendor_id }})
+            
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});
             loadContainer({{ Request::segment(3) }});

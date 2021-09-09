@@ -137,17 +137,22 @@
                         <label>Client <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="get_pic(this.value)">
-                            <option value="" selected>-- Select Customer --</option>
-                            @foreach ($company as $c)
-                            <option value="{{ $c->id }}" @if ($quote->customer_id == $c->id)
-                                selected
-                            @endif>{{ $c->client_name }}</option>
-                            @endforeach
+                        <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="get_pic(this.value)">
+                                        
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('client')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-7">
+                        <div class="icheck-primary d-inline" id="legalDoc">
+                            
+                        </div>
                     </div>
                 </div>
                 <div class="client-detail">
@@ -157,11 +162,11 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="customer_addr" id="customer_addr">
-                                <option value="" selected>-- Select Client Address --</option>
-                                @foreach ($cust_addr as $item)
-                                <option value="{{ $item->id }}">{{ $item->address }}</option>
-                                @endforeach
+                                <option>-- Select Client Address --</option>
                             </select>
+                        </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('client')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -169,12 +174,12 @@
                             <label>Client PIC</label>
                         </div>
                         <div class="col-md-7">
-                            <select class="form-control select2bs44" style="width: 100%;" name="customer_pic" id="customer_pic">
-                                <option value="" selected>-- Select Client PIC --</option>
-                                @foreach ($cust_pic as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
+                            <select class="form-control select2bs44" name="customer_pic" id="customer_pic" style="width: 100%;">
+                                <option>-- Select Customer First --</option>
                             </select>
+                        </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('client')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                 </div>
@@ -182,24 +187,13 @@
                     <div class="col-md-4">
                         <label>Shipper <font color="red">*</font></label>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
-                            <option value="" selected>-- Select Shipper --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                                        
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                    </div>
-                    <div class="col-md-2 mt-2">
-                        <div class="icheck-primary d-inline">
-                            <input type="checkbox" id="checkboxPrimary1" name="legal_doc">
-                            <label for="checkboxPrimary1">
-                                Legal Doc
-                            </label>
-                        </div>
+                        <a href="javascript:;" onclick="addCustomer('shipper')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipper-detail" style="display: none">
@@ -212,6 +206,9 @@
                                 <option value="" selected>-- Select Shipper Address --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('shipper')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -222,6 +219,9 @@
                                 <option value="" selected>-- Select Shipper PIC --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('shipper')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -230,14 +230,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="consignee" id="consignee" onchange="consignee_detail(this.value)">
-                            <option value="" selected>-- Select Consignee --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('consignee')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="consignee-detail" style="display: none">
@@ -250,6 +247,9 @@
                                 <option value="" selected>-- Select consignee Address --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('consignee')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -260,6 +260,9 @@
                                 <option value="" selected>-- Select consignee PIC --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('consignee')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -268,14 +271,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="notify_party" id="notify_party" onchange="not_detail(this.value)">
-                            <option value="" selected>-- Select Notify Party --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                        
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('notifyParty')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="not-detail" style="display: none">
@@ -288,6 +288,9 @@
                                 <option value="" selected>-- Select consignee Address --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('notifyParty')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -298,6 +301,9 @@
                                 <option value="" selected>-- Select consignee PIC --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('notifyParty')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -306,14 +312,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="agent" id="agent" onchange="agent_detail(this.value)">
-                            <option value="" selected>-- Select Agent --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('agent')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="agent-detail" style="display: none">
@@ -326,6 +329,9 @@
                                 <option value="" selected>-- Select agent Address --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('agent')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -336,6 +342,9 @@
                                 <option value="" selected>-- Select consignee PIC --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('agent')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -344,14 +353,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="shipping_line" id="shipping_line" onchange="shipline_detail(this.value)">
-                            <option value="" selected>-- Select Shipping Line --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('shipline')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipline-detail" style="display: none">
@@ -364,6 +370,9 @@
                                 <option value="" selected>-- Select consignee Address --</option>
                             </select>
                         </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('shipline')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
@@ -373,6 +382,9 @@
                             <select class="form-control select2bs44" style="width: 100%;" name="shipline_pic" id="shipline_pic">
                                 <option value="" selected>-- Select consignee PIC --</option>
                             </select>
+                        </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('shipline')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                 </div>
@@ -398,14 +410,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="vendor" id="vendor" onchange="vendor_detail(this.value)">
-                            <option value="" selected>-- Select Vendor --</option>
-                            @foreach ($company as $item)
-                            <option value="{{ $item->id }}">{{ $item->client_name }}</option>
-                            @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCustomer('vendor')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="vendor-detail" style="display: none">
@@ -415,8 +424,11 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="vendor_addr" id="vendor_addr">
-                                <option value="" selected>-- Select consignee Address --</option>
+                                <option value="" selected>-- Select Vendor Address --</option>
                             </select>
+                        </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addAddress('vendor')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -425,8 +437,11 @@
                         </div>
                         <div class="col-md-7">
                             <select class="form-control select2bs44" style="width: 100%;" name="vendor_pic" id="vendor_pic">
-                                <option value="" selected>-- Select consignee PIC --</option>
+                                <option value="" selected>-- Select Vendor PIC --</option>
                             </select>
+                        </div>
+                        <div class="col-md-1 mt-1">
+                            <a href="javascript:;" onclick="addPic('vendor')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                         </div>
                     </div>
                 </div>
@@ -436,16 +451,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
-                            <option value="" selected>-- Select Carrier --</option>
-                            @foreach ($carrier as $item)
-                            <option value="{{ $item->id }}" @if ($quote->carrier_id == $item->id)
-                                selected
-                            @endif>{{ $item->name }}</option>  
-                            @endforeach
+
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addCarrier()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -488,14 +498,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
-                            <option value="" selected>-- Select Port Of Loading --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}">{{ $item->port_name }}</option>
-                            @endforeach
+
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addPort('pol')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -512,14 +519,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
-                            <option value="" selected>-- Select Port Of Transit --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}">{{ $item->port_name }}</option>
-                            @endforeach
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addPort('pot')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -528,14 +532,11 @@
                     </div>
                     <div class="col-md-7">
                         <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
-                            <option value="" selected>-- Select Port Of Discharge --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}">{{ $item->port_name }}</option>
-                            @endforeach
+                        
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        <a href="javascript:;" onclick="addPort('pod')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -584,7 +585,7 @@
                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_payment" id="valuta_payment">
                                             <option value="" selected>-- Select Valuta --</option>
                                             @foreach ($currency as $item)
-                                            <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->code }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -642,7 +643,7 @@
                                         <label for="">Place Of Stuffing</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <textarea name="posx" id="posx" cols="70" rows="3" class="form-control"></textarea>
+                                        <textarea name="pos" id="pos" cols="70" rows="3" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -675,7 +676,7 @@
                                 <label>Shipper</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="shipper_dtl" id="shipper_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="shipper_mbl" id="shipper_mbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -683,7 +684,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_dtl" id="cons_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="cons_mbl" id="cons_mbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -691,7 +692,7 @@
                                 <label>Notify Party</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="notify_dtl" id="notify_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="notify_mbl" id="notify_mbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -746,7 +747,7 @@
                                 <label>Shipper</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="shipper_dtl_awb" id="shipper_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="shipper_hbl" id="shipper_hbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -754,7 +755,7 @@
                                 <label>Consignee</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="cons_dtl_awb" id="cons_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="cons_hbl" id="cons_hbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -762,7 +763,7 @@
                                 <label>Notify Party</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="notify_dtl_awb" id="notify_dtl" cols="30" rows="3" class="form-control"></textarea>
+                                <textarea name="notify_hbl" id="notify_hbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -770,7 +771,7 @@
                                 <label>BL/AWB Number</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" name="awb_number" id="awb_number" placeholder="Enter BL/AWB Number ...">
+                                <input type="text" class="form-control" name="hbl_number" id="hbl_number" placeholder="Enter BL/AWB Number ...">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -779,7 +780,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="input-group date" id="reservationdateAWB" data-target-input="nearest">
-                                    <input type="text" name="awb_date" id="awb_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                    <input type="text" name="hbl_date" id="awb_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                     <div class="input-group-append" data-target="#reservationdateAWB" data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
@@ -822,9 +823,9 @@
         </div>
     </div>
     <div class="col-md-6">
-        <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
+        {{-- <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
         <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
-        <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
+        <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a> --}}
     </div>
 </div>
 <div class="card card-primary">
@@ -878,30 +879,6 @@
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-5">
-                {{-- <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Total Commodity</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_commo" id="total_commo" placeholder="Total Commodity ...">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Total Package</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_package" id="total_package" placeholder="Total Package ...">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Total Container</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="total_container" id="total_container" placeholder="Total Container ...">
-                    </div>
-                </div> --}}
             </div>
         </div>
     </div>

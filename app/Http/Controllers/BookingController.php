@@ -37,11 +37,21 @@ class BookingController extends Controller
 
     public function header_booking($id)
     {
+        $sales = DB::table('t_mmatrix')
+        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+        ->select('users.name as user_name', 'users.id as user_id')
+        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+        ->where('t_mmatrix.active_flag', '1')->get();
+        
         $quote                  = QuotationModel::get_detailQuote($id);
-        $shipping               = QuotationModel::get_quoteShipping($quote->quote_no);
+        $shipping               = QuotationModel::get_quoteShipping($id);
         $obj_merge              = (object) array_merge((array)$quote, (array("nomination_flag"=>0)), (array("carrier_id"=>$shipping[0]->t_mcarrier_id)));
         $data['quote']          = $obj_merge;
         $data['shipping']       = $shipping;
+        $data['list_account']   = MasterModel::account_get();
+        $data['list_country']   = MasterModel::country();
+        $data['list_sales']     = $sales;
         return view('booking.header_booking')->with($data);
         
     }
@@ -164,20 +174,32 @@ class BookingController extends Controller
     {
         $table = '';
         $table1 = '';
-        $address = MasterModel::get_address($request['id']);
-        $pic = MasterModel::get_pic($request['id']);
-        $table2 = MasterModel::company_get($request['id']);
+        $address = MasterModel::get_address($request->id);
+        $pic = MasterModel::get_pic($request->id);
+        $table2 = MasterModel::company_get($request->id);
         $table .= '<option value="">-- Select Address --</option>';
         $table1 .= '<option value="">-- Select PIC --</option>';
 
         foreach($address as $addr)
         {
-            $table .= '<option value="'.$addr->id.'">'.$addr->address.'</option>';
+            if($request->addr_id == $addr->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            $table .= '<option value="'.$addr->id.'"'.$status.'>'.$addr->address.'</option>';
         }
 
         foreach($pic as $p)
         {
-            $table1 .= '<option value="'.$p->id.'">'.$p->name.'</option>';
+            if($request->pic_id == $p->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            $table1 .= '<option value="'.$p->id.'"'.$status.'>'.$p->name.'</option>';
         }
 
         header('Content-Type: application/json');
@@ -186,16 +208,10 @@ class BookingController extends Controller
 
     public function booking_doAdd(Request $request)
     {
-        $shipping   = QuotationModel::get_quoteShipping($request->quote_no);
-        $dtlQuote   = QuotationModel::get_quoteDetail($request->quote_no);
+        $shipping   = QuotationModel::get_quoteShipping($request->id_quote);
+        $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
         $shp = $shipping[0];
         $no = 1;
-
-        if($request->legal_doc == "on"){
-            DB::table('t_mcompany')
-            ->where('id', $request->shipper)
-            ->update(['legal_doc_flag' => 1]);
-        }
 
         if($request->quote_no == 'Nomination'){
             $nomination_flag = 1;
@@ -248,7 +264,7 @@ class BookingController extends Controller
                         'igm_date'              => $igm_date,
                         'custom_pos'            => $request->pos,
                         'custom_subpos'         => $request->sub_pos,
-                        'client_id'             => $request->customer,
+                        'client_id'             => $request->customer_add,
                         'client_addr_id'        => $request->customer_addr,
                         'client_pic_id'         => $request->customer_pic,
                         'shipper_id'            => $request->shipper,

@@ -40,7 +40,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="font-size: 14px">
                             @foreach ($data as $row)
                             <tr>
                                 <td>{{ $row->booking_no }}</td>

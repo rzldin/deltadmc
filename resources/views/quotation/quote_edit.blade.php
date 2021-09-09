@@ -541,7 +541,7 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                        Vat <font color="#f00">*</font>
+                                        Vat 
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ..." onkeyup="hitungTotal()">
@@ -549,7 +549,7 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                        Total <font color="#f00">*</font>
+                                        Total
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" class="form-control" name="total" id="total" placeholder="Total ..." readonly>
@@ -705,7 +705,7 @@
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col-md-4 col-xs-4">
-                                        Vat <font color="#f00">*</font>
+                                        Vat 
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
@@ -1510,7 +1510,7 @@
                 url:"{{ route('quotation.quote_deleteDetail') }}",
                 data:{
                     id : id,
-                    quote_no : $('#quote_no').val()
+                    quote : {{ Request::segment(3) }}
                 },
                 success:function(result){
                     Toast.fire({
@@ -1549,7 +1549,7 @@
                     url: "{{ route('quotation.quote_deleteAll') }}",
                     data: {
                         detail:dtlQuote,
-                        quote_no : $('#quote_no').val()
+                        quote : {{ Request::segment(3) }}
                     },
                     dataType: 'json',
                     cache: false,
@@ -1981,8 +1981,7 @@
                     vat:$('#vat').val(),
                     total:$('#total').val(),
                     note:$('#note').val(),
-                    truck_size:$('#truck_size').val(),
-                    quote_no : $('#quote_no').val()
+                    truck_size:$('#truck_size').val()
                 },
                 success:function(result){
                     $('#shipping-detail').modal('hide')
@@ -2016,7 +2015,7 @@
                         total:$('#total').val(),
                         note:$('#note').val(),
                         truck_size:$('#truck_size').val(),
-                        quote_no:$('#quote_no').val()
+                        quote:{{ Request::segment(3) }}
                     },
                     success:function(result){
                         $('#shipping-detail').modal('hide')
@@ -2121,7 +2120,7 @@
                         vat:$('#vatx').val(),
                         total:$('#totalx').val(),
                         note:$('#notex').val(),
-                        quote_no:$('#quote_no').val()
+                        quote:{{ Request::segment(3) }}
                     },
                     success:function(result){
                         $('#detail-quote').modal('hide')
@@ -2148,6 +2147,12 @@
             Swal.fire({
                 title: 'Error!',
                 text: 'shipping details match not be more then one!',
+                icon: 'error'
+            })
+        }else if($("#tabel-shipping-cek").val() == 'true'){
+            Swal.fire({
+                title: 'Error!',
+                text: 'please input shipping details',
                 icon: 'error'
             })
         }else{
