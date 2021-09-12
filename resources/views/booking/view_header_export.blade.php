@@ -643,7 +643,7 @@
                                         <label for="">Place Of Stuffing</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <textarea name="pos" id="pos" cols="70" rows="3" class="form-control"></textarea>
+                                        <textarea name="posx" id="posx" cols="70" rows="3" class="form-control"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -724,7 +724,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_mbl" id="valuta_mbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -795,7 +795,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_hbl" id="valuta_hbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
                                     @endforeach
                                 </select>
                             </div>

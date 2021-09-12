@@ -563,7 +563,7 @@
                                                                                     <label>Valuta Of Payment</label>
                                                                                 </div>
                                                                                 <div class="col-md-8">
-                                                                                    <input type="text" class="form-control" value="{{ number_format($booking->valuta_payment,2,',','.') }}" readonly>
+                                                                                    <input type="text" class="form-control" value="{{ $booking->valuta_payment_code }}" readonly>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row mb-3">

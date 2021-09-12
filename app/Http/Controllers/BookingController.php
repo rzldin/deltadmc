@@ -208,6 +208,181 @@ class BookingController extends Controller
 
     public function booking_doAdd(Request $request)
     {
+        // dd($request->all());
+        if($request->id_quote !== null){
+            $shipping   = QuotationModel::get_quoteShipping($request->id_quote);
+            $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
+            $shp = $shipping[0];
+        }
+
+        $no = 1;
+
+        if($request->quote_no == 'Nomination'){
+            $nomination_flag = 1;
+            if($request->activity == 'export'){
+                $request->posx = $request->posx_export;
+                $request->dogs = $request->dogs_export;
+                $request->stuf_date = $request->stuf_date_export;
+            }else if($request->activity == 'domestic'){
+                $request->posx = $request->posx_domestic;
+                $request->dogs = $request->dogs_domestic;
+                $request->stuf_date = $request->stuf_date_domestic;
+
+            }
+        }else{
+            $nomination_flag = 0;
+        }
+
+        #Doc Date
+        if($request->doc_date != null){
+            $doc_date = Carbon::parse($request->doc_date);
+        }else{
+            $doc_date = null;
+        }
+
+        #Igm Date
+        if($request->igm_date != null){
+            $igm_date = Carbon::parse($request->igm_date);
+        }else{
+            $igm_date = null;
+        }
+
+        #Mbl Date
+        if($request->mbl_date != null){
+            $mbl_date = Carbon::parse($request->mbl_date);
+        }else{
+            $mbl_date = null;
+        }
+
+        #Hbl Date
+        if($request->hbl_date != null){
+            $hbl_date = Carbon::parse($request->hbl_date);
+        }else{
+            $hbl_date = null;
+        }
+
+        try{
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            $id =   DB::table('t_booking')->insertGetId([
+                        't_quote_id'            => $request->id_quote,
+                        'booking_no'            => $request->booking_no,
+                        'booking_date'          => Carbon::parse($request->booking_date),
+                        'version_no'            => $request->version_no,
+                        'activity'              => $request->activity,
+                        'nomination_flag'       => $nomination_flag,
+                        't_mdoc_type_id'        => $request->doctype,
+                        'custom_doc_no'         => $request->doc_no,
+                        'custom_doc_date'       => $doc_date,
+                        'igm_no'                => $request->igm_number,
+                        'igm_date'              => $igm_date,
+                        'custom_pos'            => $request->pos,
+                        'custom_subpos'         => $request->sub_pos,
+                        'client_id'             => $request->customer_add,
+                        'client_addr_id'        => $request->customer_addr,
+                        'client_pic_id'         => $request->customer_pic,
+                        'shipper_id'            => $request->shipper,
+                        'shipper_addr_id'       => $request->shipper_addr,
+                        'shipper_pic_id'        => $request->shipper_pic,
+                        'consignee_id'          => $request->consignee,
+                        'consignee_addr_id'     => $request->consignee_addr,
+                        'consignee_pic_id'      => $request->consignee_pic,
+                        'not_party_id'          => $request->notify_party,
+                        'not_party_addr_id'     => $request->not_addr,
+                        'not_party_pic_id'      => $request->not_pic,
+                        'agent_id'              => $request->agent,
+                        'agent_addr_id'         => $request->agent_addr,
+                        'agent_pic_id'          => $request->agent_pic,
+                        'shipping_line_id'      => $request->shipping_line,
+                        'shpline_addr_id'       => $request->shipline_addr,
+                        'shpline_pic_id'        => $request->shipline_pic,
+                        'vendor_id'             => $request->vendor,
+                        'vendor_addr_id'        => $request->vendor_addr,
+                        'vendor_pic_id'         => $request->vendor_pic,
+                        'carrier_id'            => $request->carrier,
+                        'flight_number'         => $request->voyage,
+                        'eta_date'              => Carbon::parse($request->eta),
+                        'etd_date'              => Carbon::parse($request->etd),
+                        'place_origin'          => $request->pfo,
+                        'place_destination'     => $request->pod,
+                        'pol_id'                => $request->pol,
+                        'pol_custom_desc'       => $request->pol_desc,
+                        'pod_id'                => $request->podisc,
+                        'pod_custom_desc'       => $request->pod_desc,
+                        'pot_id'                => $request->pot,
+                        'fumigation_flag'       => $request->fumigation,
+                        'insurance_flag'        => $request->insurance,
+                        't_mincoterms_id'       => $request->incoterms,
+                        't_mfreight_charges_id' => $request->freight_charges,
+                        'place_payment'         => $request->pop,
+                        'valuta_payment'        => $request->valuta_payment,
+                        'value_prepaid'         => $request->vop,
+                        'value_collect'         => $request->voc,
+                        'freetime_detention'    => $request->fod,
+                        'stuffing_date'         => Carbon::parse($request->stuf_date),
+                        'stuffing_place'        => $request->posx,
+                        'delivery_of_goods'     => $request->dogs,
+                        'valuta_comm'           => $request->valuta_com,
+                        'value_comm'            => $request->value_commodity,
+                        'rates_comm'            => $request->exchange_rate,
+                        'exchange_valuta_comm'  => $request->exchange_valuta,
+                        'remarks'               => $request->remarks,
+                        'mbl_shipper'           => $request->shipper_mbl,
+                        'mbl_consignee'         => $request->cons_mbl,
+                        'mbl_not_party'         => $request->notify_mbl,
+                        'mbl_no'                => $request->mbl_number,
+                        'mbl_date'              => $mbl_date,
+                        'valuta_mbl'            => $request->valuta_mbl,
+                        'hbl_shipper'           => $request->shipper_hbl,
+                        'hbl_consignee'         => $request->cons_hbl,
+                        'hbl_not_party'         => $request->notify_hbl,
+                        'hbl_no'                => $request->hbl_number,
+                        'hbl_date'              => $hbl_date,
+                        'valuta_hbl'            => $request->valuta_hbl,
+                        't_mbl_issued_id'       => $request->mbl_issued,
+                        'total_commodity'       => $request->total_commo,
+                        'total_package'         => $request->total_package,
+                        'total_container'       => $request->total_container,
+                        'created_by'            => $user,
+                        'created_on'            => $tanggal
+                    ]);
+
+                    if($request->id_quote !== null){
+                        #Insert Charges Detail
+                        foreach($dtlQuote as $row)
+                        {
+                            DB::table('t_bcharges_dtl')
+                            ->insert([
+                                't_booking_id'          => $id,
+                                'position_no'           => $no++,
+                                't_mcharge_code_id'     => $row->t_mcharge_code_id,
+                                'desc'                  => $shp->name_carrier,
+                                'reimburse_flag'        => $row->reimburse_flag,
+                                'currency'              => $row->t_mcurrency_id,
+                                'rate'                  => $row->rate,
+                                'cost'                  => $row->cost,
+                                'sell'                  => $row->sell,
+                                'qty'                   => $row->qty,
+                                'cost_val'              => $row->qty * $row->cost_val,
+                                'sell_val'              => $row->qty * $row->sell_val,
+                                'vat'                   => $row->vat,
+                                'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
+                                'routing'               => $shp->routing,
+                                'transit_time'          => $shp->transit_time,
+                                'created_by'            => $user,
+                                'created_on'            => $tanggal
+                            ]);
+                        }
+                    }
+
+            return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function booking_doAddVersion(Request $request)
+    {
         $shipping   = QuotationModel::get_quoteShipping($request->id_quote);
         $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
         $shp = $shipping[0];
@@ -306,7 +481,7 @@ class BookingController extends Controller
                         'value_collect'         => $request->voc,
                         'freetime_detention'    => $request->fod,
                         'stuffing_date'         => Carbon::parse($request->stuf_date),
-                        'stuffing_place'        => $request->pos,
+                        'stuffing_place'        => $request->posx,
                         'delivery_of_goods'     => $request->dogs,
                         'valuta_comm'           => $request->valuta_com,
                         'value_comm'            => $request->value_commodity,
@@ -332,28 +507,153 @@ class BookingController extends Controller
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
-                
-                    #Insert Charges Detail
-                    foreach($dtlQuote as $row)
+
+
+                    #Insert Commodity
+                    $commodity  = BookingModel::get_commodity($request->booking_idx);
+
+                    foreach($commodity as $row)
+                    {
+                        DB::table('t_bcommodity')
+                        ->insert([
+                            't_booking_id'      => $id,
+                            'position_no'       => $row->position_no,
+                            'hs_code'           => $row->hs_code,
+                            'desc'              => $row->desc,
+                            'origin'            => $row->origin,
+                            'qty_comm'          => $row->qty_comm,
+                            'uom_comm'          => $row->uom_comm,
+                            'qty_packages'      => $row->qty_packages,
+                            'uom_packages'      => $row->uom_packages,
+                            'weight'            => $row->weight,
+                            'weight_uom'        => $row->weight_uom,
+                            'netto'             => $row->netto,
+                            'volume'            => $row->volume,
+                            'volume_uom'        => $row->volume_uom,
+                            'created_by'        => $user,
+                            'created_on'        => $tanggal
+                        ]);
+                    }
+
+
+                    #Insert Packages
+                    $packages   = BookingModel::get_packages($request->booking_idx);
+
+                    foreach($packages as $row)
+                    {   
+                        DB::table('t_bpackages')
+                        ->insert([
+                            't_booking_id'      => $id,
+                            'position_no'       => $row->position_no,
+                            'desc'              => $row->desc,
+                            'qty'               => $row->qty,
+                            'qty_uom'           => $row->qty_uom,
+                            'created_by'        => $user,
+                            'created_on'        => $tanggal
+                        ]);
+                    }
+
+                    #Insert Container
+                    $container  = BookingModel::get_container($request->booking_idx);
+
+                    foreach($container as $row)
+                    {
+                        DB::table('t_bcontainer')
+                        ->insert([
+                            't_booking_id'          => $id,
+                            'container_no'          => $row->container_no,
+                            'size'                  => $row->size,
+                            't_mloaded_type_id'     => $row->t_mloaded_type_id,
+                            't_mcontainer_type_id'  => $row->t_mcontainer_type_id,
+                            'seal_no'               => $row->seal_no,
+                            'vgm'                   => $row->vgm,
+                            'vgm_uom'               => $row->vgm_uom,
+                            'responsible_party'     => $row->responsible_party,
+                            'authorized_person'     => $row->authorized_person,
+                            'method_of_weighing'    => $row->method_of_weighing,
+                            'weighing_party'        => $row->weighing_party,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                    }
+
+                    #Insert Doc
+                    $doc        = BookingModel::get_document($request->booking_idx);
+
+                    foreach($doc as $row)
+
+                    {
+                        DB::table('t_bdocument')
+                        ->insert([
+                            't_booking_id'          => $id,
+                            't_mdoc_type_id'        => $row->t_mdoc_type_id,
+                            'doc_no'                => $row->doc_no,
+                            'doc_date'              => Carbon::parse($request->date),
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                    }
+
+                    #Insert Road Cons
+                    $roadCons   = BookingModel::getRoadCons($request->booking_idx);
+
+                    foreach($roadCons as $row)
+                    {
+                        DB::table('t_broad_cons')->insert([
+                            't_booking_id'          => $id,
+                            'no_sj'                 => $row->no_sj,
+                            't_mvehicle_type_id'    => $row->t_mvehicle_type_id,
+                            't_mvehicle_id'         => $row->t_mvehicle_id,
+                            'driver'                => $row->driver,
+                            'driver_phone'          => $row->driver_phone,
+                            'pickup_addr'           => $row->pickup_addr,
+                            'delivery_addr'         => $row->delivery_addr,
+                            'notes'                 => $row->notes,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                    }
+
+                    #Insert Schedule
+                    $schedule   = BookingModel::getSchedule($request->booking_idx);
+
+                    foreach($schedule as $row)
+                    {
+                        DB::table('t_bschedule')->insert([
+                            't_booking_id'          => $id,
+                            't_mschedule_type_id'   => $row->t_mschedule_type_id,
+                            'position_no'           => $row->position_no,
+                            'desc'                  => $row->desc,
+                            'date'                  => Carbon::parse($row->date),
+                            'notes'                 => $row->notes,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                    }
+
+                    #Insert TBL Charges Detail
+                    $sellCost   = BookingModel::getChargesDetail($request->booking_idx);
+
+                    foreach($sellCost as $row)
                     {
                         DB::table('t_bcharges_dtl')
                         ->insert([
                             't_booking_id'          => $id,
-                            'position_no'           => $no++,
+                            'position_no'           => $row->position_no,
                             't_mcharge_code_id'     => $row->t_mcharge_code_id,
-                            'desc'                  => $shp->name_carrier,
+                            'desc'                  => $row->desc,
                             'reimburse_flag'        => $row->reimburse_flag,
-                            'currency'              => $row->t_mcurrency_id,
+                            'currency'              => $row->currency,
                             'rate'                  => $row->rate,
                             'cost'                  => $row->cost,
                             'sell'                  => $row->sell,
                             'qty'                   => $row->qty,
-                            'cost_val'              => $row->qty * $row->cost_val,
-                            'sell_val'              => $row->qty * $row->sell_val,
+                            'cost_val'              => $row->cost_val,
+                            'sell_val'              => $row->sell_val,
                             'vat'                   => $row->vat,
-                            'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
-                            'routing'               => $shp->routing,
-                            'transit_time'          => $shp->transit_time,
+                            'subtotal'              => $row->subtotal,
+                            'routing'               => $row->routing,
+                            'transit_time'          => $row->transit_time,
                             'created_by'            => $user,
                             'created_on'            => $tanggal
                         ]);
@@ -916,9 +1216,23 @@ class BookingController extends Controller
 
     public function new_version($id)
     {
-        $data = BookingModel::get_bookingDetail($id);
-        $quote = $data[0];
-        return view('booking.new_version', compact('quote'));
+        $data       = BookingModel::get_bookingDetail($id);
+        $cekVerse   = DB::table('t_booking')->where('booking_no', $data[0]->booking_no)->orderBy('created_on', 'desc')->first();
+        $versionNow = $cekVerse->version_no;
+        $quote      = $data[0];
+        $commodity  = BookingModel::get_commodity($id);
+        $packages   = BookingModel::get_packages($id);
+        $container  = BookingModel::get_container($id);
+        $doc        = BookingModel::get_document($id);
+        $roadCons   = BookingModel::getRoadCons($id);
+        $schedule   = BookingModel::getSchedule($id);
+        $sellCost   = BookingModel::getChargesDetail($id);
+
+        $countCom   = count($commodity);
+        $countPack  = count($packages);
+        $countCon   = count($container);
+        
+        return view('booking.new_version', compact('quote', 'versionNow', 'commodity', 'packages', 'container', 'doc', 'roadCons', 'schedule', 'sellCost', 'countCom', 'countPack', 'countCon'));
     }
 
     public function doUpdate(Request $request)
@@ -936,7 +1250,7 @@ class BookingController extends Controller
                 'igm_date'              => Carbon::parse($request->igm_date),
                 'custom_pos'            => $request->pos,
                 'custom_subpos'         => $request->sub_pos,
-                'client_id'             => $request->customer,
+                'client_id'             => $request->customer_add,
                 'client_addr_id'        => $request->customer_addr,
                 'client_pic_id'         => $request->customer_pic,
                 'shipper_id'            => $request->shipper,
@@ -1440,7 +1754,8 @@ class BookingController extends Controller
                     ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
                     ->leftJoin('t_muom AS tmuom', 'a.valuta_comm', '=', 'tmuom.id')
                     ->leftJoin('t_muom AS tmuom2', 'a.exchange_valuta_comm', '=', 'tmuom2.id')
-                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code')
+                    ->leftjoin('t_mcurrency AS tmuom3', 'a.valuta_payment', '=', 'tmuom3.id')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code', 'tmuom3.code as valuta_payment_code')
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
         
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);

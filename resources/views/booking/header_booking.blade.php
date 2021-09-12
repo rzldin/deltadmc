@@ -49,6 +49,7 @@
                         <div class="container-fluid mt-3">
                             <div class="row">
                                 <div class="col-md-12">
+                                    <input type="hidden" name="add_booking" value="true">
                                     @if ($quote->activity == 'domestic')
                                     {{\App\Http\Controllers\BookingController::header_domestic($quote)}}
                                     @elseif($quote->activity == 'export')
@@ -1173,13 +1174,13 @@
                     }else if($('#pic_type').val() == 'shipper'){
                         shipper_pic($('#shipper').val());
                     }else if($('#pic_type').val() == 'consignee'){
-                        consignee_detail($('#consignee').val());
+                        consignee_pic($('#consignee').val());
                     }else if($('#pic_type').val() == 'notifyParty'){
-                        not_detail($('#notify_party').val());
+                        not_pic($('#notify_party').val());
                     }else if($('#pic_type').val() == 'agent'){
-                        agent_detail($('#agent').val());
+                        agent_pic($('#agent').val());
                     }else if($('#pic_type').val() == 'shipline'){
-                        shipline_detail($('#shipping_line').val());
+                        shipline_pic($('#shipping_line').val());
                     }else if($('#pic_type').val() == 'vendor'){
                         vendor_pic($("#vendor").val());    
                     }

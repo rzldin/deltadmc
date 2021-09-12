@@ -179,7 +179,7 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Client</label>
@@ -678,6 +678,404 @@
                         <input type="text" name="pod_desc" id="pod_desc" value="{{ $quote->pod_custom_desc }}" class="form-control">
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-md-6">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Client <font color="red">*</font></label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="client_detail(this.value)">
+
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-7">
+                        <div class="icheck-primary d-inline">
+                            <input type="checkbox" id="legalDoc" name="legal_doc" disabled>
+                            <label for="legalDoc">
+                                Legal Doc
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="client-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Client Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="customer_addr" id="customer_addr">
+                          
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Customer PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="customer_pic" id="customer_pic">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Shipper <font color="red">*</font></label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
+     
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="shipper-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Shipper Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="shipper_addr" id="shipper_addr">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Shipper PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="shipper_pic" id="shipper_pic">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Consignee <font color="red">*</font></label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="consignee" id="consignee" onchange="consignee_detail(this.value)">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="consignee-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Consignee Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="consignee_addr" id="consignee_addr">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Consignee PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="consignee_pic" id="consignee_pic">
+                             
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Notify Party <font color="red">*</font></label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="notify_party" id="notify_party" onchange="not_detail(this.value)">
+                           
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="not-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Notify Party Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="not_addr" id="not_addr">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Notify Party PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="not_pic" id="not_pic">
+                  
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Agent</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="agent" id="agent" onchange="agent_detail(this.value)">
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="agent-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Agent Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="agent_addr" id="agent_addr">
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Agent PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="agent_pic" id="agent_pic">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Shipping Line</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="shipping_line" id="shipping_line" onchange="shipline_detail(this.value)">
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="shipline-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Shipping Line Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="shipline_addr" id="shipline_addr">
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Shipping Line PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="shipline_pic" id="shipline_pic">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Place of Origin</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="pfo" id="pfo" class="form-control" value="{{ $quote->place_origin }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Place of Destination</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="pod" id="pod" class="form-control" value="{{ $quote->place_destination }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Vendor</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="vendor" id="vendor" onchange="vendor_detail(this.value)">
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="vendor-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Vendor Address</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="vendor_addr" id="vendor_addr">
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label>Vendor PIC</label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-control select2bs44" style="width: 100%;" name="vendor_pic" id="vendor_pic">
+                                
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Carrier</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
+                            <option value="" selected>-- Select Carrier --</option>
+                            @foreach ($carrier as $item)
+                            <option value="{{ $item->id }}" @if($quote->carrier_id == $item->id)
+                                selected
+                            @endif>{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Voyage/Flight Number</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="voyage" id="voyage" class="form-control" value="{{ $quote->flight_number }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>ETD</label>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="input-group date" id="reservationdatex" data-target-input="nearest">
+                            <input type="text" name="etd" id="etd" value="@if($quote->etd_date != null){{ \Carbon\Carbon::parse($quote->etd_date)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>ETA</label>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="input-group date" id="reservationdatez" data-target-input="nearest">
+                            <input type="text" name="eta" id="eta" value="@if($quote->eta_date != null){{ \Carbon\Carbon::parse($quote->eta_date)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Port Of Loading</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
+                            <option value="" selected>-- Select Port Of Loading --</option>
+                            @foreach ($port as $item)
+                            <option value="{{ $item->id }}" @if ($quote->pol_id == $item->id)
+                                selected
+                            @endif>{{ $item->port_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>POL Custom Desc</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="pol_desc" id="pol_desc" value="{{ $quote->pol_custom_desc }}" class="form-control">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Port Of Transit</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
+                            <option value="" selected>-- Select Port Of Transit --</option>
+                            @foreach ($port as $item)
+                            <option value="{{ $item->id }}" @if ($quote->pot_id == $item->id)
+                                selected
+                            @endif>{{ $item->port_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Port Of Discharge</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
+                            <option value="" selected>-- Select Port Of Discharge --</option>
+                            @foreach ($port as $item)
+                            <option value="{{ $item->id }}" @if ($quote->pod_id == $item->id)
+                                selected
+                            @endif>{{ $item->port_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>POD Custom Desc</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="pod_desc" id="pod_desc" value="{{ $quote->pod_custom_desc }}" class="form-control">
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="card card-secondary">
@@ -718,7 +1116,7 @@
                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_payment" id="valuta_payment">
                                             <option value="" selected>-- Select Valuta --</option>
                                             @foreach ($currency as $item)
-                                            <option value="{{ $item->code }}" @if ($quote->valuta_payment == $item->code)
+                                            <option value="{{ $item->id }}" @if ($quote->valuta_payment == $item->id)
                                                 selected
                                             @endif>{{ $item->code }}</option>
                                             @endforeach
@@ -890,7 +1288,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_mbl" id="valuta_mbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_payment == $item->code)
+                                    <option value="{{ $item->code }}" @if ($quote->valuta_mbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach
@@ -963,7 +1361,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_hbl" id="valuta_hbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_hbl == $item->code)
+                                    <option value="{{ $item->code }}" @if ($quote->valuta_hbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach

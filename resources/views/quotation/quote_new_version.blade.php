@@ -56,7 +56,7 @@
                                         <label>Version</label>
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $quote->version_no+1 }}" onkeyup="numberOnly(this);" readonly>
+                                        <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $version+1 }}" readonly>
                                     </div>
                                     <div class="col-md-4 mt-2">
                                         <input type="checkbox" name="final" id="final" style="margin-right: 5px" ><label> FINAL</label>
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate"/>
+                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" data-target="#reservationdate"/>
                                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>

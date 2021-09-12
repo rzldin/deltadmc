@@ -520,30 +520,30 @@ class QuotationController extends Controller
 
     public function quote_new($id)
     {       
-        $quote = QuotationModel::get_detailQuote($id);
-
-        $sales = DB::table('t_mmatrix')
-        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
-        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
-        ->select('users.name as user_name', 'users.id as user_id')
-        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
-        ->where('t_mmatrix.active_flag', '1')->get();
+        $quote      = QuotationModel::get_detailQuote($id);
+        $cekVersion = DB::table('t_quote')->where('quote_no', $quote->quote_no)->orderBy('created_on', 'desc')->first();
+        $sales      = DB::table('t_mmatrix')
+                        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+                        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+                        ->select('users.name as user_name', 'users.id as user_id')
+                        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+                        ->where('t_mmatrix.active_flag', '1')->get();
         
-        $data['list_account'] = MasterModel::account_get();
-        $data['list_country'] = MasterModel::country();
-        $data['list_sales']   = $sales;
-        
-        $data['loaded'] = MasterModel::loaded_get();
-        $data['company'] = MasterModel::company_data();
-        $data['inco'] = MasterModel::incoterms_get();
-        $data['port'] = MasterModel::port();
-        $data['uom'] = MasterModel::uom();
-        $data['charge'] = MasterModel::charge();
-        $data['carrier'] = MasterModel::carrier();
-        $data['currency'] = MasterModel::currency();
-        $data['volume_uom'] = DB::table('t_muom')->where('id', $quote->volume_uom_id)->first();
-        $data['quote'] = $quote;
-        $data['old_id'] = $id; 
+        $data['inco']           = MasterModel::incoterms_get();
+        $data['port']           = MasterModel::port();
+        $data['uom']            = MasterModel::uom();
+        $data['quote']          = $quote;
+        $data['version']        = $cekVersion->version_no;
+        $data['old_id']         = $id; 
+        $data['loaded']         = MasterModel::loaded_get();
+        $data['company']        = MasterModel::company_data();
+        $data['charge']         = MasterModel::charge();
+        $data['carrier']        = MasterModel::carrier();
+        $data['currency']       = MasterModel::currency();
+        $data['volume_uom']     = DB::table('t_muom')->where('id', $quote->volume_uom_id)->first();
+        $data['list_account']   = MasterModel::account_get();
+        $data['list_country']   = MasterModel::country();
+        $data['list_sales']     = $sales;
         return view('quotation.quote_new_version')->with($data);
     }
 

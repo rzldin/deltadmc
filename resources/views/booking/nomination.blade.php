@@ -218,7 +218,7 @@
                                                 <label>Client <font color="red">*</font></label>
                                             </div>
                                             <div class="col-md-7">
-                                                <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer" onchange="client_detail(this.value)">
+                                                <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer" onchange="client_detail(this.value)">
                                                     <option value="" selected>-- Select Customer --</option>
                                                     @foreach ($company as $c)
                                                     <option value="{{ $c->id }}">{{ $c->client_name }}</option>
@@ -227,6 +227,18 @@
                                             </div>
                                             <div class="col-md-1 mt-1">
                                                 <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                            </div>
+                                            <div class="col-md-7 mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="legalDoc" name="legal_doc" disabled>
+                                                    <label for="legalDoc">
+                                                        Legal Doc
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="client-detail">
@@ -255,7 +267,7 @@
                                             <div class="col-md-4">
                                                 <label>Shipper <font color="red">*</font></label>
                                             </div>
-                                            <div class="col-md-5">
+                                            <div class="col-md-7">
                                                 <select class="form-control select2bs44" style="width: 100%;" name="shipper" id="shipper" onchange="shipper_detail(this.value)">
                                                     <option value="" selected>-- Select Shipper --</option>
                                                     @foreach ($company as $item)
@@ -265,14 +277,6 @@
                                             </div>
                                             <div class="col-md-1 mt-1">
                                                 <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                                            </div>
-                                            <div class="col-md-2 mt-2">
-                                                <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="checkboxPrimary1" name="legal_doc">
-                                                    <label for="checkboxPrimary1">
-                                                        Legal Doc
-                                                    </label>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="shipper-detail">
@@ -551,7 +555,6 @@
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
-                                                {{-- <input type="date" class="form-control"> --}}
                                             </div>
                                         </div>
                                         <div class="row mb-3 port-of-loading">
@@ -656,7 +659,7 @@
                                                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_payment" id="valuta_payment">
                                                                     <option value="" selected>-- Select Valuta --</option>
                                                                     @foreach ($currency as $item)
-                                                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
@@ -702,7 +705,7 @@
                                                             </div>
                                                             <div class="col-md-8">
                                                                 <div class="input-group date" id="reservationdatexx" data-target-input="nearest">
-                                                                    <input type="text" name="stuf_date" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                                    <input type="text" name="stuf_date_export" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                                                     <div class="input-group-append" data-target="#reservationdatexx" data-toggle="datetimepicker">
                                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                     </div>
@@ -714,7 +717,7 @@
                                                                 <label for="">Place Of Stuffing</label>
                                                             </div>
                                                             <div class="col-md-8">
-                                                                <textarea name="posx" id="posx" cols="70" rows="3" class="form-control"></textarea>
+                                                                <textarea name="posx_export" id="posx" cols="70" rows="3" class="form-control"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
@@ -722,7 +725,7 @@
                                                                 <label for="">Delivery Of Goods</label>
                                                             </div>
                                                             <div class="col-md-8">
-                                                                <textarea name="dogs" id="dogs" cols="70" rows="3" class="form-control"></textarea>
+                                                                <textarea name="dogs_export" id="dogs" cols="70" rows="3" class="form-control"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -764,7 +767,7 @@
                                                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_com" id="valuta_com">
                                                                     <option value="" selected>-- Select Valuta --</option>
                                                                     @foreach ($currency as $item)
-                                                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
@@ -785,7 +788,7 @@
                                                                 <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta">
                                                                     <option value="" selected>-- Select Valuta --</option>
                                                                     @foreach ($currency as $item)
-                                                                    <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                                    <option value="{{ $item->id }}">{{ $item->code }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
@@ -804,7 +807,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="stuffingDate" data-target-input="nearest">
-                                                            <input type="text" name="stuf_date" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                            <input type="text" name="stuf_date_domestic" id="stuf_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                                             <div class="input-group-append" data-target="#stuffingDate" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>
@@ -816,7 +819,7 @@
                                                         <label for="">Place Of Stuffing</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <textarea name="pos" id="pos" cols="70" rows="3" class="form-control"></textarea>
+                                                        <textarea name="posx_domestic" id="pos" cols="70" rows="3" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -824,7 +827,7 @@
                                                         <label for="">Delivery Of Goods</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <textarea name="dogs" id="dogs" cols="70" rows="3" class="form-control"></textarea>
+                                                        <textarea name="dogs_domestic" id="dogs" cols="70" rows="3" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -895,7 +898,7 @@
                                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_mbl" id="valuta_mbl">
                                                             <option value="" selected>-- Select Valuta --</option>
                                                             @foreach ($currency as $item)
-                                                            <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                            <option value="{{ $item->id }}">{{ $item->code }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -966,7 +969,7 @@
                                                         <select class="form-control select2bs44" style="width: 100%;" name="valuta_hbl" id="valuta_hbl">
                                                             <option value="" selected>-- Select Valuta --</option>
                                                             @foreach ($currency as $item)
-                                                            <option value="{{ $item->code }}">{{ $item->code }}</option>
+                                                            <option value="{{ $item->id }}">{{ $item->code }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -1110,6 +1113,23 @@
                 dataType: "html",
                 success: function(result) {
                     var final = JSON.parse(result);
+                    let legal = final[2].legal_doc_flag;
+                    $("#customer_addr").html(final[0]);
+                    $("#customer_pic").html(final[1]);
+                    if(legal == 1){
+                        $('#legalDoc').prop('checked', true);
+                    }else{
+                        $('#legalDoc').prop('checked', false);
+                    }
+                }
+            })
+            $.ajax({
+                url: "{{ route('booking.detail') }}",
+                type: "POST",
+                data: "id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
                     $("#customer_addr").html(final[0]);
                     $("#customer_pic").html(final[1]);
                 }
@@ -1127,11 +1147,6 @@
                 success: function(result) {
                     var final = JSON.parse(result);
                     var check = final[2];
-                    if(check.legal_doc_flag == 1){
-                        $('input[type="checkbox"]').attr("checked", "checked");
-                    }else{
-                        $('input[type="checkbox"]').attr("checked", false)
-                    }
                     $('.shipper-detail').show();
                     $("#shipper_addr").html(final[0]);
                     $("#shipper_pic").html(final[1]);

@@ -379,7 +379,7 @@
                                             <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
-                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" class="btn btn-info float-left mr-2"> 
+                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2"> 
                                                 <i class="fa fa-plus"></i> New Version 
                                             </a>
                                             <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2"> 
@@ -406,14 +406,14 @@
                                                         <thead>
                                                             <tr>
                                                                 <td width="15%">No. SJ</td>
-                                                                <td width="15%">Vehicle Type</th>
-                                                                <td width="10%">Vehicle No</th>
+                                                                <td width="15%">Vehicle Type</td>
+                                                                <td width="10%">Vehicle No</td>
                                                                 <td width="20%">Driver</td>
                                                                 <td width="10%">Driver Phone</td>
                                                                 <td>Pickup Address</td>
                                                                 <td>Delivery Address</td>
                                                                 <td>Notes</td>
-                                                                <td>Action</th>
+                                                                <td>Action</td>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblRoadCons">
@@ -726,6 +726,20 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="client_addrx" value="{{ $quote->client_addr_id }}">
+    <input type="hidden" id="client_picx" value="{{ $quote->client_pic_id }}">
+    <input type="hidden" id="shipper_addrx" value="{{ $quote->shipper_addr_id }}">
+    <input type="hidden" id="shipper_picx" value="{{ $quote->shipper_pic_id }}">
+    <input type="hidden" id="consignee_addrx" value="{{ $quote->consignee_addr_id }}">
+    <input type="hidden" id="consignee_picx" value="{{ $quote->consignee_pic_id }}">
+    <input type="hidden" id="notifyParty_addrx" value="{{ $quote->not_party_addr_id }}">
+    <input type="hidden" id="notifyParty_picx" value="{{ $quote->not_party_pic_id }}">
+    <input type="hidden" id="agent_addrx" value="{{ $quote->agent_addr_id }}">
+    <input type="hidden" id="agent_picx" value="{{ $quote->agent_pic_id }}">
+    <input type="hidden" id="shipline_addrx" value="{{ $quote->shpline_addr_id }}">
+    <input type="hidden" id="shipline_picx" value="{{ $quote->shpline_pic_id }}">
+    <input type="hidden" id="vendor_addrx" value="{{ $quote->vendor_addr_id }}">
+    <input type="hidden" id="vendor_picx" value="{{ $quote->vendor_pic_id }}">
 </section>
 <!--- Modal Form -->
 <div class="modal fade" id="HBLMODAL" tabindex="-1" role="basic" aria-hidden="true">
@@ -875,20 +889,45 @@
 
         function client_detail(val){
             if(val!= ''){
+
+                let client_addr     = $('#client_addrx').val();
+                let client_pic      = $('#client_picx').val();
+                let client_addrx    = 0;
+                let client_picx     = 0;
+
+                if(client_addr == null){
+                    client_addrx = 0
+                }else{
+                    client_addrx = client_addr
+                }
+
+                if(client_pic == null){
+                    client_picx = 0
+                }else{
+                    client_picx = client_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->client_pic_id }},
-                        addr_id : {{ $quote->client_addr_id }}
+                        pic_id  : client_picx,
+                        addr_id : client_addrx
                     },
                     dataType: "html",
                     success: function(result) {
                         var final = JSON.parse(result);
+                        let legal = final[2].legal_doc_flag;
 
                         $("#customer_addr").html(final[0]);
                         $("#customer_pic").html(final[1]);
+
+                        if(legal == 1){
+                            $('#legalDoc').prop('checked', true);
+                        }else{
+                            $('#legalDoc').prop('checked', false);
+                        }
                     }
                 });
             }
@@ -896,13 +935,31 @@
 
         function shipper_detail(val){
             if(val!= ''){
+
+                let shipper_addr     = $('#shipper_addrx').val();
+                let shipper_pic      = $('#shipper_picx').val();
+                let shipper_addrx    = 0;
+                let shipper_picx     = 0;
+
+                if(shipper_addr == null){
+                    shipper_addrx = 0
+                }else{
+                    shipper_addrx = shipper_addr
+                }
+
+                if(shipper_pic == null){
+                    shipper_picx = 0
+                }else{
+                    shipper_picx = shipper_pic
+                }
+                
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->shipper_pic_id }},
-                        addr_id : {{ $quote->shipper_addr_id }}
+                        pic_id  : shipper_picx,
+                        addr_id : shipper_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -919,13 +976,31 @@
         function consignee_detail(val)
         {
             if(val!= ''){
+
+                let consignee_addr     = $('#consignee_addrx').val();
+                let consignee_pic      = $('#consignee_picx').val();
+                let consignee_addrx    = 0;
+                let consignee_picx     = 0;
+
+                if(consignee_addr == null){
+                    consignee_addrx = 0
+                }else{
+                    consignee_addrx = consignee_addr
+                }
+
+                if(consignee_pic == null){
+                    consignee_picx = 0
+                }else{
+                    consignee_picx = consignee_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->consignee_pic_id }},
-                        addr_id : {{ $quote->consignee_addr_id }}
+                        pic_id  : consignee_picx,
+                        addr_id : consignee_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -940,13 +1015,31 @@
         function not_detail(val)
         {
             if(val!= ''){
+
+                let notifyParty_addr     = $('#notifyParty_addrx').val();
+                let notifyParty_pic      = $('#notifyParty_picx').val();
+                let notifyParty_addrx    = 0;
+                let notifyParty_picx     = 0;
+
+                if(notifyParty_addr == null){
+                    notifyParty_addrx = 0
+                }else{
+                    notifyParty_addrx = notifyParty_addr
+                }
+
+                if(notifyParty_pic == null){
+                    notifyParty_picx = 0
+                }else{
+                    notifyParty_picx = notifyParty_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->not_party_pic_id }},
-                        addr_id : {{ $quote->not_party_addr_id }}
+                        pic_id  : notifyParty_picx,
+                        addr_id : notifyParty_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -959,15 +1052,33 @@
         }
 
         function agent_detail(val)
-        {
+        {   
             if(val!= ''){
+
+                let agent_addr     = $('#agent_addrx').val();
+                let agent_pic      = $('#agent_picx').val();
+                let agent_addrx    = 0;
+                let agent_picx     = 0;
+
+                if(agent_addr == null){
+                    agent_addrx = 0
+                }else{
+                    agent_addrx = agent_addr
+                }
+
+                if(agent_pic == null){
+                    agent_picx = 0
+                }else{
+                    agent_picx = agent_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->agent_pic_id }},
-                        addr_id : {{ $quote->agent_addr_id }}
+                        pic_id  : agent_picx,
+                        addr_id : agent_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -982,13 +1093,31 @@
         function shipline_detail(val)
         {
             if(val!= ''){
+
+                let shipline_addr     = $('#shipline_addrx').val();
+                let shipline_pic      = $('#shipline_picx').val();
+                let shipline_addrx    = 0;
+                let shipline_picx     = 0;
+
+                if(shipline_addr == null){
+                    shipline_addrx = 0
+                }else{
+                    shipline_addrx = shipline_addr
+                }
+
+                if(shipline_pic == null){
+                    shipline_picx = 0
+                }else{
+                    shipline_picx = shipline_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->shpline_pic_id }},
-                        addr_id : {{ $quote->shpline_addr_id }}
+                        pic_id  : shipline_picx,
+                        addr_id : shipline_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -1003,13 +1132,31 @@
         function vendor_detail(val)
         {
             if(val!= ''){
+                
+                let vendor_addr     = $('#vendor_addrx').val();
+                let vendor_pic      = $('#vendor_picx').val();
+                let vendor_addrx    = 0;
+                let vendor_picx     = 0;
+
+                if(vendor_addr == null){
+                    vendor_addrx = 0
+                }else{
+                    vendor_addrx = vendor_addr
+                }
+
+                if(vendor_pic == null){
+                    vendor_picx = 0
+                }else{
+                    vendor_picx = vendor_pic
+                }
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
                     data: {
                         id      : val,
-                        pic_id  : {{ $quote->vendor_pic_id }},
-                        addr_id : {{ $quote->vendor_addr_id }}
+                        pic_id  : vendor_picx,
+                        addr_id : vendor_addrx
                     },
                     dataType: "html",
                     success: function(result) {
@@ -1382,20 +1529,21 @@
             })
         }
 
-        function loadProfit(val, id){
-            $.ajax({
-                type:"POST",
-                url:"{{ route('quotation.quote_loadProfit') }}",
-                data:{
-                    quote_no : val,
-                    id       : id
-                },
-                dataType:"html",
-                success:function(result){
-                    var tabel = JSON.parse(result);
-                    $('#tblProfit').html(tabel);
-                }
-            })
+        function loadProfit(id){
+            if(id != null){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('quotation.quote_loadProfit') }}",
+                    data:{
+                        id       : id
+                    },
+                    dataType:"html",
+                    success:function(result){
+                        var tabel = JSON.parse(result);
+                        $('#tblProfit').html(tabel);
+                    }
+                })
+            }
         }
 
         /** Hapus Detail Road **/
@@ -2430,7 +2578,7 @@
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
             loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
-            loadProfit('{{ $quote->quote_no }}', {{ $quote->t_quote_id }})
+            loadProfit({{ $quote->t_quote_id }})
         });
     </script>
 @endpush

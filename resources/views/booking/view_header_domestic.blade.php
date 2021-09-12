@@ -818,7 +818,7 @@
                                 <label for="">Place Of Stuffing</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea name="pos" id="pos" cols="70" rows="3" class="form-control"></textarea>
+                                <textarea name="posx" id="posx" cols="70" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">

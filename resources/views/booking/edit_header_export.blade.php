@@ -161,10 +161,8 @@
                     </div>
                     <div class="col-md-7">
                         <div class="icheck-primary d-inline">
-                            <input type="checkbox" id="checkboxPrimary1" name="legal_doc" @if ($quote->legal_doc_flag == 1)
-                                checked
-                            @endif disabled>
-                            <label for="checkboxPrimary1">
+                            <input type="checkbox" id="legalDoc" name="legal_doc" disabled>
+                            <label for="legalDoc">
                                 Legal Doc
                             </label>
                         </div>
@@ -721,7 +719,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_mbl" id="valuta_mbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_mbl == $item->code)
+                                    <option value="{{ $item->code }}" @if ($quote->valuta_mbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach
@@ -794,7 +792,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_hbl" id="valuta_hbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_hbl == $item->code)
+                                    <option value="{{ $item->code }}" @if ($quote->valuta_hbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach

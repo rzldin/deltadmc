@@ -257,6 +257,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(['get', 'post'], 'booking/header_booking/{id}', 'BookingController@header_booking')->name('booking.header');
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');
     Route::post('/booking/doAdd', 'BookingController@booking_doAdd')->name('booking.doAdd');
+    Route::post('/booking/doAddVersion', 'BookingController@booking_doAddVersion')->name('booking.doAddVersion');
     Route::match(['get', 'post'], 'booking/booking_new/{id}', 'BookingController@new_version')->name('booking.new_version');
     Route::post('/booking/booking_doUpdate', 'BookingController@doUpdate')->name('booking.doUpdate');
     Route::post('/booking/roadCons_doAdd', 'BookingController@roadCons_doAdd')->name('booking.roadCons_doAdd');
