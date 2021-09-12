@@ -1513,20 +1513,23 @@
 
         /** Load Schedule **/
         function loadSellCost(val, id){
-            $.ajax({
-                type:"POST",
-                url:"{{ route('booking.loadSellCost') }}",
-                data:{
-                    quote_no : val,
-                    id : id
-                },
-                dataType:"html",
-                success:function(result){
-                    var tabel = JSON.parse(result);
-                    $('#tblCost').html(tabel[0]);
-                    $('#tblSell').html(tabel[1]);
-                }
-            })
+            if(id != null)
+            {
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.loadSellCost') }}",
+                    data:{
+                        quote_no : val,
+                        id : id
+                    },
+                    dataType:"html",
+                    success:function(result){
+                        var tabel = JSON.parse(result);
+                        $('#tblCost').html(tabel[0]);
+                        $('#tblSell').html(tabel[1]);
+                    }
+                })
+            }
         }
 
         function loadProfit(id){
