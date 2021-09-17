@@ -1220,25 +1220,46 @@
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 200%">
                                                         <thead>
                                                           <tr>
-                                                            <th width="3%">No.</th>
-                                                            <th width="10%">Service/Fee</th>
-                                                            <th width="15%">Description</th>
-                                                            <th width="5%">Reimbursment</th>
-                                                            <th width="5%">Unit</th>
-                                                            <th width="5%">Currency</th>
-                                                            <th width="7%">rate/unit</th>
-                                                            <th width="8%">Total</th>
-                                                            <th width="8%">ROE</th>
-                                                            <th width="8%">Vat</th>
-                                                            <th width="8%">Amount</th>
-                                                            <th width="10%">Paid To</th>
-                                                            <th width="10%">Note</th>
+                                                            <th>No.</th>
+                                                            <th>Service/Fee</th>
+                                                            <th>Description</th>
+                                                            <th>Reimbursment</th>
+                                                            <th>Unit</th>
+                                                            <th>Currency</th>
+                                                            <th>rate/unit</th>
+                                                            <th>Total</th>
+                                                            <th>ROE</th>
+                                                            <th>Vat</th>
+                                                            <th>Amount</th>
+                                                            <th>Paid To</th>
+                                                            <th>Note</th>
                                                           </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach  ($quoteDtl as $row)   
+                                                            @foreach ($shipping as $shp)
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
+                                                                @if ($quote->shipment_by == 'LAND')
+                                                                <td>{{ $shp->truck_size }}</td>
+                                                                @else
+                                                                <td>{{ $shp->name_carrier }}</td> 
+                                                                @endif
+                                                                <td>{{ 'Notes '. $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time }}</td>
+                                                                <td></td>
+                                                                <td>{{ $shp->qty }}</td>
+                                                                <td>{{ $shp->code_currency }}</td>
+                                                                <td>{{ number_format($shp->cost_val,2,',','.') }}</td>
+                                                                <td>{{ number_format(($shp->qty * $shp->cost_val),2,',','.') }}</td>
+                                                                <td>{{ number_format($shp->rate,2,',','.') }}</td>
+                                                                <td>{{ number_format($shp->vat,2,',','.') }}</td>
+                                                                <td>{{ number_format((($shp->qty * $shp->cost_val) * $shp->rate) + $shp->vat,2,',','.') }}</td>
+                                                                <td></td>
+                                                            </tr>    
+                                                            @endforeach
+                                                            <?php $no = 2; $totalAmount = 0; ?>
+                                                            @foreach  ($quoteDtl as $row)   
+                                                            <tr>
+                                                                <td>{{ $no++ }}</td>
                                                                 <td>{{ $row->charge_name }}</td>
                                                                 <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                                                 <td class="text-center">
@@ -1255,6 +1276,7 @@
                                                                 <td>{{ number_format((($row->qty * $row->cost_val) * $row->rate) + $row->vat,2,',','.') }}</td>
                                                                 <td>{{ $row->paid_to }}</td>
                                                                 <td></td>
+                                                                <?php $totalAmount += (($row->qty * $row->cost_val) * $row->rate) + $row->vat;  ?>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
@@ -1285,9 +1307,30 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach  ($quoteDtl as $row)   
+                                                            @foreach ($shipping as $shp)
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
+                                                                @if ($quote->shipment_by == 'LAND')
+                                                                <td>{{ $shp->truck_size }}</td>
+                                                                @else
+                                                                <td>{{ $shp->name_carrier }}</td> 
+                                                                @endif
+                                                                <td>{{ 'Notes '. $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time }}</td>
+                                                                <td></td>
+                                                                <td>{{ $shp->qty }}</td>
+                                                                <td>{{ $shp->code_currency }}</td>
+                                                                <td>{{ number_format($shp->sell_val,2,',','.') }}</td>
+                                                                <td>{{ number_format(($shp->qty * $shp->sell_val),2,',','.') }}</td>
+                                                                <td>{{ number_format($shp->rate,2,',','.') }}</td>
+                                                                <td>{{ number_format($shp->vat,2,',','.') }}</td>
+                                                                <td>{{ number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.') }}</td>
+                                                                <td></td>
+                                                            </tr>    
+                                                            @endforeach
+                                                            <?php $no = 2; $totalAmount2 = 0; ?>
+                                                            @foreach  ($quoteDtl as $row)   
+                                                            <tr>
+                                                                <td>{{ $no++ }}</td>
                                                                 <td>{{ $row->charge_name }}</td>
                                                                 <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                                                 <td class="text-center">
@@ -1304,6 +1347,7 @@
                                                                 <td>{{ number_format((($row->qty * $row->sell_val) * $row->rate) + $row->vat,2,',','.') }}</td>
                                                                 <td>{{ $row->bill_to }}</td>
                                                                 <td></td>
+                                                                <?php $totalAmount2 += (($row->qty * $row->sell_val) * $row->rate) + $row->vat; ?>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>
@@ -1325,12 +1369,23 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach ($profit as $item)
+                                                            <?php  
+                                                                $totalCost = 0;
+                                                                $totalSell = 0;
+                                                                $profitAll = 0;    
+                                                            ?>
+                                                            @foreach ($shipping as $profit)
+                                                            <?php
+                                                                $totalCost = $totalAmount + (($profit->qty * $profit->cost_val) * $profit->rate) + $profit->vat;
+                                                                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell_val) * $profit->rate) + $profit->vat;
+                                                                $profitAll = $totalSell - $totalCost;
+                                                                $profitPct = ($profitAll*100)/$totalSell;
+                                                            ?>
                                                             <tr>
-                                                                <td>{{ $item->total_cost }}</td>
-                                                                <td>{{ $item->total_sell }}</td>
-                                                                <td>{{ $item->total_profit }}</td>
-                                                                <td>{{ $item->profit_pct }}%</td>
+                                                                <td>{{ number_format($totalCost,2,',','.') }}</td>
+                                                                <td>{{ number_format($totalSell,2,',','.') }}</td>
+                                                                <td>{{ number_format($profitAll,2,',','.') }}</td>
+                                                                <td>{{ number_format($profitPct,2) }}%</td>
                                                             </tr>
                                                             @endforeach
                                                         </tbody>

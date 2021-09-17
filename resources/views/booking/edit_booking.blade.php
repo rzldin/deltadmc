@@ -638,20 +638,20 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
-                                                                <th width="3%">No.</th>
-                                                                <th width="10%">Service/Fee</th>
-                                                                <th width="10%">Description</th>
-                                                                <th width="7%">Reimbursment</th>
-                                                                <th width="5%">Unit</th>
-                                                                <th width="5%">Currency</th>
-                                                                <th width="7%">rate/unit</th>
-                                                                <th width="8%">Total</th>
-                                                                <th width="8%">ROE</th>
-                                                                <th width="8%">Vat</th>
-                                                                <th width="8%">Amount</th>
+                                                                <th>No.</th>
+                                                                <th>Service/Fee</th>
+                                                                <th>Description</th>
+                                                                <th>Reimbursment</th>
+                                                                <th>Unit</th>
+                                                                <th>Currency</th>
+                                                                <th>rate/unit</th>
+                                                                <th>Total</th>
+                                                                <th>ROE</th>
+                                                                <th>Vat</th>
+                                                                <th>Amount</th>
                                                                 <th width="10%">Paid To</th>
-                                                                <th width="7%">Note</th>
-                                                                <th width="7%">Action</th>
+                                                                <th>Note</th>
+                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblCost">
@@ -1527,6 +1527,7 @@
                         var tabel = JSON.parse(result);
                         $('#tblCost').html(tabel[0]);
                         $('#tblSell').html(tabel[1]);
+                        $('#tblProfit').html(tabel[2]);
                     }
                 })
             }
@@ -1543,7 +1544,7 @@
                     dataType:"html",
                     success:function(result){
                         var tabel = JSON.parse(result);
-                        $('#tblProfit').html(tabel);
+                        //$('#tblProfit').html(tabel);
                     }
                 })
             }

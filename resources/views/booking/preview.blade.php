@@ -26,10 +26,31 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach ($shipping as $shp)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                @if ($quote->shipment_by == 'LAND')
+                                <td>{{ $shp->truck_size }}</td>
+                                @else
+                                <td>{{ $shp->name_carrier }}</td> 
+                                @endif
+                                <td>{{ 'Notes '. $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time }}</td>
+                                <td></td>
+                                <td>{{ $shp->qty }}</td>
+                                <td>{{ $shp->code_currency }}</td>
+                                <td>{{ number_format($shp->cost_val,2,',','.') }}</td>
+                                <td>{{ number_format(($shp->qty * $shp->cost_val),2,',','.') }}</td>
+                                <td>{{ number_format($shp->rate,2,',','.') }}</td>
+                                <td>{{ number_format($shp->vat,2,',','.') }}</td>
+                                <td>{{ number_format((($shp->qty * $shp->cost_val) * $shp->rate) + $shp->vat,2,',','.') }}</td>
+                                <td></td>
+                            </tr>    
+                            @endforeach
+                            <?php $no = 2; ?>
                             @foreach ($sell_cost as $row)
                             <?php $total = ($row->qty * $row->cost_val); ?>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $no++ }}</td>
                                 <td>{{ $row->charge_name }}</td>
                                 <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                 <td>
@@ -53,7 +74,7 @@
                 <td width="2%"></td>
                 <td width="44%">
                     <h4>Sell</h4>
-                    <table width="100%" cellspacing="0" border="1" style="font-size: 7px">
+                    <table width="100%" cellspacing="0" cellpading="0" border="1" style="font-size: 7px">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -71,10 +92,31 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach ($shipping as $shp)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                @if ($quote->shipment_by == 'LAND')
+                                <td>{{ $shp->truck_size }}</td>
+                                @else
+                                <td>{{ $shp->name_carrier }}</td> 
+                                @endif
+                                <td>{{ 'Notes '. $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time }}</td>
+                                <td></td>
+                                <td>{{ $shp->qty }}</td>
+                                <td>{{ $shp->code_currency }}</td>
+                                <td>{{ number_format($shp->sell_val,2,',','.') }}</td>
+                                <td>{{ number_format(($shp->qty * $shp->sell_val),2,',','.') }}</td>
+                                <td>{{ number_format($shp->rate,2,',','.') }}</td>
+                                <td>{{ number_format($shp->vat,2,',','.') }}</td>
+                                <td>{{ number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.') }}</td>
+                                <td></td>
+                            </tr>    
+                            @endforeach
+                            <?php $no = 2; ?>
                             @foreach ($sell_cost as $row)
                             <?php $total = ($row->qty * $row->sell_val); ?>
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $no++ }}</td>
                                 <td>{{ $row->charge_name }}</td>
                                 <td>{{ $row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time }}</td>
                                 <td>

@@ -363,8 +363,8 @@ class BookingController extends Controller
                                 'cost'                  => $row->cost,
                                 'sell'                  => $row->sell,
                                 'qty'                   => $row->qty,
-                                'cost_val'              => $row->qty * $row->cost_val,
-                                'sell_val'              => $row->qty * $row->sell_val,
+                                'cost_val'              => $row->cost_val,
+                                'sell_val'              => $row->sell_val,
                                 'vat'                   => $row->vat,
                                 'subtotal'              => ($row->qty * $row->sell_val)+$row->vat,
                                 'routing'               => $shp->routing,
@@ -1539,18 +1539,78 @@ class BookingController extends Controller
 
     public function loadSellCost(Request $request)
     {
-        $tabel = "";
-        $tabel1 = "";
-        $no = 2;
+        $tabel      = "";
+        $tabel1     = "";
+        $tabel2     = "";
+        $no         = 2;
         $data       = BookingModel::getChargesDetail($request->id);
         $company    = MasterModel::company_data();
-        $total = 0;
-        $total2 = 0;
-        $amount = 0;
-        $amount2 = 0;
-        $a = 1;
-        $b = 2;
-        //dd($data);
+        $booking    = DB::table('t_booking')->where('id', $request->id)->first();
+        $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
+        $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
+        $total      = 0;
+        $total2     = 0;
+        $amount     = 0;
+        $amount2    = 0;
+        $a          = 1;
+        $b          = 2;
+
+        foreach($shipping as $shp)
+        {
+
+            // Cost
+            $tabel .= '<tr>';
+            $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
+            $tabel .= '<td>'.($no-1).'</td>';
+                if($quote->shipment_by == 'LAND'){
+                    $tabel .= '<td>'.$shp->truck_size.'</td>';     
+                }else{
+                    $tabel .= '<td>'.$shp->name_carrier.'</td>';
+                }
+            $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
+            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'"></td>';
+            $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
+            $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
+            $tabel .= '<td class="text-right">'.number_format($shp->cost_val,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format(($shp->qty * $shp->cost_val),2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format((($shp->qty * $shp->cost_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
+            $tabel .= '<td class="text-left"></td>';
+            $tabel .= '<td></td>';
+            $tabel .= '<td></td>';
+            $tabel .= '</tr>';
+
+            $tabel1 .= '<tr>';
+            $tabel1 .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
+            $tabel1 .= '<td>'.($no-1).'</td>';
+                if($quote->shipment_by == 'LAND'){
+                    $tabel1 .= '<td>'.$shp->truck_size.'</td>';     
+                }else{
+                    $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
+                }
+            $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'"></td>';
+            $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
+            $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($shp->sell_val,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format(($shp->qty * $shp->sell_val),2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-left"></td>';
+            $displayx = 'display:none';
+            
+            $tabel1 .= '<td class="text-left"></td>';
+            $tabel1 .= '<td>';
+            $tabel1 .= '</td>';
+            $tabel1 .= '</tr>';
+
+        }
+
+        $totalAmount    = 0;
+        $totalAmount2   = 0;
+
         foreach($data as $row)
             {
                 if($row->reimburse_flag == 1){
@@ -1567,7 +1627,7 @@ class BookingController extends Controller
                 // Cost
                 $tabel .= '<tr>';
                 $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
-                $tabel .= '<td>'.($no-1).'</td>';
+                $tabel .= '<td>'.($no).'</td>';
                 $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
                 $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
@@ -1607,14 +1667,14 @@ class BookingController extends Controller
                 // Sell
                 $tabel1 .= '<tr>';
                 $tabel1 .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
-                $tabel1 .= '<td>'.($no-1).'</td>';
+                $tabel1 .= '<td>'.($no).'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
                 $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($total2,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell_val),2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
@@ -1647,10 +1707,38 @@ class BookingController extends Controller
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
                 $no++;
+
+                $totalAmount    += $amount;
+                $totalAmount2   += $amount2;
             }
 
+            $totalCost = 0;
+            $totalSell = 0;
+            $profitAll = 0;
+
+            foreach($shipping as $profit)
+            {
+                $totalCost = $totalAmount + (($profit->qty * $profit->cost_val) * $profit->rate) + $profit->vat;
+                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell_val) * $profit->rate) + $profit->vat;
+                $profitAll = $totalSell - $totalCost;
+                $profitPct = ($profitAll*100)/$totalSell;
+                $tabel2 .= '<tr>';
+                    if($quote->shipment_by != 'LAND'){
+                        $tabel2 .= '<td class="text-center"><strong>'.$profit->carrier_code.'</strong></td>';
+                        $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
+                        $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
+                    }
+                    $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
+                    $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
+                    $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
+                    $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
+                    $tabel2 .= '</tr>';
+                    $no++;
+            }
+
+
         header('Content-Type: application/json');
-        echo json_encode([$tabel, $tabel1]);
+        echo json_encode([$tabel, $tabel1, $tabel2]);
     }
 
     public function updateSell(Request $request)
@@ -1767,6 +1855,8 @@ class BookingController extends Controller
         $container  = BookingModel::get_container($booking->id);
         $packages   = BookingModel::get_packages($booking->id);
         $commodity  = BookingModel::get_commodity($booking->id);
+        $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
+        $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
         
         $data['booking']    = $booking;
         $data['profit']     = $profit;
@@ -1777,6 +1867,8 @@ class BookingController extends Controller
         $data['container']  = $container;
         $data['packages']   = $packages;
         $data['commodity']  = $commodity;
+        $data['shipping']   = $shipping;
+        $data['quote']      = $quote;
 
         return view('booking.view_booking')->with($data);
     }
@@ -1806,8 +1898,8 @@ class BookingController extends Controller
                         ->leftJoin('t_quote AS b', 'a.t_quote_id', '=', 'b.id')
                         ->select('a.*', 'b.quote_no')
                         ->where('a.id', $id)->first();
-        $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
-        $quoteDtl   = QuotationModel::get_quoteDetail($booking->quote_no);
+        $profit     = QuotationModel::get_quoteProfit($booking->t_quote_id);
+        $quoteDtl   = QuotationModel::get_quoteDetail($booking->t_quote_id);
         $schedule   = BookingModel::getSchedule($booking->id);
         $roadCons   = BookingModel::getRoadCons($booking->id);
         $document   = BookingModel::get_document($booking->id);
@@ -2022,13 +2114,15 @@ class BookingController extends Controller
         return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully Copy');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
-            //return $e->getMessage();
         }
     }
 
     public function booking_preview($id)
     {
+        $booking                 = DB::table('t_booking')->where('id', $id)->first();
         $data['sell_cost']       = BookingModel::getChargesDetail($id);
+        $data['shipping']        = QuotationModel::get_quoteShipping($booking->t_quote_id);
+        $data['quote']           = QuotationModel::get_detailQuote($booking->t_quote_id);
 
         return view('booking.preview')->with($data);
     }
