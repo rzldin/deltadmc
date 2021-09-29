@@ -38,7 +38,7 @@
                 <td style="font-size: 10pt;">Weighing Party<p class="text-bottom">(e.g. ABC COMPANY)</p></td>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="line-height: 30px">
             @foreach ($data as $row)
             <tr style="text-align: center; font-size:10pt;">
                 <td>{{ $row->booking_no }}</td>

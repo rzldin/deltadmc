@@ -2223,8 +2223,9 @@ class BookingController extends Controller
 
     public function cetak_suratJalan($id)
     {
-        $data   = BookingModel::getDetailBooking($id);
-        $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data]);
+        $data   = BookingModel::getRoadCons($id);
+        $barang = BookingModel::get_packages($id);
+        $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data, 'barang' => $barang]);
         return $pdf->stream();  
     }
 
