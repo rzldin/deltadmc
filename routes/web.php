@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+// use App\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +25,20 @@ Route::post('/', 'Auth\LoginController@login')->name('login');
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/dashboard', function () {
+        $user = DB::table('users AS a')
+            ->leftJoin('t_mmatrix AS b', 'a.id', '=', 'b.t_muser_id')
+            ->leftJoin('t_mresponsibility AS c', 'b.t_mresponsibility_id', '=', 'c.id')
+            ->select('a.*', 'c.responsibility_name')
+            ->where('a.id', Auth::guard()->id())->first();
+
+        $auth = [
+            'user_id'     => $user->id,
+            'role'        => $user->responsibility_name,
+            'email'       => $user->email,
+            'name'        => $user->name,
+        ];
+
+        Session::put('user', $auth);
         return view('content');
     });
     Route::get('/logout', 'Otentikasi\OtentikasiController@logout')->name('logout');
@@ -109,7 +126,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/user_doAdd', 'MasterController@user_doAdd')->name('master.user_doAdd');
     Route::post('/master/user_doEdit', 'MasterController@user_doEdit')->name('master.user_doEdit');
     Route::post('/master/users_get', 'MasterController@users_get')->name('master.users_get');
-    Route::get('/master/user_delete/{id}', 'MasterController@user_delete')->name('master.user_delete');
+    Route::match(array('GET', 'POST'), '/master/user_delete/{id}', 'MasterController@user_delete')->name('master.user_delete');
     Route::post('/master/cek_username', 'MasterController@cek_username')->name('master.cek_username');
 
 
@@ -275,6 +292,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(array('GET', 'POST'), 'booking/preview/{id}', 'BookingController@booking_preview');
     Route::match(array('GET', 'POST'), '/booking/cetak_hbl/{id}/{hbl1}/{hbl2}', 'BookingController@cetak_hbl');
     Route::get('booking/cetak_awb/{id}', 'BookingController@cetak_hawb');
+    Route::get('booking/cetak_vgm/{id}', 'BookingController@cetak_vgm');
+    Route::get('booking/cetak_si_lcl/{id}', 'BookingController@cetak_si_lcl');
+    Route::get('booking/cetak_si_fcl/{id}', 'BookingController@cetak_si_fcl');
+    Route::get('booking/cetak_si_air/{id}', 'BookingController@cetak_si_air');
+    Route::get('booking/cetak_si_trucking_fcl/{id}', 'BookingController@cetak_si_trucking_fcl');
+    Route::get('booking/cetak_si_trucking_lcl/{id}', 'BookingController@cetak_si_trucking_lcl');
+    Route::get('booking/cetak_suratjalan/{id}', 'BookingController@cetak_suratJalan');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');
@@ -317,8 +341,18 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/user/access_doEdit', 'ManagementController@user_accessdoEdit')->name('user.access_doEdit');
     Route::post('/user/access_get', 'ManagementController@user_access_get')->name('user.access_get');
     Route::get('/master/access_delete/{id}', 'ManagementController@user_accessDelete')->name('user.access_delete');
-});
+    Route::get('/user/roles', 'ManagementController@user_roles')->name('user.roles');
+    Route::post('/user/roles_doAdd', 'ManagementController@user_rolesdoAdd')->name('user.roles_doAdd');
+    Route::post('/user/roles_doEdit', 'ManagementController@user_rolesdoEdit')->name('user.roles_doEdit');
+    Route::post('/user/roles_get', 'ManagementController@user_roles_get')->name('user.roles_get');
+    Route::get('/master/roles_delete/{id}', 'ManagementController@user_rolesDelete')->name('user.roles_delete');
 
+
+    /** Profile */
+    Route::get('/user/{id}', 'UserController@index')->name('profile');
+    Route::post('/user/user_doAdd', 'UserController@user_doAdd')->name('user.doAdd');
+    Route::post('/user/change_password', 'UserController@doChangePassword')->name('user.change_password');
+});
 
 
 Route::get('/home', 'HomeController@index')->name('home');

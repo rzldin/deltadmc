@@ -25,6 +25,10 @@
               <i class="far fa-user"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
+              <a href="{{ url('user/'. Auth::user()->id) }}" class="dropdown-item">
+                <i class="fas fa-user"></i> Profile
+              </a>
+              <div class="dropdown-divider"></div>
               <a href=" {{ route('logout') }} " class="dropdown-item">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>

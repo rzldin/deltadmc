@@ -1036,13 +1036,13 @@ class BookingController extends Controller
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCon('.$row->t_mloaded_type_id.','.$row->t_mcontainer_type_id.','.$no.');" style="margin-top:5px" id="btnEditCon_'.$no.'"> '
-                        . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                        . '<i class="fa fa-edit"></i></a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                         . '" onclick="updateDetailCon('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdateCon_'.$no.'"> '
-                        . '<i class="fa fa-save"></i> Update </a>';
+                        . '<i class="fa fa-save"></i></a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailCon('.$row->id.');" style="margin-top:5px"> '
-                        . '<i class="fa fa-trash"></i> Delete </a>';
+                        . '<i class="fa fa-trash"></i></a>';
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1158,7 +1158,7 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-left"><label id="lbl_doc_number_'.$no.'">'.$row->doc_no.'</label>';
                 $tabel .= '<input type="text" id="doc_number_'.$no.'" name="doc_number" class="form-control" value="'.$row->doc_no.'" style="display:none"></td>';
                 $tabel .= '<td class="text-center"><label id="lbl_doc_date_'.$no.'">'.$date.'</label>';
-                $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.$date.'" style="display:none">';
+                $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.Carbon::parse($row->doc_date)->format('d/m/Y').'" style="display:none">';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
@@ -2129,7 +2129,6 @@ class BookingController extends Controller
 
     public function cetak_hbl($id, $hbl1, $hbl2)
     {
-        //$booking = DB::table('t_booking')->where('id', $id)->first();
         $booking = DB::table('t_booking As a')
                     ->leftJoin('t_quote AS b', 'a.t_quote_id', '=', 'b.id')
                     ->leftJoin('t_mdoc_type AS tmdoc', 'a.t_mdoc_type_id', '=', 'tmdoc.id')
@@ -2175,6 +2174,58 @@ class BookingController extends Controller
     {
         $pdf = PDF::loadview('booking.cetak_awb_pdf');
         return $pdf->stream();
+    }
+
+    public function cetak_vgm($id)
+    {
+        $data = BookingModel::get_container($id);
+        $pdf = PDF::loadview('booking.cetak_vgm_pdf', ['data' => $data])->setPaper('a4', 'landscape');
+        return $pdf->stream();   
+    }
+
+    public function cetak_si_lcl($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_si_lcl', ['data' => $data]);
+        return $pdf->stream();  
+    }
+
+    public function cetak_si_fcl($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_si_fcl', ['data' => $data]);
+        return $pdf->stream();  
+    }
+
+
+    public function cetak_si_air($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_si_air', ['data' => $data]);
+        return $pdf->stream();  
+    }
+
+    public function cetak_si_trucking_fcl($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['data' => $data]);
+        return $pdf->stream();  
+    }
+
+
+    public function cetak_si_trucking_lcl($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_lcl', ['data' => $data]);
+        return $pdf->stream();  
+    }
+
+
+    public function cetak_suratJalan($id)
+    {
+        $data   = BookingModel::getDetailBooking($id);
+        $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data]);
+        return $pdf->stream();  
     }
 
 }

@@ -68,8 +68,19 @@
                                                 @endif
                                             </form>
                                             <div class="row float-right mt-2">
-                                                <a href="" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                <a href="" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                
+                                                <?php if($quote->shipment_by == 'SEA') {?>
+                                                    @if ($quote->loaded_type == 'FCL')
+                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$quote->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_fcl/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                    @else
+                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$quote->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_lcl/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                    @endif
+                                                <?php }elseif($quote->shipment_by == 'AIR'){?>
+                                                    <a href="{{ url('booking/cetak_si_air/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                <?php }?>
+                                                    
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -325,7 +336,13 @@
                                                    </table>
                                                 </div>
                                             </div>
+
                                         </div>
+                                        @if ($quote->activity == 'export')
+                                        <div class="col-md-12 mb-3 ">
+                                            <a href="{{ url('booking/cetak_vgm/'.$quote->id) }}" class="btn btn-md btn-success float-right" target="_blank"><i class="fa fa-file"></i> Print VGM Certificate</a>
+                                        </div>
+                                        @endif
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="card-header">
@@ -399,7 +416,8 @@
                                         <div class="col-md-12">
                                             <div class="card card-primary">
                                                 <div class="card-header">
-                                                    <a class="btn btn-dark btn-sm float-right" onclick="newRoad()"><i class="fa fa-plus"></i> Add Data</a>
+                                                    <a class="btn btn-dark btn-sm float-left" onclick="newRoad()"><i class="fa fa-plus"></i> Add Data</a>
+                                                    <a href="{{ url('booking/cetak_suratjalan/'.$quote->id) }}" target="_blank" class="btn btn-success btn-sm float-right"><i class="fa fa-print"></i> Print Surat Jalan</a>
                                                 </div>
                                                 <div class="card-body">
                                                     <table id="myTable" class="table table-bordered table-striped" width="100%">
@@ -631,7 +649,8 @@
                                             <div class="card card-primary">
                                                 <div class="card-header">
                                                     <h5 class="card-title">Cost</h5>
-                                                    <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
+                                                    <a class="btn btn-success float-right"><i class="fas fa-check"></i> Input Invoice for selected</a>
+                                                    <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -662,7 +681,8 @@
                                             </div>
                                             <div class="card card-primary">
                                                 <div class="card-header">
-                                                    <h5>Sell</h5>
+                                                    <h5 class="card-title">Sell</h5>
+                                                    <a class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -1931,6 +1951,7 @@
                     $('#lbl_container_'+id).hide();
                     $('#lbl_seal_no_'+id).hide();
                     $('#lbl_vgm_'+id).hide();
+                    $('#lbl_vgm_uom_'+id).hide();
                     $('#lbl_resp_'+id).hide();
                     $('#lbl_auth_'+id).hide();
                     $('#lbl_mow_'+id).hide();

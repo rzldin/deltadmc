@@ -8,6 +8,8 @@ use App\QuotationModel;
 use App\MasterModel;
 use Carbon\Carbon;
 use DB;
+use Session;
+use Validator;
 
 class QuotationController extends Controller
 {
@@ -614,19 +616,22 @@ class QuotationController extends Controller
                 ->leftJoin('t_mincoterms', 't_quote.terms', '=', 't_mincoterms.id')
                 ->select('t_quote.*', 't_mcompany.client_name', 't_mloaded_type.loaded_type', 't_mpic.name as name_pic','t_mport.port_name', 't_muom.uom_code', 't_mpic.id as id_pic', 't_mincoterms.incoterns_code')
                 ->where('t_quote.id', $request->id)->first();
+        
+               
 
         $dimension  = QuotationModel::get_quoteDimension($request->id);;
         $shipping   = QuotationModel::get_quoteShipping($request->id);
         $quoteDtl   = QuotationModel::get_quoteDetail($request->id);
         $profit     = QuotationModel::get_quoteProfit($request->id);
 
-        $data['loaded']     = MasterModel::loaded_get();
-        $data['uom']        = MasterModel::uom();
-        $data['quote']      = $quote;
-        $data['dimension']  = $dimension;
-        $data['shipping']   = $shipping;
-        $data['quoteDtl']   = $quoteDtl;
-        $data['profit']     = $profit;
+        $data['loaded']         = MasterModel::loaded_get();
+        $data['uom']            = MasterModel::uom();
+        $data['quote']          = $quote;
+        $data['dimension']      = $dimension;
+        $data['shipping']       = $shipping;
+        $data['quoteDtl']       = $quoteDtl;
+        $data['profit']         = $profit;
+        $data['role_user']      = session()->get('user.role');
 
         return view('quotation.quote_view')->with($data);
     }

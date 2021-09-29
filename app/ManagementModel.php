@@ -27,4 +27,14 @@ class ManagementModel extends Model
     {
         return DB::table('t_maccess_control')->where('id', $id)->first();
     }
+
+    public static function get_data_user()
+    {
+        return DB::table('users')->orderBy('name', 'asc')->get();
+    }
+
+    public static function get_detail_user()
+    {
+        return DB::table('t_mmatrix')->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')->select('t_mmatrix.*', 'users.name AS name_user', 't_mresponsibility.responsibility_name AS role')->get();
+    }
 }

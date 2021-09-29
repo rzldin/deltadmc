@@ -1030,7 +1030,7 @@ class MasterController extends Controller
 
     public function user_doEdit(Request $request)
     {
-        if($request->status == '1'){
+        if($request->status == 'on'){
             $status = 1;
         }else{
             $status = 0;
@@ -1076,7 +1076,7 @@ class MasterController extends Controller
         return json_encode($data);
     }
 
-    public function users_delete($id)
+    public function user_delete($id)
     {
         try {
             DB::table('users')->where('id', $id)->delete();

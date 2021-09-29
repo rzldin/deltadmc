@@ -59,7 +59,7 @@
                                 </td>
                                 <td>
                                     <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>
-                                    <a href="{{ '/master/users_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
+                                    <a href="{{ '/master/user_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -103,7 +103,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Country <font color="#f00">*</font>
+                            Country 
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="country" id="country">
@@ -116,7 +116,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Province<font color="#f00">*</font>
+                            Province
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="province" name="province" 
@@ -125,7 +125,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Address<font color="#f00">*</font>
+                            Address <font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                            <textarea name="address" id="address" class="form-control" rows="3" placeholder="Input Address.."></textarea>
@@ -133,7 +133,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            City<font color="#f00">*</font>
+                            City
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="city" name="city" 
@@ -142,7 +142,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Postal Code<font color="#f00">*</font>
+                            Postal Code
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="postal_code" name="postal_code" 
@@ -151,7 +151,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Phone 1<font color="#f00">*</font>
+                            Phone 1 <font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="phone1" name="phone1" 
@@ -160,7 +160,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Phone 2<font color="#f00">*</font>
+                            Phone 2
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="phone2" name="phone2" 
@@ -169,7 +169,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Fax<font color="#f00">*</font>
+                            Fax
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="fax" name="fax" 
@@ -178,7 +178,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Email<font color="#f00">*</font>
+                            Email <font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="email" id="email" name="email" 

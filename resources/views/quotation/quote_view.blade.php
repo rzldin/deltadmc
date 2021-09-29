@@ -451,7 +451,9 @@
             </div>
             <div class="col-md-12 mt-3 mb-3">
                 @if ($quote->status == 0 && $quote->final_flag == 1)
-                <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $quote->id }}')"><i class="fa fa-check"></i> Approve</a>
+                    @if ($role_user == 'Administrator' || $role_user == 'Sales Manager')
+                        <a href="javascript:;" class="btn btn-success float-right" onclick="approve('{{ $quote->id }}')"><i class="fa fa-check"></i> Approve</a>
+                    @endif
                 @endif
                 <a href="{{ route('quotation.list') }}" class="btn btn-secondary float-left"><i class="fa fa-angle-left"></i> Back</a>
             </div>

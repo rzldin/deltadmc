@@ -5,12 +5,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>User Access</h1>
+          <h1>User Roles</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item active">User Access</li>
+            <li class="breadcrumb-item active">User Roles</li>
           </ol>
         </div>
       </div>
@@ -31,9 +31,8 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th width="25%">Role</th>
-                                <th width="25%">Menu Name</th>
-                                <th width="20%">Menu Role</th>
+                                <th width="35%">Nama</th>
+                                <th width="35%">Role</th>
                                 <th width="10%">Status</th>
                                 <th width="15%">Action</th>
                             </tr>
@@ -42,9 +41,8 @@
                             @foreach ($list_data as $list)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $list->responsibility_name }}</td>
-                                <td>{{ $list->apps_menu_name }}</td>
-                                <td>{{ $list->apps_menu_level }}</td>
+                                <td>{{ $list->name_user }}</td>
+                                <td>{{ $list->role }}</td>
                                 <td align="center">
                                     @if ($list->active_flag == 1)
                                         <span class="badge badge-success">ACTIVE</span>
@@ -54,7 +52,7 @@
                                 </td>
                                 <td>
                                     <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Update </a>
-                                    <a href="{{ '/user/access_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
+                                    <a href="{{ '/user/roles_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -79,26 +77,27 @@
                     {{ csrf_field() }}
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
+                            User<font color="#f00">*</font>
+                        </div>                                
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs4"style="width: 100%;margin-bottom:5px;" name="user" id="user">
+                                <option value="" disabled selected>-- Select User --</option>
+                                @foreach ($list_user as $m)
+                                    <option value="{{ $m->id }}">{{ $m->name }}</option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" name="id" id="id">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4 col-xs-4">
                            Role<font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="role" id="role">
                                 <option value="" disabled selected>-- Select Role --</option>
-                                @foreach ($list_user as $lu)
+                                @foreach ($list_role as $lu)
                                     <option value="{{ $lu->id }}">{{ $lu->responsibility_name }}</option>
-                                @endforeach
-                            </select>
-                            <input type="hidden" id="id" name="id">
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4 col-xs-4">
-                            Apps Menu<font color="#f00">*</font>
-                        </div>                                
-                        <div class="col-md-8 col-xs-8">
-                            <select class="form-control select2bs4" multiple="multiple" style="width: 100%;margin-bottom:5px;" name="menu[]" id="menu">
-                                @foreach ($list_menu as $m)
-                                    <option value="{{ $m->id }}">{{ $m->apps_menu_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -130,7 +129,7 @@
         function newData(){
             $('#id').val('');
             $('#role').val('');
-            $('#menu').val('');
+            $('#user').val('');
             dsState = "Input";
             
             $("#myModal").find('.modal-title').text('Add Data');
@@ -138,24 +137,24 @@
         }
 
         function simpandata(){
-            if($.trim($("#role").val()) == ""){
+            if($.trim($("#user").val()) == ""){
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Please select Role!',
+                    text: 'Please Select user',
                     icon: 'error'
                 })
-            }else if($.trim($("#menu").val()) == ""){
+            }else if($.trim($("#role").val()) == ""){
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Please Select menu',
+                    text: 'Please Select Role',
                     icon: 'error'
                 })
             }else{
                 if(dsState=="Input"){                   
-                    $('#formku').attr("action", "{{ route('user.access_doAdd') }}");
+                    $('#formku').attr("action", "{{ route('user.roles_doAdd') }}");
                     $('#formku').submit();              
                 }else{
-                    $('#formku').attr("action", "{{ route('user.access_doEdit') }}");
+                    $('#formku').attr("action", "{{ route('user.roles_doEdit') }}");
                     $('#formku').submit(); 
                 }
             }
@@ -166,14 +165,13 @@
             dsState = "Edit";
             $.ajax({
                 type: "POST",
-                url: "{{ route('user.access_get') }}",
+                url: "{{ route('user.roles_get') }}",
                 dataType: 'json',
                 data : {id: id},
                 success: function (result){
-                    console.log(result.id)
                     $('#id').val(result.id);
+                    $('#user').val(result.t_muser_id).trigger("change");
                     $('#role').val(result.t_mresponsibility_id).trigger("change");
-                    $('#menu').val(result.t_mapps_menu_id).trigger("change");
                     $("#myModal").find('.modal-title').text('Edit Data');
                     $("#myModal").modal('show',{backdrop: 'true'});           
                 }
