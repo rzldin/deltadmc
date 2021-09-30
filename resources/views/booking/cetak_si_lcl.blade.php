@@ -71,7 +71,10 @@
         <tr>
             <td width="45%" style="border-top: 1px solid #000;border-bottom: 1px solid #000;border-right: 1px solid #000;" height="15"></td>
             <td width="35%" style="border-top: 1px solid #000;border-bottom: 1px solid #000;border-right: 1px solid #000;background-color: #a9a9a9a9;text-align:center;font-size:10px;">SHIPPING INTRUCTION</td>
-            <td width="20%" style="border-top: 1px solid #000;border-bottom: 1px solid #000;"></td>
+            <td width="20%" style="border-top: 1px solid #000;border-bottom: 1px solid #000;color:red;text-align:center;font-size:12px;"> @if ($data->final_flag == 1)
+                FINAL SI    
+            @endif
+            </td>
         </tr>
     </table>
     <table width="100%" cellspacing="0" cellpadding="0">
@@ -132,7 +135,7 @@
                                         <br>
                                         <br>
                                         <div class="isi-place" style="font-size:9pt;">
-                                            JAKARTA, INDONESIA
+                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -315,8 +318,8 @@
                         <td>
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;" height="20.5">
-                                        <b>{{ \Carbon\Carbon::parse($data->etd_date)->format('d/M/Y') }}</b>
+                                    <td width="50%" style="font-size: 9pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;" height="20.5">
+                                        <b>{{ \Carbon\Carbon::parse($data->etd_date)->format('d-M-Y') }}</b>
                                     </td>
                                     <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;text-align:center;">
                                         
@@ -346,8 +349,8 @@
                                     <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;" height="20.5">
                                         
                                     </td>
-                                    <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;text-align:center;">
-                                        <b>{{ \Carbon\Carbon::parse($data->eta_date)->format('d/M/Y') }}</b>
+                                    <td width="50%" style="font-size: 9pt;border-bottom:1px solid #000;text-align:center;">
+                                        <b>{{ \Carbon\Carbon::parse($data->eta_date)->format('d-M-Y') }}</b>
                                     </td>
                                 </tr>
                             </table>
@@ -401,8 +404,8 @@
             <td width="30%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
 
             </td>
-            <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;margin:0px;">
-               {!! $data->delivery_of_goods !!}
+            <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;vertical-align:top;">
+                {!! $comm[0]->desc !!}
             </td>
             <td width="15%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
                 <table width="100%" cellspacing="0" cellpadding="0">
@@ -411,7 +414,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                            <b>NW : {{ $comm[0]->netto }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -421,7 +424,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                            <b>GW : {{ $comm[0]->weight }} {{ $comm[0]->code_c }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -438,7 +441,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                            <b>MEAS : {{ $comm[0]->volume }} {{ $comm[0]->code_e }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -454,17 +457,17 @@
                 <b><u>CONTAINER/SEAL/GW/NO.OF PACKAGE (BREAKDOWN)</u></b>
             </td>
             <td width="15%" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
-                <b>dd</b>
+                <b></b>
             </td>
             <td width="15%" style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
-                <b>gg</b>
+                <b></b>
             </td>
         </tr>
     </table>
     <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
             <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="50">
-                <b>STUFFING DATE :</b> {{ \Carbon\Carbon::parse($data->stuffing_date)->format('d/M/Y') }} <br><br>
+                <b>STUFFING DATE :</b> {{ \Carbon\Carbon::parse($data->stuffing_date)->format('d-M-Y') }} <br><br>
                 <b>FREIGHT :</b> {{ $data->charge_name }}
             </td>
         </tr>

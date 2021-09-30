@@ -2186,14 +2186,18 @@ class BookingController extends Controller
     public function cetak_si_lcl($id)
     {
         $data   = BookingModel::getDetailBooking($id);
-        $pdf    = PDF::loadview('booking.cetak_si_lcl', ['data' => $data]);
+        $comm   = BookingModel::get_commodity($id);
+        $cont    = BookingModel::get_container($id);
+        $pdf    = PDF::loadview('booking.cetak_si_lcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
         return $pdf->stream();  
     }
 
     public function cetak_si_fcl($id)
     {
         $data   = BookingModel::getDetailBooking($id);
-        $pdf    = PDF::loadview('booking.cetak_si_fcl', ['data' => $data]);
+        $comm   = BookingModel::get_commodity($id);
+        $cont    = BookingModel::get_container($id);
+        $pdf    = PDF::loadview('booking.cetak_si_fcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
         return $pdf->stream();  
     }
 
@@ -2208,7 +2212,8 @@ class BookingController extends Controller
     public function cetak_si_trucking_fcl($id)
     {
         $data   = BookingModel::getDetailBooking($id);
-        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['data' => $data]);
+        $comm   = BookingModel::get_commodity($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['data' => $data, 'comm' => $comm]);
         return $pdf->stream();  
     }
 
@@ -2216,7 +2221,8 @@ class BookingController extends Controller
     public function cetak_si_trucking_lcl($id)
     {
         $data   = BookingModel::getDetailBooking($id);
-        $pdf    = PDF::loadview('booking.cetak_si_trucking_lcl', ['data' => $data]);
+        $comm   = BookingModel::get_commodity($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_lcl', ['data' => $data, 'comm' => $comm]);
         return $pdf->stream();  
     }
 

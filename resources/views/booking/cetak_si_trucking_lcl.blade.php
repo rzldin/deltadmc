@@ -132,7 +132,7 @@
                                         <br>
                                         <br>
                                         <div class="isi-place" style="font-size:9pt;">
-                                            JAKARTA, INDONESIA
+                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -402,8 +402,7 @@
 
             </td>
             <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;margin:0px;">
-               {!! $data->delivery_of_goods !!}<br/><br/>
-               HS CODE :
+               {!! $comm[0]->desc !!}<br/><br/>
             </td>
             <td width="15%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
                 <table width="100%" cellspacing="0" cellpadding="0">
@@ -412,7 +411,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
-                            <b>NW :</b>
+                            <b>NW : {{ $comm[0]->weight }} {{ $comm[0]->code_c }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -422,7 +421,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
-                            <b>GW :</b>
+                            <b>GW : {{ $comm[0]->netto }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -436,7 +435,7 @@
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;vertical-align:bottom;padding-left:2px;" height="100.2">
-                            <b>MEAS :</b>
+                            <b>MEAS : {{ $comm[0]->volume }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -479,8 +478,9 @@
             </td>
         </tr>
         <tr>
-            <td style="font-size: 14pt;margin-left:2px;">
-               {!! $data->remarks !!}
+            <td style="font-size: 10pt;margin-left:2px;">
+                {!! $data->stuffing_place !!}<br>
+                {!! $data->remarks !!}
             </td>
         </tr>
     </table>

@@ -132,7 +132,7 @@
                                         <br>
                                         <br>
                                         <div class="isi-place" style="font-size:9pt;">
-                                            JAKARTA, INDONESIA
+                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -278,8 +278,8 @@
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>BOOKING NO:</b>
-                            <div class="isi-booking" style="font-size: 10pt;">
-                                {{ $data->booking_no }}
+                            <div class="isi-booking" style="font-size: 10pt;color:red;">
+                                <b>{{ $data->booking_no }}</b>
                             </div>
                         </td>
                     </tr>
@@ -315,8 +315,8 @@
                         <td>
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;" height="20.5">
-                                        <b>{{ \Carbon\Carbon::parse($data->etd_date)->format('d/M/Y') }}</b>
+                                    <td width="50%" style="font-size: 9pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;color:#0000CD;" height="20.5">
+                                        <b>{{ \Carbon\Carbon::parse($data->etd_date)->format('d-M-Y') }}</b>
                                     </td>
                                     <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;text-align:center;">
                                         
@@ -346,8 +346,8 @@
                                     <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;border-right:1px solid #000;text-align:center;" height="20.5">
                                         
                                     </td>
-                                    <td width="50%" style="font-size: 7pt;border-bottom:1px solid #000;text-align:center;">
-                                        <b>{{ \Carbon\Carbon::parse($data->eta_date)->format('d/M/Y') }}</b>
+                                    <td width="50%" style="font-size: 9pt;border-bottom:1px solid #000;text-align:center;color:#0000CD;">
+                                        <b>{{ \Carbon\Carbon::parse($data->eta_date)->format('d-M-Y') }}</b>
                                     </td>
                                 </tr>
                             </table>
@@ -401,8 +401,8 @@
             <td width="30%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
 
             </td>
-            <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;margin:0px;">
-               {!! $data->delivery_of_goods !!}
+            <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;vertical-align:top;margin:0px;">
+               {!! $comm[0]->desc !!}<br/><br/>
             </td>
             <td width="15%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
                 <table width="100%" cellspacing="0" cellpadding="0">
@@ -410,8 +410,8 @@
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="30"></td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                        <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
+                            <b>NW : {{ $comm[0]->weight }} {{ $comm[0]->code_c }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -420,8 +420,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                        <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
+                            <b>GW : {{ $comm[0]->netto }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -434,7 +434,9 @@
             <td width="15%" style="font-size:7pt;text-align:center;">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="100.2"></td>
+                        <td style="border-bottom: 1px solid #000;font-size:7pt;vertical-align:bottom;padding-left:2px;" height="100.2">
+                            <b>MEAS : {{ $comm[0]->volume }}</b>
+                        </td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
@@ -454,17 +456,17 @@
                 <b><u>CONTAINER/SEAL/GW/NO.OF PACKAGE (BREAKDOWN)</u></b>
             </td>
             <td width="15%" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
-                <b>dd</b>
+                <b></b>
             </td>
             <td width="15%" style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
-                <b>gg</b>
+                <b></b>
             </td>
         </tr>
     </table>
     <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
             <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="50">
-                <b>STUFFING DATE :</b> {{ \Carbon\Carbon::parse($data->stuffing_date)->format('d/M/Y') }} <br><br>
+                <b>STUFFING DATE : <span style="color: red;font-size:9pt;">{{ ucwords(\Carbon\Carbon::parse($data->stuffing_date)->format('d M Y')) }}</b></span> <br><br>
                 <b>FREIGHT :</b> {{ $data->charge_name }}
             </td>
         </tr>
@@ -476,8 +478,9 @@
             </td>
         </tr>
         <tr>
-            <td style="font-size: 14pt;margin-left:2px;">
-               {!! $data->remarks !!}
+            <td style="font-size: 10pt;margin-left:2px;">
+                {!! $data->stuffing_place !!}<br>
+                {!! $data->remarks !!}
             </td>
         </tr>
     </table>

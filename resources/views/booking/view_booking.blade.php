@@ -246,6 +246,21 @@
                                                                     <input type="text" class="form-control" value="{{ $booking->company_c }}" readonly>
                                                                 </div>
                                                             </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-md-4">
+
+                                                                </div>
+                                                                <div class="col-md-8">
+                                                                    <div class="icheck-primary d-inline">
+                                                                        <input type="checkbox" id="checkboxPrimary1" name="legal_doc" @if ($booking->legal_f == 1)
+                                                                            checked
+                                                                        @endif disabled>
+                                                                        <label for="checkboxPrimary1">
+                                                                            Legal Doc
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="client-detail">
                                                                 <div class="row mb-3">
                                                                     <div class="col-md-4">
@@ -268,18 +283,8 @@
                                                                 <div class="col-md-4">
                                                                     <label>Shipper</label>
                                                                 </div>
-                                                                <div class="col-md-5">
+                                                                <div class="col-md-8">
                                                                     <input type="text" class="form-control" value="{{ $booking->company_f }}" readonly>
-                                                                </div>
-                                                                <div class="col-md-3 mt-2">
-                                                                    <div class="icheck-primary d-inline">
-                                                                        <input type="checkbox" id="checkboxPrimary1" name="legal_doc" @if ($booking->legal_f == 1)
-                                                                            checked
-                                                                        @endif>
-                                                                        <label for="checkboxPrimary1">
-                                                                            Legal Doc
-                                                                        </label>
-                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="shipper-detail">
