@@ -48,14 +48,14 @@
                                 <div class="container-fluid mt-3">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <form action="{{ route('booking.doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                                            <form action="{{ route('booking.doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action="">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="status_final" id="status_final">
                                                 @if(count($errors)>0)
                                                 @foreach($errors->all() as $error)
                                                 <div class="alert alert-danger" role="alert">
                                                     {{ $error }}
-                                                </div>  		
+                                                </div>
                                                 @endforeach
                                                 @endif
                                                 <?php $verse = $quote->version_no; ?>
@@ -68,7 +68,7 @@
                                                 @endif
                                             </form>
                                             <div class="row float-right mt-2">
-                                                
+
                                                 <?php if($quote->shipment_by == 'SEA') {?>
                                                     @if ($quote->loaded_type == 'FCL')
                                                     <a href="{{ url('booking/cetak_si_trucking_fcl/'.$quote->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
@@ -80,7 +80,7 @@
                                                 <?php }elseif($quote->shipment_by == 'AIR'){?>
                                                     <a href="{{ url('booking/cetak_si_air/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
                                                 <?php }?>
-                                                    
+
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -106,7 +106,7 @@
                                                        </thead>
                                                        <tbody>
                                                            <tbody id="tblCommodity">
-                            
+
                                                            </tbody>
                                                            <tr>
                                                                 <td>
@@ -130,7 +130,7 @@
                                                                             <select class="form-control select2bs44" name="qty_uom" id="qty_uom_1">
                                                                                 <option value="">--Select Uom--</option>
                                                                                 @foreach ($uom as $item)
-                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -145,7 +145,7 @@
                                                                             <select class="form-control select2bs44" name="qty_pckg_uom" id="qty_pckg_uom_1">
                                                                                 <option value="">--Select Uom--</option>
                                                                                 @foreach ($uom as $item)
-                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -160,7 +160,7 @@
                                                                             <select class="form-control select2bs44" name="weight_uom" id="weight_uom_1">
                                                                                 <option value="">--Select Uom--</option>
                                                                                 @foreach ($uom as $item)
-                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -178,7 +178,7 @@
                                                                             <select class="form-control select2bs44" name="volume_uom" id="volume_uom_1">
                                                                                 <option value="">--Select Uom--</option>
                                                                                 @foreach ($uom as $item)
-                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                                <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -211,7 +211,7 @@
                                                        </thead>
                                                        <tbody>
                                                            <tbody id="tblPackages">
-                            
+
                                                            </tbody>
                                                            <tr>
                                                                 <td>
@@ -227,7 +227,7 @@
                                                                     <select class="form-control select2bs44" name="unit" id="unit_1">
                                                                         <option value="">--Select Uom--</option>
                                                                         @foreach ($uom as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                        <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
@@ -272,7 +272,7 @@
                                                        </thead>
                                                        <tbody>
                                                            <tbody id="tblContainer">
-                            
+
                                                            </tbody>
                                                            <tr>
                                                                 <td>
@@ -288,7 +288,7 @@
                                                                     <select class="form-control select2bs44" name="loaded" id="loaded_1">
                                                                         <option value="">--Select Container--</option>
                                                                         @foreach ($loaded as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->loaded_type }}</option>                                                
+                                                                        <option value="{{ $item->id }}">{{ $item->loaded_type }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
@@ -296,7 +296,7 @@
                                                                     <select class="form-control select2bs44" name="container" id="container_1">
                                                                         <option value="">--Select Container--</option>
                                                                         @foreach ($container as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->container_type }}</option>                                                
+                                                                        <option value="{{ $item->id }}">{{ $item->container_type }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
@@ -311,7 +311,7 @@
                                                                     <select class="form-control select2bs44" name="vgm_uom" id="vgm_uom_1">
                                                                         <option value="">--Select Uom--</option>
                                                                         @foreach ($uom as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
+                                                                        <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
@@ -361,7 +361,7 @@
                                                        </thead>
                                                        <tbody>
                                                            <tbody id="tblDoc">
-                            
+
                                                            </tbody>
                                                            <tr>
                                                                 <td>
@@ -371,7 +371,7 @@
                                                                     <select class="form-control select2bs44" name="docx" id="docx_1">
                                                                         <option value="">--Select Doctype--</option>
                                                                         @foreach ($doc as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
+                                                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </td>
@@ -396,18 +396,18 @@
                                             <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
-                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2"> 
-                                                <i class="fa fa-plus"></i> New Version 
+                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2">
+                                                <i class="fa fa-plus"></i> New Version
                                             </a>
-                                            <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2"> 
+                                            <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2">
                                                 <i class="fa fa-times"></i> Cancel
                                             </a>
-                                            <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)"> 
-                                                <i class="fa fa-save"></i> Save 
+                                            <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)">
+                                                <i class="fa fa-save"></i> Save
                                             </a>
                                         </div>
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
                                 <section class="content">
@@ -441,7 +441,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </section>                                
+                                </section>
                             </div>
                             <div class="modal fade" id="myModal" tabindex="-1" role="basic" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -452,7 +452,7 @@
                                         </div>
                                         <br>
                                         <div class="modal-body">
-                                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                            <form class="eventInsForm" method="post" target="_self" name="formku"
                                                   id="formRoad" enctype="multipart/form-data">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
@@ -461,7 +461,7 @@
                                                         No. SJ <font color="#f00">*</font>
                                                     </div>
                                                     <div class="col-md-8 col-xs-8">
-                                                        <input type="text" id="no_sj" name="no_sj" 
+                                                        <input type="text" id="no_sj" name="no_sj"
                                                             class="form-control myline" style="margin-bottom:5px" placeholder="No Surat Jalan ....">
                                                         <input type="hidden" id="id" name="id">
                                                     </div>
@@ -469,7 +469,7 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Vehicle Type<font color="#f00">*</font>
-                                                    </div>                                
+                                                    </div>
                                                     <div class="col-md-8 col-xs-8">
                                                         <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="vehicle_type" id="vehicle_type">
                                                             <option value="" disabled selected>--Pilih--</option>
@@ -482,7 +482,7 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Vehicle<font color="#f00">*</font>
-                                                    </div>                                
+                                                    </div>
                                                     <div class="col-md-8 col-xs-8">
                                                         <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="vehicle_no" id="vehicle_no">
                                                             <option value="" disabled selected>--Pilih--</option>
@@ -495,9 +495,9 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Driver<font color="#f00">*</font>
-                                                    </div>                                
+                                                    </div>
                                                     <div class="col-md-8 col-xs-8">
-                                                        <input type="text" id="driver" name="driver" 
+                                                        <input type="text" id="driver" name="driver"
                                                             class="form-control myline" style="margin-bottom:5px">
                                                     </div>
                                                 </div>
@@ -535,7 +535,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="modal-footer">                        
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-primary" onClick="simpandataRoad();"><i class="fa fa-save"></i> Save</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                                         </div>
@@ -564,14 +564,14 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody id="tblSchedule">
-                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </section> 
+                                </section>
                             </div>
                             <div class="modal fade" id="myModalx" tabindex="-1" role="basic" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -582,14 +582,14 @@
                                         </div>
                                         <br>
                                         <div class="modal-body">
-                                            <form class="eventInsForm" method="post" target="_self" name="formku" 
+                                            <form class="eventInsForm" method="post" target="_self" name="formku"
                                                   id="formRoad" enctype="multipart/form-data">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Schedule<font color="#f00">*</font>
-                                                    </div>                                
+                                                    </div>
                                                     <div class="col-md-8 col-xs-8">
                                                         <select class="form-control select2bs4k" style="width: 100%;margin-bottom:5px;" name="schedulex" id="schedulex">
                                                             <option value="" selected>--Pilih--</option>
@@ -602,9 +602,9 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Description<font color="#f00">*</font>
-                                                    </div>                                
+                                                    </div>
                                                     <div class="col-md-8 col-xs-8">
-                                                        <input type="text" id="description_s" name="description_s" 
+                                                        <input type="text" id="description_s" name="description_s"
                                                             class="form-control myline" style="margin-bottom:5px" placeholder="Description .. ">
                                                         <input type="hidden" name="id_s" id="id_s">
                                                     </div>
@@ -634,7 +634,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="modal-footer">                        
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-primary" onClick="simpandataSch();"><i class="fa fa-save"></i> Save</button>
                                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                                         </div>
@@ -674,7 +674,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblCost">
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -682,7 +682,8 @@
                                             <div class="card card-primary">
                                                 <div class="card-header">
                                                     <h5 class="card-title">Sell</h5>
-                                                    <a class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
+                                                    <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
+                                                    <input type="text" name="testval[]" id="testval">
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -706,7 +707,7 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody id="tblSell">
-                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -731,14 +732,14 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody id="tblProfit">
-                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </section> 
+                                </section>
                             </div>
                         </div>
                     </div>
@@ -771,7 +772,7 @@
             </div>
             <br>
             <div class="modal-body">
-                <form class="eventInsForm" method="post" target="_self" name="formku" 
+                <form class="eventInsForm" method="post" target="_self" name="formku"
                       id="formku" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="row">
@@ -793,7 +794,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">                        
+            <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onClick="cetak_hbl();"><i class="fa fa-print"></i> Print</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
             </div>
@@ -972,7 +973,7 @@
                 }else{
                     shipper_picx = shipper_pic
                 }
-                
+
                 $.ajax({
                     url: "{{ route('booking.detail') }}",
                     type: "POST",
@@ -1072,7 +1073,7 @@
         }
 
         function agent_detail(val)
-        {   
+        {
             if(val!= ''){
 
                 let agent_addr     = $('#agent_addrx').val();
@@ -1152,7 +1153,7 @@
         function vendor_detail(val)
         {
             if(val!= ''){
-                
+
                 let vendor_addr     = $('#vendor_addrx').val();
                 let vendor_pic      = $('#vendor_picx').val();
                 let vendor_addrx    = 0;
@@ -1214,7 +1215,7 @@
             $('#copy_non_nego_hbl').val('');
             $("#HBLMODAL").find('.modal-title').text('Print HBL');
             $('#hbl_print_id').val(id)
-            $("#HBLMODAL").modal('show',{backdrop: 'true'}); 
+            $("#HBLMODAL").modal('show',{backdrop: 'true'});
         }
 
         function cetak_hbl()
@@ -1243,14 +1244,14 @@
             //         copy_non_nego_hbl : copy_non_nego_hbl
             //     },
             //     success: function (result){
-            //         $("#HBLMODAL").modal('hide'); 
-            //         loadRoadCons({{ Request::segment(3) }}); 
+            //         $("#HBLMODAL").modal('hide');
+            //         loadRoadCons({{ Request::segment(3) }});
             //         Toast.fire({
             //             icon: 'success',
             //             title: 'Print...!'
             //         });
             //     }
-            // });  
+            // });
         }
 
         function newRoad(){
@@ -1265,9 +1266,9 @@
             $('#notes').val('');
 
             dsState = "Input";
-            
+
             $("#myModal").find('.modal-title').text('Add Data');
-            $("#myModal").modal('show',{backdrop: 'true'}); 
+            $("#myModal").modal('show',{backdrop: 'true'});
         }
 
         function simpandataRoad(){
@@ -1331,14 +1332,14 @@
                             notes : $('#notes').val()
                         },
                         success: function (result){
-                            $("#myModal").modal('hide'); 
-                            loadRoadCons({{ Request::segment(3) }}); 
+                            $("#myModal").modal('hide');
+                            loadRoadCons({{ Request::segment(3) }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Add Data!'
                             });
                         }
-                    });              
+                    });
                 }else{
                     $.ajax({
                         type: "POST",
@@ -1356,17 +1357,17 @@
                             notes : $('#notes').val()
                         },
                         success: function (result){
-                            $("#myModal").modal('hide'); 
-                            loadRoadCons({{ Request::segment(3) }}); 
+                            $("#myModal").modal('hide');
+                            loadRoadCons({{ Request::segment(3) }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Update!'
                             });
                         }
-                    }); 
+                    });
                 }
             }
-            
+
         };
 
 
@@ -1388,7 +1389,7 @@
                     $('#deliv_addr').val(result.delivery_addr);
                     $('#notes').val(result.notes);
                     $("#myModal").find('.modal-title').text('Edit Data');
-                    $("#myModal").modal('show',{backdrop: 'true'});           
+                    $("#myModal").modal('show',{backdrop: 'true'});
                 }
             });
         };
@@ -1401,9 +1402,9 @@
             $('#notesx').val('');
 
             dsState = "Input";
-            
+
             $("#myModalx").find('.modal-title').text('Add Data');
-            $("#myModalx").modal('show',{backdrop: 'true'}); 
+            $("#myModalx").modal('show',{backdrop: 'true'});
         }
 
         function simpandataSch(){
@@ -1445,14 +1446,14 @@
                             notes : $('#notesx').val()
                         },
                         success: function (result){
-                            $("#myModalx").modal('hide'); 
-                            loadSchedule({{ Request::segment(3) }}); 
+                            $("#myModalx").modal('hide');
+                            loadSchedule({{ Request::segment(3) }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Add Data!'
                             });
                         }
-                    });              
+                    });
                 }else{
                     $.ajax({
                         type: "POST",
@@ -1467,17 +1468,17 @@
                             notes : $('#notesx').val()
                         },
                         success: function (result){
-                            $("#myModalx").modal('hide'); 
-                            loadSchedule({{ Request::segment(3) }}); 
+                            $("#myModalx").modal('hide');
+                            loadSchedule({{ Request::segment(3) }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Update!'
                             });
                         }
-                    }); 
+                    });
                 }
             }
-            
+
         };
 
         function editDetailSch(id){
@@ -1498,7 +1499,7 @@
                     $('#date_s').val(result.date);
                     $('#notesx').val(result.notes);
                     $("#myModalx").find('.modal-title').text('Edit Data');
-                    $("#myModalx").modal('show',{backdrop: 'true'});           
+                    $("#myModalx").modal('show',{backdrop: 'true'});
                 }
             });
         };
@@ -1583,10 +1584,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus data!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1604,10 +1605,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus data!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1685,10 +1686,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus Dimension!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1705,10 +1706,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus Packages!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1725,10 +1726,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus data!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1745,10 +1746,10 @@
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'
-                        });   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus data!');
-                    }, 
+                    },
                 });
             }
         }
@@ -1769,7 +1770,7 @@
                 type: "POST",
                 dataType: "json",
                 success: function(result) {
-                    
+
                     $.each(result, function(i,data){
                         if(uom_com == data.id){
                             style = 'selected';
@@ -1828,7 +1829,7 @@
                     $("#qty_uom_"+id).select2({
                         theme: 'bootstrap4'
                     });
-                    
+
                     $('#qty_pckg_uom_'+id).show();
                     $('#qty_pckg_uom_'+id).html(html2);
                     $("#qty_pckg_uom_"+id).select2({
@@ -1869,7 +1870,7 @@
                 type: "POST",
                 dataType: "json",
                 success: function(result) {
-                    
+
                     $.each(result, function(i,data){
                         if(uom == data.id){
                             style = 'selected';
@@ -1893,7 +1894,7 @@
                     $("#unit_"+id).select2({
                         theme: 'bootstrap4'
                     });
-                    
+
                     $('#merk_'+id).show();
                     $('#qtyx_'+id).show();
                     $('#btnUpdatePckg_'+id).show();
@@ -2002,7 +2003,7 @@
                 type: "POST",
                 dataType: "json",
                 success: function(result) {
-                    
+
                     $.each(result, function(i,data){
                         if(type_doc == data.id){
                             style = 'selected';
@@ -2026,7 +2027,7 @@
                     $("#docx_"+id).select2({
                         theme: 'bootstrap4'
                     });
-                    
+
                     $('#doc_date_'+id).show();
                     $('#doc_number_'+id).show();
                     $('#btnUpdateDoc_'+id).show();
@@ -2118,14 +2119,14 @@
                         volume_uom:$('#volume_uom_'+id).val()
                     },
                     success:function(result){
-                        loadCommodity({{ Request::segment(3) }}); 
+                        loadCommodity({{ Request::segment(3) }});
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
                         });
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate Commodity!');
-                    },          
+                    },
                 });
             }
         }
@@ -2159,14 +2160,14 @@
                         unit:$('#unit_'+id).val()
                     },
                     success:function(result){
-                        loadPackages({{ Request::segment(3) }}); 
+                        loadPackages({{ Request::segment(3) }});
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
                         });
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate Commodity!');
-                    },          
+                    },
                 });
             }
         }
@@ -2213,14 +2214,14 @@
                         w_party:$('#w_party_'+id).val(),
                     },
                     success:function(result){
-                        loadContainer({{ Request::segment(3) }}); 
+                        loadContainer({{ Request::segment(3) }});
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
                         });
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate Container!');
-                    },          
+                    },
                 });
             }
         }
@@ -2254,14 +2255,14 @@
                         date:$('#doc_date_'+id).val()
                     },
                     success:function(result){
-                        loadDoc({{ Request::segment(3) }}); 
+                        loadDoc({{ Request::segment(3) }});
                         Toast.fire({
                             icon: 'success',
                             title: 'Sukses Update Data!'
                         });
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate Commodity!');
-                    },          
+                    },
                 });
             }
         }
@@ -2365,9 +2366,9 @@
                         icon: 'success',
                         title: 'Sukses Add Data!'
                     });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan item!');
-                    },  
+                    },
                 });
             }
         }
@@ -2408,9 +2409,9 @@
                         icon: 'success',
                         title: 'Sukses Add Data!'
                     });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan item!');
-                    },  
+                    },
                 });
             }
         }
@@ -2472,9 +2473,9 @@
                         icon: 'success',
                         title: 'Sukses Add Data!'
                     });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan item!');
-                    },  
+                    },
                 });
             }
         }
@@ -2515,9 +2516,9 @@
                         icon: 'success',
                         title: 'Sukses Add Data!'
                     });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan item!');
-                    },  
+                    },
                 });
             }
         }
@@ -2545,13 +2546,13 @@
                     $('#formku').submit();
                 }
             }
-            
+
         }
 
         /** Update Package **/
         function updateDetailSell(id_detail, id, v)
         {
-            
+
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.updateSell') }}",
@@ -2567,10 +2568,33 @@
                         icon: 'success',
                         title: 'Sukses Update Data!'
                     });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                     alert('Gagal Mengupdate data!');
-                },          
+                },
             });
+        }
+
+        function redirectToProformaInvoice() {
+            console.log('clicked');
+            // $('input[name="cek_sell[]"]:checked').each(function () {
+            //     console.log(this.value);
+            // });
+            $('#fSell').attr('action', `{{ route('proformainvoice.create') }}`);
+            $('#fSell').submit();
+        }
+
+        function testChecked(checkbox) {
+            var arrChecked = new Array();
+            arrChecked.push($('#testval').val());
+            console.log('testChecked');
+            if (checkbox.checked == true) {
+                console.log('checked');
+                console.log(checkbox.value);
+                arrChecked.push(checkbox.value);
+                $('#testval').val(arrChecked);
+            } else {
+                console.log('unchecked');
+            }
         }
 
 
@@ -2595,11 +2619,11 @@
 
             get_vendor({{ $quote->vendor_id }})
             vendor_detail({{ $quote->vendor_id }})
-            
+
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});
             loadContainer({{ Request::segment(3) }});
-            loadDoc({{ Request::segment(3) }}); 
+            loadDoc({{ Request::segment(3) }});
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
             loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})

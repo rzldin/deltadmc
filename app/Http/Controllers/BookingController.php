@@ -43,7 +43,7 @@ class BookingController extends Controller
         ->select('users.name as user_name', 'users.id as user_id')
         ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
         ->where('t_mmatrix.active_flag', '1')->get();
-        
+
         $quote                  = QuotationModel::get_detailQuote($id);
         $shipping               = QuotationModel::get_quoteShipping($id);
         $obj_merge              = (object) array_merge((array)$quote, (array("nomination_flag"=>0)), (array("carrier_id"=>$shipping[0]->t_mcarrier_id)));
@@ -53,11 +53,11 @@ class BookingController extends Controller
         $data['list_country']   = MasterModel::country();
         $data['list_sales']     = $sales;
         return view('booking.header_booking')->with($data);
-        
+
     }
 
     public function nomination()
-    {   
+    {
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['cust_addr']      = DB::table('t_maddress')->get();
@@ -540,7 +540,7 @@ class BookingController extends Controller
                     $packages   = BookingModel::get_packages($request->booking_idx);
 
                     foreach($packages as $row)
-                    {   
+                    {
                         DB::table('t_bpackages')
                         ->insert([
                             't_booking_id'      => $id,
@@ -712,7 +712,7 @@ class BookingController extends Controller
         $no = 2;
         $data = BookingModel::get_commodity($request['id']);
         $totalCom = count($data);
-        
+
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
@@ -890,7 +890,7 @@ class BookingController extends Controller
         $no = 2;
         $data = BookingModel::get_packages($request['id']);
         $totalPackages = count($data);
-        
+
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
@@ -999,7 +999,7 @@ class BookingController extends Controller
         $data = BookingModel::get_container($request['id']);
         $booking = BookingModel::get_bookingDetail($request['id']);
         $totalContainer = count($data);
-        
+
             foreach($data as $row)
             {
                 $tabel .= '<tr>';
@@ -1139,7 +1139,7 @@ class BookingController extends Controller
         $tabel = "";
         $no = 2;
         $data = BookingModel::get_document($request['id']);
-        
+
             foreach($data as $row)
             {
                 if($row->doc_date != null){
@@ -1231,7 +1231,7 @@ class BookingController extends Controller
         $countCom   = count($commodity);
         $countPack  = count($packages);
         $countCon   = count($container);
-        
+
         return view('booking.new_version', compact('quote', 'versionNow', 'commodity', 'packages', 'container', 'doc', 'roadCons', 'schedule', 'sellCost', 'countCom', 'countPack', 'countCon'));
     }
 
@@ -1563,7 +1563,7 @@ class BookingController extends Controller
             $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
             $tabel .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
-                    $tabel .= '<td>'.$shp->truck_size.'</td>';     
+                    $tabel .= '<td>'.$shp->truck_size.'</td>';
                 }else{
                     $tabel .= '<td>'.$shp->name_carrier.'</td>';
                 }
@@ -1585,7 +1585,7 @@ class BookingController extends Controller
             $tabel1 .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
             $tabel1 .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
-                    $tabel1 .= '<td>'.$shp->truck_size.'</td>';     
+                    $tabel1 .= '<td>'.$shp->truck_size.'</td>';
                 }else{
                     $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
                 }
@@ -1600,7 +1600,7 @@ class BookingController extends Controller
             $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
             $tabel1 .= '<td class="text-left"></td>';
             $displayx = 'display:none';
-            
+
             $tabel1 .= '<td class="text-left"></td>';
             $tabel1 .= '<td>';
             $tabel1 .= '</td>';
@@ -1610,7 +1610,7 @@ class BookingController extends Controller
 
         $totalAmount    = 0;
         $totalAmount2   = 0;
-
+        $tabel1 .= "<form id='fSell' method='post'>".csrf_field();
         foreach($data as $row)
             {
                 if($row->reimburse_flag == 1){
@@ -1652,7 +1652,7 @@ class BookingController extends Controller
                     $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
                     $displayx = 'display:none';
                 }
-                
+
                 $tabel .= '<td class="text-left"></td>';
                 $tabel .= '<td>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
@@ -1666,7 +1666,7 @@ class BookingController extends Controller
 
                 // Sell
                 $tabel1 .= '<tr>';
-                $tabel1 .= '<td><input type="checkbox" name="cek_sell" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
+                $tabel1 .= '<td><input type="checkbox" name="cek_sell[]" onchange="testChecked(this)" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
                 $tabel1 .= '<td>'.($no).'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
@@ -1711,6 +1711,8 @@ class BookingController extends Controller
                 $totalAmount    += $amount;
                 $totalAmount2   += $amount2;
             }
+
+            $tabel1 .= "</form>";
 
             $totalCost = 0;
             $totalSell = 0;
@@ -1757,7 +1759,7 @@ class BookingController extends Controller
                     'bill_to'   => $request->bill_to
                 ]);
             }
-           
+
 
             $return_data = 'sukses';
         } catch (\Exception $e) {
@@ -1785,7 +1787,7 @@ class BookingController extends Controller
     {
         $option = '';
         $option1 = '';
-        
+
         $quote = DB::select("SELECT * FROM t_booking WHERE booking_no = '".$request->booking_no."'");
 
         foreach($quote as $row)
@@ -1845,7 +1847,7 @@ class BookingController extends Controller
                     ->leftjoin('t_mcurrency AS tmuom3', 'a.valuta_payment', '=', 'tmuom3.id')
                     ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code', 'tmuom3.code as valuta_payment_code')
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
-        
+
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
         //$quoteDtl   = QuotationModel::get_quoteDetail($booking->quote_no);
         $quoteDtl   = BookingModel::getChargesDetail($booking->id);
@@ -1857,7 +1859,7 @@ class BookingController extends Controller
         $commodity  = BookingModel::get_commodity($booking->id);
         $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
         $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
-        
+
         $data['booking']    = $booking;
         $data['profit']     = $profit;
         $data['quoteDtl']   = $quoteDtl;
@@ -1910,7 +1912,7 @@ class BookingController extends Controller
 
         $user = Auth::user()->name;
         $tanggal = Carbon::now();
-        
+
         try {
         # Insert Booking
         $id =   DB::table('t_booking')->insertGetId([
@@ -2137,7 +2139,7 @@ class BookingController extends Controller
                     ->leftJoin('t_muom AS b', 'a.qty_uom', '=', 'b.id')
                     ->select('a.*', 'b.uom_code as code')
                     ->where('t_booking_id', $id)->get();
-                    
+
         $pdf = PDF::loadview('booking.cetak_hbl_pdf', ['booking' => $booking, 'packages' => $packages, 'origin' =>$hbl1, 'copy' => $hbl2]);
         return $pdf->stream();
     }
@@ -2155,7 +2157,7 @@ class BookingController extends Controller
     {
         $data = BookingModel::get_container($id);
         $pdf = PDF::loadview('booking.cetak_vgm_pdf', ['data' => $data])->setPaper('a4', 'landscape');
-        return $pdf->stream();   
+        return $pdf->stream();
     }
 
     public function cetak_si_lcl($id)
@@ -2164,7 +2166,7 @@ class BookingController extends Controller
         $comm   = BookingModel::get_commodity($id);
         $cont    = BookingModel::get_container($id);
         $pdf    = PDF::loadview('booking.cetak_si_lcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
     public function cetak_si_fcl($id)
@@ -2173,7 +2175,7 @@ class BookingController extends Controller
         $comm   = BookingModel::get_commodity($id);
         $cont    = BookingModel::get_container($id);
         $pdf    = PDF::loadview('booking.cetak_si_fcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
 
@@ -2181,7 +2183,7 @@ class BookingController extends Controller
     {
         $data   = BookingModel::getDetailBooking($id);
         $pdf    = PDF::loadview('booking.cetak_si_air', ['data' => $data]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
     public function cetak_si_trucking_fcl($id)
@@ -2189,7 +2191,7 @@ class BookingController extends Controller
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
         $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['data' => $data, 'comm' => $comm]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
 
@@ -2198,7 +2200,7 @@ class BookingController extends Controller
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
         $pdf    = PDF::loadview('booking.cetak_si_trucking_lcl', ['data' => $data, 'comm' => $comm]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
 
@@ -2207,7 +2209,7 @@ class BookingController extends Controller
         $data   = BookingModel::getRoadCons($id);
         $barang = BookingModel::get_packages($id);
         $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data, 'barang' => $barang]);
-        return $pdf->stream();  
+        return $pdf->stream();
     }
 
 }
