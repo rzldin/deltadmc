@@ -680,37 +680,40 @@
                                                 </div>
                                             </div>
                                             <div class="card card-primary">
-                                                <div class="card-header">
-                                                    <h5 class="card-title">Sell</h5>
-                                                    <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
-                                                    <input type="text" name="testval[]" id="testval">
-                                                </div>
-                                                <div class="card-body table-responsive p-0">
-                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
-                                                        <thead>
-                                                          <tr>
-                                                            <th>#</th>
-                                                            <th>No.</th>
-                                                            <th>Service/Fee</th>
-                                                            <th>Description</th>
-                                                            <th>Reimbursment</th>
-                                                            <th>Unit</th>
-                                                            <th>Currency</th>
-                                                            <th>rate/unit</th>
-                                                            <th>Total</th>
-                                                            <th>ROE</th>
-                                                            <th>Vat</th>
-                                                            <th>Amount</th>
-                                                            <th style="width:10%;">Bill To</th>
-                                                            <th>Note</th>
-                                                            <th>Action</th>
-                                                          </tr>
-                                                        </thead>
-                                                        <tbody id="tblSell">
+                                                <form id="fSell" method="post">
+                                                    @csrf
+                                                    <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
+                                                    <div class="card-header">
+                                                        <h5 class="card-title">Sell</h5>
+                                                        <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
+                                                    </div>
+                                                    <div class="card-body table-responsive p-0">
+                                                        <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>#</th>
+                                                                <th>No.</th>
+                                                                <th>Service/Fee</th>
+                                                                <th>Description</th>
+                                                                <th>Reimbursment</th>
+                                                                <th>Unit</th>
+                                                                <th>Currency</th>
+                                                                <th>rate/unit</th>
+                                                                <th>Total</th>
+                                                                <th>ROE</th>
+                                                                <th>Vat</th>
+                                                                <th>Amount</th>
+                                                                <th style="width:10%;">Bill To</th>
+                                                                <th>Note</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody id="tblSell">
 
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </form>
                                             </div>
                                             <div class="card card-primary">
                                                 <div class="card-header">
@@ -2558,7 +2561,8 @@
                 url:"{{ route('booking.updateSell') }}",
                 data:{
                     id:id_detail,
-                    bill_to:$('#bill_to_'+id).val(),
+                    bill_to_name:$('#bill_to_name_'+id).val(),
+                    bill_to_id:$('#bill_to_id_'+id).val(),
                     paid_to:$('#paid_to_'+id).val(),
                     v : v
                 },
@@ -2575,28 +2579,29 @@
         }
 
         function redirectToProformaInvoice() {
-            console.log('clicked');
-            // $('input[name="cek_sell[]"]:checked').each(function () {
-            //     console.log(this.value);
-            // });
             $('#fSell').attr('action', `{{ route('proformainvoice.create') }}`);
             $('#fSell').submit();
         }
 
-        function testChecked(checkbox) {
-            var arrChecked = new Array();
-            arrChecked.push($('#testval').val());
-            console.log('testChecked');
-            if (checkbox.checked == true) {
-                console.log('checked');
-                console.log(checkbox.value);
-                arrChecked.push(checkbox.value);
-                $('#testval').val(arrChecked);
-            } else {
-                console.log('unchecked');
-            }
+        function checkedBillTo(key) {
+            id = $('#cek_bill_to_'+key);
+            id.prop('checked', !id.prop('checked'));
         }
 
+        function fillBillToName(no) {
+            text = $('#bill_to_'+no).val();
+            arr = text.split("-");
+            $('#bill_to_name_'+no).val(arr[1]);
+            $('#bill_to_id_'+no).val(arr[0]);
+        }
+
+        function showErrorMsg(msg) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: '{!! $errorMsg !!}',
+            })
+        }
 
         $(function() {
             get_customer({{ $quote->client_id }});
@@ -2628,6 +2633,8 @@
             loadSchedule({{ Request::segment(3) }});
             loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
             loadProfit({{ $quote->t_quote_id }})
+
+            if ({{ $error }} == 1) showErrorMsg('{{ $errorMsg }}');
         });
     </script>
 @endpush

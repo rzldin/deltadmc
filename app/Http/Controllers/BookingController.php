@@ -31,6 +31,8 @@ class BookingController extends Controller
         $data['vehicle_type']   = MasterModel::vehicleType_get();
         $data['vehicle']        = MasterModel::vehicle();
         $data['schedule']       = MasterModel::schedule_get();
+        $data['error']          = (isset($_GET['error']) ? 1 : 0);
+        $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
 
         return view('booking.edit_booking')->with($data);
     }
@@ -1546,6 +1548,7 @@ class BookingController extends Controller
         $data       = BookingModel::getChargesDetail($request->id);
         $company    = MasterModel::company_data();
         $booking    = DB::table('t_booking')->where('id', $request->id)->first();
+        // $booking    = BookingModel::getDetailBooking($request->id);
         $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
         $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
         $total      = 0;
@@ -1560,7 +1563,7 @@ class BookingController extends Controller
 
             // Cost
             $tabel .= '<tr>';
-            $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
+            $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
             $tabel .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
                     $tabel .= '<td>'.$shp->truck_size.'</td>';
@@ -1582,7 +1585,10 @@ class BookingController extends Controller
             $tabel .= '</tr>';
 
             $tabel1 .= '<tr>';
-            $tabel1 .= '<td><input type="checkbox" name="cek_cost" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
+            $tabel1 .= '<td>
+                            <input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
+                            <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>
+                        </td>';
             $tabel1 .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
                     $tabel1 .= '<td>'.$shp->truck_size.'</td>';
@@ -1590,7 +1596,7 @@ class BookingController extends Controller
                     $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
                 }
             $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'"></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'"></td>';
             $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
             $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
             $tabel1 .= '<td class="text-right">'.number_format($shp->sell_val,2,',','.').'</td>';
@@ -1610,7 +1616,6 @@ class BookingController extends Controller
 
         $totalAmount    = 0;
         $totalAmount2   = 0;
-        $tabel1 .= "<form id='fSell' method='post'>".csrf_field();
         foreach($data as $row)
             {
                 if($row->reimburse_flag == 1){
@@ -1626,7 +1631,7 @@ class BookingController extends Controller
 
                 // Cost
                 $tabel .= '<tr>';
-                $tabel .= '<td><input type="checkbox" name="cek_cost" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
+                $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
                 $tabel .= '<td>'.($no).'</td>';
                 $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
@@ -1666,7 +1671,10 @@ class BookingController extends Controller
 
                 // Sell
                 $tabel1 .= '<tr>';
-                $tabel1 .= '<td><input type="checkbox" name="cek_sell[]" onchange="testChecked(this)" value="'.$row->id.'"  id="cekxx_'.$no.'"></td>';
+                $tabel1 .= '<td>
+                                <input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
+                                <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>
+                            </td>';
                 $tabel1 .= '<td>'.($no).'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
@@ -1681,13 +1689,15 @@ class BookingController extends Controller
                 if($row->bill_to == null){
                     //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
                     $tabel1 .= '<td>';
-                    $tabel1 .= '<select id="bill_to_'.$no.'" name="bill_to" class="form-control select2bs44" ';
+                    $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" name="bill_to" class="form-control select2bs44" ';
                     $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;>';
                     $tabel1 .= '<option value="">--Select Company--</option>';
                     foreach($company as $item){
-                        $tabel1 .= '<option value="'.$item->client_name.'">'.$item->client_code.'</option>';
+                        $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }
                     $tabel1 .= '</select>';
+                    $tabel1 .= '<input type="hidden" name="bill_to_name" id="bill_to_name_'.$no.'"/>';
+                    $tabel1 .= '<input type="hidden" name="bill_to_id" id="bill_to_id_'.$no.'"/>';
                     $tabel1 .= '</td>';
                     $display = '';
                 }else{
@@ -1711,8 +1721,6 @@ class BookingController extends Controller
                 $totalAmount    += $amount;
                 $totalAmount2   += $amount2;
             }
-
-            $tabel1 .= "</form>";
 
             $totalCost = 0;
             $totalSell = 0;
@@ -1756,7 +1764,8 @@ class BookingController extends Controller
                 DB::table('t_bcharges_dtl')
                 ->where('id', $request->id)
                 ->update([
-                    'bill_to'   => $request->bill_to
+                    'bill_to'   => $request->bill_to_name,
+                    'bill_to_id'   => $request->bill_to_id,
                 ]);
             }
 

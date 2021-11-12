@@ -25,7 +25,7 @@
                     <div class="card card-primary card-outline">
                         <div class="card-header">
                             <h3 class="card-title float-right">
-                                <strong>{{ ucwords('Export') }}</strong>
+                                <strong>{{ ucwords($booking->activity) }}</strong>
                             </h3>
                         </div>
                         <div class="card-body">
@@ -41,8 +41,14 @@
                                                     <label>Bill To</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_id" id="client_id">
+                                                    <select class="form-control" name="client_id" id="client_id"
+                                                        onchange="client_detail(this.value)">
                                                         <option value="">Select Company</option>
+                                                        @foreach ($companies as $company)
+                                                            <option value="{{ $company->id }}"
+                                                                <?= $company->id == $bill_to_id ? 'selected' : '' ?>>
+                                                                {{ $company->client_code }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -54,6 +60,10 @@
                                                     <select class="form-control" name="client_addr_id"
                                                         id="client_addr_id">
                                                         <option value="">Select Address</option>
+                                                        @foreach ($addresses as $address)
+                                                            <option value="{{ $address->id }}">
+                                                                {{ $address->address }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -64,6 +74,10 @@
                                                 <div class="col-md-8">
                                                     <select class="form-control" name="client_pic_id" id="client_pic_id">
                                                         <option value="">Select PIC</option>
+                                                        @foreach ($pics as $pic)
+                                                            <option value="{{ $pic->id }}">
+                                                                {{ $pic->name }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -103,7 +117,7 @@
                                                     <label>TOP</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <input class="form-control" type="text" name="top" id="top">
+                                                    <input class="form-control" type="number" name="top" id="top">
                                                 </div>
                                                 <div class="col-md-4">
                                                     Days
@@ -115,7 +129,11 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <select class="form-control" name="currency" id="currency">
-                                                        <option value="">Select Currency</option>
+                                                        <option value="" selected>-- Select Valuta --</option>
+                                                        @foreach ($currency as $item)
+                                                            <option value="{{ $item->id }}" @if ($booking->valuta_payment == $item->id) selected @endif>
+                                                                {{ $item->code }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
@@ -125,7 +143,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper">
+                                                        id="mbl_shipper" value="{{ $booking->mbl_shipper }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -134,7 +152,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="hbl_shipper"
-                                                        id="hbl_shipper">
+                                                        id="hbl_shipper" value="{{ $booking->hbl_shipper }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -158,7 +176,10 @@
                                                     <label>Loading</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pol_name" id="pol_name">
+                                                    <input class="form-control" type="text" name="pol_name" id="pol_name"
+                                                        value="{{ $booking->port1 }}">
+                                                    <input class="form-control" type="hidden" name="pol_id" id="pol_id"
+                                                        value="{{ $booking->pol_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -166,7 +187,10 @@
                                                     <label>Destination</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pod_name" id="pod_name">
+                                                    <input class="form-control" type="text" name="pod_name" id="pod_name"
+                                                        value="{{ $booking->port3 }}">
+                                                    <input class="form-control" type="hidden" name="pod_id" id="pod_id"
+                                                        value="{{ $booking->pod_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -194,14 +218,14 @@
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
-                                    <a href="{{ route('proformainvoice.create') }}" class="btn btn-success float-right"><i
-                                            class="fas fa-check"></i> Create Invoice Selected</a>
+                                    {{-- <a href="{{ route('proformainvoice.create') }}"
+                                        class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
+                                        Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
                                                 <th>No.</th>
                                                 <th>Service/Fee</th>
                                                 <th>Description</th>
@@ -213,9 +237,8 @@
                                                 <th>ROE</th>
                                                 <th>Vat</th>
                                                 <th>Amount</th>
-                                                <th style="width:10%;">Bill To</th>
                                                 <th>Note</th>
-                                                <th>Action</th>
+                                                {{-- <th>Action</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody id="tblSell">
@@ -236,4 +259,66 @@
             </div>
         </div>
     </section>
+    @push('after-scripts')
+        <script>
+            function client_detail(val) {
+                if (val != '') {
+
+                    let client_addr = $('#client_addr_id').val();
+                    let client_pic = $('#client_pic_id').val();
+
+                    $.ajax({
+                        url: "{{ route('booking.detail') }}",
+                        type: "POST",
+                        data: {
+                            id: val,
+                            pic_id: client_pic,
+                            addr_id: client_addr
+                        },
+                        dataType: "html",
+                        success: function(result) {
+                            var final = JSON.parse(result);
+                            let legal = final[2].legal_doc_flag;
+
+                            $("#client_addr_id").html(final[0]);
+                            $("#client_pic_id").html(final[1]);
+
+                            // if(legal == 1){
+                            //     $('#legalDoc').prop('checked', true);
+                            // }else{
+                            //     $('#legalDoc').prop('checked', false);
+                            // }
+                        }
+                    });
+                }
+            }
+
+            /** Load Schedule **/
+            function loadSellCost(id) {
+                console.log('loadSellCost');
+
+                if (id != null) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('proformainvoice.loadSellCost') }}",
+                        data: {
+                            id: id,
+                            shipping_dtl_id: @json($shipping_dtl_id),
+                            chrg_dtl_id: @json($chrg_dtl_id),
+                        },
+                        dataType: "html",
+                        success: function(result) {
+                            var tabel = JSON.parse(result);
+                            $('#tblSell').html(tabel[0]);
+                            // $('#tblProfit').html(tabel[2]);
+                        }
+                    })
+                }
+            }
+
+            $(function() {
+                loadSellCost({{ $booking->id }})
+            });
+        </script>
+    @endpush
 @endsection
