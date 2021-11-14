@@ -90,6 +90,40 @@
                                                         id="proforma_invoice_no">
                                                 </div>
                                             </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>MB/L</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    : {{ $booking->mbl_shipper }}
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>Container</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    :
+                                                    <ul class="list-item-inv">
+                                                        @foreach ($containers as $container)
+                                                            <li>{{ $container->container_no."/".$container->size."'" }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>Goods</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    :
+                                                    <ul class="list-item-inv">
+                                                        @foreach ($goods as $good)
+                                                            <li>{{ number_format($good->qty_comm,0)." ".$good->code_c." OF ".$good->desc."'" }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-1"></div>
                                         <div class="col-md-5">
@@ -139,11 +173,11 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>MB/L</label>
+                                                    <label>MB/L NO.</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $booking->mbl_shipper }}">
+                                                        id="mbl_shipper" value="{{ $booking->mbl_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">

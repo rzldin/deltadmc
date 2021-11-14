@@ -50,6 +50,10 @@
               padding: 4px 8px;
           }
 
+          .list-item-inv {
+            list-style-type: none; position: absolute; top: 0; padding-left: 7px;
+          }
+
       </style>
       <!-- jQuery -->
       <script src="{{ asset('admin/plugins/jquery/jquery.min.js') }}"></script>
@@ -63,7 +67,7 @@
               }
           });
         });
-      </script> 
+      </script>
       <!-- SweetAlert2 -->
       <script src="{{ asset('admin/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
       <script>
@@ -98,7 +102,7 @@
         <b>Version</b> 3.1.0
       </div>
     </footer>
-    
+
       <!-- Control Sidebar -->
       <aside class="control-sidebar control-sidebar-dark">
         <!-- Control sidebar content goes here -->
@@ -108,9 +112,9 @@
     <!-- ./wrapper -->
 
     @stack('before-scripts')
-    
 
-  
+
+
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
       $.widget.bridge('uibutton', $.ui.button)
@@ -249,7 +253,7 @@
           "autoWidth": true,
           "responsive": true,
           language : {
-            "zeroRecords": " "             
+            "zeroRecords": " "
           },
         });
       });
@@ -268,12 +272,12 @@
           "autoWidth": true,
           "responsive": true,
           language : {
-            "zeroRecords": " "             
+            "zeroRecords": " "
           },
         });
       });
 
-      
+
 
       $(document).ready(function () {
       $('#dtHorizontalExample').DataTable({
@@ -300,16 +304,16 @@
       })
 
       function numberOnly(root){
-        var reet = root.value;    
-        var arr1=reet.length;      
-        var ruut = reet.charAt(arr1-1);   
-            if (reet.length > 0){   
-                    var regex = /[0-9]|\./;   
-                if (!ruut.match(regex)){   
-                    var reet = reet.slice(0, -1);   
-                    $(root).val(reet);   
-                }   
-            }  
+        var reet = root.value;
+        var arr1=reet.length;
+        var ruut = reet.charAt(arr1-1);
+            if (reet.length > 0){
+                    var regex = /[0-9]|\./;
+                if (!ruut.match(regex)){
+                    var reet = reet.slice(0, -1);
+                    $(root).val(reet);
+                }
+            }
         }
 
       $(function(){
@@ -325,4 +329,3 @@
   </body>
 </html>
 
-    

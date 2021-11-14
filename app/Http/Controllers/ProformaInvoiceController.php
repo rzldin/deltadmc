@@ -94,6 +94,8 @@ class ProformaInvoiceController extends Controller
         $data['addresses'] = MasterModel::get_address($data['bill_to_id']);
         $data['pics'] = MasterModel::get_pic($data['bill_to_id']);
         $data['currency']       = MasterModel::currency();
+        $data['containers'] = BookingModel::get_container($request->t_booking_id);
+        $data['goods'] = BookingModel::get_commodity($request->t_booking_id);
         // dd($data);
         return view('proforma_invoice.add_proforma_invoice')->with($data);
     }
@@ -225,5 +227,10 @@ class ProformaInvoiceController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode([$tabel1, $tabel2]);
+    }
+
+    public function save(Request $request)
+    {
+
     }
 }

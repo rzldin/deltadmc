@@ -336,6 +336,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     /** Proforma Invoice */
     Route::post('/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
+    Route::post('/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
     Route::post('/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
 
 
