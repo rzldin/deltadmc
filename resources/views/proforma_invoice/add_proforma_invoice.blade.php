@@ -1,34 +1,39 @@
 @extends('layouts.master')
 
 @section('content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><i class="fas fa-plus"></i>
-                        Create Pro Forma Invoice
-                    </h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item active">Proforma Invoice</li>
-                    </ol>
-                </div>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1><i class="fas fa-plus"></i>
+                    Create Pro Forma Invoice
+                </h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Proforma Invoice</li>
+                </ol>
             </div>
         </div>
-    </section>
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title float-right">
-                                <strong>{{ ucwords($booking->activity) }}</strong>
-                            </h3>
-                        </div>
-                        <div class="card-body">
+    </div>
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title float-right">
+                            <strong>{{ ucwords($booking->activity) }}</strong>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ route('proformainvoice.save') }}"
+                            id="formProforma">
+                            @csrf
+                            <input type="hidden" name="id" id="id" value="" />
+                            <input type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $booking->id }}" />
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h3 class="card-title">Pro Forma Invoice Information</h3>
@@ -44,7 +49,7 @@
                                                     <select class="form-control" name="client_id" id="client_id"
                                                         onchange="client_detail(this.value)">
                                                         <option value="">Select Company</option>
-                                                        @foreach ($companies as $company)
+                                                        @foreach($companies as $company)
                                                             <option value="{{ $company->id }}"
                                                                 <?= $company->id == $bill_to_id ? 'selected' : '' ?>>
                                                                 {{ $company->client_code }}</option>
@@ -60,7 +65,7 @@
                                                     <select class="form-control" name="client_addr_id"
                                                         id="client_addr_id">
                                                         <option value="">Select Address</option>
-                                                        @foreach ($addresses as $address)
+                                                        @foreach($addresses as $address)
                                                             <option value="{{ $address->id }}">
                                                                 {{ $address->address }}</option>
                                                         @endforeach
@@ -72,9 +77,10 @@
                                                     <label>PIC</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_pic_id" id="client_pic_id">
+                                                    <select class="form-control" name="client_pic_id"
+                                                        id="client_pic_id">
                                                         <option value="">Select PIC</option>
-                                                        @foreach ($pics as $pic)
+                                                        @foreach($pics as $pic)
                                                             <option value="{{ $pic->id }}">
                                                                 {{ $pic->name }}</option>
                                                         @endforeach
@@ -87,7 +93,22 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="proforma_invoice_no"
-                                                        id="proforma_invoice_no">
+                                                    id="proforma_invoice_no">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>Invoice Type</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input type="radio" name="invoice_type"
+                                                        id="invoice_type_reg" value="REG" checked> Reguler<br>
+                                                    <input type="radio" name="invoice_type"
+                                                        id="invoice_type_reimbursment" value="REM"> Reimbursment<br>
+                                                    <input type="radio" name="invoice_type"
+                                                        id="invoice_type_debit_note" value="DN"> Debit Note<br>
+                                                    <input type="radio" name="invoice_type"
+                                                        id="invoice_type_credit_note" value="CN"> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -105,8 +126,9 @@
                                                 <div class="col-md-8">
                                                     :
                                                     <ul class="list-item-inv">
-                                                        @foreach ($containers as $container)
-                                                            <li>{{ $container->container_no."/".$container->size."'" }}</li>
+                                                        @foreach($containers as $container)
+                                                            <li>{{ $container->container_no."/".$container->size."'" }}
+                                                            </li>
                                                         @endforeach
                                                     </ul>
                                                 </div>
@@ -118,8 +140,9 @@
                                                 <div class="col-md-8">
                                                     :
                                                     <ul class="list-item-inv">
-                                                        @foreach ($goods as $good)
-                                                            <li>{{ number_format($good->qty_comm,0)." ".$good->code_c." OF ".$good->desc."'" }}</li>
+                                                        @foreach($goods as $good)
+                                                            <li>{{ number_format($good->qty_comm,0)." ".$good->code_c." OF ".$good->desc."'" }}
+                                                            </li>
                                                         @endforeach
                                                     </ul>
                                                 </div>
@@ -164,8 +187,9 @@
                                                 <div class="col-md-8">
                                                     <select class="form-control" name="currency" id="currency">
                                                         <option value="" selected>-- Select Valuta --</option>
-                                                        @foreach ($currency as $item)
-                                                            <option value="{{ $item->id }}" @if ($booking->valuta_payment == $item->id) selected @endif>
+                                                        @foreach($currency as $item)
+                                                            <option value="{{ $item->id }}" @if ($booking->
+                                                                valuta_payment == $item->id) selected @endif>
                                                                 {{ $item->code }}</option>
                                                         @endforeach
                                                     </select>
@@ -202,7 +226,8 @@
                                                     <label>M. VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="m_vessel" id="m_vessel">
+                                                    <input class="form-control" type="text" name="m_vessel"
+                                                        id="m_vessel">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -210,8 +235,8 @@
                                                     <label>Loading</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pol_name" id="pol_name"
-                                                        value="{{ $booking->port1 }}">
+                                                    <input class="form-control" type="text" name="pol_name"
+                                                        id="pol_name" value="{{ $booking->port1 }}">
                                                     <input class="form-control" type="hidden" name="pol_id" id="pol_id"
                                                         value="{{ $booking->pol_id }}">
                                                 </div>
@@ -221,8 +246,8 @@
                                                     <label>Destination</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pod_name" id="pod_name"
-                                                        value="{{ $booking->port3 }}">
+                                                    <input class="form-control" type="text" name="pod_name"
+                                                        id="pod_name" value="{{ $booking->port3 }}">
                                                     <input class="form-control" type="hidden" name="pod_id" id="pod_id"
                                                         value="{{ $booking->pod_id }}">
                                                 </div>
@@ -253,8 +278,8 @@
                                 <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
                                     {{-- <a href="{{ route('proformainvoice.create') }}"
-                                        class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
-                                        Selected</a> --}}
+                                    class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
+                                    Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -284,75 +309,87 @@
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
                                     <button class="btn btn-info">Confirm</button>
-                                    <button class="btn btn-primary">Save</button>
+                                    <button class="btn btn-primary" onclick="$('#formProforma').submit()">Save</button>
                                 </div>
                             </div>
-                        </div>
+
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    @push('after-scripts')
-        <script>
-            function client_detail(val) {
-                if (val != '') {
+    </div>
+</section>
+@push('after-scripts')
+    <script>
+        function client_detail(val) {
+            if (val != '') {
 
-                    let client_addr = $('#client_addr_id').val();
-                    let client_pic = $('#client_pic_id').val();
+                let client_addr = $('#client_addr_id').val();
+                let client_pic = $('#client_pic_id').val();
 
-                    $.ajax({
-                        url: "{{ route('booking.detail') }}",
-                        type: "POST",
-                        data: {
-                            id: val,
-                            pic_id: client_pic,
-                            addr_id: client_addr
-                        },
-                        dataType: "html",
-                        success: function(result) {
-                            var final = JSON.parse(result);
-                            let legal = final[2].legal_doc_flag;
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: {
+                        id: val,
+                        pic_id: client_pic,
+                        addr_id: client_addr
+                    },
+                    dataType: "html",
+                    success: function (result) {
+                        var final = JSON.parse(result);
+                        let legal = final[2].legal_doc_flag;
 
-                            $("#client_addr_id").html(final[0]);
-                            $("#client_pic_id").html(final[1]);
+                        $("#client_addr_id").html(final[0]);
+                        $("#client_pic_id").html(final[1]);
 
-                            // if(legal == 1){
-                            //     $('#legalDoc').prop('checked', true);
-                            // }else{
-                            //     $('#legalDoc').prop('checked', false);
-                            // }
-                        }
-                    });
-                }
+                        // if(legal == 1){
+                        //     $('#legalDoc').prop('checked', true);
+                        // }else{
+                        //     $('#legalDoc').prop('checked', false);
+                        // }
+                    }
+                });
             }
+        }
 
-            /** Load Schedule **/
-            function loadSellCost(id) {
-                console.log('loadSellCost');
+        /** Load Schedule **/
+        function loadSellCost(id) {
+            console.log('loadSellCost');
 
-                if (id != null) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ route('proformainvoice.loadSellCost') }}",
-                        data: {
-                            id: id,
-                            shipping_dtl_id: @json($shipping_dtl_id),
-                            chrg_dtl_id: @json($chrg_dtl_id),
-                        },
-                        dataType: "html",
-                        success: function(result) {
-                            var tabel = JSON.parse(result);
-                            $('#tblSell').html(tabel[0]);
-                            // $('#tblProfit').html(tabel[2]);
-                        }
-                    })
-                }
+            if (id != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('proformainvoice.loadSellCost') }}",
+                    data: {
+                        id: id,
+                        shipping_dtl_id: @json($shipping_dtl_id),
+                        chrg_dtl_id: @json($chrg_dtl_id),
+                    },
+                    dataType: "html",
+                    success: function (result) {
+                        var tabel = JSON.parse(result);
+                        $('#tblSell').html(tabel[0]);
+                        // $('#tblProfit').html(tabel[2]);
+                    }
+                })
             }
+        }
 
-            $(function() {
-                loadSellCost({{ $booking->id }})
-            });
-        </script>
-    @endpush
+        function showErrorMsg(msg) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                html: '{!! $errorMsg !!}',
+            })
+        }
+
+        $(function () {
+            if ({{ $error }} == 1) showErrorMsg('{{ $errorMsg }}');
+            loadSellCost({{ $booking->id }})
+        });
+
+    </script>
+@endpush
 @endsection

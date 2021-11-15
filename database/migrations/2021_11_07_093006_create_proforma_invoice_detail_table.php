@@ -31,8 +31,8 @@ class CreateProformaInvoiceDetailTable extends Migration
             $table->decimal('subtotal', 25, 4);
             $table->string('routing', 100)->nullable();
             $table->string('transit_time', 50)->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('created_on')->nullable();
+            $table->string('created_by', 100)->nullable();
+            $table->dateTime('created_on')->nullable();
             $table->index('proforma_invoice_id');
         });
     }

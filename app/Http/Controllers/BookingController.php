@@ -33,6 +33,8 @@ class BookingController extends Controller
         $data['schedule']       = MasterModel::schedule_get();
         $data['error']          = (isset($_GET['error']) ? 1 : 0);
         $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
+        $data['success']          = (isset($_GET['success']) ? 1 : 0);
+        $data['successMsg']       = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
 
         return view('booking.edit_booking')->with($data);
     }
@@ -1605,6 +1607,8 @@ class BookingController extends Controller
             $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
             $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
             $tabel1 .= '<td class="text-left"></td>';
+            $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
+            $tabel1 .= '<td class="text-left"></td>';
             $displayx = 'display:none';
 
             $tabel1 .= '<td class="text-left"></td>';
@@ -1707,13 +1711,15 @@ class BookingController extends Controller
 
 
                 $tabel1 .= '<td class="text-left"></td>';
+                $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
+                $tabel1 .= '<td class="text-left"></td>';
                 $tabel1 .= '<td>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                        . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
-                        . '<i class="fa fa-save"></i></a>';
+                . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
+                . '<i class="fa fa-save"></i></a>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                        . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
-                        . '<i class="fa fa-trash"></i></a>';
+                . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
+                . '<i class="fa fa-trash"></i></a>';
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
                 $no++;

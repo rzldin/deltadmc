@@ -69,7 +69,12 @@ class BookingModel extends Model
 
     public static function getChargesDetailById($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur from t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id LEFT JOIN t_mcurrency d ON a.currency = d.id WHERE a.id='".$id."'");
+        return DB::table('t_bcharges_dtl as a')
+            ->select("a.*", "c.name as charge_name", "d.code as code_cur")
+            ->leftJoin('t_booking as b', 'a.t_booking_id', '=', 'b.id')
+            ->leftJoin('t_mcharge_code as c', 'a.t_mcharge_code_id', '=', 'c.id')
+            ->LeftJoin('t_mcurrency as d', 'a.currency', '=', 'd.id')
+            ->where('a.id', $id)->first();
     }
 
     public static function getChargesDetailUsingInId($id)

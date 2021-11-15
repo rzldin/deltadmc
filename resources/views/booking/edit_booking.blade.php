@@ -680,7 +680,7 @@
                                                 </div>
                                             </div>
                                             <div class="card card-primary">
-                                                <form id="fSell" method="post">
+                                                <form id="fSell" method="get">
                                                     @csrf
                                                     <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
                                                     <div class="card-header">
@@ -705,6 +705,8 @@
                                                                 <th>Amount</th>
                                                                 <th style="width:10%;">Bill To</th>
                                                                 <th>Note</th>
+                                                                <th>Type</th>
+                                                                <th>Invoice No.</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                             </thead>
@@ -2603,6 +2605,14 @@
             })
         }
 
+        function showSuccessMsg(msg) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                html: '{!! $successMsg !!}',
+            })
+        }
+
         $(function() {
             get_customer({{ $quote->client_id }});
             client_detail({{ $quote->client_id }});
@@ -2635,6 +2645,7 @@
             loadProfit({{ $quote->t_quote_id }})
 
             if ({{ $error }} == 1) showErrorMsg('{{ $errorMsg }}');
+            if ({{ $success }} == 1) showSuccessMsg('{{ $successMsg }}');
         });
     </script>
 @endpush
