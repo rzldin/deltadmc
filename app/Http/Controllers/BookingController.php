@@ -1712,7 +1712,7 @@ class BookingController extends Controller
 
                 $tabel1 .= '<td class="text-left"></td>';
                 $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
-                $tabel1 .= '<td class="text-left"></td>';
+                $tabel1 .= '<td class="text-left">'.$row->proforma_invoice_no.'</td>';
                 $tabel1 .= '<td>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                 . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
