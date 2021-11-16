@@ -335,9 +335,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/approved', 'BookingController@approved')->name('booking.Approve');
 
     /** Proforma Invoice */
-    Route::get('/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
-    Route::post('/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
-    Route::post('/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
+    Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proformainvoice.index');
+    Route::get('/invoice/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
+    Route::post('/invoice/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
+    Route::post('/invoice/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
 
 
     /** Role Access **/

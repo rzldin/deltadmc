@@ -10,6 +10,14 @@ class ProformaInvoiceModel extends Model
     protected $guarded = [];
     public $timestamps = false;
 
+    public static function getAllProformaInvoice()
+    {
+        return ProformaInvoiceModel::join('t_booking AS a', 'a.id', '=', 't_proforma_invoice.t_booking_id')
+            ->leftJoin('t_mcompany AS b', 't_proforma_invoice.client_id', '=', 'b.id')
+            ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
+            ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
+            ->select('t_proforma_invoice.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+    }
     public static function saveProformaInvoice($request)
     {
         return ProformaInvoiceModel::updateOrCreate(

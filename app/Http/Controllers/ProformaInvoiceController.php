@@ -7,7 +7,6 @@ use App\MasterModel;
 use App\ProformaInvoiceDetailModel;
 use App\ProformaInvoiceModel;
 use App\QuotationModel;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +14,15 @@ use Illuminate\Support\Facades\Validator;
 
 class ProformaInvoiceController extends Controller
 {
+    public function index()
+    {
+        $proforma_invoices = ProformaInvoiceModel::getAllProformaInvoice()->get();
+        return view('proforma_invoice.list_proforma_invoice', compact('proforma_invoices'));
+    }
+
     public function create(Request $request)
     {
-        // dd($request->all());
+
         $data['error']          = (isset($_GET['error']) ? 1 : 0);
         $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
 
@@ -77,25 +82,7 @@ class ProformaInvoiceController extends Controller
         }
 
 
-        $data['booking'] = BookingModel::getDetailBooking($request->t_booking_id); // DB::table('t_booking')->where('id', $request->t_booking_id)->first();
-        // $data['cust_addr'] = DB::table('t_maddress')->where('t_mcompany_id', $data['booking']->client_id)->get();
-        // $data['cust_pic'] = DB::table('t_mpic')->where('t_mcompany_id', $data['booking']->client_id)->get();
-
-
-        // foreach ($request->shp_dtl['id'] as $key => $shp_dtl_id) {
-        //     // dd($shp_dtl);
-        //     $data['shippings'][$key]   = QuotationModel::get_quoteShippingById($shp_dtl_id);
-        //     $data['shipping_dtl_id'][$key] = $shp_dtl_id;
-        // }
-
-        // dd($request->chrg_dtl);
-        // foreach ($request->chrg_dtl['id'] as $key => $chrg_dtl_id) {
-        //     // dd($chrg_dtl);
-        //     $data['quotes'][$key]      = BookingModel::getChargesDetailById($chrg_dtl_id);
-        //     $data['chrg_dtl_id'][$key] = $chrg_dtl_id;
-        //     // foreach ($chrg_dtl['id'] as $id) {
-        //     // }
-        // }
+        $data['booking'] = BookingModel::getDetailBooking($request->t_booking_id);
         $data['bill_to_id'] = $request->cek_bill_to[0];
         $data['companies'] = MasterModel::company_data();
         $data['addresses'] = MasterModel::get_address($data['bill_to_id']);
@@ -103,13 +90,13 @@ class ProformaInvoiceController extends Controller
         $data['currency']       = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($request->t_booking_id);
         $data['goods'] = BookingModel::get_commodity($request->t_booking_id);
-        // dd($data);
+
         return view('proforma_invoice.add_proforma_invoice')->with($data);
     }
 
     public function loadSellCost(Request $request)
     {
-        // dd($request->all());
+
         $shp_dtl_id = [];
         $chrg_dtl_id = [];
 
@@ -121,7 +108,6 @@ class ProformaInvoiceController extends Controller
         $no         = 1;
         // $data       = BookingModel::getChargesDetail($request->id);
         $data       = BookingModel::getChargesDetailUsingInId($chrg_dtl_id);
-        $company    = MasterModel::company_data();
         $booking    = DB::table('t_booking')->where('id', $request->id)->first();
         // $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
         $shipping   = QuotationModel::get_quoteShippingInId($shp_dtl_id);
@@ -131,8 +117,6 @@ class ProformaInvoiceController extends Controller
         $total2     = 0;
         $amount     = 0;
         $amount2    = 0;
-        $a          = 1;
-        $b          = 2;
         // dd($quote);
         $amountShip = 0;
         $totalAmount    = 0;
@@ -246,7 +230,7 @@ class ProformaInvoiceController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
+
         $rules = [
             'client_id' => 'required',
             'proforma_invoice_no' => 'required|unique:t_proforma_invoice',
@@ -283,7 +267,7 @@ class ProformaInvoiceController extends Controller
 
         try {
             DB::beginTransaction();
-            // dd($request->all());
+
             $param = $request->all();
             $param['proforma_invoice_date'] = date('Y-m-d', strtotime($request->proforma_invoice_date));
             $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));

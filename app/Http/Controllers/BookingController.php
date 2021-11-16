@@ -1587,10 +1587,12 @@ class BookingController extends Controller
             $tabel .= '</tr>';
 
             $tabel1 .= '<tr>';
-            $tabel1 .= '<td>
-                            <input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
-                            <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>
-                        </td>';
+            $tabel1 .= '<td>';
+            if ($shp->t_invoice_id == null) {
+                $tabel .= '<input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
+                            <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>';
+            }
+            $tabel1 .= '</td>';
             $tabel1 .= '<td>'.($no-1).'</td>';
                 if($quote->shipment_by == 'LAND'){
                     $tabel1 .= '<td>'.$shp->truck_size.'</td>';
@@ -1607,11 +1609,11 @@ class BookingController extends Controller
             $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
             $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
             $tabel1 .= '<td class="text-left"></td>';
-            $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
-            $tabel1 .= '<td class="text-left"></td>';
             $displayx = 'display:none';
 
             $tabel1 .= '<td class="text-left"></td>';
+            $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
+            $tabel1 .= '<td class="text-left">'.$shp->proforma_invoice_no.'</td>';
             $tabel1 .= '<td>';
             $tabel1 .= '</td>';
             $tabel1 .= '</tr>';
@@ -1675,10 +1677,12 @@ class BookingController extends Controller
 
                 // Sell
                 $tabel1 .= '<tr>';
-                $tabel1 .= '<td>
-                                <input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
-                                <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>
-                            </td>';
+                $tabel1 .= '<td>';
+                if ($row->t_invoice_id == null) {
+                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
+                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
+                }
+                $tabel .=  '</td>';
                 $tabel1 .= '<td>'.($no).'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
@@ -1714,12 +1718,14 @@ class BookingController extends Controller
                 $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->proforma_invoice_no.'</td>';
                 $tabel1 .= '<td>';
-                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
-                . '<i class="fa fa-save"></i></a>';
-                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
-                . '<i class="fa fa-trash"></i></a>';
+                if ($row->t_invoice_id == null) {
+                    $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+                    . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
+                    . '<i class="fa fa-save"></i></a>';
+                    $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                    . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
+                    . '<i class="fa fa-trash"></i></a>';
+                }
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
                 $no++;
