@@ -53,8 +53,8 @@
                                 <td>{{ $proforma_invoice->company_b }}</td>
                                 <td>{{ $proforma_invoice->activity }}</td>
                                 <td>
-                                    {{-- <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $proforma_invoice->booking_no }}','{{ $proforma_invoice->version_no }}', 'view', '{{ $proforma_invoice->id }}')"><i class="fa fa-file-alt"></i> View </a>
-                                    <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $proforma_invoice->booking_no }}','{{ $proforma_invoice->version_no }}', 'edit', '{{ $proforma_invoice->id }}')"><i class="fa fa-edit"></i> Edit </a> --}}
+                                    <a class="btn btn-primary btn-sm" ><i class="fa fa-file-alt"></i> View </a>
+                                    <a class="btn btn-info btn-sm" href="{{ route('proformainvoice.edit', ['id' => $proforma_invoice->id]) }}"><i class="fa fa-edit"></i> Edit </a>
                                 </td>
                             </tr>
                             @endforeach

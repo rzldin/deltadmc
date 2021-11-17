@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ProformaInvoiceModel extends Model
 {
@@ -18,6 +19,18 @@ class ProformaInvoiceModel extends Model
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
             ->select('t_proforma_invoice.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
+
+    public static function getProformaInvoice($id)
+    {
+        return ProformaInvoiceModel::leftJoin('t_mport as pol', 'pol.id', '=', 't_proforma_invoice.pol_id')
+            ->leftJoin('t_mport as pod', 'pod.id', '=', 't_proforma_invoice.pod_id')
+            ->leftJoin('t_booking as b', 'b.id', '=', 't_proforma_invoice.t_booking_id')
+            ->leftJoin('t_bcharges_dtl AS chrg', 'chrg.t_invoice_id', '=', 't_proforma_invoice.id')
+            ->leftJoin('t_quote_shipg_dtl AS shp', 'shp.t_invoice_id', '=', 't_proforma_invoice.id')
+            ->select('t_proforma_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
+            ->where('t_proforma_invoice.id', $id);
+    }
+
     public static function saveProformaInvoice($request)
     {
         return ProformaInvoiceModel::updateOrCreate(

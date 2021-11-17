@@ -17,4 +17,12 @@ class ProformaInvoiceDetailModel extends Model
             $request
         );
     }
+
+    public static function getProformaInvoiceDetails($proforma_invoice_id)
+    {
+        return ProformaInvoiceDetailModel::leftJoin('t_mcharge_code AS c', 'c.id', '=', 't_proforma_invoice_detail.t_mcharge_code_id')
+            ->leftJoin('t_mcurrency AS curr', 'curr.id', '=', 't_proforma_invoice_detail.currency')
+            ->select('t_proforma_invoice_detail.*', 'c.name AS charge_name', 'curr.code AS currency_code')
+            ->where('t_proforma_invoice_detail.proforma_invoice_id', $proforma_invoice_id);
+    }
 }
