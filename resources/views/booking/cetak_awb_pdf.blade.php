@@ -6,94 +6,118 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>HAWB</title>
 </head>
-<body style="border: 1px solid #000;">
+<body>
     <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
             <td width="50%">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td style="vertical-align:top;border:1px solid #000;" height="80">
+                        <td style="vertical-align:top;" height="80">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="30">
-                                        Shipper's Name and Address
+                                    <td style="font-size:6pt;vertical-align:top;" height="30">
+                                        @if ($booking->hbl_shipper != null)
+                                            <p style="padding-top:5px;">
+                                                {!! $booking->hbl_shipper !!}
+                                            </p>
+                                        @else
+                                            <p style="padding-top:5px;">
+                                                {{ $booking->company_f }}<br>
+                                                {{ $booking->address_f }}<br>
+                                                {{ $booking->pic_f }}
+                                            </p>
+                                        @endif
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:1px solid #000; border-bottom:1px solid #000; border-top:1px solid #000; border-right:1px solid #000;" height="20">
-                                        Shipper's Account Number
+                                    <td style="font-size:6pt;vertical-align:top;" height="20">
+                                        @if ($booking->hbl_shipper == null)
+                                            <p>{{ $booking->code_company_f }}</p>
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="border-right:1px solid #000;" height="50" colspan="2">&nbsp;</td>
+                                    <td height="50" colspan="2">&nbsp;</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top;border:1px solid #000;" height="80">
+                        <td style="vertical-align:top;" height="80">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="30">
-                                        Consignee's Name and Address
+                                    <td style="font-size:6pt;vertical-align:top;" height="30">
+                                        @if ($booking->hbl_consignee != null)
+                                            <p style="padding-top:5px;">
+                                                {!! $booking->hbl_consignee !!}
+                                            </p>
+                                        @else
+                                            <p style="padding-top:5px;">
+                                                {{ $booking->company_i }}<br>
+                                                {{ $booking->address_i }}<br>
+                                                {{ $booking->pic_i }}
+                                            </p>
+                                        @endif
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:1px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="20">
-                                        Consignee's Account Number
+                                    <td style="font-size:6pt;vertical-align:top;" height="20">
+                                        @if ($booking->hbl_consignee == null)
+                                            <p>{{ $booking->code_company_i }}</p>
+                                        @endif
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="border-right:1px solid #000;" height="50" colspan="2">&nbsp;</td>
+                                    <td style="" height="50" colspan="2">&nbsp;</td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top;border:1px solid #000;" height="90">
+                        <td style="vertical-align:top;" height="90">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td colspan="6" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="45">
+                                    <td colspan="6" style="font-size:6pt;vertical-align:top;" height="45">
                                         Issuing Carrier's Agent Name and City
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="25">
+                                    <td colspan="3" style="font-size:6pt;vertical-align:top;" height="25">
                                         Agent's IATA Code
                                     </td>
-                                    <td colspan="3" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="25">
+                                    <td colspan="3" style="font-size:6pt;vertical-align:top;" height="25">
                                         Account No.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="6" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:1px solid #000; border-right:0px solid #000;" height="24" width="10">
-                                        Airport of Departure (Addr. of First Carrier) and Requested Routing
+                                    <td colspan="6" style="font-size:6pt;vertical-align:top;" height="24" width="10">
+                                        <p>{{ $booking->name_carrier }}</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="font-size:8pt;vertical-align:top;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="10">
+                                    <td style="font-size:8pt;vertical-align:top;" height="24" width="10">
                                         &nbsp;
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="50">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;" height="24" width="50">
                                         By first Carrier (Routing and Destination)
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="10">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;" height="24" width="10">
                                         to
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="10">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;" height="24" width="10">
                                         by
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="10">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;" height="24" width="10">
                                         to
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="24" width="10">
+                                    <td style="font-size:6pt;vertical-align:top;" height="24" width="10">
                                         by
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" style="font-size:6pt;vertical-align:top;border-left:0px solid #000; border-bottom:0px solid #000; border-top:1px solid #000; border-right:1px solid #000;" height="24">
+                                    <td colspan="2" style="font-size:6pt;vertical-align:top;" height="24">
                                         Airport Of Destination
                                     </td>
-                                    <td colspan="2" style="font-size:6pt;vertical-align:top;border-left:0px solid #000; border-bottom:0px solid #000; border-top:1px solid #000; border-right:1px solid #000;" height="24">
+                                    <td colspan="2" style="font-size:6pt;vertical-align:top;" height="24">
                                         Flight/Date
                                     </td>
-                                    <td colspan="2" style="font-size:6pt;vertical-align:top;border-left:0px solid #000; border-bottom:0px solid #000; border-top:1px solid #000; border-right:1px solid #000;" height="24">
+                                    <td colspan="2" style="font-size:6pt;vertical-align:top;" height="24">
                                         Flight/Date
                                     </td>
                                 </tr>
@@ -106,53 +130,51 @@
             <td width="50%">
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td style="vertical-align:top;border:1px solid #000;" height="80" colspan="5">
+                        <td style="vertical-align:top;" height="80" colspan="5">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:8pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="64">
-                                        Not Negotable
-                                        <h2 style="margin-top:0px;">Air Waybill</h2>
-                                        <p style="padding-top:0px;">Issued By</p>
+                                    <td style="font-size:8pt;vertical-align:top;padding-left:5px;" height="64">
+                                        
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="font-size:7pt;border-left:0px solid #000; border-bottom:0px solid #000; border-top:1px solid #000; border-right:0px solid #000;padding-left:5px;" height="15">
-                                        <b>Copies 1, 2 and 3 of this Air Waybill are originals and have the same validity.</b>
+                                    <td style="font-size:7pt;padding-left:5px;" height="15">
+                                        
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top;border:1px solid #000;" height="80" colspan="5">
+                        <td style="vertical-align:top;" height="80" colspan="5">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td height="80">
-                                        <p style="font-size: 6pt; text-align:justify;padding-left:5px;padding-right:5px;">it is agreed that the goods described herein are accepted in apparent good order and condition (except as noted) for camage SUBJECT TO THE CONDITIONS OF CONTRACT ON THE REVERSE HEREOF. ALL GOODSMAY BE CARRIED BY ANY OTHER MEANS INCLUDING ROAD OR ANY OTHER CARRIER UNLESS SPECIFIC CONTRARY INSTRUCTIONS ARE GIVEN HEREON BY THE SHIPPER AND SHIPPER AGREES THAT THE SHIPMENT MAY BE CARRIED VIA INTERMEDIATE STOPPING PLACES WHICH THE CARRIER DEEMS APPROPRIATE. THE SHIPPER'S ATTENTION IS DRAWN TO THE NOTICE CONCERNING CARRIER'S LIMITATION OF LIABILITY. Shipper may increase such limitation of liability by declaring a higher value for carriage and paying a supplemental charge if required</p>
+                                        
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="5" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:1px solid #000; border-bottom:1px solid #000; border-top:1px solid #000; border-right:1px solid #000;" height="95">
+                        <td colspan="5" style="font-size:6pt;vertical-align:top;" height="95">
                             Accounting Information
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-size:5pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="5">
+                        <td style="font-size:5pt;vertical-align:top;padding-left:5px;" height="24" width="5">
                             Currency
                         </td>
-                        <td style="font-size:5pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="5">
+                        <td style="font-size:5pt;vertical-align:top;padding-left:5px;" height="24" width="5">
                             Chgs. Code
                         </td>
-                        <td style="font-size:5pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="40">
+                        <td style="font-size:5pt;vertical-align:top;" height="24" width="40">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:5pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;">
+                                    <td style="font-size:5pt;vertical-align:top;padding-left:5px;">
                                         WT/VAL
                                     </td>
-                                    <td style="font-size:5pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;">
+                                    <td style="font-size:5pt;vertical-align:top;padding-left:5px;">
                                         OTHER
                                     </td>
                                 </tr>
@@ -184,15 +206,15 @@
                                 </tr>
                             </table>
                         </td>
-                        <td style="font-size:5pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="25">
+                        <td style="font-size:5pt;vertical-align:top;" height="24" width="25">
                             Declared Value for Carriage
                         </td>
-                        <td style="font-size:5pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24" width="25">
+                        <td style="font-size:5pt;vertical-align:top;" height="24" width="25">
                             Declared Value for Customs
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2" style="font-size:6pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" height="24">
+                        <td colspan="2" style="font-size:6pt;vertical-align:top;" height="24">
                             Ammount of Insurance
                         </td>
                         <td colspan="3" style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;" height="24">
@@ -208,15 +230,15 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;" width="100%">
+            <td colspan="2" style="font-size:7pt;vertical-align:top;" width="100%">
                 <table width="100%" cellspacing="0" cellpadding="0" height="170">
                     <thead>
                         <tr>
-                            <td style="font-size:6pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:5%;text-align:center;">No. of Pieces RCP</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:10%;text-align:center;">Gross <br>Weight</td>
+                            <td style="font-size:6pt;vertical-align:top;width:5%;text-align:center;">No. of Pieces RCP</td>
+                            <td style="font-size:7pt;vertical-align:top;width:10%;text-align:center;">Gross <br>Weight</td>
                             <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:0px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;">kg <br>lb</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;background-color:#808080;">&nbsp;</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:10%;">
+                            <td style="font-size:7pt;vertical-align:top;width:1%;background-color:#808080;">&nbsp;</td>
+                            <td style="font-size:7pt;vertical-align:top;width:10%;">
                                 <table width="100%" cellspacing="0" cellpadding="0">
                                     <tr>
                                         <td colspan="2" style="padding-left: 10px;">
@@ -239,14 +261,14 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;background-color:#808080;">&nbsp;</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:10%;text-align:center;">Chargeable<br>Weight</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;background-color:#808080;">&nbsp;</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:10%;text-align:center;">Rate/Charge</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;background-color:#808080;">&nbsp;</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:10%;text-align:center;">Total</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;width:1%;background-color:#808080;">&nbsp;</td>
-                            <td style="font-size:7pt;vertical-align:top;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;text-align:center;">Nature and Quantity of Goods <br>(Incl. Dimensions or Volume)</td>
+                            <td style="font-size:7pt;vertical-align:top;width:1%;background-color:#808080;">&nbsp;</td>
+                            <td style="font-size:7pt;vertical-align:top;width:10%;text-align:center;">Chargeable<br>Weight</td>
+                            <td style="font-size:7pt;vertical-align:top;width:1%;background-color:#808080;">&nbsp;</td>
+                            <td style="font-size:7pt;vertical-align:top;width:10%;text-align:center;">Rate/Charge</td>
+                            <td style="font-size:7pt;vertical-align:top;width:1%;background-color:#808080;">&nbsp;</td>
+                            <td style="font-size:7pt;vertical-align:top;width:10%;text-align:center;">Total</td>
+                            <td style="font-size:7pt;vertical-align:top;width:1%;background-color:#808080;">&nbsp;</td>
+                            <td style="font-size:7pt;vertical-align:top;text-align:center;">Nature and Quantity of Goods <br>(Incl. Dimensions or Volume)</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -313,7 +335,7 @@
                                     <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:1px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;text-align:right;">
                                         Weight
                                     </td>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:2px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:2px;">
                                         Charge
                                     </td>
                                     <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:1px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;text-align:center;">
@@ -386,7 +408,7 @@
                         <td style="vertical-align:top;border:1px solid #000;" height="20">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;text-align:center;width:50%;">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;text-align:center;width:50%;">
                                         Total Prepaid
                                     </td>
                                     <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;text-align:center;width:50%;">
@@ -404,7 +426,7 @@
                         <td style="vertical-align:top;border:1px solid #000;" height="20">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:1px solid #000;text-align:center;width:50%;">
+                                    <td style="font-size:6pt;vertical-align:top;padding-left:5px;text-align:center;width:50%;">
                                         Currency Conversion Rates
                                     </td>
                                     <td style="font-size:6pt;vertical-align:top;padding-left:5px;border-left:0px solid #000; border-bottom:1px solid #000; border-top:0px solid #000; border-right:0px solid #000;text-align:center;width:50%;">

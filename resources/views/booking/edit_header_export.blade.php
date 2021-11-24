@@ -719,7 +719,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_mbl" id="valuta_mbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_mbl == $item->id)
+                                    <option value="{{ $item->id }}" @if ($quote->valuta_mbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach
@@ -792,7 +792,7 @@
                                 <select class="form-control select2bs44" style="width: 100%;" name="valuta_hbl" id="valuta_hbl">
                                     <option value="" selected>-- Select Valuta --</option>
                                     @foreach ($currency as $item)
-                                    <option value="{{ $item->code }}" @if ($quote->valuta_hbl == $item->id)
+                                    <option value="{{ $item->id }}" @if ($quote->valuta_hbl == $item->id)
                                         selected
                                     @endif>{{ $item->code }}</option>
                                     @endforeach

@@ -73,7 +73,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/charge_doEdit', 'MasterController@charge_doEdit')->name('master.charge_doEdit');
     Route::post('/master/charge_get', 'MasterController@charge_get')->name('master.charge_get');
     Route::get('/master/charge_delete/{id}', 'MasterController@charge_delete')->name('master.charge_delete');
-    
+
     //Vehicle
     Route::get('/master/vehicle', 'MasterController@vehicle')->name('master.vehicle');
     Route::post('/master/vehicle_doAdd', 'MasterController@vehicle_doAdd')->name('master.vehicle_doAdd');
@@ -146,7 +146,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/schedule_doEdit', 'MasterController@schedule_doEdit')->name('master.schedule_doEdit');
     Route::post('/master/schedule_get', 'MasterController@schedule_get')->name('master.schedule_get');
     Route::get('/master/schedule_delete/{id}', 'MasterController@schedule_delete')->name('master.schedule_delete');
- 
+
 
     //Loaded Type
     Route::get('/master/loaded', 'MasterController@loaded')->name('master.loaded');
@@ -336,7 +336,15 @@ Route::group(['middleware' => 'auth'], function(){
     #Approved Booking
     Route::post('/booking/approved', 'BookingController@approved')->name('booking.Approve');
 
-    
+    /** Proforma Invoice */
+    Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proformainvoice.index');
+    Route::get('/invoice/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
+    Route::get('/invoice/proformainvoice/edit/{id}', 'ProformaInvoiceController@edit')->name('proformainvoice.edit');
+    Route::post('/invoice/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
+    Route::post('/invoice/proformainvoice/update', 'ProformaInvoiceController@update')->name('proformainvoice.update');
+    Route::post('/invoice/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
+
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

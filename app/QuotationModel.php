@@ -52,8 +52,29 @@ class QuotationModel extends Model
                 ->leftJoin('t_mcarrier', 't_mcarrier.id', '=', 't_quote_shipg_dtl.t_mcarrier_id')
                 ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_shipg_dtl.t_quote_id')
                 ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_shipg_dtl.t_mcurrency_id')
-                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code')
+                ->leftJoin('t_proforma_invoice', 't_proforma_invoice.id', '=', 't_quote_shipg_dtl.t_invoice_id')
+                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code', 't_proforma_invoice.proforma_invoice_no')
                 ->where('t_quote_shipg_dtl.t_quote_id', $id)->get();
+    }
+
+    public static function get_quoteShippingById($id)
+    {
+        return DB::table('t_quote_shipg_dtl')
+                ->leftJoin('t_mcarrier', 't_mcarrier.id', '=', 't_quote_shipg_dtl.t_mcarrier_id')
+                ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_shipg_dtl.t_quote_id')
+                ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_shipg_dtl.t_mcurrency_id')
+                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code')
+                ->where('t_quote_shipg_dtl.id', $id)->first();
+    }
+
+    public static function get_quoteShippingInId($id)
+    {
+        return DB::table('t_quote_shipg_dtl')
+                ->leftJoin('t_mcarrier', 't_mcarrier.id', '=', 't_quote_shipg_dtl.t_mcarrier_id')
+                ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_shipg_dtl.t_quote_id')
+                ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_shipg_dtl.t_mcurrency_id')
+                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code')
+                ->whereIn('t_quote_shipg_dtl.id', $id)->get();
     }
 
     public static function get_quoteDimension($id)
@@ -91,5 +112,19 @@ class QuotationModel extends Model
         return DB::table('t_quote_dtl')->where('id', $id)->first();
     }
 
+    public static function saveChargeDetail($request)
+    {
+        return DB::table('t_bcharges_dtl')->updateOrInsert(
+            ['id' => $request['id']],
+            $request
+        );
+    }
 
+    public static function saveShipDetail($request)
+    {
+        return DB::table('t_quote_shipg_dtl')->updateOrInsert(
+            ['id' => $request['id']],
+            $request
+        );
+    }
 }
