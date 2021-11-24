@@ -144,7 +144,7 @@ class QuotationController extends Controller
                 $status = '';
             }
 
-            $table .= '<option value="'.$d->id.'"'.$status.'>'.$d->client_name.'</option>';
+            $table .= '<option value="'.$d->id.'"'.$status.'>('.$d->client_code.') '.$d->client_name.'</option>';
         }
         
 
@@ -1167,7 +1167,8 @@ class QuotationController extends Controller
                     $tabel .= '<td>'.$row->name_charge.'</td>';
                     $tabel .= '<td>'.$row->desc.'</td>';
                     if($row->reimburse_flag == 1){
-                        $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')"></td>';
+                        // $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')"></td>';
+                        $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" checked onchange="reims('.$no.')" onclick="return false;"></td>';
                         $tabel .= '<input type="hidden" name="reimbursxx" id="reimbursx_'.$no.'" value="">';
                     }else{
                         $tabel .= '<td class="text-center"><input type="checkbox" class="form_control" id="reimburs_'.$no.'" onchange="reims('.$no.')"></td>';

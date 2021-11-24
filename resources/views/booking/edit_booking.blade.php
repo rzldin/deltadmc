@@ -646,14 +646,14 @@
                                     <div class="container-fluid mt-3">
                                       <div class="row">
                                         <div class="col-md-12">
-                                            <div class="card card-primary">
+                                            <div class="card card-warning">
                                                 <div class="card-header">
                                                     <h5 class="card-title">Cost</h5>
                                                     <a class="btn btn-success float-right"><i class="fas fa-check"></i> Input Invoice for selected</a>
                                                     <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
                                                 </div>
-                                                <div class="card-body table-responsive p-0">
-                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                                <div class="card-body table-responsive p-0 text-center">
+                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%;">
                                                         <thead>
                                                             <tr>
                                                                 <th>#</th>
@@ -674,18 +674,22 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblCost">
-
+                                                            <div class="align-items-center bg-white justify-content-center spinner_load">
+                                                                <div class="spinner-border" role="status">
+                                                                  <span class="sr-only">Loading...</span>
+                                                                </div>
+                                                            </div>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="card card-primary">
                                                 <form id="fSell" method="get">
                                                     @csrf
+                                                <div class="card-success">
                                                     <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
                                                     <div class="card-header">
                                                         <h5 class="card-title">Sell</h5>
-                                                        <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
+                                                        <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-warning float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
                                                     </div>
                                                     <div class="card-body table-responsive p-0">
                                                         <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -711,12 +715,16 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody id="tblSell">
-
+                                                                <div class="align-items-center bg-white justify-content-center spinner_load">
+                                                                    <div class="spinner-border" role="status">
+                                                                      <span class="sr-only">Loading...</span>
+                                                                    </div>
+                                                                </div>
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                             <div class="card card-primary">
                                                 <div class="card-header">
                                                     <h5>Profit Analysis</h5>
@@ -737,7 +745,11 @@
                                                           </tr>
                                                         </thead>
                                                         <tbody id="tblProfit">
-
+                                                            <div class="align-items-center bg-white justify-content-center spinner_load">
+                                                                <div class="spinner-border" role="status">
+                                                                  <span class="sr-only">Loading...</span>
+                                                                </div>
+                                                            </div>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -1539,6 +1551,7 @@
 
         /** Load Schedule **/
         function loadSellCost(val, id){
+            $('.spinner_load').show();
             if(id != null)
             {
                 $.ajax({
@@ -1551,6 +1564,7 @@
                     dataType:"html",
                     success:function(result){
                         var tabel = JSON.parse(result);
+                        $('.spinner_load').hide();
                         $('#tblCost').html(tabel[0]);
                         $('#tblSell').html(tabel[1]);
                         $('#tblProfit').html(tabel[2]);
