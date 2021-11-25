@@ -342,6 +342,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/proformainvoice/update', 'ProformaInvoiceController@update')->name('proformainvoice.update');
     Route::post('/invoice/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
 
+    /** Invoice */
+    Route::get('/invoice', 'InvoiceController@index')->name('invoice.index');
+    Route::get('/invoice/create', 'InvoiceController@create')->name('invoice.create');
+    Route::post('/invoice/save', 'InvoiceController@save')->name('invoice.save');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

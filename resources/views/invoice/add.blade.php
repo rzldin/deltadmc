@@ -6,13 +6,13 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Edit Pro Forma Invoice
+                    Internal Invoice
                 </h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Proforma Invoice</li>
+                    <li class="breadcrumb-item active">Internal Invoice</li>
                 </ol>
             </div>
         </div>
@@ -32,12 +32,11 @@
                         <form method="post" action="{{ route('proformainvoice.update') }}"
                             id="formProforma">
                             @csrf
-                            <input type="hidden" name="id" id="id" value="{{ $header->id }}" />
-                            <input type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $header->t_booking_id }}" />
-                            <input type="hidden" name="activity" value="{{ $header->activity }}">
+                            <input type="hidden" name="id" id="id" value="0" />
+                            <input type="hidden" name="t_proformainvoice_id" id="t_proformainvoice_id" value="{{ $header->id }}" />
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Pro Forma Invoice Information</h3>
+                                    <h3 class="card-title">Invoice Information</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

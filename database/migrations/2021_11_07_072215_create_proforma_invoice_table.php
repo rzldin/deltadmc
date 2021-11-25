@@ -19,6 +19,7 @@ class CreateProformaInvoiceTable extends Migration
             $table->integer('client_id')->nullable();
             $table->integer('client_addr_id')->nullable();
             $table->integer('client_pic_id')->nullable();
+            $table->string('activity', 50)->nullable();
             $table->string('proforma_invoice_no');
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
