@@ -158,16 +158,10 @@
                                                     <label>Issued Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input-group date" id="reservationdate"
-                                                        data-target-input="nearest">
-                                                        <input type="text" name="proforma_invoice_date"
-                                                            id="proforma_invoice_date"
-                                                            class="form-control datetimepicker-input"
-                                                            data-target="#reservationdate" value="{{ date('d/m/Y', strtotime($header->proforma_invoice_date)) }}" />
-                                                        <div class="input-group-append" data-target="#reservationdate"
-                                                            data-toggle="datetimepicker">
-                                                            <div class="input-group-text"><i class="fa fa-calendar"></i>
-                                                            </div>
+                                                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                        <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
+                                                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -260,15 +254,10 @@
                                                     <label>On Board Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input-group date" id="reservationdatex"
-                                                        data-target-input="nearest">
-                                                        <input type="text" name="onboard_date" id="onboard_date"
-                                                            class="form-control datetimepicker-input"
-                                                            data-target="#reservationdate" value="{{ date('d/m/Y', strtotime($header->onboard_date)) }}" />
-                                                        <div class="input-group-append" data-target="#reservationdatex"
-                                                            data-toggle="datetimepicker">
-                                                            <div class="input-group-text"><i class="fa fa-calendar"></i>
-                                                            </div>
+                                                    <div class="input-group date" id="reservationdatex" data-target-input="nearest">
+                                                        <input type="text" name="onboard_date" id="onboard_date" value="{{ \Carbon\Carbon::parse($header->onboard_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdatex" readonly/>
+                                                        <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
+                                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                         </div>
                                                     </div>
                                                 </div>

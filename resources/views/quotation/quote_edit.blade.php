@@ -334,7 +334,7 @@
                                    <th width="10%">Height</th>
                                    <th width="15%">UOM</th>
                                    <th width="10%">Pieces</th>
-                                   <th width="9%">Wight</th>
+                                   <th width="9%">Weight</th>
                                    <th width="15%">UOM</th>
                                    <th width="15%">Action</th>
                                </tr>
@@ -368,7 +368,7 @@
                                         <input type="text" class="form-control" name="pieces" id="pieces_1" placeholder="Pieces ..." onkeyup="numberOnly(this)">
                                    </td>
                                    <td>
-                                        <input type="text" class="form-control" name="wight" id="wight_1" placeholder="Wight ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="wight" id="wight_1" placeholder="Weight ..." onkeyup="numberOnly(this)">
                                    </td>
                                    <td>
                                         <select class="form-control select2bs44" name="wight_uom" id="wight_uom_1">
@@ -660,7 +660,7 @@
                                         Rate <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." onkeyup="hitungx()">
+                                        <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." value="" onkeyup="hitungx()">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -1297,7 +1297,7 @@
                 let text = JSON.parse(result)
                 let code = text.code
 
-                if(code == 'IDR'){
+                if(code == 'IDR' && $('#rate').val() == '' && $('#ratex').val() == ''){
                     $('#rate').val(1);
                     $('#ratex').val(1);
                 }
@@ -1644,6 +1644,7 @@
             dataType: "html",
             success: function(result) {
                 let data = JSON.parse(result);
+                console.log(data);
                 let cost_val = data.cost_val
                 let sell_val = data.sell_val
                 let subtotal = data.subtotal
@@ -1696,6 +1697,7 @@
                 $('#charge').val(data.t_mcharge_code_id).trigger('change');
                 $('#descx').val(data.desc);
                 $('#id_dtl_quote').val(data.id);
+                $('#ratex').val(Number(data.rate));
                 $('#currencyx').val(data.t_mcurrency_id).trigger('change');
                 if(data.reimburse_flag == 1){
                     $('#reimburs').prop('checked',true);
@@ -1704,7 +1706,6 @@
                     $('#reimburs').prop('checked',false);
                     $('#reimbursx').val(0)
                 }
-                $('#ratex').val(Number(data.rate));
                 $('#costx').val(Number(data.cost));
                 $('#sellx').val(Number(data.sell));
                 $('#qtyx').val(data.qty);

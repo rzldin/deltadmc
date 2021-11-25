@@ -1573,7 +1573,7 @@ class BookingController extends Controller
                     $tabel .= '<td>'.$shp->name_carrier.'</td>';
                 }
             $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'"></td>';
+            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
             $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
             $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
             $tabel .= '<td class="text-right">'.number_format($shp->cost_val,2,',','.').'</td>';
@@ -1600,7 +1600,7 @@ class BookingController extends Controller
                     $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
                 }
             $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'"></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
             $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
             $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
             $tabel1 .= '<td class="text-right">'.number_format($shp->sell_val,2,',','.').'</td>';
@@ -1698,8 +1698,8 @@ class BookingController extends Controller
                     //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
                     $tabel1 .= '<td>';
                     $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" name="bill_to" class="form-control select2bs44" ';
-                    $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;>';
-                    $tabel1 .= '<option value="">--Select Company--</option>';
+                    $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
+                    $tabel1 .= '<option value="" selected>-- Select Company --</option>';
                     foreach($company as $item){
                         $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }

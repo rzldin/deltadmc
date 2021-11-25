@@ -90,7 +90,6 @@ class ProformaInvoiceController extends Controller
         $data['currency']       = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($request->t_booking_id);
         $data['goods'] = BookingModel::get_commodity($request->t_booking_id);
-
         return view('proforma_invoice.add_proforma_invoice')->with($data);
     }
 

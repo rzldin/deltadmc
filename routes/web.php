@@ -43,6 +43,10 @@ Route::group(['middleware' => 'auth'], function(){
     });
     Route::get('/logout', 'Otentikasi\OtentikasiController@logout')->name('logout');
 
+    //Finance
+    Route::get('/finance/invoice_terima', 'FinanceController@index')->name('finance.invoice_terima');
+
+
     /** Master */
 
     //Country
@@ -70,7 +74,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/charge_get', 'MasterController@charge_get')->name('master.charge_get');
     Route::get('/master/charge_delete/{id}', 'MasterController@charge_delete')->name('master.charge_delete');
 
-
     //Vehicle
     Route::get('/master/vehicle', 'MasterController@vehicle')->name('master.vehicle');
     Route::post('/master/vehicle_doAdd', 'MasterController@vehicle_doAdd')->name('master.vehicle_doAdd');
@@ -78,7 +81,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/vehicle_doEdit', 'MasterController@vehicle_doEdit')->name('master.vehicle_doEdit');
     Route::post('/master/vehicle_get', 'MasterController@vehicle_get')->name('master.vehicle_get');
     Route::get('/master/vehicle_delete/{id}', 'MasterController@vehicle_delete')->name('master.vehicle_delete');
-
 
     //Port
     Route::get('/master/port', 'MasterController@port')->name('master.port');
