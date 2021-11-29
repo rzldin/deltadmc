@@ -436,4 +436,18 @@ class ProformaInvoiceController extends Controller
             return redirect()->to($url);
         }
     }
+
+    public function view($id)
+    {
+        $data['header'] = ProformaInvoiceModel::getProformaInvoice($id)->first();
+        $data['details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($id)->get();
+        $data['companies'] = MasterModel::company_data();
+        $data['addresses'] = MasterModel::get_address($data['header']->client_id);
+        $data['pics'] = MasterModel::get_pic($data['header']->client_id);
+        $data['currency']       = MasterModel::currency();
+        $data['containers'] = BookingModel::get_container($data['header']->t_booking_id);
+        $data['goods'] = BookingModel::get_commodity($data['header']->t_booking_id);
+
+        return view('proforma_invoice.view_proforma_invoice')->with($data);
+    }
 }
