@@ -739,7 +739,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">                        
-                            <button type="button" class="btn btn-primary" onClick="saveDetailxxx();"><i class="fa fa-save"></i> Save</button>
+                            <button type="button" class="btn btn-primary" id="detail_quote_submit" onClick="saveDetailxxx(); this.disabled=true;"><i class="fa fa-save"></i> Save</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                         </div>
                     </div>
@@ -1116,7 +1116,7 @@
         $('#agent').prop('checked', false);
         $('#ppjk').prop('checked', false);
         
-        $("#add-customer").find('.modal-title').text('Add Data');
+        $("#add-customer").find('.modal-title').text('Add Data Customer');
         $("#add-customer").modal('show',{backdrop: 'true'}); 
     }
 
@@ -1131,7 +1131,7 @@
         $('#email').val('');
         $('#pic_desc').val('');
         
-        $("#add-pic").find('.modal-title').text('Add Data');
+        $("#add-pic").find('.modal-title').text('Add Data PIC');
         $("#add-pic").modal('show',{backdrop: 'true'}); 
     }
 
@@ -1431,7 +1431,7 @@
 
         dsState = "Input";
         
-        $("#shipping-detail").find('.modal-title').text('Add Data');
+        $("#shipping-detail").find('.modal-title').text('Add Shipping Detail');
         $("#shipping-detail").modal('show',{backdrop: 'true'}); 
     }
 
@@ -1456,7 +1456,7 @@
 
         dsState = "Input";
         
-        $("#detail-quote").find('.modal-title').text('Add Data');
+        $("#detail-quote").find('.modal-title').text('Add Detail Quote');
         $("#detail-quote").modal('show',{backdrop: 'true'}); 
     }
 
@@ -1717,7 +1717,7 @@
 
                 dsState = "Edit";
         
-                $("#detail-quote").find('.modal-title').text('Edit Data');
+                $("#detail-quote").find('.modal-title').text('Edit Detail Quote');
                 $("#detail-quote").modal('show',{backdrop: 'true'});
                
             }
@@ -2041,64 +2041,73 @@
             Toast.fire({
                 icon: 'error',
                 title: 'Please Select Charge!'
-            })
+            });
+            $('#detail_quote_submit').prop('disabled', false);
         }else if($.trim($("#currencyx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please Select Currency!'
             });
+            $('#detail_quote_submit').prop('disabled', false);
         }else if($.trim($("#ratex").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Rate!'
             });
+            $('#detail_quote_submit').prop('disabled', false);
         }else if($.trim($("#costx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Cost!'
             });
+            $('#detail_quote_submit').prop('disabled', false);
         }else if($.trim($("#sellx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Sell!'
             });
+            $('#detail_quote_submit').prop('disabled', false);
         }else if($.trim($("#qtyx").val()) == ""){
             Toast.fire({
                 icon: 'error',
                 title: 'Please input Qty!'
             });
+            $('#detail_quote_submit').prop('disabled', false);
         }else{
             if(dsState == "Input")
             {
                 $.ajax({
-                type:"POST",
-                url:"{{ route('quotation.quote_addDetail') }}",
-                data:{
-                    quote:{{ $quote->id }},
-                    quote_no : $('#quote_no').val(),
-                    charge:$('#charge').val(),
-                    desc:$('#descx').val(),
-                    reimburs:$('#reimbursx').val(),
-                    currency:$('#currencyx').val(),
-                    rate:$('#ratex').val(),
-                    cost:$('#costx').val(),
-                    sell:$('#sellx').val(),
-                    qty:$('#qtyx').val(),
-                    cost_val:$('#cost_valx').val(),
-                    sell_val:$('#sell_valx').val(),
-                    vat:$('#vatx').val(),
-                    total:$('#totalx').val(),
-                    note:$('#notex').val()
-                },
-                success:function(result){
-                    $('#detail-quote').modal('hide')
-                    loadDetail({{ Request::segment(3) }}, 'a');
-                    loadProfit({{ Request::segment(3) }}); 
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Sukses Add Data!'
-                    });
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                    type:"POST",
+                    url:"{{ route('quotation.quote_addDetail') }}",
+                    data:{
+                        quote:{{ $quote->id }},
+                        quote_no : $('#quote_no').val(),
+                        charge:$('#charge').val(),
+                        desc:$('#descx').val(),
+                        reimburs:$('#reimbursx').val(),
+                        currency:$('#currencyx').val(),
+                        rate:$('#ratex').val(),
+                        cost:$('#costx').val(),
+                        sell:$('#sellx').val(),
+                        qty:$('#qtyx').val(),
+                        cost_val:$('#cost_valx').val(),
+                        sell_val:$('#sell_valx').val(),
+                        vat:$('#vatx').val(),
+                        total:$('#totalx').val(),
+                        note:$('#notex').val()
+                    },
+                    success:function(result){
+                        $('#detail-quote').modal('hide')
+                        $('#detail_quote_submit').prop('disabled', false);
+                        loadDetail({{ Request::segment(3) }}, 'a');
+                        loadProfit({{ Request::segment(3) }}); 
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Sukses Add Data!'
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {  
+                        $('#detail_quote_submit').prop('disabled', false);         
                         alert('Gagal menambahkan item!');
                     },  
                 });
@@ -2124,6 +2133,7 @@
                         quote:{{ Request::segment(3) }}
                     },
                     success:function(result){
+                        $('#detail_quote_submit').prop('disabled', false);
                         $('#detail-quote').modal('hide')
                         loadDetail({{ Request::segment(3) }}, 'a'); 
                         loadProfit({{ Request::segment(3) }}); 
@@ -2131,7 +2141,8 @@
                             icon: 'success',
                             title: 'Sukses Update Data!'
                         });
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {  
+                        $('#detail_quote_submit').prop('disabled', false);        
                         alert('Gagal Mengupdate!');
                     },          
                 });

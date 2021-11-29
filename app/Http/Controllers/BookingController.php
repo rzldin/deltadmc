@@ -1547,6 +1547,7 @@ class BookingController extends Controller
         $tabel1     = "";
         $tabel2     = "";
         $no         = 2;
+        $no_bill_to = 2;
         $data       = BookingModel::getChargesDetail($request->id);
         $company    = MasterModel::company_data();
         $booking    = DB::table('t_booking')->where('id', $request->id)->first();
@@ -1617,7 +1618,7 @@ class BookingController extends Controller
             $tabel1 .= '<td>';
             $tabel1 .= '</td>';
             $tabel1 .= '</tr>';
-
+            $no++;
         }
 
         $totalAmount    = 0;
@@ -1637,11 +1638,11 @@ class BookingController extends Controller
 
                 // Cost
                 $tabel .= '<tr>';
-                $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$no.'"></td>';
-                $tabel .= '<td>'.($no).'</td>';
+                $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$no_bill_to.'"></td>';
+                $tabel .= '<td>'.($no_bill_to).'</td>';
                 $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
+                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no_bill_to.'" '.$style.' onclick="return false;"></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
@@ -1650,14 +1651,16 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
                 if($row->paid_to == null){
-                    //$tabel .= '<td class="text-left"><input type="text" name="paid_to" id="paid_to_'.$no.'" placeholder="Paid to..." class="form-control"></td>';
                     $tabel .= '<td>';
-                    $tabel .= '<select id="paid_to_'.$no.'" name="paid_to" class="form-control select2bs44"';
+                    $tabel .= '<select onchange="fillPaidToName('.$no_bill_to.')" id="paid_to_'.$no_bill_to.'" name="paid_to" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
+                    $tabel .= '<option value="" selected>-- Select Company --</option>';
                     foreach($company as $item){
-                        $tabel .= '<option value="'.$item->client_name.'">'.$item->client_code.'</option>';
+                        $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }
                     $tabel .= '</select>';
                     $tabel .= '</td>';
+                    $tabel .= '<input type="hidden" name="paid_to_name" id="paid_to_name_'.$no_bill_to.'"/>';
+                    $tabel .= '<input type="hidden" name="paid_to_id" id="paid_to_id_'.$no_bill_to.'"/>';
                     $displayx = '';
                 }else{
                     $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
@@ -1667,7 +1670,7 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-left"></td>';
                 $tabel .= '<td>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
-                        . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
+                        . '" onclick="updateDetailSell('.$row->id.', '.$no_bill_to.','.$a.');" style="'.$displayx.'"> '
                         . '<i class="fa fa-save"></i></a>';
                 $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
                         . '" onclick="hapusDetailSch('.$row->id.');"> '
@@ -1679,14 +1682,14 @@ class BookingController extends Controller
                 $tabel1 .= '<tr>';
                 $tabel1 .= '<td>';
                 if ($row->t_invoice_id == null) {
-                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
-                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
+                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no_bill_to.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no_bill_to.'">
+                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no_bill_to.'"/>';
                 }
                 $tabel .=  '</td>';
-                $tabel1 .= '<td>'.($no).'</td>';
+                $tabel1 .= '<td>'.$no_bill_to.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.'></td>';
+                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no_bill_to.'" '.$style.' onclick="return false;"></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
@@ -1695,17 +1698,17 @@ class BookingController extends Controller
                 $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
                 if($row->bill_to == null){
-                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
+                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no_bill_to.'" placeholder="Bill to..." class="form-control"></td>';
                     $tabel1 .= '<td>';
-                    $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" name="bill_to" class="form-control select2bs44" ';
+                    $tabel1 .= '<select onchange="fillBillToName('.$no_bill_to.')" id="bill_to_'.$no_bill_to.'" name="bill_to" class="form-control select2bs44" ';
                     $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
                     $tabel1 .= '<option value="" selected>-- Select Company --</option>';
                     foreach($company as $item){
                         $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }
                     $tabel1 .= '</select>';
-                    $tabel1 .= '<input type="hidden" name="bill_to_name" id="bill_to_name_'.$no.'"/>';
-                    $tabel1 .= '<input type="hidden" name="bill_to_id" id="bill_to_id_'.$no.'"/>';
+                    $tabel1 .= '<input type="hidden" name="bill_to_name" id="bill_to_name_'.$no_bill_to.'"/>';
+                    $tabel1 .= '<input type="hidden" name="bill_to_id" id="bill_to_id_'.$no_bill_to.'"/>';
                     $tabel1 .= '</td>';
                     $display = '';
                 }else{
@@ -1720,7 +1723,7 @@ class BookingController extends Controller
                 $tabel1 .= '<td>';
                 if ($row->t_invoice_id == null) {
                     $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                    . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
+                    . '" onclick="updateDetailSell('.$row->id.', '.$no_bill_to.', '.$b.');" style="'.$display.'"> '
                     . '<i class="fa fa-save"></i></a>';
                     $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                     . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
@@ -1728,7 +1731,7 @@ class BookingController extends Controller
                 }
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
-                $no++;
+                $no_bill_to++;
 
                 $totalAmount    += $amount;
                 $totalAmount2   += $amount2;
@@ -1760,7 +1763,7 @@ class BookingController extends Controller
 
 
         header('Content-Type: application/json');
-        echo json_encode([$tabel, $tabel1, $tabel2]);
+        echo json_encode([$tabel, $tabel1, $tabel2, $no_bill_to]);
     }
 
     public function updateSell(Request $request)
@@ -1770,7 +1773,8 @@ class BookingController extends Controller
                 DB::table('t_bcharges_dtl')
                 ->where('id', $request->id)
                 ->update([
-                    'paid_to'   => $request->paid_to
+                    'paid_to'   => $request->paid_to_name,
+                    'paid_to_id' => $request->paid_to_id
                 ]);
             }else{
                 DB::table('t_bcharges_dtl')

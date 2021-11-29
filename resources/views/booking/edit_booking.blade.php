@@ -660,7 +660,7 @@
                                                                 <th>No.</th>
                                                                 <th>Service/Fee</th>
                                                                 <th>Description</th>
-                                                                <th>Reimbursment</th>
+                                                                <th>Reimburse</th>
                                                                 <th>Unit</th>
                                                                 <th>Currency</th>
                                                                 <th>rate/unit</th>
@@ -683,7 +683,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                                <form id="fSell" method="get">
+                                            <form id="fSell" method="get">
                                                     @csrf
                                                 <div class="card-success">
                                                     <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
@@ -699,7 +699,7 @@
                                                                 <th>No.</th>
                                                                 <th>Service/Fee</th>
                                                                 <th>Description</th>
-                                                                <th>Reimbursment</th>
+                                                                <th>Reimburse</th>
                                                                 <th>Unit</th>
                                                                 <th>Currency</th>
                                                                 <th>rate/unit</th>
@@ -1568,6 +1568,10 @@
                         $('#tblCost').html(tabel[0]);
                         $('#tblSell').html(tabel[1]);
                         $('#tblProfit').html(tabel[2]);
+                        for (let i = 0; i < tabel[3]; i++) {
+                          $('#paid_to_'+i).select2();
+                          $('#bill_to_'+i).select2();
+                        }
                     }
                 })
             }
@@ -2571,7 +2575,7 @@
         /** Update Package **/
         function updateDetailSell(id_detail, id, v)
         {
-
+            // console.log($('#paid_to_id_'+id).val());
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.updateSell') }}",
@@ -2579,7 +2583,8 @@
                     id:id_detail,
                     bill_to_name:$('#bill_to_name_'+id).val(),
                     bill_to_id:$('#bill_to_id_'+id).val(),
-                    paid_to:$('#paid_to_'+id).val(),
+                    paid_to_name:$('#paid_to_name_'+id).val(),
+                    paid_to_id:$('#paid_to_id_'+id).val(),
                     v : v
                 },
                 success:function(result){
@@ -2609,6 +2614,13 @@
             arr = text.split("-");
             $('#bill_to_name_'+no).val(arr[1]);
             $('#bill_to_id_'+no).val(arr[0]);
+        }
+
+        function fillPaidToName(no) {
+            text = $('#paid_to_'+no).val();
+            arr = text.split("-");
+            $('#paid_to_name_'+no).val(arr[1]);
+            $('#paid_to_id_'+no).val(arr[0]);
         }
 
         function showErrorMsg(msg) {
