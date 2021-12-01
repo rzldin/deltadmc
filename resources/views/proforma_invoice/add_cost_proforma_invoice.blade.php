@@ -12,7 +12,7 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Proforma Invoice</li>
+                    <li class="breadcrumb-item active">Invoice</li>
                 </ol>
             </div>
         </div>
@@ -29,25 +29,25 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ route('proformainvoice.save') }}"
+                        <form method="post" action="{{ route('invoice.save_cost') }}"
                             id="formProforma">
                             @csrf
                             <input type="hidden" name="id" id="id" value="" />
                             <input type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $booking->id }}" />
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Pro Forma Invoice Information</h3>
+                                    <h3 class="card-title">Invoice Information</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Bill To</label>
+                                                    <label>Paid To</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input type="text" id="bill_to_name" class="form-control" value="{{ $companies->client_name }}" disabled>
-                                                    <input type="hidden" id="client_id" name="client_id" value="{{ $bill_to_id }}">
+                                                    <input type="text" id="paid_to_name" class="form-control" value="{{ $companies->client_name }}" disabled>
+                                                    <input type="hidden" id="client_id" name="client_id" value="{{ $paid_to_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -82,11 +82,11 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Pro Forma Invoice No</label>
+                                                    <label>Invoice No</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="proforma_invoice_no"
-                                                    id="proforma_invoice_no">
+                                                    <input class="form-control" type="text" name="invoice_no"
+                                                    id="invoice_no">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -150,8 +150,8 @@
                                                 <div class="col-md-8">
                                                     <div class="input-group date" id="reservationdate"
                                                         data-target-input="nearest">
-                                                        <input type="text" name="proforma_invoice_date"
-                                                            id="proforma_invoice_date"
+                                                        <input type="text" name="invoice_date"
+                                                            id="invoice_date"
                                                             class="form-control datetimepicker-input"
                                                             data-target="#reservationdate" />
                                                         <div class="input-group-append" data-target="#reservationdate"
@@ -293,7 +293,7 @@
                                                 {{-- <th>Action</th> --}}
                                             </tr>
                                         </thead>
-                                        <tbody id="tblSell">
+                                        <tbody id="tblCost">
 
                                         </tbody>
                                     </table>
@@ -301,7 +301,6 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <button class="btn btn-info">Confirm</button>
                                     <button class="btn btn-primary" onclick="$('#formProforma').submit()">Save</button>
                                 </div>
                             </div>
@@ -363,7 +362,7 @@
                     dataType: "html",
                     success: function (result) {
                         var tabel = JSON.parse(result);
-                        $('#tblSell').html(tabel[0]);
+                        $('#tblCost').html(tabel[0]);
                         // $('#tblProfit').html(tabel[2]);
                     }
                 })

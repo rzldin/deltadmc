@@ -64,8 +64,13 @@ class BookingModel extends Model
 
     public static function getChargesDetail($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.proforma_invoice_no from t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id LEFT JOIN t_mcurrency d ON a.currency = d.id
-        LEFT JOIN t_proforma_invoice i ON i.id = a.t_invoice_id WHERE a.t_booking_id='".$id."'");
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.proforma_invoice_no from t_bcharges_dtl a 
+            LEFT JOIN t_booking b ON a.t_booking_id = b.id 
+            LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id 
+            LEFT JOIN t_mcurrency d ON a.currency = d.id
+            LEFT JOIN t_proforma_invoice i ON i.id = a.t_invoice_id
+            LEFT JOIN t_proforma_invoice i2 ON i2.id = a.t_invoice_cost_id
+        WHERE a.t_booking_id='".$id."'");
     }
 
     public static function getChargesDetailById($id)
@@ -124,6 +129,4 @@ class BookingModel extends Model
             ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'f.client_code as code_company_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'i.client_code as code_company_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
             ->where('a.id', '=', $id)->first();
     }
-
-
 }

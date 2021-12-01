@@ -646,43 +646,47 @@
                                     <div class="container-fluid mt-3">
                                       <div class="row">
                                         <div class="col-md-12">
-                                            <div class="card card-warning">
-                                                <div class="card-header">
-                                                    <h5 class="card-title">Cost</h5>
-                                                    <a class="btn btn-success float-right"><i class="fas fa-check"></i> Input Invoice for selected</a>
-                                                    <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
-                                                </div>
-                                                <div class="card-body table-responsive p-0 text-center">
-                                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%;">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>#</th>
-                                                                <th>No.</th>
-                                                                <th>Service/Fee</th>
-                                                                <th>Description</th>
-                                                                <th>Reimburse</th>
-                                                                <th>Unit</th>
-                                                                <th>Currency</th>
-                                                                <th>rate/unit</th>
-                                                                <th>Total</th>
-                                                                <th>ROE</th>
-                                                                <th>Vat</th>
-                                                                <th>Amount</th>
-                                                                <th width="10%">Paid To</th>
-                                                                <th>Note</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="tblCost">
-                                                            <div class="align-items-center bg-white justify-content-center spinner_load">
-                                                                <div class="spinner-border" role="status">
-                                                                  <span class="sr-only">Loading...</span>
+                                            <form id="fCost" method="get">
+                                                @csrf
+                                                <div class="card card-warning">
+                                                    <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
+                                                    <div class="card-header">
+                                                        <h5 class="card-title">Cost</h5>
+                                                        <a class="btn btn-success float-right" onclick="redirectToCostInvoice()"><i class="fas fa-check"></i> Input Invoice for selected</a>
+                                                        <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
+                                                    </div>
+                                                    <div class="card-body table-responsive p-0 text-center">
+                                                        <table class="table table-bordered table-striped" id="myTable2" style="width: 150%;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>#</th>
+                                                                    <th>No.</th>
+                                                                    <th>Service/Fee</th>
+                                                                    <th>Description</th>
+                                                                    <th>Reimburse</th>
+                                                                    <th>Unit</th>
+                                                                    <th>Currency</th>
+                                                                    <th>rate/unit</th>
+                                                                    <th>Total</th>
+                                                                    <th>ROE</th>
+                                                                    <th>Vat</th>
+                                                                    <th>Amount</th>
+                                                                    <th width="10%">Paid To</th>
+                                                                    <th>Note</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tblCost">
+                                                                <div class="align-items-center bg-white justify-content-center spinner_load">
+                                                                    <div class="spinner-border" role="status">
+                                                                      <span class="sr-only">Loading...</span>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </tbody>
-                                                    </table>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </form>
                                             <form id="fSell" method="get">
                                                     @csrf
                                                 <div class="card-success">
@@ -2599,9 +2603,19 @@
             });
         }
 
+        function redirectToCostInvoice() {
+            $('#fCost').attr('action', `{{ route('proformainvoice.create_cost') }}`);
+            $('#fCost').submit();
+        }
+
         function redirectToProformaInvoice() {
             $('#fSell').attr('action', `{{ route('proformainvoice.create') }}`);
             $('#fSell').submit();
+        }
+
+        function checkedPaidTo(key) {
+            id = $('#cek_paid_to_'+key);
+            id.prop('checked', !id.prop('checked'));
         }
 
         function checkedBillTo(key) {

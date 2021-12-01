@@ -342,12 +342,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/proformainvoice/edit/{id}', 'ProformaInvoiceController@edit')->name('proformainvoice.edit');
     Route::post('/invoice/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
     Route::post('/invoice/proformainvoice/update', 'ProformaInvoiceController@update')->name('proformainvoice.update');
+    Route::get('/invoice/proformainvoice/create_cost', 'ProformaInvoiceController@create_cost')->name('proformainvoice.create_cost');
     Route::post('/invoice/proformainvoice/loadSellCost', 'ProformaInvoiceController@loadSellCost')->name('proformainvoice.loadSellCost');
 
     /** Invoice */
     Route::get('/invoice', 'InvoiceController@index')->name('invoice.index');
     Route::get('/invoice/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/save', 'InvoiceController@save')->name('invoice.save');
+    Route::post('/invoice/save_cost', 'InvoiceController@save_cost')->name('invoice.save_cost');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

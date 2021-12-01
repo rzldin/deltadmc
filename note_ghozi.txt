@@ -1,1 +1,3 @@
-booking\edit_booking. paid to nya di bisain search company dan kasih nama company (done)
+ALTER TABLE `t_quote_shipg_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoice_id`;
+ALTER TABLE `t_bcharges_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoice_id`;
+ALTER TABLE `t_invoice` ADD `tipe_inv` TINYINT(1) NOT NULL DEFAULT '0' AFTER `id`;

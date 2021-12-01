@@ -15,6 +15,7 @@ class InvoiceModel extends Model
         return InvoiceModel::updateOrCreate(
             ['id' => $request->id],
             [
+                'tipe_inv' => $request['tipe_inv'],
                 't_proforoma_invoice_id' => $request['t_proforoma_invoice_id'],
                 't_booking_id' => $request['t_booking_id'],
                 'client_id' => $request['client_id'],

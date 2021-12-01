@@ -11,7 +11,6 @@ class SiteHelpers {
 
         $id = Auth::user()->id;
 
-
         $main_menu = DB::table('t_maccess_control')
         ->join('t_mapps_menu', 't_mapps_menu.id', '=', 't_maccess_control.t_mapps_menu_id')
         ->join('t_mresponsibility', 't_mresponsibility.id', '=', 't_maccess_control.t_mresponsibility_id')

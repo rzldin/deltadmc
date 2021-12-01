@@ -89,6 +89,11 @@ class MasterModel extends Model
 
     public static function company_data()
     {
+        return DB::table('t_mcompany')->where('active_flag', 1)->orderBy('client_name')->get();
+    }
+
+    public static function company_data_full()
+    {
         return DB::table('t_mcompany')->orderBy('client_name')->get();
     }
 
