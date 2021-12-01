@@ -159,11 +159,17 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                        <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
+                                                        <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('m/d/Y') }}" data-target="#reservationdate" readonly/>
                                                         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                         </div>
                                                     </div>
+                                                    {{-- <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                                        <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" readonly/>
+                                                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                        </div>
+                                                    </div> --}}
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
