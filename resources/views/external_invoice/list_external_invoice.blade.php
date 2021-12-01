@@ -42,10 +42,10 @@
                             </tr>
                         </thead>
                         <tbody style="font-size: 14px">
-                            @foreach ($invoices as $invoice)
+                            @foreach ($external_invoices as $invoice)
                             <tr>
-                                <td>{{ $invoice->invoice_no }}</td>
-                                <td>{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</td>
+                                <td>{{ $invoice->external_invoice_no }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice->external_invoice_date)->format('d/m/Y') }}</td>
                                 <td>{{ $invoice->booking_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($invoice->booking_date)->format('d/m/Y') }}</td>
                                 <td>{{ $invoice->company_d }}</td>
@@ -53,11 +53,8 @@
                                 <td>{{ $invoice->company_b }}</td>
                                 <td>{{ $invoice->activity }}</td>
                                 <td>
-                                    <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
-                                    @if ($invoice->external_invoice_id == 0)
-                                    <a class="btn btn-info btn-sm" href="{{ route('external_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Ext. Inv. </a>
-
-                                    @endif
+                                    <a class="btn btn-primary btn-sm" href="{{ route('external_invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
+                                    {{-- <a class="btn btn-info btn-sm" href="{{ route('external_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Ext. Inv. </a> --}}
                                 </td>
                             </tr>
                             @endforeach

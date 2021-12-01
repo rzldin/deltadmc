@@ -351,6 +351,15 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
 
+    Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
+    Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
+    Route::get('/invoice/external/create/{invoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
+    Route::post('/invoice/external/create/', 'ExternalInvoiceController@save')->name('external_invoice.save');
+    Route::post('/invoice/external/create/loadDetail', 'ExternalInvoiceController@loadDetail')->name('external_invoice.loadDetail');
+    Route::post('/invoice/external/create/loadDetailBefore', 'ExternalInvoiceController@loadDetailBefore')->name('external_invoice.loadDetailBefore');
+    Route::post('/invoice/external/create/loadDetailAfter', 'ExternalInvoiceController@loadDetailAfter')->name('external_invoice.loadDetailAfter');
+    Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

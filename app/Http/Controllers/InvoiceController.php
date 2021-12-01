@@ -93,6 +93,7 @@ class InvoiceController extends Controller
 
             return redirect()->route('invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
         }
     }

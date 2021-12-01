@@ -17,7 +17,8 @@ class InvoiceModel extends Model
             ->leftJoin('t_mcompany AS b', 't_invoice.client_id', '=', 'b.id')
             ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
-            ->select('t_invoice.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+            ->leftJoin('t_external_invoice AS ei', 'ei.t_invoice_id', '=', 't_invoice.id')
+            ->select('t_invoice.*', DB::raw('COALESCE(ei.id, 0) external_invoice_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
     public static function getInvoice($id)
