@@ -14,10 +14,11 @@ class ProformaInvoiceModel extends Model
     public static function getAllProformaInvoice()
     {
         return ProformaInvoiceModel::join('t_booking AS a', 'a.id', '=', 't_proforma_invoice.t_booking_id')
+            ->leftJoin('t_invoice AS i', 'i.t_proforma_invoice_id', '=', 't_proforma_invoice.id')
             ->leftJoin('t_mcompany AS b', 't_proforma_invoice.client_id', '=', 'b.id')
             ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
-            ->select('t_proforma_invoice.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+            ->select('t_proforma_invoice.*', DB::raw('COALESCE(i.id, 0) AS invoice_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
     public static function getProformaInvoice($id)
@@ -37,6 +38,7 @@ class ProformaInvoiceModel extends Model
             ['id' => $request['id']],
             [
                 't_booking_id' => $request['t_booking_id'],
+                'activity' => $request['activity'],
                 'client_id' => $request['client_id'],
                 'client_addr_id' => $request['client_addr_id'],
                 'client_pic_id' => $request['client_pic_id'],

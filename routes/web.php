@@ -340,6 +340,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proformainvoice.index');
     Route::get('/invoice/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
     Route::get('/invoice/proformainvoice/edit/{id}', 'ProformaInvoiceController@edit')->name('proformainvoice.edit');
+    Route::get('/invoice/proformainvoice/view/{id}', 'ProformaInvoiceController@view')->name('proformainvoice.view');
     Route::post('/invoice/proformainvoice/save', 'ProformaInvoiceController@save')->name('proformainvoice.save');
     Route::post('/invoice/proformainvoice/update', 'ProformaInvoiceController@update')->name('proformainvoice.update');
     Route::get('/invoice/proformainvoice/create_cost', 'ProformaInvoiceController@create_cost')->name('proformainvoice.create_cost');
@@ -350,6 +351,19 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/save', 'InvoiceController@save')->name('invoice.save');
     Route::post('/invoice/save_cost', 'InvoiceController@save_cost')->name('invoice.save_cost');
+    Route::get('/invoice/internal', 'InvoiceController@index')->name('invoice.index');
+    Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
+    Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
+    Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
+
+    Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
+    Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
+    Route::get('/invoice/external/create/{invoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
+    Route::post('/invoice/external/create/', 'ExternalInvoiceController@save')->name('external_invoice.save');
+    Route::post('/invoice/external/create/loadDetail', 'ExternalInvoiceController@loadDetail')->name('external_invoice.loadDetail');
+    Route::post('/invoice/external/create/loadDetailBefore', 'ExternalInvoiceController@loadDetailBefore')->name('external_invoice.loadDetailBefore');
+    Route::post('/invoice/external/create/loadDetailAfter', 'ExternalInvoiceController@loadDetailAfter')->name('external_invoice.loadDetailAfter');
+    Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

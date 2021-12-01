@@ -5,12 +5,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Booking List</h1>
+          <h1>Proforma Invoice List</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item active">Booking List</li>
+            <li class="breadcrumb-item active">Proforma Invoice List</li>
           </ol>
         </div>
       </div>
@@ -22,7 +22,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-primary btn-sm" href="{{ route('quotation.list') }}"><i class="fa fa-plus"></i> Create Booking</a>
+                    {{-- <a class="btn btn-primary btn-sm" href="{{ route('quotation.list') }}"><i class="fa fa-plus"></i> Create Booking</a> --}}
                 </div>
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->
@@ -53,8 +53,10 @@
                                 <td>{{ $proforma_invoice->company_b }}</td>
                                 <td>{{ $proforma_invoice->activity }}</td>
                                 <td>
-                                    <a class="btn btn-primary btn-sm" ><i class="fa fa-file-alt"></i> View </a>
+                                    <a class="btn btn-primary btn-sm" href="{{ route('proformainvoice.view', ['id' => $proforma_invoice->id]) }}" ><i class="fa fa-file-alt"></i> View </a>
+                                    @if ($proforma_invoice->invoice_id == 0)
                                     <a class="btn btn-info btn-sm" href="{{ route('proformainvoice.edit', ['id' => $proforma_invoice->id]) }}"><i class="fa fa-edit"></i> Edit </a>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
