@@ -22,7 +22,6 @@ class ProformaInvoiceController extends Controller
 
     public function create(Request $request)
     {
-
         $data['error']          = (isset($_GET['error']) ? 1 : 0);
         $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
 
@@ -40,15 +39,17 @@ class ProformaInvoiceController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $validatorMsg);
         if ($validator->fails()) {
-            $errorMsg = '';
-            foreach ($validator->errors()->messages() as $err) {
-                foreach ($err as $msg) {
-                    $errorMsg .= $msg . "<br>";
-                }
-            }
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = '';
+            // foreach ($validator->errors()->messages() as $err) {
+            //     foreach ($err as $msg) {
+            //         $errorMsg .= $msg . "<br>";
+            //     }
+            // }
+            // $previousUrl = parse_url(app('url')->previous());
 
-            return redirect()->to($previousUrl['path'] . '?' . http_build_query(['error' => '1', 'errorMsg' => $errorMsg]));
+            // return redirect()->to($previousUrl['path'] . '?' . http_build_query(['error' => '1', 'errorMsg' => $errorMsg]));
+
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
         if (isset($request->cek_bill_to)) {
@@ -84,6 +85,7 @@ class ProformaInvoiceController extends Controller
 
         $data['booking'] = BookingModel::getDetailBooking($request->t_booking_id);
         $data['bill_to_id'] = $request->cek_bill_to[0];
+        $data['reimburse'] = $request->reimburs;
         $data['companies'] = MasterModel::company_data();
         $data['addresses'] = MasterModel::get_address($data['bill_to_id']);
         $data['pics'] = MasterModel::get_pic($data['bill_to_id']);
@@ -129,12 +131,12 @@ class ProformaInvoiceController extends Controller
             $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$booking->client_id.'" />';
             $tabel1 .= '</td>';
             if ($quote->shipment_by == 'LAND') {
-                $tabel1 .= '<td>' . $shp->truck_size . '</td>';
+                $tabel1 .= '<td>' . $shp->truck_size . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '').'</td>';
             } else {
-                $tabel1 .= '<td>' . $shp->name_carrier . '</td>';
+                $tabel1 .= '<td>' . $shp->name_carrier . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '').'</td>';
             }
             $tabel1 .= '<td class="text-left">' . $shp->notes . ' | Routing: ' . $shp->routing . ' | Transit time : ' . $shp->transit_time . '</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '"></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
             $tabel1 .= '<td class="text-left">' . $shp->qty . '</td>';
             $tabel1 .= '<td class="text-left">' . $shp->code_currency . '</td>';
             $tabel1 .= '<td class="text-right">' . number_format($shp->sell_val, 2, ',', '.') . '</td>';
@@ -170,9 +172,9 @@ class ProformaInvoiceController extends Controller
             $tabel1 .= '<input type="hidden" name="cek_sell_chrg[]" value="'.$row->id.'" />';
             $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
             $tabel1 .= '</td>';
-            $tabel1 .= '<td class="text-left">' . $row->charge_name . '</td>';
+            $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '').'</td>';
             $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . '></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
             $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
             $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
             $tabel1 .= '<td class="text-right">' . number_format($row->sell_val, 2, ',', '.') . '</td>';
@@ -229,7 +231,7 @@ class ProformaInvoiceController extends Controller
 
     public function save(Request $request)
     {
-
+        // dd($request->all());
         $rules = [
             'client_id' => 'required',
             'proforma_invoice_no' => 'required|unique:t_proforma_invoice',
@@ -241,27 +243,29 @@ class ProformaInvoiceController extends Controller
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            $errorMsg = '';
-            foreach ($validator->errors()->messages() as $err) {
-                foreach ($err as $msg) {
-                    $errorMsg .= $msg . "<br>";
-                }
-            }
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = '';
+            // foreach ($validator->errors()->messages() as $err) {
+            //     foreach ($err as $msg) {
+            //         $errorMsg .= $msg . "<br>";
+            //     }
+            // }
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-                'cek_bill_to' => $request->cek_bill_to,
-            ];
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            //     'cek_bill_to' => $request->cek_bill_to,
+            // ];
 
-            if (isset($request->cek_sell_shp)) $errorParam['cek_sell_shp'] = $request->cek_sell_shp;
-            if (isset($request->cek_sell_chrg)) $errorParam['cek_sell_chrg'] = $request->cek_sell_chrg;
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // if (isset($request->cek_sell_shp)) $errorParam['cek_sell_shp'] = $request->cek_sell_shp;
+            // if (isset($request->cek_sell_chrg)) $errorParam['cek_sell_chrg'] = $request->cek_sell_chrg;
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            // return redirect()->to($url);
+
+            return redirect()->back()->with('errorForm', $validator->getMessageBag());
         }
 
         try {
@@ -278,7 +282,7 @@ class ProformaInvoiceController extends Controller
             $param['created_on'] = date('Y-m-d h:i:s');
 
             $proforma = ProformaInvoiceModel::saveProformaInvoice($param);
-
+            // dd($proforma);
             $paramDetail['id'] = '';
             $paramDetail['proforma_invoice_id'] = $proforma->id;
             if (isset($request->cek_sell_shp)) {
@@ -286,6 +290,7 @@ class ProformaInvoiceController extends Controller
                     $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
                     $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
                     $paramDetail['currency'] = $request->currency;
+                    $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                     $paramDetail['rate'] = 1;
                     $paramDetail['cost'] = $shp_dtl->cost;
                     $paramDetail['sell'] = $shp_dtl->sell;
@@ -313,6 +318,7 @@ class ProformaInvoiceController extends Controller
                     $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
                     $paramDetail['desc'] = $chrg_dtl->desc;
                     $paramDetail['currency'] = $request->currency;
+                    $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                     $paramDetail['rate'] = 1;
                     $paramDetail['cost'] = $chrg_dtl->cost;
                     $paramDetail['sell'] = $chrg_dtl->sell;
@@ -336,25 +342,28 @@ class ProformaInvoiceController extends Controller
                 }
             }
             DB::commit();
-            return redirect()->to(route('booking.edit', ['id' => $request->t_booking_id]) . '?' . http_build_query(['success' => '1', 'successMsg' => 'Proforma Invoice Created!']));
+            // return redirect()->to(route('booking.edit', ['id' => $request->t_booking_id]) . '?' . http_build_query(['success' => '1', 'successMsg' => 'Proforma Invoice Created!']));
+            return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Proforma Invoice Created!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            $errorMsg = $th->getMessage();
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = $th->getMessage();
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-                'cek_bill_to' => $request->cek_bill_to,
-            ];
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            //     'cek_bill_to' => $request->cek_bill_to,
+            // ];
 
-            if (isset($request->cek_sell_shp)) $errorParam['cek_sell_shp'] = $request->cek_sell_shp;
-            if (isset($request->cek_sell_chrg)) $errorParam['cek_sell_chrg'] = $request->cek_sell_chrg;
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // if (isset($request->cek_sell_shp)) $errorParam['cek_sell_shp'] = $request->cek_sell_shp;
+            // if (isset($request->cek_sell_chrg)) $errorParam['cek_sell_chrg'] = $request->cek_sell_chrg;
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            // return redirect()->to($url);
+
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 

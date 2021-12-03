@@ -99,17 +99,17 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Invoice Type</label>
+                                                    <label>Invoice Type {{ $reimburse }}</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" checked> Reguler<br>
+                                                        id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG" <?= (($reimburse == 'on') ? 'checked' : '') ?>> Reguler<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM"> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" onchange="loadSellCost({{ $booking->id }})" value="REM" <?= (($reimburse == 'on') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN"> Debit Note<br>
+                                                        id="invoice_type_debit_note" onchange="loadSellCost({{ $booking->id }})" value="DN"> Debit Note<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN"> Credit Note<br>
+                                                        id="invoice_type_credit_note" onchange="loadSellCost({{ $booking->id }})" value="CN"> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -309,7 +309,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <button class="btn btn-info">Confirm</button>
+                                    {{-- <button class="btn btn-info">Confirm</button> --}}
                                     <button class="btn btn-primary" onclick="$('#formProforma').submit()">Save</button>
                                 </div>
                             </div>
@@ -357,8 +357,6 @@
 
         /** Load Schedule **/
         function loadSellCost(id) {
-            console.log('loadSellCost');
-
             if (id != null) {
                 $.ajax({
                     type: "POST",
@@ -367,6 +365,7 @@
                         id: id,
                         shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
+                        invoice_type: $('input[name="invoice_type"]:checked').val(),
                     },
                     dataType: "html",
                     success: function (result) {

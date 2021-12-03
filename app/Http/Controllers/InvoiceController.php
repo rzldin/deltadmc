@@ -65,13 +65,14 @@ class InvoiceController extends Controller
             $param['created_on'] = date('Y-m-d h:i:s');
 
             $invoice = InvoiceModel::saveInvoice($param);
-
+            // dd($invoice);
             $details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->t_proforma_invoice_id)->get();
             foreach ($details as $key => $detail) {
                 // dd($invoice->id);
                 $paramDetail['id'] = 0;
                 $paramDetail['invoice_id'] = $invoice->id;
                 $paramDetail['t_mcharge_code_id'] = $detail->t_mcharge_code_id;
+                $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                 $paramDetail['desc'] = $detail->desc;
                 $paramDetail['currency'] = $request->currency;
                 $paramDetail['rate'] = 1;

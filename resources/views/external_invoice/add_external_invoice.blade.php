@@ -107,13 +107,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" <?= (($invoice_header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
+                                                        id="invoice_type_reg" onchange="loadDetail({{ $invoice_header->id }})" value="REG" <?= (($invoice_header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" <?= (($invoice_header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" onchange="loadDetail({{ $invoice_header->id }})" value="REM" <?= (($invoice_header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" <?= (($invoice_header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
+                                                        id="invoice_type_debit_note" onchange="loadDetail({{ $invoice_header->id }})" value="DN" <?= (($invoice_header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" <?= (($invoice_header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                        id="invoice_type_credit_note" onchange="loadDetail({{ $invoice_header->id }})" value="CN" <?= (($invoice_header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -378,7 +378,7 @@
                                             <input type="text" name="desc" id="desc" class="form-control">
                                         </td>
                                         <td style="text-align: center">
-                                            <input type="checkbox" name="reimburse_flag" id="reimburse_flag">
+                                            <input type="checkbox" name="reimburse_flag" id="reimburse_flag" onclick="return false">
                                         </td>
                                         <td>
                                             <input type="text" name="unit" id="unit" class="form-control">
@@ -503,7 +503,8 @@
                 type: 'post',
                 url: url,
                 data: {
-                    invoice_id: invoiceId
+                    invoice_id: invoiceId,
+                    invoice_type: $('input[name="invoice_type"]:checked').val(),
                 },
                 success: function(result) {
                     $('#tblSell').html(result);
@@ -523,7 +524,6 @@
                 })
             } else {
                 currency = $('#currency_dtl option:selected');
-                console.log(currency.text());
                 $('#currency_id').val(currency.val());
                 $('#currency_code').val(currency.text());
                 $('#modalMerge').modal('show');
@@ -532,16 +532,23 @@
 
         function loadDetailBefore() {
             var id = $.map($('input[name="detail_id"]:checked'), function(c){return c.value; });
+            var invoice_type = $('input[name="invoice_type"]:checked').val();
             console.log('id', id);
             url = `{{ route('external_invoice.loadDetailBefore') }}`;
             $.ajax({
                 type: 'post',
                 url: url,
                 data: {
-                    id: id
+                    id: id,
+                    invoice_type: invoice_type,
                 },
                 success: function(result) {
                     $('#tblBefore').html(result);
+                    if (invoice_type == 'REM') {
+                        $('#reimburse_flag').prop('checked', true);
+                    } else {
+                        $('#reimburse_flag').prop('checked', false);
+                    }
                     $('#unit').val();
                     $('#currency_dtl').val();
                     $('#rate').val();
