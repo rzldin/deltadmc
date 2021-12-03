@@ -226,7 +226,6 @@
                             <tbody>
                                 <tbody id="tblDetail">
                                 </tbody>
-
                                 <tr>
                                     <td><i class="fa fa-plus"></i></td>
                                     <td>
@@ -261,7 +260,7 @@
                                         <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
                                     </td>
                                     <td>
-                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetail(1)"><i class="fa fa-plus"></i> Add </button>
+                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetail(1)"><i class="fa fa-plus"></i><span id="add_address">Add</span></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -320,7 +319,7 @@
                                         <input type="checkbox" class="form-control" name="status" id="status_1" style="width: 15px" value="1" checked>Active
                                     </td>
                                     <td>
-                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="savexDetail(1)"><i class="fa fa-plus"></i> Add </button>
+                                        <button class="btn btn-block btn-outline-success btn-xs" onclick="savexDetail(1)"><i class="fa fa-plus"></i><span id="add_pic">Add</span></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -853,6 +852,7 @@
                     title: 'Please input Province!'
                 });
             }else{
+                $('#add_address').text('Please Wait...');
                 $.ajax({
                 type:"POST",
                 url:"{{ route('master.company_addAddress') }}",
@@ -867,6 +867,7 @@
                     status:$('#status_'+id).val()
                 },
                 success:function(result){
+                    $('#add_address').text('Add');
                     $('#address_type_'+id).val('').trigger('change');
                     $("#country_"+id).val('').trigger('change');
                     $('#province_'+id).val('');
@@ -899,6 +900,7 @@
                     title: 'Please input Email!'
                 });
             }else{
+                $('#add_pic').text('Please Wait ...').prop('disabled', true);
                 $.ajax({
                     type:"POST",
                     url:"{{ route('master.company_addPic') }}",
@@ -914,6 +916,7 @@
                     },
                     success:function(result){
                         console.log(result);
+                        $('#add_pic').text('Add').prop('disabled', false);
                         $('#pic_name_'+id).val('');
                         $("#phonex_"+id).val('');
                         $('#phonexx_'+id).val('');

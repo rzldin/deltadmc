@@ -539,7 +539,7 @@ class MasterController extends Controller
     /** Company */
     public function company()
     {
-        $data['list_data'] = MasterModel::company_data();
+        $data['list_data'] = MasterModel::company_data_full();
         return view('master.company')->with($data);
     }
 

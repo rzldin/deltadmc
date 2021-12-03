@@ -47,15 +47,8 @@
                                                     <label>Bill To</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_id" id="client_id"
-                                                        onchange="client_detail(this.value)">
-                                                        <option value="">Select Company</option>
-                                                        @foreach($companies as $company)
-                                                            <option value="{{ $company->id }}"
-                                                                <?= $company->id == $bill_to_id ? 'selected' : '' ?>>
-                                                                {{ $company->client_code }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" id="bill_to_name" class="form-control" value="{{ $companies->client_name }}" disabled>
+                                                    <input type="hidden" id="client_id" name="client_id" value="{{ $bill_to_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -365,7 +358,11 @@
                         id: id,
                         shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
+<<<<<<< HEAD
                         invoice_type: $('input[name="invoice_type"]:checked').val(),
+=======
+                        tipe_inv: '{{$tipe_inv}}'
+>>>>>>> 6ca522602527acb26940d738423b18ca98b44c31
                     },
                     dataType: "html",
                     success: function (result) {
