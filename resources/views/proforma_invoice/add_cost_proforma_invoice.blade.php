@@ -30,10 +30,11 @@
                     </div>
                     <div class="card-body">
                         <form method="post" action="{{ route('invoice.save_cost') }}"
-                            id="formProforma">
+                            id="formInvoice">
                             @csrf
                             <input type="hidden" name="id" id="id" value="" />
                             <input type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $booking->id }}" />
+                            <input type="hidden" name="activity" value="{{ $booking->activity }}">
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h3 class="card-title">Invoice Information</h3>
@@ -301,7 +302,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <button class="btn btn-primary" onclick="$('#formProforma').submit()">Save</button>
+                                    <button class="btn btn-primary" onclick="$('#formInvoice').submit()">Save</button>
                                 </div>
                             </div>
 
@@ -358,6 +359,7 @@
                         id: id,
                         shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
+                        tipe_inv: '{{$tipe_inv}}'
                     },
                     dataType: "html",
                     success: function (result) {

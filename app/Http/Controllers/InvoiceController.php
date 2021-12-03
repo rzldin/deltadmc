@@ -8,6 +8,7 @@ use App\InvoiceModel;
 use App\MasterModel;
 use App\ProformaInvoiceDetailModel;
 use App\ProformaInvoiceModel;
+use App\QuotationModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,9 +26,10 @@ class InvoiceController extends Controller
     {
         $data['proforma_header'] = ProformaInvoiceModel::getProformaInvoice($request->id)->first();
         $data['proforma_details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->id)->get();
-        $data['companies'] = MasterModel::company_data();
+        $data['companies'] = MasterModel::company_get($data['proforma_header']['client_id']);
         $data['addresses'] = MasterModel::get_address($data['proforma_header']['client_id']);
         $data['pics'] = MasterModel::get_pic($data['proforma_header']['client_id']);
+        $data['bill_to_id'] = $data['proforma_header']['client_id'];
         $data['currency']       = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($data['proforma_header']['t_booking_id']);
         $data['goods'] = BookingModel::get_commodity($data['proforma_header']['t_booking_id']);
@@ -114,11 +116,10 @@ class InvoiceController extends Controller
 
     public function save_cost(Request $request)
     {
-
         $rules = [
             'client_id' => 'required',
-            'proforma_invoice_no' => 'required|unique:t_proforma_invoice',
-            'proforma_invoice_date' => 'required',
+            'invoice_no' => 'required|unique:t_invoice',
+            'invoice_date' => 'required',
             'currency' => 'required',
             'pol_id' => 'required',
             'pod_id' => 'required',
@@ -139,24 +140,27 @@ class InvoiceController extends Controller
                 'errorMsg' => $errorMsg,
                 '_token' => $request->_token,
                 't_booking_id' => $request->t_booking_id,
-                'cek_bill_to' => $request->cek_bill_to,
+                'cek_paid_to' => $request->cek_paid_to,
             ];
 
             if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
             if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
             $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            echo $url;die();
+            // return redirect()->to($url);
         }
 
         try {
             DB::beginTransaction();
 
             $param = $request->all();
-            $invoice_id = DB::table('t_invoice_detail')->insertGetId([
+
+            $invoice_id = DB::table('t_invoice')->insertGetId([
                     'tipe_inv' => 1,
-                    't_proforoma_invoice_id' => 0,
-                    't_booking_id' => $request->t_booking_id,
+                    't_proforma_invoice_id' => 0,
+                    't_booking_id'=> $request->t_booking_id,
+                    'activity' => $request->activity,
                     'client_id' => $request->client_id,
                     'client_addr_id' => $request->client_addr_id,
                     'client_pic_id' => $request->client_pic_id,
@@ -181,7 +185,6 @@ class InvoiceController extends Controller
                 ]
             );
 
-            $paramDetail['id'] = '';
             $pno = 0;
             if (isset($request->cek_cost_shp)) {
                 foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
@@ -189,11 +192,9 @@ class InvoiceController extends Controller
                     DB::table('t_invoice_detail')->insert([
                             'invoice_id'     => $invoice_id,
                             'position_no'    => $pno++,//Position
-                            't_booking_id'   => $id,
-                            'position_no'    => $no++,
-                            'desc'           => $shp_dtl->name_carrier,
+                            'desc'           => $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time,
                             'reimburse_flag' => $shp_dtl->reimburse_flag,
-                            'currency'       => $shp_dtl->t_mcurrency_id,
+                            'currency'       => $request->currency,
                             'rate'           => $shp_dtl->rate,
                             'cost'           => $shp_dtl->cost,
                             'sell'           => $shp_dtl->sell,
@@ -202,8 +203,6 @@ class InvoiceController extends Controller
                             'sell_val'       => $shp_dtl->sell_val,
                             'vat'            => $shp_dtl->vat,
                             'subtotal'       => ($shp_dtl->qty * $shp_dtl->sell_val)+$shp_dtl->vat,
-                            'routing'        => $shp->routing,
-                            'transit_time'   => $shp->transit_time,
                             'created_by'     => Auth::user()->name,
                             'created_on'     => date('Y-m-d h:i:s')
                         ]
@@ -218,18 +217,15 @@ class InvoiceController extends Controller
                 }
             }
 
-            if (isset($request->cek_sell_chrg)) {
-                foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
-                    $chrg_dtl       = BookingModel::getChargesDetailById($chrg_dtl_id);
-                    // $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
+            if (isset($request->cek_cost_chrg)) {
+                foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
+                    $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
                     DB::table('t_invoice_detail')->insert([
                             'invoice_id'     => $invoice_id,
                             'position_no'    => $pno++,//Position
-                            't_booking_id'   => $id,
-                            'position_no'    => $no++,
-                            'desc'           => $chrg_dtl->name_carrier,
+                            'desc'           => $chrg_dtl->desc,
                             'reimburse_flag' => $chrg_dtl->reimburse_flag,
-                            'currency'       => $chrg_dtl->t_mcurrency_id,
+                            'currency'       => $request->currency,
                             'rate'           => $chrg_dtl->rate,
                             'cost'           => $chrg_dtl->cost,
                             'sell'           => $chrg_dtl->sell,
@@ -238,28 +234,27 @@ class InvoiceController extends Controller
                             'sell_val'       => $chrg_dtl->sell_val,
                             'vat'            => $chrg_dtl->vat,
                             'subtotal'       => ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat,
-                            'routing'        => $shp->routing,
-                            'transit_time'   => $shp->transit_time,
+                            'routing'        => $chrg_dtl->routing,
+                            'transit_time'   => $chrg_dtl->transit_time,
                             'created_by'     => Auth::user()->name,
                             'created_on'     => date('Y-m-d h:i:s')
                         ]
                     );
-
-                    ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
 
                     $chrgDtlParam['id'] = $chrg_dtl_id;
                     $chrgDtlParam['t_invoice_cost_id'] = $invoice_id;
                     // $chrgDtlParam['invoice_type'] = $request->invoice_type;
                     $chrgDtlParam['created_by'] = Auth::user()->name;
                     $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
-                    QuotationModel::saveChargeDetail($chrgDtlParam);
+                    QuotationModel::saveShipDetail($chrgDtlParam);
                 }
             }
             DB::commit();
-            return redirect()->to(route('booking.edit', ['id' => $request->t_booking_id]) . '?' . http_build_query(['success' => '1', 'successMsg' => 'Proforma Invoice Created!']));
+            return redirect()->route('invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
             $errorMsg = $th->getMessage();
+            print_r($errorMsg);die();
             $previousUrl = parse_url(app('url')->previous());
 
             $errorParam = [
@@ -267,11 +262,11 @@ class InvoiceController extends Controller
                 'errorMsg' => $errorMsg,
                 '_token' => $request->_token,
                 't_booking_id' => $request->t_booking_id,
-                'cek_bill_to' => $request->cek_bill_to,
+                'cek_paid_to' => $request->cek_paid_to,
             ];
 
-            if (isset($request->cek_sell_shp)) $errorParam['cek_sell_shp'] = $request->cek_sell_shp;
-            if (isset($request->cek_sell_chrg)) $errorParam['cek_sell_chrg'] = $request->cek_sell_chrg;
+            if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
+            if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
             $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
             return redirect()->to($url);

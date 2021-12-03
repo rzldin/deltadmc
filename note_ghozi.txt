@@ -1,3 +1,7 @@
+ALTER TABLE t_bcharges_dtl
+ADD COLUMN `paid_to_id` int(11) NULL AFTER `paid_to`,
+MODIFY COLUMN `bill_to_id` int(11) NULL DEFAULT NULL AFTER `bill_to`;
 ALTER TABLE `t_quote_shipg_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoice_id`;
 ALTER TABLE `t_bcharges_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoice_id`;
 ALTER TABLE `t_invoice` ADD `tipe_inv` TINYINT(1) NOT NULL DEFAULT '0' AFTER `id`;
+ALTER TABLE `t_proforma_invoice` ADD `activity` VARCHAR(50) NOT NULL AFTER `proforma_invoice_no`;

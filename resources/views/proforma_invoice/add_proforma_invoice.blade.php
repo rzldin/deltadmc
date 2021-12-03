@@ -360,6 +360,7 @@
                         id: id,
                         shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
+                        tipe_inv: '{{$tipe_inv}}'
                     },
                     dataType: "html",
                     success: function (result) {

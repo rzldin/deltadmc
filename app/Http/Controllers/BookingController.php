@@ -1646,7 +1646,7 @@ class BookingController extends Controller
                 // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
                 $tabel .= '<td>';
                 if ($row->t_invoice_cost_id == null) {
-                    $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$noloop.')" name="cek_cost_shp[]" value="'.$row->id.'" id="cekx_'.$noloop.'">
+                    $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$noloop.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$noloop.'">
                     <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$noloop.'"/>';
                 }
                 $tabel .=  '</td>';

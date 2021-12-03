@@ -47,15 +47,8 @@
                                                     <label>Bill To</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_id" id="client_id"
-                                                        onchange="client_detail(this.value)">
-                                                        <option value="">Select Company</option>
-                                                        @foreach($companies as $company)
-                                                            <option value="{{ $company->id }}"
-                                                                <?= $company->id == $header['client_id'] ? 'selected' : '' ?>>
-                                                                {{ $company->client_code }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" id="bill_to_name" class="form-control" value="{{ $companies->client_name }}" disabled>
+                                                    <input type="hidden" id="client_id" name="client_id" value="{{ $bill_to_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -68,7 +61,7 @@
                                                         <option value="">Select Address</option>
                                                         @foreach($addresses as $address)
                                                             <option value="{{ $address->id }}"
-                                                                <?= $company->id == $header['client_addr_id'] ? 'selected' : '' ?>>
+                                                                <?= $address->id == $header['client_addr_id'] ? 'selected' : '' ?>>
                                                                 {{ $address->address }}</option>
                                                         @endforeach
                                                     </select>
@@ -84,7 +77,7 @@
                                                         <option value="">Select PIC</option>
                                                         @foreach($pics as $pic)
                                                             <option value="{{ $pic->id }}"
-                                                                <?= $company->id == $header['client_pic_id'] ? 'selected' : '' ?>>
+                                                                <?= $pic->id == $header['client_pic_id'] ? 'selected' : '' ?>>
                                                                 {{ $pic->name }}</option>
                                                         @endforeach
                                                     </select>
