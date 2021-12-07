@@ -101,13 +101,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" <?= (($proforma_header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
+                                                        id="invoice_type_reg" onchange="checkReimburse()" value="REG" <?= (($proforma_header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" <?= (($proforma_header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" onchange="checkReimburse()" value="REM" <?= (($proforma_header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" <?= (($proforma_header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
+                                                        id="invoice_type_debit_note" onchange="checkReimburse()" value="DN" <?= (($proforma_header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" <?= (($proforma_header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                        id="invoice_type_credit_note" onchange="checkReimburse()" value="CN" <?= (($proforma_header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -305,7 +305,7 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
                                                     <td>{{ $detail->desc }}</td>
-                                                    <td>{{ $proforma_header->reimburse_flag }}</td>
+                                                    <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" onclick="return false;" /></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
                                                     <td>{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
@@ -323,7 +323,11 @@
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
                                     {{-- <button type="button" class="btn btn-info" onclick="confirmInvoice()">Create External Invoice</button> --}}
+<<<<<<< HEAD
+                                    <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Save</button>
+=======
                                     <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Create External Invoice</button>
+>>>>>>> 6ca522602527acb26940d738423b18ca98b44c31
                                 </div>
                             </div>
 
@@ -336,6 +340,14 @@
 </section>
 @push('after-scripts')
     <script>
+        function checkReimburse() {
+            if ($('input[name="invoice_type"]:checked').val() == 'REM') {
+                $('input[name="reimburs"]').prop('checked', true);
+            } else {
+                $('input[name="reimburs"]').prop('checked', false);
+            }
+        }
+
         function confirmInvoice() {
             Swal.fire({
                 title: 'Are you sure to create Invoice?',
@@ -392,6 +404,9 @@
             }
         }
 
+        $(function() {
+            checkReimburse();
+        });
     </script>
 @endpush
 @endsection

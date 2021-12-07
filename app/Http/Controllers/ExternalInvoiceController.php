@@ -84,7 +84,7 @@ class ExternalInvoiceController extends Controller
                 $html .= '</td>';
                 $html .= '<td class="text-left">' . $detail['charge_name'] . '</td>';
                 $html .= '<td class="text-left">' . $detail['desc'] . '</td>';
-                $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($key + 1) . '" ' . $style . '></td>';
+                $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($key + 1) . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                 $html .= '<td class="text-left">' . $detail['qty'] . '</td>';
                 $html .= '<td class="text-left">' . $detail['currency_code'] . '</td>';
                 $html .= '<td class="text-right">' . number_format($detail['sell_val'], 2, ',', '.') . '</td>';
@@ -138,7 +138,7 @@ class ExternalInvoiceController extends Controller
                 $html .= '</td>';
                 $html .= '<td class="text-left">' . $details[$id]['charge_name'] . '</td>';
                 $html .= '<td class="text-left">' . $details[$id]['desc'] . '</td>';
-                $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($index + 1) . '" ' . $style . '></td>';
+                $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($index + 1) . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                 $html .= '<td class="text-left">' . $details[$id]['qty'] . '</td>';
                 $html .= '<td class="text-left">' . $details[$id]['currency_code'] . '</td>';
                 $html .= '<td class="text-right">' . number_format($details[$id]['sell_val'], 2, ',', '.') . '</td>';
@@ -285,6 +285,7 @@ class ExternalInvoiceController extends Controller
                 $paramDetail['id'] = 0;
                 $paramDetail['external_invoice_id'] = $invoice->id;
                 $paramDetail['t_mcharge_code_id'] = $detail['t_mcharge_code_id'];
+                $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                 $paramDetail['desc'] = $detail['desc'];
                 $paramDetail['currency'] = $request['currency'];
                 $paramDetail['rate'] = $request['rate'];
@@ -305,7 +306,7 @@ class ExternalInvoiceController extends Controller
 
             DB::commit();
 
-            return redirect()->route('invoice.index')->with('success', 'Saved!');
+            return redirect()->route('external_invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

@@ -298,7 +298,7 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
                                                     <td>{{ $detail->desc }}</td>
-                                                    <td>{{ $header->reimburse_flag }}</td>
+                                                    <td align="center"> <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
                                                     <td>{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
