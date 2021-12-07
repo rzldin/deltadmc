@@ -5,3 +5,7 @@ ALTER TABLE `t_quote_shipg_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoic
 ALTER TABLE `t_bcharges_dtl` ADD `t_invoice_cost_id` INT NULL AFTER `t_invoice_id`;
 ALTER TABLE `t_invoice` ADD `tipe_inv` TINYINT(1) NOT NULL DEFAULT '0' AFTER `id`;
 ALTER TABLE `t_proforma_invoice` ADD `activity` VARCHAR(50) NOT NULL AFTER `proforma_invoice_no`;
+
+-----
+
+ALTER TABLE `t_invoice` ADD `total_invoice` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `rate`;

@@ -322,6 +322,14 @@
         })
       })
 
+      $('#date_id').datetimepicker({
+          format: 'YYYY-MM-DD',
+      });
+
+      $('#date_jt').datetimepicker({
+          format: 'YYYY-MM-DD'
+      });
+
       $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
     </script>
 

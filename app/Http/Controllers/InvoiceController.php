@@ -68,6 +68,7 @@ class InvoiceController extends Controller
 
             $invoice = InvoiceModel::saveInvoice($param);
 
+            $total_sub = 0;
             $details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->t_proforma_invoice_id)->get();
             foreach ($details as $key => $detail) {
                 // dd($invoice->id);
@@ -89,7 +90,12 @@ class InvoiceController extends Controller
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
                 InvoiceDetailModel::saveInvoiceDetail($paramDetail);
+                $total_sub += $detail->subtotal;
             }
+
+            DB::table('t_invoice')->where('id', $invoice->id)->update([
+                'total_invoice' => $total_sub
+            ]);
 
             DB::commit();
 
@@ -145,10 +151,9 @@ class InvoiceController extends Controller
 
             if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
             if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            echo $url;die();
-            // return redirect()->to($url);
+            return redirect()->to($previousUrl);
         }
 
         try {
@@ -186,9 +191,11 @@ class InvoiceController extends Controller
             );
 
             $pno = 0;
+            $total_sub = 0;
             if (isset($request->cek_cost_shp)) {
                 foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
                     $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
+                    $sub_total = ($shp_dtl->qty * $shp_dtl->sell_val)+$shp_dtl->vat;
                     DB::table('t_invoice_detail')->insert([
                             'invoice_id'     => $invoice_id,
                             'position_no'    => $pno++,//Position
@@ -202,7 +209,7 @@ class InvoiceController extends Controller
                             'cost_val'       => $shp_dtl->cost_val,
                             'sell_val'       => $shp_dtl->sell_val,
                             'vat'            => $shp_dtl->vat,
-                            'subtotal'       => ($shp_dtl->qty * $shp_dtl->sell_val)+$shp_dtl->vat,
+                            'subtotal'       => $sub_total,
                             'created_by'     => Auth::user()->name,
                             'created_on'     => date('Y-m-d h:i:s')
                         ]
@@ -214,12 +221,14 @@ class InvoiceController extends Controller
                     $shpDtlParam['created_by'] = Auth::user()->name;
                     $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
                     QuotationModel::saveShipDetail($shpDtlParam);
+                    $total_sub += $sub_total;
                 }
             }
 
             if (isset($request->cek_cost_chrg)) {
                 foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
                     $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
+                    $sub_total = ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat;
                     DB::table('t_invoice_detail')->insert([
                             'invoice_id'     => $invoice_id,
                             'position_no'    => $pno++,//Position
@@ -233,7 +242,7 @@ class InvoiceController extends Controller
                             'cost_val'       => $chrg_dtl->cost_val,
                             'sell_val'       => $chrg_dtl->sell_val,
                             'vat'            => $chrg_dtl->vat,
-                            'subtotal'       => ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat,
+                            'subtotal'       => $sub_total,
                             'routing'        => $chrg_dtl->routing,
                             'transit_time'   => $chrg_dtl->transit_time,
                             'created_by'     => Auth::user()->name,
@@ -246,9 +255,14 @@ class InvoiceController extends Controller
                     // $chrgDtlParam['invoice_type'] = $request->invoice_type;
                     $chrgDtlParam['created_by'] = Auth::user()->name;
                     $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
-                    QuotationModel::saveShipDetail($chrgDtlParam);
+                    QuotationModel::saveChargeDetail($chrgDtlParam);
+                    $total_sub += $sub_total;
                 }
             }
+
+            DB::table('t_invoice')->where('id', $invoice_id)->update([
+                'total_invoice' => $total_sub
+            ]);
             DB::commit();
             return redirect()->route('invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {

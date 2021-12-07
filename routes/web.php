@@ -365,6 +365,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/external/create/loadDetailAfter', 'ExternalInvoiceController@loadDetailAfter')->name('external_invoice.loadDetailAfter');
     Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
 
+    /** Pembayaran **/
+    Route::get('/pembayaran/index', 'PembayaranController@index')->name('pembayaran.index');
+    Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');
+    Route::post('/pembayaran/save', 'PembayaranController@save')->name('pembayaran.save');
+    Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
+    Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');
@@ -376,7 +383,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/user/roles_doEdit', 'ManagementController@user_rolesdoEdit')->name('user.roles_doEdit');
     Route::post('/user/roles_get', 'ManagementController@user_roles_get')->name('user.roles_get');
     Route::get('/master/roles_delete/{id}', 'ManagementController@user_rolesDelete')->name('user.roles_delete');
-
 
     /** Profile */
     Route::get('/user/{id}', 'UserController@index')->name('profile');
