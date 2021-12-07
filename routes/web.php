@@ -372,7 +372,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
     Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
 
-    /** Kas */
+    /** Kas Masuk*/
     Route::get('/kas/masuk', 'KasMasukController@indexKasMasuk')->name('kas.masuk.index');
     Route::get('/kas/masuk/add', 'KasMasukController@addKasMasuk')->name('kas.masuk.add');
     Route::post('/kas/masuk/loadDetail', 'KasMasukController@loadDetailKasMasuk')->name('kas.masuk.loadDetail');
@@ -380,6 +380,15 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/kas/masuk/deleteDetail', 'KasMasukController@deleteDetailKasMasuk')->name('kas.masuk.deleteDetail');
     Route::post('/kas/masuk', 'KasMasukController@saveKasMasuk')->name('kas.masuk.save');
     Route::get('/kas/masuk/view/{id}', 'KasMasukController@viewKasMasuk')->name('kas.masuk.view');
+
+    /** Kas Keluar */
+    Route::get('/kas/keluar', 'KasKeluarController@indexKasKeluar')->name('kas.keluar.index');
+    Route::get('/kas/keluar/add', 'KasKeluarController@addKasKeluar')->name('kas.keluar.add');
+    Route::post('/kas/keluar/loadDetail', 'KasKeluarController@loadDetailKasKeluar')->name('kas.keluar.loadDetail');
+    Route::post('/kas/keluar/saveDetail', 'KasKeluarController@saveDetailKasKeluar')->name('kas.keluar.saveDetail');
+    Route::post('/kas/keluar/deleteDetail', 'KasKeluarController@deleteDetailKasKeluar')->name('kas.keluar.deleteDetail');
+    Route::post('/kas/keluar', 'KasKeluarController@saveKasKeluar')->name('kas.keluar.save');
+    Route::get('/kas/keluar/view/{id}', 'KasKeluarController@viewKasKeluar')->name('kas.keluar.view');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

@@ -6,13 +6,13 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Kas Masuk
+                    Kas Keluar
                 </h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Kas Masuk</li>
+                    <li class="breadcrumb-item active">Kas Keluar</li>
                 </ol>
             </div>
         </div>
@@ -29,13 +29,13 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ route('kas.masuk.save') }}"
-                            id="formKasMasuk">
+                        <form method="post" action="{{ route('kas.keluar.save') }}"
+                            id="formKasKeluar">
                             @csrf
                             <input type="hidden" name="id">
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Kas Masuk</h3>
+                                    <h3 class="card-title">Kas Keluar</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -45,13 +45,13 @@
                                                     <label>Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input-group date" id="kas_masuk_date_picker"
+                                                    <div class="input-group date" id="kas_keluar_date_picker"
                                                         data-target-input="nearest">
-                                                        <input type="text" name="kas_masuk_date"
-                                                            id="kas_masuk_date"
+                                                        <input type="text" name="kas_keluar_date"
+                                                            id="kas_keluar_date"
                                                             class="form-control datetimepicker-input"
-                                                            data-target="#kas_masuk_date_picker" value="{{ date('d/m/Y') }}" />
-                                                        <div class="input-group-append" data-target="#kas_masuk_date_picker"
+                                                            data-target="#kas_keluar_date_picker" value="{{ date('d/m/Y') }}" />
+                                                        <div class="input-group-append" data-target="#kas_keluar_date_picker"
                                                             data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                             </div>
@@ -223,7 +223,7 @@
                                                     <input type="number" id="dtl_amount" class="form-control" value="0">
                                                 </td>
                                                 <td>
-                                                    <a href="javascript:void(0);" class="btn btn-xs btn-success" onclick="saveDetailKasMasuk()">
+                                                    <a href="javascript:void(0);" class="btn btn-xs btn-success" onclick="saveDetailKasKeluar()">
                                                         <i class="fa fa-save"></i>
                                                     </a>
                                                 </td>
@@ -280,10 +280,10 @@
             });
         }
 
-        function loadDetailKasMasuk() {
+        function loadDetailKasKeluar() {
             $.ajax({
                 type: 'post',
-                url: `{{ route('kas.masuk.loadDetail') }}`,
+                url: `{{ route('kas.keluar.loadDetail') }}`,
                 success: function(result) {
                     $('#tblDtl').html(result);
                     calculateTotal();
@@ -291,7 +291,7 @@
             });
         }
 
-        function saveDetailKasMasuk() {
+        function saveDetailKasKeluar() {
             let account_id = $('#dtl_account_id');
             let account_number = $('#dtl_account_number');
             let account_name = $('#dtl_account_name');
@@ -302,7 +302,7 @@
             } else {
                 $.ajax({
                     type: 'post',
-                    url: `{{ route('kas.masuk.saveDetail') }}`,
+                    url: `{{ route('kas.keluar.saveDetail') }}`,
                     data: {
                         account_id: account_id.val(),
                         account_number: account_number.val(),
@@ -310,7 +310,7 @@
                         amount: amount.val(),
                     },
                     success: function() {
-                        loadDetailKasMasuk();
+                        loadDetailKasKeluar();
                         account_id.val('');
                         account_id.select2();
                         account_number.val('');
@@ -323,15 +323,15 @@
 
         }
 
-        function deleteDetailKasMasuk(key) {
+        function deleteDetailKasKeluar(key) {
             $.ajax({
                 type: 'post',
-                url: `{{ route('kas.masuk.deleteDetail') }}`,
+                url: `{{ route('kas.keluar.deleteDetail') }}`,
                 data: {
                     key: key,
                 },
                 success: function() {
-                    loadDetailKasMasuk();
+                    loadDetailKasKeluar();
                     showToast('success', 'Detail deleted!');
                 }
             });
@@ -353,8 +353,8 @@
 
         $(function() {
             $('.select2').select2();
-            loadDetailKasMasuk();
-            $('#kas_masuk_date_picker').datetimepicker({
+            loadDetailKasKeluar();
+            $('#kas_keluar_date_picker').datetimepicker({
                 format: 'L'
             });
             $('#transaction_date_picker').datetimepicker({
