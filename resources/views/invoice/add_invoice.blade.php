@@ -323,11 +323,7 @@
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
                                     {{-- <button type="button" class="btn btn-info" onclick="confirmInvoice()">Create External Invoice</button> --}}
-<<<<<<< HEAD
                                     <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Save</button>
-=======
-                                    <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Create External Invoice</button>
->>>>>>> 6ca522602527acb26940d738423b18ca98b44c31
                                 </div>
                             </div>
 

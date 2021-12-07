@@ -372,6 +372,15 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
     Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
 
+    /** Kas */
+    Route::get('/kas/masuk', 'KasMasukController@indexKasMasuk')->name('kas.masuk.index');
+    Route::get('/kas/masuk/add', 'KasMasukController@addKasMasuk')->name('kas.masuk.add');
+    Route::post('/kas/masuk/loadDetail', 'KasMasukController@loadDetailKasMasuk')->name('kas.masuk.loadDetail');
+    Route::post('/kas/masuk/saveDetail', 'KasMasukController@saveDetailKasMasuk')->name('kas.masuk.saveDetail');
+    Route::post('/kas/masuk/deleteDetail', 'KasMasukController@deleteDetailKasMasuk')->name('kas.masuk.deleteDetail');
+    Route::post('/kas/masuk', 'KasMasukController@saveKasMasuk')->name('kas.masuk.save');
+    Route::get('/kas/masuk/view/{id}', 'KasMasukController@viewKasMasuk')->name('kas.masuk.view');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');
