@@ -242,6 +242,11 @@ class MasterModel extends Model
         return DB::table('t_maccount')->where('parent_account', null)->orderBy('account_name')->get();
     }
 
+    public static function bank_account()
+    {
+        return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100'])->orderBy('account_name')->get();
+    }
+
     public static function charge_group()
     {
         return DB::table('t_mcharge_group')->get();
