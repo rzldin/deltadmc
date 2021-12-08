@@ -6,13 +6,13 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Kas Masuk
+                    Cash In
                 </h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Kas Masuk</li>
+                    <li class="breadcrumb-item active">Cash In</li>
                 </ol>
             </div>
         </div>
@@ -35,7 +35,7 @@
                             <input type="hidden" name="id">
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Kas Masuk</h3>
+                                    <h3 class="card-title">Cash In</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
