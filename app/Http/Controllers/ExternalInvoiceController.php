@@ -280,6 +280,7 @@ class ExternalInvoiceController extends Controller
 
             $details = $request->session()->get('invoice_details');
             // dd($details);
+            $total_invoice = 0;
             foreach ($details as $key => $detail) {
                 // dd($invoice->id);
                 $paramDetail['id'] = 0;
@@ -301,9 +302,13 @@ class ExternalInvoiceController extends Controller
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
+                $total_invoice += $detail['subtotal'];
                 ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
             }
 
+            DB::table('t_external_invoice')->where('id', $invoice->id)->update([
+                'total_invoice' => $total_invoice
+            ]);
             DB::commit();
 
             return redirect()->route('external_invoice.index')->with('success', 'Saved!');

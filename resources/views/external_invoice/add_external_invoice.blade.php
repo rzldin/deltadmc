@@ -33,6 +33,7 @@
                             id="formInvoice">
                             @csrf
                             <input type="hidden" name="id" value="0">
+                            <input type="hidden" name="total_invoice" value="{{ $invoice_header->total_invoice }}">
                             <input type="hidden" name="t_invoice_id" id="t_invoice_id" value="{{ $invoice_header->id }}" />
                             <input type="hidden" name="activity" value="{{ $invoice_header->activity }}">
                             <input type="hidden" name="t_booking_id" value="{{ $invoice_header->t_booking_id }}">

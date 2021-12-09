@@ -39,8 +39,8 @@
             <!-- /.card-header -->
             <!-- form start -->
                 <form action="{{ route('pembayaran.save') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
-                {{ csrf_field() }} 
-                <input type="hidden" name="jenis_pmb" value="1">  
+                {{ csrf_field() }}   
+                <input type="hidden" name="jenis_pmb" value="0">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">

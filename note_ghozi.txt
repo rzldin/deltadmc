@@ -9,3 +9,11 @@ ALTER TABLE `t_proforma_invoice` ADD `activity` VARCHAR(50) NOT NULL AFTER `prof
 -----
 
 ALTER TABLE `t_invoice` ADD `total_invoice` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `rate`;
+ALTER TABLE `t_invoice` ADD `invoice_bayar` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `total_invoice`;
+ALTER TABLE `t_invoice` ADD `flag_bayar` TINYINT(1) NOT NULL DEFAULT '0' AFTER `invoice_bayar`, ADD `tanggal_lunas` DATE NULL AFTER `flag_bayar`;
+ALTER TABLE `t_invoice` ADD `modified_by` INT(3) NULL AFTER `created_on`, ADD `modified_at` DATETIME NULL AFTER `modified_by`;
+
+ALTER TABLE `t_external_invoice` ADD `total_invoice` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `rate`;
+ALTER TABLE `t_external_invoice` ADD `invoice_bayar` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `total_invoice`;
+ALTER TABLE `t_external_invoice` ADD `flag_bayar` TINYINT(1) NOT NULL DEFAULT '0' AFTER `invoice_bayar`, ADD `tanggal_lunas` DATE NULL AFTER `flag_bayar`;
+ALTER TABLE `t_external_invoice` ADD `modified_by` INT(3) NULL AFTER `created_on`, ADD `modified_at` DATETIME NULL AFTER `modified_by`;

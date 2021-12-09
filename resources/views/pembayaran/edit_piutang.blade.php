@@ -7,11 +7,11 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Edit Pembayaran Hutang</h1>
+                <h1>Edit Pembayaran Piutang</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('pembayaran.index') }}">List Pembayaran Hutang</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('pembayaran.index') }}">List Pembayaran Piutang</a></li>
                     <li class="breadcrumb-item active">Edit Data</li>
                 </ol>
             </div>
@@ -166,7 +166,7 @@
               </tbody>
             </table>
             <br>
-            <div class="separator_hr">List Hutang</div>
+            <div class="separator_hr">List Piutang</div>
             <table class="table table-bordered">
               <thead>
                 <tr>
@@ -315,7 +315,7 @@ function loadInvoice(){
     $('.spinner_load').show();
     $.ajax({
         type:"POST",
-        url:"{{ route('pembayaran.list_hutang') }}",
+        url:"{{ route('pembayaran.list_piutang') }}",
         data:{
             id : {{ $header->id_company }},
             id_pmb : {{ $header->id }},
@@ -355,7 +355,7 @@ function hitungSubTotalSJ(){
 
 function input_bayar(id){
   $.ajax({
-    url: "{{ route('pembayaran.getDataInv') }}",
+    url: "{{ route('pembayaran.getDataInvExt') }}",
     type: "POST",
     data: {
         id:id
@@ -369,10 +369,11 @@ function input_bayar(id){
       $("#alert-danger").hide();
       
       $("#id_modal_inv").val(result['id']);
-      $("#invoice_no").val(result['invoice_no']);
-      $("#invoice_date").val(result['invoice_date']);
-      $('#nilai_bayar').val(0);
+      $("#invoice_no").val(result['external_invoice_no']);
+      $("#invoice_date").val(result['external_invoice_date']);
       $("#total_invoice").val(numberWithCommas(result['total_invoice']));
+      // $("#nominal_sdh_bayar").val(numberWithCommas(result['nilai_total_bayar']));
+      $('#nilai_bayar').val(0);
       $("#invoice_bayar").val(numberWithCommas(result['invoice_bayar']));
     }
   });
@@ -405,7 +406,7 @@ $('#tambah_inv').click(function(event) {
 function proceed_bayar(){
   $('#tambah_inv_txt').text('Please Wait ...');
   $.ajax({// Run getUnlockedCall() and return values to form
-      url: "{{ route('pembayaran.saveDetailPembayaran') }}",
+      url: "{{ route('pembayaran.saveDetailPembayaranPiutang') }}",
       data:{
          id_pmb:'{{ $header->id }}',
          jenis_pmb:'{{ $header->jenis_pmb }}',
@@ -441,7 +442,7 @@ function proceed_bayar(){
 
 function delete_detail(id){
   $.ajax({
-    url: "{{ route('pembayaran.deleteDetailPembayaran') }}",
+    url: "{{ route('pembayaran.deleteDetailPembayaranPiutang') }}",
     type: "POST",
     data: {
         id:id
