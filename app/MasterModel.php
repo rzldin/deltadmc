@@ -297,4 +297,9 @@ class MasterModel extends Model
         return DB::table('t_mbl_issued')->get();
     }
 
+    public static function getKasAccount()
+    {
+        return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100']);
+    }
+
 }

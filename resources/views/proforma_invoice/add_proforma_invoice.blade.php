@@ -358,11 +358,8 @@
                         id: id,
                         shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
-<<<<<<< HEAD
                         invoice_type: $('input[name="invoice_type"]:checked').val(),
-=======
                         tipe_inv: '{{$tipe_inv}}'
->>>>>>> 6ca522602527acb26940d738423b18ca98b44c31
                     },
                     dataType: "html",
                     success: function (result) {

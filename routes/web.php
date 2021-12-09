@@ -386,6 +386,29 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('/pembayaran/saveDetailPembayaranPiutang', 'PembayaranController@saveDetailPembayaranPiutang')->name('pembayaran.saveDetailPembayaranPiutang');
         Route::post('/pembayaran/deleteDetailPembayaranPiutang', 'PembayaranController@deleteDetailPembayaranPiutang')->name('pembayaran.deleteDetailPembayaranPiutang');
 
+    /** Kas Masuk*/
+    Route::get('/cash/in', 'KasMasukController@indexKasMasuk')->name('kas.masuk.index');
+    Route::get('/cash/in/add', 'KasMasukController@addKasMasuk')->name('kas.masuk.add');
+    Route::post('/cash/in/loadDetail', 'KasMasukController@loadDetailKasMasuk')->name('kas.masuk.loadDetail');
+    Route::post('/cash/in/saveDetail', 'KasMasukController@saveDetailKasMasuk')->name('kas.masuk.saveDetail');
+    Route::post('/cash/in/deleteDetail', 'KasMasukController@deleteDetailKasMasuk')->name('kas.masuk.deleteDetail');
+    Route::post('/cash/in', 'KasMasukController@saveKasMasuk')->name('kas.masuk.save');
+    Route::get('/cash/in/view/{id}', 'KasMasukController@viewKasMasuk')->name('kas.masuk.view');
+
+    /** Kas Keluar */
+    Route::get('/cash/out', 'KasKeluarController@indexKasKeluar')->name('kas.keluar.index');
+    Route::get('/cash/out/add', 'KasKeluarController@addKasKeluar')->name('kas.keluar.add');
+    Route::post('/cash/out/loadDetail', 'KasKeluarController@loadDetailKasKeluar')->name('kas.keluar.loadDetail');
+    Route::post('/cash/out/saveDetail', 'KasKeluarController@saveDetailKasKeluar')->name('kas.keluar.saveDetail');
+    Route::post('/cash/out/deleteDetail', 'KasKeluarController@deleteDetailKasKeluar')->name('kas.keluar.deleteDetail');
+    Route::post('/cash/out', 'KasKeluarController@saveKasKeluar')->name('kas.keluar.save');
+    Route::get('/cash/out/view/{id}', 'KasKeluarController@viewKasKeluar')->name('kas.keluar.view');
+
+    /** Kas Transfer */
+    Route::get('/cash/transfer', 'KasTransferController@indexKasTransfer')->name('kas.transfer.index');
+    Route::get('/cash/transfer/add', 'KasTransferController@addKasTransfer')->name('kas.transfer.add');
+    Route::post('/cash/transfer/save', 'KasTransferController@saveKasTransfer')->name('kas.transfer.save');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

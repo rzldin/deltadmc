@@ -15,6 +15,7 @@ class CreateInvoiceTable extends Migration
     {
         Schema::create('t_invoice', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('tipe_inv')->default(0);
             $table->integer('t_proforma_invoice_id');
             $table->integer('t_booking_id');
             $table->integer('client_id')->nullable();
@@ -24,6 +25,7 @@ class CreateInvoiceTable extends Migration
             $table->string('invoice_no');
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
+            $table->decimal('total_invoice', 25, 4)->default(0);
             $table->integer('reimburse_flag')->nullable();
             $table->integer('debit_note_flag')->nullable();
             $table->integer('credit_note_flag')->nullable();
