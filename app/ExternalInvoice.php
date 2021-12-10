@@ -64,4 +64,33 @@ class ExternalInvoice extends Model
             ]
         );
     }
+
+    public static function listAccountReceivables($clientId, $bookingId, $invoiceType, $chargeCode)
+    {
+        $ars = ExternalInvoice::from('t_external_invoice AS ei')
+            ->leftJoin('t_mcompany AS c', 'c.id', '=', 'ei.client_id')
+            ->leftJoin('t_invoice AS i', 'i.id', '=', 't_invoice_id')
+            ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'i.t_proforma_invoice_id')
+            ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
+            ->select('ei.*', 'c.client_code', 'c.client_name', 'b.booking_no', 'pi.proforma_invoice_no', 'i.invoice_no', 'ei.external_invoice_no')
+            ->where('ei.flag_bayar', '<>', 1);
+
+        if ($clientId != null) $ars->where('ei.client_id', $clientId);
+        if ($bookingId != null) $ars->where('b.id', $bookingId);
+        if ($invoiceType != null) {
+            if ($invoiceType == 'REG') {
+                $ars->where('ei.reimburse_flag', '<>', 1);
+                $ars->where('ei.debit_note_flag', '<>', 1);
+                $ars->where('ei.credit_note_flag', '<>', 1);
+            } else if ($invoiceType == 'REM') {
+                $ars->where('ei.reimburse_flag', '=', 1);
+            } else if ($invoiceType == 'DN') {
+                $ars->where('ei.debit_note_flag', '=', 1);
+            } else if ($invoiceType == 'CN') {
+                $ars->where('ei.credit_note_flag', '=', 1);
+            }
+        }
+
+        return $ars;
+    }
 }

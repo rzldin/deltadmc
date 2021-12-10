@@ -57,6 +57,7 @@ class InvoiceController extends Controller
             DB::beginTransaction();
 
             $param = $request->all();
+            $param['tipe_inv'] = 0;
             $param['invoice_date'] = date('Y-m-d', strtotime($request->invoice_date));
             $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
@@ -134,27 +135,28 @@ class InvoiceController extends Controller
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            $errorMsg = '';
-            foreach ($validator->errors()->messages() as $err) {
-                foreach ($err as $msg) {
-                    $errorMsg .= $msg . "<br>";
-                }
-            }
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = '';
+            // foreach ($validator->errors()->messages() as $err) {
+            //     foreach ($err as $msg) {
+            //         $errorMsg .= $msg . "<br>";
+            //     }
+            // }
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-                'cek_paid_to' => $request->cek_paid_to,
-            ];
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            //     'cek_paid_to' => $request->cek_paid_to,
+            // ];
 
-            if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
-            if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
+            // if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
+            // if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
             // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($previousUrl);
+            // return redirect()->to($previousUrl);
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
         try {
@@ -268,23 +270,24 @@ class InvoiceController extends Controller
             return redirect()->route('invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            $errorMsg = $th->getMessage();
-            print_r($errorMsg);die();
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = $th->getMessage();
+            // print_r($errorMsg);die();
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-                'cek_paid_to' => $request->cek_paid_to,
-            ];
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            //     'cek_paid_to' => $request->cek_paid_to,
+            // ];
 
-            if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
-            if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // if (isset($request->cek_cost_shp)) $errorParam['cek_cost_shp'] = $request->cek_cost_shp;
+            // if (isset($request->cek_cost_chrg)) $errorParam['cek_cost_chrg'] = $request->cek_cost_chrg;
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            // return redirect()->to($url);
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 }
