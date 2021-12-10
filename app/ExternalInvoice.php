@@ -73,7 +73,7 @@ class ExternalInvoice extends Model
             ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'i.t_proforma_invoice_id')
             ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
             ->select('ei.*', 'c.client_code', 'c.client_name', 'b.booking_no', 'pi.proforma_invoice_no', 'i.invoice_no', 'ei.external_invoice_no')
-            ->where('ei.flag_lunas', '<>', 1);
+            ->where('ei.flag_bayar', '<>', 1);
 
         if ($clientId != null) $ars->where('ei.client_id', $clientId);
         if ($bookingId != null) $ars->where('b.id', $bookingId);

@@ -73,7 +73,7 @@ class InvoiceModel extends Model
             ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
             ->select('i.*', 'c.client_code', 'c.client_name', 'b.booking_no')
             ->where('i.tipe_inv', 1)
-            ->where('i.flag_lunas', '<>', 1);
+            ->where('i.flag_bayar', '<>', 1);
 
         if ($clientId != null) $ars->where('i.client_id', $clientId);
         if ($bookingId != null) $ars->where('b.id', $bookingId);
