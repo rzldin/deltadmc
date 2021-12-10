@@ -166,12 +166,23 @@ class PembayaranController extends Controller
         $tanggal   = date('Y-m-d H:i:s');
 
         $total_invoice = str_replace(',', '', $request->total_invoice);
-        $invoice_bayar = str_replace(',', '', $request->nilai_bayar);
+        $nilai_bayar = str_replace(',', '', $request->nilai_bayar);
         $nilai_sisa = str_replace(',', '', $request->nilai_sisa);
 
         $invoice = DB::table('t_invoice')->where('id', $request->id_invoice)->first();
+        $invoice_bayar = $invoice->invoice_bayar + $nilai_bayar;
+        $sisa = $invoice->total_invoice - $invoice_bayar;
+        if($sisa <= 0){
+            $flag = 1;
+            $tanggal_lunas = $request->tanggal_bayar;
+        }else{
+            $flag = 2;
+            $tanggal_lunas = null;
+        }
         DB::table('t_invoice')->where('id', $request->id_invoice)->update([
-            'invoice_bayar' => $invoice->invoice_bayar + $invoice_bayar,
+            'invoice_bayar' => $invoice_bayar,
+            'flag_bayar' => $flag,
+            'tanggal_lunas' => $tanggal_lunas,
             'modified_by' => Auth::user()->id,
             'modified_at' => Carbon::now()
         ]);
@@ -180,7 +191,7 @@ class PembayaranController extends Controller
             'id_pmb' => $request->id_pmb,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
-            'nilai' => $invoice_bayar
+            'nilai' => $nilai_bayar
         ]);
 
         $return_data['status']= "sukses";
@@ -195,8 +206,16 @@ class PembayaranController extends Controller
         $tanggal   = date('Y-m-d H:i:s');
 
         $data = PembayaranModel::get_detail($request->id)->first();
+        $invoice_bayar = $data->invoice_bayar - $data->nilai;
+        $tanggal_lunas = null;
+        $flag = 2;
+        if($invoice_bayar == 0){
+            $flag = 0;
+        }
         DB::table('t_invoice')->where('id', $data->id_invoice)->update([
             'invoice_bayar' => $data->invoice_bayar - $data->nilai,
+            'flag_bayar' => $flag,
+            'tanggal_lunas' => $tanggal_lunas,
             'modified_by' => Auth::user()->id,
             'modified_at' => Carbon::now()
         ]);
@@ -322,12 +341,23 @@ class PembayaranController extends Controller
         $tanggal   = date('Y-m-d H:i:s');
 
         $total_invoice = str_replace(',', '', $request->total_invoice);
-        $invoice_bayar = str_replace(',', '', $request->nilai_bayar);
+        $nilai_bayar = str_replace(',', '', $request->nilai_bayar);
         $nilai_sisa = str_replace(',', '', $request->nilai_sisa);
 
         $invoice = DB::table('t_external_invoice')->where('id', $request->id_invoice)->first();
+        $invoice_bayar = $invoice->invoice_bayar + $nilai_bayar;
+        $sisa = $invoice->total_invoice - $invoice_bayar;
+        if($sisa <= 0){
+            $flag = 1;
+            $tanggal_lunas = $request->tanggal_bayar;
+        }else{
+            $flag = 2;
+            $tanggal_lunas = null;
+        }
         DB::table('t_external_invoice')->where('id', $request->id_invoice)->update([
-            'invoice_bayar' => $invoice->invoice_bayar + $invoice_bayar,
+            'invoice_bayar' => $invoice_bayar,
+            'flag_bayar' => $flag,
+            'tanggal_lunas' => $tanggal_lunas,
             'modified_by' => Auth::user()->id,
             'modified_at' => Carbon::now()
         ]);
@@ -336,7 +366,7 @@ class PembayaranController extends Controller
             'id_pmb' => $request->id_pmb,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
-            'nilai' => $invoice_bayar
+            'nilai' => $nilai_bayar
         ]);
 
         $return_data['status']= "sukses";
@@ -351,8 +381,16 @@ class PembayaranController extends Controller
         $tanggal   = date('Y-m-d H:i:s');
 
         $data = PembayaranModel::get_detail_piutang($request->id)->first();
+        $invoice_bayar = $data->invoice_bayar - $data->nilai;
+        $tanggal_lunas = null;
+        $flag = 2;
+        if($invoice_bayar == 0){
+            $flag = 0;
+        }
         DB::table('t_external_invoice')->where('id', $data->id_invoice)->update([
             'invoice_bayar' => $data->invoice_bayar - $data->nilai,
+            'flag_bayar' => $flag,
+            'tanggal_lunas' => $tanggal_lunas,
             'modified_by' => Auth::user()->id,
             'modified_at' => Carbon::now()
         ]);

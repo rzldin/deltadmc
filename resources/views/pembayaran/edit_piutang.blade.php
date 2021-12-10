@@ -414,6 +414,7 @@ function proceed_bayar(){
          total_invoice:$('#total_invoice').val(),
          nilai_bayar:$('#nilai_bayar').val(),
          nilai_sisa:$('#nilai_sisa').val(),
+         tanggal_bayar:$('#tanggal_dt').val()
       },
       type: "POST",
       dataType: "json",

@@ -25,25 +25,25 @@ class PembayaranModel extends Model
     {
         return DB::select("
             Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and id_pmb =".$idp.")as count from t_invoice as i
-            where i.client_id = ".$id);
+            where flag_bayar in (0,2) and i.client_id = ".$id);
     }
 
     public static function get_detail($id){
         return DB::table('t_pembayaran_detail as pd')
             ->leftJoin('t_invoice AS i', 'pd.id_invoice', '=', 'i.id')
-            ->where('pd.id', $id)->select('pd.*', 'i.invoice_no', 'i.invoice_date', 'i.invoice_bayar');
+            ->where('pd.id', $id)->select('pd.*', 'i.invoice_no', 'i.invoice_date', 'i.invoice_bayar', 'i.total_invoice');
     }
 
     public static function get_list_piutang($id,$idp)
     {
         return DB::select("
             Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 0 and id_pmb =".$idp.")as count from t_external_invoice as i
-            where i.client_id = ".$id);
+            where flag_bayar in (0,2) and i.client_id = ".$id);
     }
 
     public static function get_detail_piutang($id){
         return DB::table('t_pembayaran_detail as pd')
             ->leftJoin('t_external_invoice AS i', 'pd.id_invoice', '=', 'i.id')
-            ->where('pd.id', $id)->select('pd.*', 'i.external_invoice_no', 'i.external_invoice_date', 'i.invoice_bayar');
+            ->where('pd.id', $id)->select('pd.*', 'i.external_invoice_no', 'i.external_invoice_date', 'i.invoice_bayar', 'i.total_invoice');
     }
 }
