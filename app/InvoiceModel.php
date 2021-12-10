@@ -64,4 +64,33 @@ class InvoiceModel extends Model
             ]
         );
     }
+
+    public static function listAccountPayables($clientId, $bookingId, $invoiceType, $chargeCode)
+    {
+        $ars = InvoiceModel::from('t_invoice AS i')
+            ->leftJoin('t_mcompany AS c', 'c.id', '=', 'i.client_id')
+            ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'i.t_proforma_invoice_id')
+            ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
+            ->select('i.*', 'c.client_code', 'c.client_name', 'b.booking_no')
+            ->where('i.tipe_inv', 1)
+            ->where('i.flag_lunas', '<>', 1);
+
+        if ($clientId != null) $ars->where('i.client_id', $clientId);
+        if ($bookingId != null) $ars->where('b.id', $bookingId);
+        if ($invoiceType != null) {
+            if ($invoiceType == 'REG') {
+                $ars->where('i.reimburse_flag', '<>', 1);
+                $ars->where('i.debit_note_flag', '<>', 1);
+                $ars->where('i.credit_note_flag', '<>', 1);
+            } else if ($invoiceType == 'REM') {
+                $ars->where('i.reimburse_flag', '=', 1);
+            } else if ($invoiceType == 'DN') {
+                $ars->where('i.debit_note_flag', '=', 1);
+            } else if ($invoiceType == 'CN') {
+                $ars->where('i.credit_note_flag', '=', 1);
+            }
+        }
+
+        return $ars;
+    }
 }

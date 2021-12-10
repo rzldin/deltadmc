@@ -17,6 +17,13 @@ class BookingModel extends Model
                 ->groupBy('a.booking_no')->get();
     }
 
+    public static function getAllBokingHasProforma()
+    {
+        return DB::table('t_booking AS b')
+            ->join('t_proforma_invoice AS pi', 'pi.t_booking_id', '=', 'b.id')
+            ->select('b.*');
+    }
+
     public static function get_bookingDetail($id)
     {
         return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag, d.loaded_type FROM t_booking a LEFT JOIN t_quote b ON a.t_quote_id = b.id LEFT JOIN t_mcompany c ON a.shipper_id = c.id LEFT JOIN t_mloaded_type d ON b.t_mloaded_type_id = d.id  WHERE a.id='".$id."'");
@@ -64,9 +71,9 @@ class BookingModel extends Model
 
     public static function getChargesDetail($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.proforma_invoice_no from t_bcharges_dtl a 
-            LEFT JOIN t_booking b ON a.t_booking_id = b.id 
-            LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id 
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.proforma_invoice_no from t_bcharges_dtl a
+            LEFT JOIN t_booking b ON a.t_booking_id = b.id
+            LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id
             LEFT JOIN t_mcurrency d ON a.currency = d.id
             LEFT JOIN t_proforma_invoice i ON i.id = a.t_invoice_id
             LEFT JOIN t_proforma_invoice i2 ON i2.id = a.t_invoice_cost_id

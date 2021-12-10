@@ -366,25 +366,32 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
 
     /** Pembayaran **/
-        //HUTANG
-        Route::get('/pembayaran/index', 'PembayaranController@index')->name('pembayaran.index');
-        Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');
-        Route::post('/pembayaran/save', 'PembayaranController@save')->name('pembayaran.save');
-        Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
-        Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
-        Route::post('/pembayaran/getDataInv', 'PembayaranController@getDataInv')->name('pembayaran.getDataInv');
-        Route::post('/pembayaran/saveDetailPembayaran', 'PembayaranController@saveDetailPembayaran')->name('pembayaran.saveDetailPembayaran');
-        Route::post('/pembayaran/list_detail', 'PembayaranController@list_detail')->name('pembayaran.list_detail');
-        Route::post('/pembayaran/deleteDetailPembayaran', 'PembayaranController@deleteDetailPembayaran')->name('pembayaran.deleteDetailPembayaran');
-        Route::post('/pembayaran/update', 'PembayaranController@update')->name('pembayaran.update');
+    //HUTANG
+    Route::get('/pembayaran/index', 'PembayaranController@index')->name('pembayaran.index');
+    Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');
+    Route::post('/pembayaran/save', 'PembayaranController@save')->name('pembayaran.save');
+    Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
+    Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
+    Route::post('/pembayaran/getDataInv', 'PembayaranController@getDataInv')->name('pembayaran.getDataInv');
+    Route::post('/pembayaran/saveDetailPembayaran', 'PembayaranController@saveDetailPembayaran')->name('pembayaran.saveDetailPembayaran');
+    Route::post('/pembayaran/list_detail', 'PembayaranController@list_detail')->name('pembayaran.list_detail');
+    Route::post('/pembayaran/deleteDetailPembayaran', 'PembayaranController@deleteDetailPembayaran')->name('pembayaran.deleteDetailPembayaran');
+    Route::post('/pembayaran/update', 'PembayaranController@update')->name('pembayaran.update');
 
-        //PIUTANG
-        Route::get('/pembayaran/piutang', 'PembayaranController@piutang')->name('pembayaran.piutang');
-        Route::get('/pembayaran/add_piutang', 'PembayaranController@add_piutang')->name('pembayaran.add_piutang');
-        Route::post('/pembayaran/list_piutang', 'PembayaranController@list_piutang')->name('pembayaran.list_piutang');
-        Route::post('/pembayaran/getDataInvExt', 'PembayaranController@getDataInvExt')->name('pembayaran.getDataInvExt');
-        Route::post('/pembayaran/saveDetailPembayaranPiutang', 'PembayaranController@saveDetailPembayaranPiutang')->name('pembayaran.saveDetailPembayaranPiutang');
-        Route::post('/pembayaran/deleteDetailPembayaranPiutang', 'PembayaranController@deleteDetailPembayaranPiutang')->name('pembayaran.deleteDetailPembayaranPiutang');
+    /** list hutang */
+    Route::get('/hutang', 'HutangController@index')->name('hutang.index');
+
+    //PIUTANG
+    Route::get('/pembayaran/piutang', 'PembayaranController@piutang')->name('pembayaran.piutang');
+    Route::get('/pembayaran/add_piutang', 'PembayaranController@add_piutang')->name('pembayaran.add_piutang');
+    Route::post('/pembayaran/list_piutang', 'PembayaranController@list_piutang')->name('pembayaran.list_piutang');
+    Route::post('/pembayaran/getDataInvExt', 'PembayaranController@getDataInvExt')->name('pembayaran.getDataInvExt');
+    Route::post('/pembayaran/saveDetailPembayaranPiutang', 'PembayaranController@saveDetailPembayaranPiutang')->name('pembayaran.saveDetailPembayaranPiutang');
+    Route::post('/pembayaran/deleteDetailPembayaranPiutang', 'PembayaranController@deleteDetailPembayaranPiutang')->name('pembayaran.deleteDetailPembayaranPiutang');
+
+
+    /** list piutang */
+    Route::get('/piutang', 'PiutangController@index')->name('piutang.index');
 
     /** Kas Masuk*/
     Route::get('/cash/in', 'KasMasukController@indexKasMasuk')->name('kas.masuk.index');
