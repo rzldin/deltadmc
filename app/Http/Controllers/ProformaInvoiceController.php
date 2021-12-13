@@ -84,6 +84,7 @@ class ProformaInvoiceController extends Controller
 
         $data['bill_to_id'] = $request->cek_bill_to[0];
         $data['booking'] = BookingModel::getDetailBooking($request->t_booking_id);
+        $data['reimburse'] = null;
         $data['companies'] = MasterModel::company_get($request->cek_bill_to[0]);
         $data['addresses'] = MasterModel::get_address($request->cek_bill_to[0]);
         $data['pics'] = MasterModel::get_pic($request->cek_bill_to[0]);
@@ -216,9 +217,9 @@ class ProformaInvoiceController extends Controller
                     $tabel1 .= '<input type="hidden" name="cek_sell_shp[]" value="'.$row->id.'" />';
                     $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
                     $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;"></td>';
+                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                     $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->sell_val, 2, ',', '.') . '</td>';
@@ -261,9 +262,9 @@ class ProformaInvoiceController extends Controller
                     $tabel1 .= '<input type="hidden" name="cek_sell_chrg[]" value="'.$row->id.'" />';
                     $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
                     $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;"></td>';
+                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                     $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->sell_val, 2, ',', '.') . '</td>';
