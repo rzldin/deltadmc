@@ -45,6 +45,7 @@ class ExternalInvoice extends Model
                 'client_addr_id' => $request['client_addr_id'],
                 'client_pic_id' => $request['client_pic_id'],
                 'external_invoice_no' => $request['external_invoice_no'],
+                'truck_no' => $request['truck_no'],
                 'external_invoice_date' => $request['external_invoice_date'],
                 'reimburse_flag' => $request['reimburse_flag'],
                 'debit_note_flag' => $request['debit_note_flag'],

@@ -440,8 +440,8 @@ class ProformaInvoiceController extends Controller
             'proforma_invoice_no' => 'required|unique:t_proforma_invoice',
             'proforma_invoice_date' => 'required',
             'currency' => 'required',
-            'pol_id' => 'required',
-            'pod_id' => 'required',
+            // 'pol_id' => 'required',
+            // 'pod_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -468,7 +468,7 @@ class ProformaInvoiceController extends Controller
 
             // return redirect()->to($url);
 
-            return redirect()->back()->with('errorForm', $validator->getMessageBag());
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
         try {
@@ -594,30 +594,31 @@ class ProformaInvoiceController extends Controller
             // 'proforma_invoice_no' => 'required|unique:t_proforma_invoice',
             'proforma_invoice_date' => 'required',
             'currency' => 'required',
-            'pol_id' => 'required',
-            'pod_id' => 'required',
+            // 'pol_id' => 'required',
+            // 'pod_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            $errorMsg = '';
-            foreach ($validator->errors()->messages() as $err) {
-                foreach ($err as $msg) {
-                    $errorMsg .= $msg . "<br>";
-                }
-            }
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = '';
+            // foreach ($validator->errors()->messages() as $err) {
+            //     foreach ($err as $msg) {
+            //         $errorMsg .= $msg . "<br>";
+            //     }
+            // }
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-            ];
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            // ];
 
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            // return redirect()->to($url);
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
         try {
@@ -633,20 +634,21 @@ class ProformaInvoiceController extends Controller
 
             $proforma = ProformaInvoiceModel::saveProformaInvoice($param);
 
-            return redirect()->route('proformainvoice.index');
+            return redirect()->route('proformainvoice.index')->with('success', 'Update success!');
         } catch (\Throwable $th) {
-            $errorMsg = $th->getMessage();
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = $th->getMessage();
+            // $previousUrl = parse_url(app('url')->previous());
 
-            $errorParam = [
-                'error' => '1',
-                'errorMsg' => $errorMsg,
-                '_token' => $request->_token,
-                't_booking_id' => $request->t_booking_id,
-            ];
-            $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
+            // $errorParam = [
+            //     'error' => '1',
+            //     'errorMsg' => $errorMsg,
+            //     '_token' => $request->_token,
+            //     't_booking_id' => $request->t_booking_id,
+            // ];
+            // $url = $previousUrl['path'] . '?' . http_build_query($errorParam);
 
-            return redirect()->to($url);
+            // return redirect()->to($url);
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 

@@ -23,6 +23,7 @@ class CreateInvoiceTable extends Migration
             $table->integer('client_pic_id')->nullable();
             $table->string('activity', 50)->nullable();
             $table->string('invoice_no');
+            $table->string('truck_no', 20)->nullable();
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
             $table->decimal('total_invoice', 25, 4)->default(0);

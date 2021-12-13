@@ -43,6 +43,7 @@ class ProformaInvoiceModel extends Model
                 'client_addr_id' => $request['client_addr_id'],
                 'client_pic_id' => $request['client_pic_id'],
                 'proforma_invoice_no' => $request['proforma_invoice_no'],
+                'truck_no' => $request['truck_no'],
                 'proforma_invoice_date' => $request['proforma_invoice_date'],
                 'reimburse_flag' => $request['reimburse_flag'],
                 'debit_note_flag' => $request['debit_note_flag'],

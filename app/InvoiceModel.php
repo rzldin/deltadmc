@@ -45,6 +45,7 @@ class InvoiceModel extends Model
                 'client_addr_id' => $request['client_addr_id'],
                 'client_pic_id' => $request['client_pic_id'],
                 'invoice_no' => $request['invoice_no'],
+                'truck_no' => $request['truck_no'],
                 'invoice_date' => $request['invoice_date'],
                 'reimburse_flag' => $request['reimburse_flag'],
                 'debit_note_flag' => $request['debit_note_flag'],

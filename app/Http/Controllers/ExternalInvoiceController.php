@@ -254,8 +254,8 @@ class ExternalInvoiceController extends Controller
             'external_invoice_no' => 'required|unique:t_external_invoice',
             'external_invoice_date' => 'required',
             'currency' => 'required',
-            'pol_id' => 'required',
-            'pod_id' => 'required',
+            // 'pol_id' => 'required',
+            // 'pod_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);

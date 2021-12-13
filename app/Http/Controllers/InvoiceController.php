@@ -44,8 +44,8 @@ class InvoiceController extends Controller
             'invoice_no' => 'required|unique:t_invoice',
             'invoice_date' => 'required',
             'currency' => 'required',
-            'pol_id' => 'required',
-            'pod_id' => 'required',
+            // 'pol_id' => 'required',
+            // 'pod_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);

@@ -104,6 +104,15 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
+                                                    <label>Truck No</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="truck_no"
+                                                    id="truck_no" value="{{ $header->truck_no }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
                                                     <label>Invoice Type</label>
                                                 </div>
                                                 <div class="col-md-8">

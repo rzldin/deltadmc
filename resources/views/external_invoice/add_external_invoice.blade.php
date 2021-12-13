@@ -104,6 +104,15 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
+                                                    <label>Truck No</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="truck_no"
+                                                    id="truck_no" value="{{ $invoice_header->truck_no }}">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
                                                     <label>Invoice Type</label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -242,7 +251,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pol_name"
-                                                        id="pol_name" value="{{ $invoice_header->pol_name }}">
+                                                        id="pol_name" value="{{ $invoice_header->pol_name }}" readonly>
                                                     <input class="form-control" type="hidden" name="pol_id" id="pol_id"
                                                         value="{{ $invoice_header->pol_id }}">
                                                 </div>
@@ -253,7 +262,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pod_name"
-                                                        id="pod_name" value="{{ $invoice_header->pod_name }}">
+                                                        id="pod_name" value="{{ $invoice_header->pod_name }}" readonly>
                                                     <input class="form-control" type="hidden" name="pod_id" id="pod_id"
                                                         value="{{ $invoice_header->pod_id }}">
                                                 </div>

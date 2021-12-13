@@ -22,6 +22,7 @@ class CreateExternalInvoicesTable extends Migration
             $table->integer('client_pic_id')->nullable();
             $table->string('activity', 50)->nullable();
             $table->string('external_invoice_no');
+            $table->string('truck_no', 20)->nullable();
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
             $table->integer('reimburse_flag')->nullable();

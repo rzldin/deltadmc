@@ -1579,7 +1579,7 @@ class BookingController extends Controller
                     $tabel .= '<td>'.$shp->name_carrier.'</td>';
                 }
             $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel .= '<td class="text-center"><input type="checkbox" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
+            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
             $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
             $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
             $tabel .= '<td class="text-right">'.number_format($shp->cost_val,2,',','.').'</td>';
@@ -1606,7 +1606,7 @@ class BookingController extends Controller
                     $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
                 }
             $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
             $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
             $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
             $tabel1 .= '<td class="text-right">'.number_format($shp->sell_val,2,',','.').'</td>';
@@ -1653,7 +1653,7 @@ class BookingController extends Controller
                 $tabel .= '<td>'.($noloop).'</td>';
                 $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel .= '<td class="text-center"><input type="checkbox" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
@@ -1700,7 +1700,7 @@ class BookingController extends Controller
                 $tabel1 .= '<td>'.$noloop.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel1 .= '<td class="text-center"><input type="checkbox" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
