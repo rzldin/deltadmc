@@ -17,3 +17,14 @@ ALTER TABLE `t_external_invoice` ADD `total_invoice` DECIMAL(14,2) NOT NULL DEFA
 ALTER TABLE `t_external_invoice` ADD `invoice_bayar` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `total_invoice`;
 ALTER TABLE `t_external_invoice` ADD `flag_bayar` TINYINT(1) NOT NULL DEFAULT '0' AFTER `invoice_bayar`, ADD `tanggal_lunas` DATE NULL AFTER `flag_bayar`;
 ALTER TABLE `t_external_invoice` ADD `modified_by` INT(3) NULL AFTER `created_on`, ADD `modified_at` DATETIME NULL AFTER `modified_by`;
+
+--------
+
+ALTER TABLE funed713_deltadmc.t_external_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE funed713_deltadmc.t_external_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER external_invoice_no;
+
+ALTER TABLE funed713_deltadmc.t_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE funed713_deltadmc.t_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER invoice_no;
+
+ALTER TABLE funed713_deltadmc.t_proforma_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE funed713_deltadmc.t_proforma_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER proforma_invoice_no;
