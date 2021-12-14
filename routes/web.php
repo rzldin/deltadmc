@@ -416,6 +416,16 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/cash/transfer/add', 'KasTransferController@addKasTransfer')->name('kas.transfer.add');
     Route::post('/cash/transfer/save', 'KasTransferController@saveKasTransfer')->name('kas.transfer.save');
 
+    /** Journal */
+    Route::get('/journal', 'JournalController@indexJournal')->name('journal.index');
+    Route::get('/journal/add', 'JournalController@addJournal')->name('journal.add');
+    Route::post('/journal/save', 'JournalController@saveJournal')->name('journal.save');
+    Route::get('/journal/edit/{id}', 'JournalController@editJournal')->name('journal.edit');
+    Route::get('/journal/view/{id}', 'JournalController@viewJournal')->name('journal.view');
+    Route::post('/journal/loadDetail', 'JournalController@loadDetailJournal')->name('journal.loadDetail');
+    Route::post('/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
+    Route::post('/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

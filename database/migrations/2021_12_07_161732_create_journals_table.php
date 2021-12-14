@@ -16,12 +16,10 @@ class CreateJournalsTable extends Migration
         Schema::create('t_journals', function (Blueprint $table) {
             $table->id();
             $table->date('journal_date');
-            $table->integer('account_id')->unsigned()->default(0);
+            $table->string('journal_no')->unique();
             $table->integer('currency_id')->unsigned()->default(0);
-            $table->string('transaction_type', 1);
-            $table->decimal('amount', 25, 4);
-            $table->text('memo');
-            $table->integer('transaction_group_id')->unsigned()->default(0);
+            $table->decimal('amount', 25, 4)->default(0);
+            $table->integer('flag_post')->unsigned()->default(0);
             $table->integer('attr1')->nullable()->unsigned()->default(0);
             $table->integer('attr2')->nullable()->unsigned()->default(0);
             $table->string('attr3', 100)->nullable();

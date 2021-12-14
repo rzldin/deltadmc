@@ -15,6 +15,13 @@ class Journal extends Model
         return Journal::max('transaction_group_id');
     }
 
+    public static function findAllJournals()
+    {
+        return Journal::from('t_journals AS j')
+            ->leftJoin('t_mcurrency AS c', 'c.id', '=', 'j.currency_id')
+            ->select('j.*', 'c.code AS currency_code', 'c.name AS currency_name');
+    }
+
     public static function saveJournal($request)
     {
         return Journal::updateOrCreate(
