@@ -18,13 +18,13 @@ class GeneralLedger extends Model
                     A.id,
                     A.account_number,
                     A.account_name,
-                    (SELECT SUM(DEBIT) FROM T_GENERAL_LEDGERS TGL2 WHERE A.ID = TGL2.ACCOUNT_ID GROUP BY TGL2.ACCOUNT_ID) total_debit,
-                    (SELECT SUM(CREDIT) FROM T_GENERAL_LEDGERS TGL3 WHERE A.ID = TGL3.ACCOUNT_ID GROUP BY TGL3.ACCOUNT_ID) total_credit,
-                    (SELECT SUM(BALANCE) FROM T_GENERAL_LEDGERS TGL4 WHERE A.ID = TGL4.ACCOUNT_ID GROUP BY TGL4.ACCOUNT_ID) total_balance
+                    (SELECT SUM(DEBIT) FROM t_general_ledgers TGL2 WHERE A.ID = TGL2.ACCOUNT_ID GROUP BY TGL2.ACCOUNT_ID) total_debit,
+                    (SELECT SUM(CREDIT) FROM t_general_ledgers TGL3 WHERE A.ID = TGL3.ACCOUNT_ID GROUP BY TGL3.ACCOUNT_ID) total_credit,
+                    (SELECT SUM(BALANCE) FROM t_general_ledgers TGL4 WHERE A.ID = TGL4.ACCOUNT_ID GROUP BY TGL4.ACCOUNT_ID) total_balance
                 FROM
-                    T_MACCOUNT AS A
+                    t_maccount AS A
                 WHERE
-                    A.ID IN (SELECT DISTINCT ACCOUNT_ID FROM T_GENERAL_LEDGERS TGL )';
+                    A.ID IN (SELECT DISTINCT ACCOUNT_ID FROM t_general_ledgers TGL )';
 
         return DB::select($query);
     }
