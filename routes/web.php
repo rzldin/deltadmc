@@ -426,6 +426,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
     Route::post('/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
 
+    /** General Ledgers */
+    Route::get('/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');
