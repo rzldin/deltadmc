@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GeneralLedger;
 use App\Journal;
 use App\JournalDetail;
 use App\MasterModel;
@@ -168,5 +169,45 @@ class JournalController extends Controller
         $data['details'] = JournalDetail::findAllJournalDetails($journalId)->get();
 
         return view('journal.view_journal')->with($data);
+    }
+
+    public function postJournal(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $journal_details = JournalDetail::where('journal_id', $request->id)->get();
+            foreach ($journal_details as $key => $detail) {
+                $param['id'] = 0;
+                $param['gl_date'] = date('Y-m-d');
+                $param['journal_id'] = $request->id;
+                $param['account_id'] = $detail->account_id;
+                $param['debit'] = $detail->debit;
+                $param['credit'] = $detail->credit;
+                $param['balance'] = ($detail->debit - $detail->credit);
+                $param['created_by'] = Auth::user()->name;
+                $param['created_on'] = date('Y-m-d h:i:s');
+
+                GeneralLedger::saveGL($param);
+
+                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, date('Y-m-d'));
+                if ($refresh['status'] == 'failed') {
+                    return redirect()->back()->with('error', $refresh['message']);
+                }
+            }
+
+            $paramJournal['id'] = $request->id;
+            $paramJournal['flag_post'] = 1;
+            $paramJournal['created_by'] = Auth::user()->name;
+            $paramJournal['created_on'] = date('Y-m-d h:i:s');
+            Journal::saveJournal($paramJournal);
+
+            DB::commit();
+            return redirect()->route('journal.index')->with('success', 'Journal posted!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error("postJournal Error ".$th->getMessage());
+            return redirect()->back()->with('error', 'Something wrong, try again later!');
+        }
     }
 }

@@ -28,10 +28,10 @@
                             <strong></strong>
                         </h3>
                     </div>
-                    <form method="post" action="" id="formJournal">
+                    <form method="post" action="{{ route('journal.post') }}" id="formJournal">
                         <div class="card-body">
                             @csrf
-                            <input type="hidden" name="id">
+                            <input type="hidden" name="id" value="{{ $header->id }}">
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h3 class="card-title">Journal</h3>
@@ -132,7 +132,7 @@
                                     <div class="row">
                                         <div class="col-md-12" style="text-align: right">
                                             @if ($header->flag_post == 0)
-                                            <a class="btn btn-primary" href="{{ route('journal.view', ['id' => $header->id]) }}" >
+                                            <a class="btn btn-primary" href="javascript:void(0)" onclick="$('#formJournal').submit()" >
                                                 <i class="fa fa-paper-plane"></i> Post
                                             </a>
                                             @endif

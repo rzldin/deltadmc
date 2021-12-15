@@ -417,17 +417,19 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/cash/transfer/save', 'KasTransferController@saveKasTransfer')->name('kas.transfer.save');
 
     /** Journal */
-    Route::get('/journal', 'JournalController@indexJournal')->name('journal.index');
-    Route::get('/journal/add', 'JournalController@addJournal')->name('journal.add');
-    Route::post('/journal/save', 'JournalController@saveJournal')->name('journal.save');
-    Route::get('/journal/edit/{id}', 'JournalController@editJournal')->name('journal.edit');
-    Route::get('/journal/view/{id}', 'JournalController@viewJournal')->name('journal.view');
-    Route::post('/journal/loadDetail', 'JournalController@loadDetailJournal')->name('journal.loadDetail');
-    Route::post('/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
-    Route::post('/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
+    Route::get('/accounting/journal', 'JournalController@indexJournal')->name('journal.index');
+    Route::get('/accounting/journal/add', 'JournalController@addJournal')->name('journal.add');
+    Route::post('/accounting/journal/save', 'JournalController@saveJournal')->name('journal.save');
+    Route::post('/accounting/journal/post', 'JournalController@postJournal')->name('journal.post');
+    Route::get('/accounting/journal/edit/{id}', 'JournalController@editJournal')->name('journal.edit');
+    Route::get('/accounting/journal/view/{id}', 'JournalController@viewJournal')->name('journal.view');
+    Route::post('/accounting/journal/loadDetail', 'JournalController@loadDetailJournal')->name('journal.loadDetail');
+    Route::post('/accounting/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
+    Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
 
     /** General Ledgers */
-    Route::get('/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
+    Route::get('/accounting/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
+    Route::post('/accounting/general_ledger/loadDetail', 'GeneralLedgerController@loadDetail')->name('general_ledger.loadDetail');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
