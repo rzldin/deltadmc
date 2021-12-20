@@ -36,39 +36,52 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-4">
                                         Company Code <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_code" name="client_code" 
+                                        <input type="text" id="client_code" name="client_code"
                                             class="form-control myline" style="margin-bottom:5px" placeholder="Input Company Code...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Company Name <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_name" name="client_name" 
+                                        <input type="text" id="client_name" name="client_name"
                                             class="form-control myline" style="margin-bottom:5px"  placeholder="Input Company Name...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         NPWP <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="npwp" name="npwp" 
+                                        <input type="text" id="npwp" name="npwp"
                                             class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Account <font color="#f00">*</font>
-                                    </div>                                
+                                        Account Payable
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account" id="account">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_payable_id" id="account_payable_id">
                                             <option value="" disabled selected>-- Select Account --</option>
                                             @foreach ($list_account as $account)
-                                            <option value="{{ $account->id }}">{{ $account->account_name }}</option>
+                                            <option value="{{ $account->id }}">{{ $account->account_number.' | '.$account->account_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Account Receivable
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_receivable_id" id="account_receivable_id">
+                                            <option value="" disabled selected>-- Select Account --</option>
+                                            @foreach ($list_account as $account)
+                                            <option value="{{ $account->id }}">{{ $account->account_number.' | '.$account->account_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -76,7 +89,7 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Sales By <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="sales" id="sales">
                                             <option value="" disabled selected>-- Select Sales --</option>
@@ -104,7 +117,7 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Status
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <div class="custom-control custom-checkbox">
                                             <div class="icheck-primary d-inline">
@@ -202,7 +215,7 @@
 
 @push('after-scripts')
     <script>
-        
+
         $('#client_name').keyup(function(){
             let position = this.selectionStart
             this.value = this.value.toUpperCase();
@@ -246,6 +259,6 @@
                 $('#formku').submit();
             }
         });
-        
+
     </script>
 @endpush

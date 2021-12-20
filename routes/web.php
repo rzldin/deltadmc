@@ -434,6 +434,15 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/accounting/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
     Route::post('/accounting/general_ledger/loadDetail', 'GeneralLedgerController@loadDetail')->name('general_ledger.loadDetail');
 
+    /** Deposit */
+    Route::get('/deposit', 'DepositController@index')->name('deposit.index');
+    Route::get('/deposit/add', 'DepositController@add')->name('deposit.add');
+    Route::post('/deposit/loadDetail', 'DepositController@loadDetail')->name('deposit.loadDetail');
+    Route::post('/deposit/saveDetail', 'DepositController@saveDetail')->name('deposit.saveDetail');
+    Route::post('/deposit/deleteDetail', 'DepositController@deleteDetail')->name('deposit.deleteDetail');
+    Route::post('/deposit', 'DepositController@save')->name('deposit.save');
+    Route::get('/deposit/view/{id}', 'DepositController@view')->name('deposit.view');
+
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');
     Route::post('/user/access_doAdd', 'ManagementController@user_accessdoAdd')->name('user.access_doAdd');

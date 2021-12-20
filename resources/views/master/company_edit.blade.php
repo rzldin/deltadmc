@@ -36,9 +36,9 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-4">
                                         Company Code <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_code" name="client_code" 
+                                        <input type="text" id="client_code" name="client_code"
                                             class="form-control myline" style="margin-bottom:5px" placeholder="Input Company Code..." value="{{ $company->client_code }}">
                                         <input type="hidden" id="id_company" name="id_company" value="{{ $company->id }}">
                                     </div>
@@ -46,31 +46,45 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Company Name <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_name" name="client_name" 
+                                        <input type="text" id="client_name" name="client_name"
                                             class="form-control myline" style="margin-bottom:5px"  placeholder="Input Company Name..." value="{{ $company->client_name }}">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         NPWP <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="npwp" name="npwp" 
+                                        <input type="text" id="npwp" name="npwp"
                                             class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP..." value="{{ $company->npwp }}">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Account <font color="#f00">*</font>
-                                    </div>                                
+                                        Account Payable
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account" id="account">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_payable_id" id="account_payable_id">
                                             <option value="" disabled>-- Select Account --</option>
                                             @foreach ($list_account as $account)
-                                            <option value="{{ $account->id }}" @if ($company->t_maccount_id == $account->id) selected
-                                            @endif>{{ $account->account_name }}</option>
+                                            <option value="{{ $account->id }}" @if ($company->account_payable_id == $account->id) selected
+                                            @endif>{{ $account->account_number.' | '.$account->account_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Account Receivable
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_receivable_id" id="account_receivable_id">
+                                            <option value="" disabled>-- Select Account --</option>
+                                            @foreach ($list_account as $account)
+                                            <option value="{{ $account->id }}" @if ($company->account_receivable_id == $account->id) selected
+                                            @endif>{{ $account->account_number.' | '.$account->account_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -78,13 +92,13 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Sales By <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="sales" id="sales">
                                             <option value="" disabled>-- Select Sales --</option>
                                             @foreach ($list_sales as $sales)
                                             <option value="{{ $sales->user_id }}" @if ($company->sales_by == $sales->user_id) selected
-                                                
+
                                             @endif>{{ $sales->user_name }}</option>
                                             @endforeach
                                         </select>
@@ -110,7 +124,7 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Status
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <div class="custom-control custom-checkbox">
                                             <div class="icheck-primary d-inline">
@@ -140,7 +154,7 @@
                                             </div>
                                             <div class="custom-control custom-checkbox mt-2">
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
+                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked
                                                     @endif>
                                                     <label for="vendor">
                                                         VENDOR
@@ -217,7 +231,7 @@
                                     <th>Country</th>
                                     <th>Province</th>
                                     <th>City</th>
-                                    <th>Postal Code</th> 
+                                    <th>Postal Code</th>
                                     <th>Address</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -284,7 +298,7 @@
                                     <th>Phone 1</th>
                                     <th>Phone 2</th>
                                     <th>Fax</th>
-                                    <th>Email</th> 
+                                    <th>Email</th>
                                     <th>PIC Desc</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -327,8 +341,8 @@
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
-                        <i class="fa fa-angle-left"></i> Back 
+                    <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2">
+                        <i class="fa fa-angle-left"></i> Back
                     </a>
                     <button type="button" class="btn btn-primary mb-4 float-right" id="update_company_detail">
                         <i class="fa fa-save"></i> Save
@@ -408,7 +422,7 @@
             }
         }
 
-        
+
         $("#update_company_detail").click(function(){
             if($.trim($("#client_code").val()) == ""){
                 Swal.fire({
@@ -426,12 +440,6 @@
                 Swal.fire({
                     title: 'Error!',
                     text: 'Please enter NPWP',
-                    icon: 'error'
-                })
-            }else if($.trim($("#account").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select Account',
                     icon: 'error'
                 })
             }else if($.trim($("#sales").val()) == ""){
@@ -470,7 +478,7 @@
                             <td><label id="lbl_address_type_${no}" style="font-size:12px;">${data.address_type}</label>
                             <select id="address_type_${no}" name="address_type" class="form-control" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
                                 <option value="" >--Silahkan Pilih --</option>
-                                
+
                             </select>
                             </td>
                             <td><label id="lbl_country_${no}" style="font-size:12px;">${data.country_name}</label><select id="country_${no}" name="country" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
@@ -613,10 +621,10 @@
                     url:"{{ route('master.company_deleteAddress') }}",
                     data:"id="+ id,
                     success:function(result){
-                        loadDetail($('#id_company').val());   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        loadDetail($('#id_company').val());
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus address!');
-				    }, 
+				    },
                 });
             }
         }
@@ -631,14 +639,14 @@
                     url:"{{ route('master.company_deletePic') }}",
                     data:"id="+ id,
                     success:function(result){
-                        loadDetailx($('#id_company').val());   
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        loadDetailx($('#id_company').val());
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Menghapus PIC!');
-				    }, 
+				    },
                 });
             }
         }
-        
+
 
 
         /** Edit Detail Address **/
@@ -665,10 +673,10 @@
                         type += `<option value="UTAMA">UTAMA</option>
                                 <option value="GUDANG">GUDANG</option>
                                 <option value="INVOICE" selected>INVOICE</option>`;
-                    }   
-                    
+                    }
+
                     cek += `<input type="checkbox" id="status_${id}" name="status" style="width: 15px" class="form-control" value="1" style="display:none" ${c}> Active`
-                    
+
                     $.each(result, function(i,data){
                         if(id_country == data.id){
                             country = 'selected';
@@ -737,7 +745,7 @@
 
             $('#td_statusx_'+id).html(cek)
 
-            
+
         }
 
 
@@ -778,10 +786,10 @@
                         status:$('#statusx_'+id).val()
                     },
                     success:function(result){
-                        loadDetailx($('#id_company').val()); 
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        loadDetailx($('#id_company').val());
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate address!');
-				    },          
+				    },
                 });
             }
         }
@@ -820,15 +828,15 @@
                         status:$('#status_'+id).val()
                     },
                     success:function(result){
-                        loadDetail($('#id_company').val()); 
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                        loadDetail($('#id_company').val());
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal Mengupdate address!');
-				    },          
+				    },
                 });
             }
         }
 
-        
+
         /** Save Detail Address **/
         function saveDetail(id){
             if($.trim($("#address_type_"+id).val()) == ""){
@@ -875,9 +883,9 @@
                     $('#postal_code_'+id).val('');
                     $('#address_'+id).val('');
                     loadDetail($('#id_company').val());
-                },error: function (xhr, ajaxOptions, thrownError) {           
+                },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan item!');
-				    },  
+				    },
                 });
             }
         }
@@ -924,31 +932,31 @@
                         $('#fax_'+id).val('');
                         $('#pic_desc_'+id).val('');
                         loadDetailx($('#id_company').val());
-                    },error: function (xhr, ajaxOptions, thrownError) {           
+                    },error: function (xhr, ajaxOptions, thrownError) {
                         alert('Gagal menambahkan PIC!');
-                    },  
+                    },
                 });
             }
         }
 
 
         function numberOnly(root){
-            var reet = root.value;    
-            var arr1=reet.length;      
-            var ruut = reet.charAt(arr1-1);   
-                if (reet.length > 0){   
-                        var regex = /[0-9]|\./;   
-                    if (!ruut.match(regex)){   
-                        var reet = reet.slice(0, -1);   
-                        $(root).val(reet);   
-                    }   
-                }  
+            var reet = root.value;
+            var arr1=reet.length;
+            var ruut = reet.charAt(arr1-1);
+                if (reet.length > 0){
+                        var regex = /[0-9]|\./;
+                    if (!ruut.match(regex)){
+                        var reet = reet.slice(0, -1);
+                        $(root).val(reet);
+                    }
+                }
         }
-            
+
         $(function() {
             loadDetail({{ Request::segment(3) }});
             loadDetailx({{ Request::segment(3) }});
         });
-        
+
     </script>
 @endpush

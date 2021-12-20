@@ -197,13 +197,14 @@ class ProformaInvoiceController extends Controller
         // $data       = BookingModel::getChargesDetail($request->id);
         if($request->tipe_inv=='sell'){
             if(isset($request->shipping_dtl_id)){
-                $data   = BookingModel::getChargesDetailUsingInId($shp_dtl_id);
+                $data   = QuotationModel::get_quoteShippingInId($shp_dtl_id);
                 foreach ($data as $row) {
-                    if ($row->reimburse_flag == 1) {
-                        $style = 'checked';
-                    } else {
-                        $style = '';
-                    }
+                    // if ($row->reimburse_flag == 1) {
+                    //     $style = 'checked';
+                    // } else {
+                    //     $style = '';
+                    // }
+                    $style = '';
 
                     $total = ($row->qty * $row->cost_val);
                     $total2 = ($row->qty * $row->sell_val);
@@ -215,13 +216,17 @@ class ProformaInvoiceController extends Controller
                     $tabel1 .= '<td>';
                     $tabel1 .= ($no);
                     $tabel1 .= '<input type="hidden" name="cek_sell_shp[]" value="'.$row->id.'" />';
-                    $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
+                    $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$booking->client_id.'" />';
                     $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
+                    if ($quote->shipment_by == 'LAND') {
+                        $tabel1 .= '<td>' . $row->truck_size . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '').'</td>';
+                    } else {
+                        $tabel1 .= '<td>' . $row->name_carrier . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '').'</td>';
+                    }
+                    $tabel1 .= '<td class="text-left">'.$row->notes.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
                     $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                     $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->code_currency . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->sell_val, 2, ',', '.') . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format(($row->qty * $row->sell_val), 2, ',', '.') . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, ',', '.') . '</td>';
