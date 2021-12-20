@@ -394,7 +394,7 @@
                                @foreach ($quoteDtl as $row)
                                    <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $row->code_currency }}</td>
+                                        <td>{{ $row->name_charge }}</td>
                                         <td>{{ $row->desc }}</td>
                                         <td><input type="checkbox"  @if ($row->reimburse_flag == 1)checked @endif></td>
                                         <td>{{ $row->code_currency }}</td>
@@ -438,9 +438,12 @@
                                     <td>{{ $row->carrier_code }}</td>
                                     <td>{{ $row->routing }}</td>
                                     <td>{{ $row->transit_time }}</td> 
-                                    <td>{{ $row->code_currency .' '. number_format($row->total_cost,2,',','.') }}</td>
+{{--                                     <td>{{ $row->code_currency .' '. number_format($row->total_cost,2,',','.') }}</td>
                                     <td>{{ $row->code_currency.' '. number_format($row->total_sell,2,',','.') }}</td>
-                                    <td>{{ $row->code_currency.' '. number_format($row->total_profit,2,',','.') }}</td>
+                                    <td>{{ $row->code_currency.' '. number_format($row->total_profit,2,',','.') }}</td> --}}
+                                    <td>{{ number_format($row->total_cost,2,',','.') }}</td>
+                                    <td>{{ number_format($row->total_sell,2,',','.') }}</td>
+                                    <td>{{ number_format($row->total_profit,2,',','.') }}</td>
                                     <td>{{ $row->profit_pct }}%</td>
                                 </tr>                                   
                                @endforeach

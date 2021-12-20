@@ -195,38 +195,38 @@ class InvoiceController extends Controller
 
             $pno = 0;
             $total_sub = 0;
-            if (isset($request->cek_cost_shp)) {
-                foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
-                    $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
-                    $sub_total = ($shp_dtl->qty * $shp_dtl->sell_val)+$shp_dtl->vat;
-                    DB::table('t_invoice_detail')->insert([
-                            'invoice_id'     => $invoice_id,
-                            'position_no'    => $pno++,//Position
-                            'desc'           => $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time,
-                            'reimburse_flag' => $shp_dtl->reimburse_flag,
-                            'currency'       => $request->currency,
-                            'rate'           => $shp_dtl->rate,
-                            'cost'           => $shp_dtl->cost,
-                            'sell'           => $shp_dtl->sell,
-                            'qty'            => $shp_dtl->qty,
-                            'cost_val'       => $shp_dtl->cost_val,
-                            'sell_val'       => $shp_dtl->sell_val,
-                            'vat'            => $shp_dtl->vat,
-                            'subtotal'       => $sub_total,
-                            'created_by'     => Auth::user()->name,
-                            'created_on'     => date('Y-m-d h:i:s')
-                        ]
-                    );
+            // if (isset($request->cek_cost_shp)) {
+            //     foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
+            //         $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
+            //         $sub_total = ($shp_dtl->qty * $shp_dtl->sell_val)+$shp_dtl->vat;
+            //         DB::table('t_invoice_detail')->insert([
+            //                 'invoice_id'     => $invoice_id,
+            //                 'position_no'    => $pno++,//Position
+            //                 'desc'           => $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time,
+            //                 'reimburse_flag' => $shp_dtl->reimburse_flag,
+            //                 'currency'       => $request->currency,
+            //                 'rate'           => $shp_dtl->rate,
+            //                 'cost'           => $shp_dtl->cost,
+            //                 'sell'           => $shp_dtl->sell,
+            //                 'qty'            => $shp_dtl->qty,
+            //                 'cost_val'       => $shp_dtl->cost_val,
+            //                 'sell_val'       => $shp_dtl->sell_val,
+            //                 'vat'            => $shp_dtl->vat,
+            //                 'subtotal'       => $sub_total,
+            //                 'created_by'     => Auth::user()->name,
+            //                 'created_on'     => date('Y-m-d h:i:s')
+            //             ]
+            //         );
 
-                    $shpDtlParam['id'] = $shp_dtl_id;
-                    $shpDtlParam['t_invoice_cost_id'] = $invoice_id;
-                    // $shpDtlParam['invoice_type'] = $request->invoice_type;
-                    $shpDtlParam['created_by'] = Auth::user()->name;
-                    $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
-                    QuotationModel::saveShipDetail($shpDtlParam);
-                    $total_sub += $sub_total;
-                }
-            }
+            //         $shpDtlParam['id'] = $shp_dtl_id;
+            //         $shpDtlParam['t_invoice_cost_id'] = $invoice_id;
+            //         // $shpDtlParam['invoice_type'] = $request->invoice_type;
+            //         $shpDtlParam['created_by'] = Auth::user()->name;
+            //         $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
+            //         QuotationModel::saveShipDetail($shpDtlParam);
+            //         $total_sub += $sub_total;
+            //     }
+            // }
 
             if (isset($request->cek_cost_chrg)) {
                 foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
@@ -234,6 +234,7 @@ class InvoiceController extends Controller
                     $sub_total = ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat;
                     DB::table('t_invoice_detail')->insert([
                             'invoice_id'     => $invoice_id,
+                            't_mcharge_code_id' => $chrg_dtl->t_mcharge_code_id,
                             'position_no'    => $pno++,//Position
                             'desc'           => $chrg_dtl->desc,
                             'reimburse_flag' => $chrg_dtl->reimburse_flag,

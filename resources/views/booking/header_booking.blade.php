@@ -80,7 +80,7 @@
                 </div>
                 <br>
                 <div class="modal-body">
-                    <form class="eventInsForm" method="post" target="_self" name="formku" 
+                    <form class="eventInsForm" method="post" target="_self" name="formRoad" 
                             id="formRoad" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="row">
@@ -443,8 +443,8 @@
                 </div>
                 <br>
                 <div class="modal-body">
-                    <form class="eventInsForm" method="post" target="_self" name="formku" 
-                        id="formku" enctype="multipart/form-data">
+                    <form class="eventInsForm" method="post" target="_self" name="formCarrier" 
+                        id="formCarrier" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="row">
                             <div class="col-md-4 col-xs-4">
@@ -520,8 +520,8 @@
                 </div>
                 <br>
                 <div class="modal-body">
-                    <form class="eventInsForm" method="post" target="_self" name="formku" 
-                        id="formku" enctype="multipart/form-data">
+                    <form class="eventInsForm" method="post" target="_self" name="formPort" 
+                        id="formPort" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="row">
                             <div class="col-md-4 col-xs-4">

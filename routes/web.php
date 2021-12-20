@@ -291,6 +291,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
     Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
     Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
+    Route::post('/booking/updateSellshp', 'BookingController@updateSellshp')->name('booking.updateSellshp');
     Route::match(array('GET', 'POST'), 'booking/preview/{id}', 'BookingController@booking_preview');
     Route::match(array('GET', 'POST'), '/booking/cetak_hbl/{id}/{hbl1}/{hbl2}', 'BookingController@cetak_hbl');
     Route::get('booking/cetak_awb/{id}', 'BookingController@cetak_hawb');
@@ -301,6 +302,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('booking/cetak_si_trucking_fcl/{id}', 'BookingController@cetak_si_trucking_fcl');
     Route::get('booking/cetak_si_trucking_lcl/{id}', 'BookingController@cetak_si_trucking_lcl');
     Route::get('booking/cetak_suratjalan/{id}', 'BookingController@cetak_suratJalan');
+
+    Route::post('/booking/quote_addDetail', 'BookingController@quote_addDetail')->name('booking.quote_addDetail');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');

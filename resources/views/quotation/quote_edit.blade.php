@@ -1297,7 +1297,8 @@
                 let text = JSON.parse(result)
                 let code = text.code
 
-                if(code == 'IDR' && $('#rate').val() == '' && $('#ratex').val() == ''){
+                // if(code == 'IDR' && $('#rate').val() == '' && $('#ratex').val() == ''){
+                if(code == 'IDR'){
                     $('#rate').val(1);
                     $('#ratex').val(1);
                 }
@@ -1420,6 +1421,7 @@
         $('#transit').val('');
         $('#currency_ship_dtl').val('').trigger('change');
         $('#rate').val('');
+        $('#ratex').val('');
         $('#cost').val('');
         $('#sell').val('');
         $('#qty').val('');
@@ -1444,6 +1446,7 @@
         $('#currencyx').val('').trigger('change');
         $('#reimburs').prop('checked',false);
         $('#reimbursx').val(0);
+        $('#rate').val('');
         $('#ratex').val('');
         $('#costx').val('');
         $('#sellx').val('');

@@ -35,6 +35,8 @@ class BookingController extends Controller
         $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
         $data['success']        = (isset($_GET['success']) ? 1 : 0);
         $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
+        $data['charge'] = MasterModel::charge();
+        $data['currency'] = MasterModel::currency();
 
         return view('booking.edit_booking')->with($data);
     }
@@ -264,6 +266,7 @@ class BookingController extends Controller
             $hbl_date = null;
         }
 
+        DB::beginTransaction();
         try{
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -351,7 +354,39 @@ class BookingController extends Controller
                     ]);
 
                     if($request->id_quote !== null){
+                        if($shp->shipment_by == 'SEA'){
+                            $t_mcharge_code_id = 5;
+                        }elseif($shp->shipment_by == 'AIR'){
+                            $t_mcharge_code_id = 7;
+                        }else{
+                            $t_mcharge_code_id = 1;
+                        }
+
                         #Insert Charges Detail
+                        DB::table('t_bcharges_dtl')
+                            ->insert([
+                                't_booking_id'          => $id,
+                                'position_no'           => $no++,
+                                't_mcharge_code_id'     => $t_mcharge_code_id,
+                                // 'desc'                  => $shp->name_carrier,
+                                'desc'                  => $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time,
+                                'reimburse_flag'        => 0,
+                                'currency'              => $shp->t_mcurrency_id,
+                                'rate'                  => $shp->rate,
+                                'cost'                  => $shp->cost,
+                                'sell'                  => $shp->sell,
+                                'qty'                   => $shp->qty,
+                                'cost_val'              => $shp->cost_val,
+                                'sell_val'              => $shp->sell_val,
+                                'vat'                   => $shp->vat,
+                                'subtotal'              => ($shp->qty * $shp->sell_val)+$shp->vat,
+                                'routing'               => $shp->routing,
+                                'transit_time'          => $shp->transit_time,
+                                'flag_shp'              => 1, // Flag bedain kalau ini dari shipping
+                                'created_by'            => $user,
+                                'created_on'            => $tanggal
+                            ]);
+
                         foreach($dtlQuote as $row)
                         {
                             DB::table('t_bcharges_dtl')
@@ -359,7 +394,8 @@ class BookingController extends Controller
                                 't_booking_id'          => $id,
                                 'position_no'           => $no++,
                                 't_mcharge_code_id'     => $row->t_mcharge_code_id,
-                                'desc'                  => $shp->name_carrier,
+                                // 'desc'                  => $shp->name_carrier,
+                                'desc'                  => $row->desc,
                                 'reimburse_flag'        => $row->reimburse_flag,
                                 'currency'              => $row->t_mcurrency_id,
                                 'rate'                  => $row->rate,
@@ -378,8 +414,10 @@ class BookingController extends Controller
                         }
                     }
 
+            DB::commit();
             return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
+            DB::rollback();
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
     }
@@ -1540,13 +1578,301 @@ class BookingController extends Controller
         echo json_encode($return_data);
     }
 
+    // public function loadSellCost(Request $request)
+    // {
+    //     $tabel      = "";
+    //     $tabel1     = "";
+    //     $tabel2     = "";
+    //     $no         = 2;
+    //     $noloo      = 1;
+    //     $noloop     = 2;
+    //     $data       = BookingModel::getChargesDetail($request->id);
+    //     $company    = MasterModel::company_data();
+    //     $booking    = DB::table('t_booking')->where('id', $request->id)->first();
+    //     // $booking    = BookingModel::getDetailBooking($request->id);
+    //     $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
+    //     $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
+    //     $total      = 0;
+    //     $total2     = 0;
+    //     $amount     = 0;
+    //     $amount2    = 0;
+    //     $a          = 1;
+    //     $b          = 2;
+
+    //     foreach($shipping as $shp)
+    //     {
+
+    //         // Cost
+    //         $tabel .= '<tr>';
+    //         // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
+    //         $tabel .= '<td>';
+    //         if ($shp->t_invoice_cost_id == null) {
+    //             $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.($no-1).')" name="cek_cost_shp[]" value="'.$shp->id.'"  id="cekx_'.($no-1).'">
+    //                         <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$booking->client_id.'" id="cek_paid_to_'.($no-1).'"/>';
+    //         }
+    //         $tabel .= '</td>';
+    //         $tabel .= '<td>'.($no-1).'</td>';
+    //             if($quote->shipment_by == 'LAND'){
+    //                 $tabel .= '<td>'.$shp->truck_size.'</td>';
+    //             }else{
+    //                 $tabel .= '<td>'.$shp->name_carrier.'</td>';
+    //             }
+    //         $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
+    //         $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
+    //         $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
+    //         $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
+    //         $tabel .= '<td class="text-right">'.number_format($shp->cost,2,',','.').'</td>';
+    //         $tabel .= '<td class="text-right">'.number_format(($shp->qty * $shp->cost),2,',','.').'</td>';
+    //         $tabel .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
+    //         $tabel .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
+    //         $tabel .= '<td class="text-right">'.number_format((($shp->qty * $shp->cost) * $shp->rate) + $shp->vat,2,',','.').'</td>';
+    //             if($shp->paid_to == null){
+    //                 $tabel .= '<td>';
+    //                 $tabel .= '<select onchange="fillPaidToName('.$noloo.')" id="paid_to_'.$noloo.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
+    //                 $tabel .= '<option value="" selected>-- Select Company --</option>';
+    //                 foreach($company as $item){
+    //                     $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+    //                 }
+    //                 $tabel .= '</select>';
+    //                 $tabel .= '</td>';
+    //                 $tabel .= '<input type="hidden" id="paid_to_name_'.$noloo.'"/>';
+    //                 $tabel .= '<input type="hidden" id="paid_to_id_'.$noloo.'"/>';
+    //                 $displayx = '';
+    //             }else{
+    //                 $tabel .= '<td class="text-left">'.$shp->paid_to.'</td>';
+    //                 $displayx = 'display:none';
+    //             }
+    //         $display = '';
+    //         $tabel .= '<td></td>';
+    //             $tabel .= '<td>';
+    //             if ($shp->t_invoice_cost_id == null) {
+    //             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
+    //                     . '" onclick="updateDetailSellshp('.$shp->id.', '.$noloo.','.$a.');" style="'.$displayx.'"> '
+    //                     . '<i class="fa fa-save"></i></a>';
+    //             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
+    //                     . '" onclick="hapusDetailSchshp('.$shp->id.');"> '
+    //                     . '<i class="fa fa-trash"></i></a>';
+    //             $tabel .= '</td>';
+    //             }
+    //         $tabel .= '</tr>';
+
+    //         $tabel1 .= '<tr>';
+    //         $tabel1 .= '<td>';
+    //         if ($shp->t_invoice_id == null) {
+    //             $tabel1 .= '<input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
+    //                         <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>';
+    //         }
+    //         $tabel1 .= '</td>';
+    //         $tabel1 .= '<td>'.($no-1).'</td>';
+    //             if($quote->shipment_by == 'LAND'){
+    //                 $tabel1 .= '<td>'.$shp->truck_size.'</td>';
+    //             }else{
+    //                 $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
+    //             }
+    //         $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
+    //         $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
+    //         $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
+    //         $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
+    //         $tabel1 .= '<td class="text-right">'.number_format($shp->sell,2,',','.').'</td>';
+    //         $tabel1 .= '<td class="text-right">'.number_format(($shp->qty * $shp->sell),2,',','.').'</td>';
+    //         $tabel1 .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
+    //         $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
+    //         $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell) * $shp->rate) + $shp->vat,2,',','.').'</td>';
+    //             if($shp->bill_to == null){
+    //                 //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$noloo.'" placeholder="Bill to..." class="form-control"></td>';
+    //                 $tabel1 .= '<td>';
+    //                 $tabel1 .= '<select onchange="fillBillToName('.$noloo.')" id="bill_to_'.$noloo.'" class="form-control select2bs44" ';
+    //                 $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
+    //                 $tabel1 .= '<option value="" selected>-- Select Company --</option>';
+    //                 foreach($company as $item){
+    //                     $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+    //                 }
+    //                 $tabel1 .= '</select>';
+    //                 $tabel1 .= '<input type="hidden" id="bill_to_name_'.$noloo.'"/>';
+    //                 $tabel1 .= '<input type="hidden" id="bill_to_id_'.$noloo.'"/>';
+    //                 $tabel1 .= '</td>';
+    //                 $display = '';
+    //             }else{
+    //                 $tabel1 .= '<td class="text-left">'.$shp->bill_to.'</td>';
+    //                 $display = 'display:none';
+    //             }
+    //         $display = '';
+    //         $displayx = 'display:none';
+
+    //         $tabel1 .= '<td class="text-left"></td>';
+    //         $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
+    //         $tabel1 .= '<td class="text-left">'.$shp->proforma_invoice_no.'</td>';
+    //             $tabel1 .= '<td>';
+    //             if ($shp->t_invoice_id == null) {
+    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+    //                 . '" onclick="updateDetailSellshp('.$shp->id.', '.$noloo.', '.$b.');" style="'.$display.'"> '
+    //                 . '<i class="fa fa-save"></i></a>';
+    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+    //                 . '" onclick="hapusDetailSellshp('.$shp->id.');" style="margin-left:2px;"> '
+    //                 . '<i class="fa fa-trash"></i></a>';
+    //             }
+    //             $tabel1 .= '</td>';
+    //         $tabel1 .= '</tr>';
+    //         $no++;
+    //     }
+
+    //     $totalAmount    = 0;
+    //     $totalAmount2   = 0;
+    //     foreach($data as $row)
+    //         {
+    //             if($row->reimburse_flag == 1){
+    //                 $style = 'checked';
+    //             }else{
+    //                 $style = '';
+    //             }
+
+    //             $total = ($row->qty * $row->cost);
+    //             $total2 = ($row->qty * $row->sell);
+    //             $amount = ($total * $row->rate) + $row->vat;
+    //             $amount2 = ($total2 * $row->rate) + $row->vat;
+
+    //             // Cost
+    //             $tabel .= '<tr>';
+    //             // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
+    //             $tabel .= '<td>';
+    //             if ($row->t_invoice_cost_id == null) {
+    //                 $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$noloop.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$noloop.'">
+    //                 <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$noloop.'"/>';
+    //             }
+    //             $tabel .=  '</td>';
+    //             $tabel .= '<td>'.($noloop).'</td>';
+    //             $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
+    //             $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+    //             $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+    //             $tabel .= '<td class="text-left">'.$row->qty.'</td>';
+    //             $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
+    //             $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
+    //             $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
+    //             $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+    //             $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+    //             $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
+    //             if($row->paid_to == null){
+    //                 $tabel .= '<td>';
+    //                 $tabel .= '<select onchange="fillPaidToName('.$noloop.')" id="paid_to_'.$noloop.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
+    //                 $tabel .= '<option value="" selected>-- Select Company --</option>';
+    //                 foreach($company as $item){
+    //                     $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+    //                 }
+    //                 $tabel .= '</select>';
+    //                 $tabel .= '</td>';
+    //                 $tabel .= '<input type="hidden" id="paid_to_name_'.$noloop.'"/>';
+    //                 $tabel .= '<input type="hidden" id="paid_to_id_'.$noloop.'"/>';
+    //                 $displayx = '';
+    //             }else{
+    //                 $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
+    //                 $displayx = 'display:none';
+    //             }
+
+    //             $tabel .= '<td class="text-left"></td>';
+    //             $tabel .= '<td>';
+    //             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
+    //                     . '" onclick="updateDetailSell('.$row->id.', '.$noloop.','.$a.');" style="'.$displayx.'"> '
+    //                     . '<i class="fa fa-save"></i></a>';
+    //             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
+    //                     . '" onclick="hapusDetailSch('.$row->id.');"> '
+    //                     . '<i class="fa fa-trash"></i></a>';
+    //             $tabel .= '</td>';
+    //             $tabel .= '</tr>';
+
+    //             // Sell
+    //             $tabel1 .= '<tr>';
+    //             $tabel1 .= '<td>';
+    //             if ($row->t_invoice_id == null) {
+    //                 $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$noloop.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$noloop.'">
+    //                 <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$noloop.'"/>';
+    //             }
+    //             $tabel .=  '</td>';
+    //             $tabel1 .= '<td>'.$noloop.'</td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
+    //             $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
+    //             $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+    //             $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell),2,',','.').'</td>';
+    //             $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+    //             $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+    //             $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
+    //             if($row->bill_to == null){
+    //                 //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$noloop.'" placeholder="Bill to..." class="form-control"></td>';
+    //                 $tabel1 .= '<td>';
+    //                 $tabel1 .= '<select onchange="fillBillToName('.$noloop.')" id="bill_to_'.$noloop.'" class="form-control select2bs44" ';
+    //                 $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
+    //                 $tabel1 .= '<option value="" selected>-- Select Company --</option>';
+    //                 foreach($company as $item){
+    //                     $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+    //                 }
+    //                 $tabel1 .= '</select>';
+    //                 $tabel1 .= '<input type="hidden" id="bill_to_name_'.$noloop.'"/>';
+    //                 $tabel1 .= '<input type="hidden" id="bill_to_id_'.$noloop.'"/>';
+    //                 $tabel1 .= '</td>';
+    //                 $display = '';
+    //             }else{
+    //                 $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';
+    //                 $display = 'display:none';
+    //             }
+
+
+    //             $tabel1 .= '<td class="text-left"></td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
+    //             $tabel1 .= '<td class="text-left">'.$row->proforma_invoice_no.'</td>';
+    //             $tabel1 .= '<td>';
+    //             if ($row->t_invoice_id == null) {
+    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+    //                 . '" onclick="updateDetailSell('.$row->id.', '.$noloop.', '.$b.');" style="'.$display.'"> '
+    //                 . '<i class="fa fa-save"></i></a>';
+    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+    //                 . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
+    //                 . '<i class="fa fa-trash"></i></a>';
+    //             }
+    //             $tabel1 .= '</td>';
+    //             $tabel1 .= '</tr>';
+    //             $noloop++;
+
+    //             $totalAmount    += $amount;
+    //             $totalAmount2   += $amount2;
+    //         }
+
+    //         $totalCost = 0;
+    //         $totalSell = 0;
+    //         $profitAll = 0;
+
+    //         foreach($shipping as $profit)
+    //         {
+    //             $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
+    //             $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
+    //             $profitAll = $totalSell - $totalCost;
+    //             $profitPct = ($profitAll*100)/$totalSell;
+    //             $tabel2 .= '<tr>';
+    //                 if($quote->shipment_by != 'LAND'){
+    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->carrier_code.'</strong></td>';
+    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
+    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
+    //                 }
+    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
+    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
+    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
+    //                 $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
+    //                 $tabel2 .= '</tr>';
+    //                 $no++;
+    //         }
+
+
+    //     header('Content-Type: application/json');
+    //     echo json_encode([$tabel, $tabel1, $tabel2, $noloop]);
+    // }
+
     public function loadSellCost(Request $request)
     {
         $tabel      = "";
         $tabel1     = "";
         $tabel2     = "";
-        $no         = 2;
-        $noloop     = 2;
+        $no         = 1;
         $data       = BookingModel::getChargesDetail($request->id);
         $company    = MasterModel::company_data();
         $booking    = DB::table('t_booking')->where('id', $request->id)->first();
@@ -1560,72 +1886,6 @@ class BookingController extends Controller
         $a          = 1;
         $b          = 2;
 
-        foreach($shipping as $shp)
-        {
-
-            // Cost
-            $tabel .= '<tr>';
-            // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
-            $tabel .= '<td>';
-            if ($shp->t_invoice_cost_id == null) {
-                $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.($no-1).')" name="cek_cost_shp[]" value="'.$shp->id.'"  id="cekx_'.($no-1).'">
-                            <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$booking->client_id.'" id="cek_paid_to_'.($no-1).'"/>';
-            }
-            $tabel .= '</td>';
-            $tabel .= '<td>'.($no-1).'</td>';
-                if($quote->shipment_by == 'LAND'){
-                    $tabel .= '<td>'.$shp->truck_size.'</td>';
-                }else{
-                    $tabel .= '<td>'.$shp->name_carrier.'</td>';
-                }
-            $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
-            $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
-            $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
-            $tabel .= '<td class="text-right">'.number_format($shp->cost_val,2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format(($shp->qty * $shp->cost_val),2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format((($shp->qty * $shp->cost_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
-            $tabel .= '<td class="text-left"></td>';
-            $tabel .= '<td></td>';
-            $tabel .= '<td></td>';
-            $tabel .= '</tr>';
-
-            $tabel1 .= '<tr>';
-            $tabel1 .= '<td>';
-            if ($shp->t_invoice_id == null) {
-                $tabel1 .= '<input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
-                            <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>';
-            }
-            $tabel1 .= '</td>';
-            $tabel1 .= '<td>'.($no-1).'</td>';
-                if($quote->shipment_by == 'LAND'){
-                    $tabel1 .= '<td>'.$shp->truck_size.'</td>';
-                }else{
-                    $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
-                }
-            $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
-            $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
-            $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
-            $tabel1 .= '<td class="text-right">'.number_format($shp->sell_val,2,',','.').'</td>';
-            $tabel1 .= '<td class="text-right">'.number_format(($shp->qty * $shp->sell_val),2,',','.').'</td>';
-            $tabel1 .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
-            $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
-            $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell_val) * $shp->rate) + $shp->vat,2,',','.').'</td>';
-            $tabel1 .= '<td class="text-left"></td>';
-            $displayx = 'display:none';
-
-            $tabel1 .= '<td class="text-left"></td>';
-            $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
-            $tabel1 .= '<td class="text-left">'.$shp->proforma_invoice_no.'</td>';
-            $tabel1 .= '<td>';
-            $tabel1 .= '</td>';
-            $tabel1 .= '</tr>';
-            $no++;
-        }
-
         $totalAmount    = 0;
         $totalAmount2   = 0;
         foreach($data as $row)
@@ -1636,8 +1896,8 @@ class BookingController extends Controller
                     $style = '';
                 }
 
-                $total = ($row->qty * $row->cost_val);
-                $total2 = ($row->qty * $row->sell_val);
+                $total = ($row->qty * $row->cost);
+                $total2 = ($row->qty * $row->sell);
                 $amount = ($total * $row->rate) + $row->vat;
                 $amount2 = ($total2 * $row->rate) + $row->vat;
 
@@ -1646,32 +1906,32 @@ class BookingController extends Controller
                 // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
                 $tabel .= '<td>';
                 if ($row->t_invoice_cost_id == null) {
-                    $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$noloop.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$noloop.'">
-                    <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$noloop.'"/>';
+                    $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$no.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$no.'">
+                    <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$no.'"/>';
                 }
                 $tabel .=  '</td>';
-                $tabel .= '<td>'.($noloop).'</td>';
+                $tabel .= '<td>'.($no).'</td>';
                 $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
-                $tabel .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+                $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
                 $tabel .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
-                $tabel .= '<td class="text-right">'.number_format($row->cost_val,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost_val),2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
+                $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
                 if($row->paid_to == null){
                     $tabel .= '<td>';
-                    $tabel .= '<select onchange="fillPaidToName('.$noloop.')" id="paid_to_'.$noloop.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
+                    $tabel .= '<select onchange="fillPaidToName('.$no.')" id="paid_to_'.$no.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
                     $tabel .= '<option value="" selected>-- Select Company --</option>';
                     foreach($company as $item){
                         $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }
                     $tabel .= '</select>';
                     $tabel .= '</td>';
-                    $tabel .= '<input type="hidden" id="paid_to_name_'.$noloop.'"/>';
-                    $tabel .= '<input type="hidden" id="paid_to_id_'.$noloop.'"/>';
+                    $tabel .= '<input type="hidden" id="paid_to_name_'.$no.'"/>';
+                    $tabel .= '<input type="hidden" id="paid_to_id_'.$no.'"/>';
                     $displayx = '';
                 }else{
                     $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
@@ -1681,7 +1941,7 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-left"></td>';
                 $tabel .= '<td>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
-                        . '" onclick="updateDetailSell('.$row->id.', '.$noloop.','.$a.');" style="'.$displayx.'"> '
+                        . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
                         . '<i class="fa fa-save"></i></a>';
                 $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
                         . '" onclick="hapusDetailSch('.$row->id.');"> '
@@ -1693,33 +1953,33 @@ class BookingController extends Controller
                 $tabel1 .= '<tr>';
                 $tabel1 .= '<td>';
                 if ($row->t_invoice_id == null) {
-                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$noloop.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$noloop.'">
-                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$noloop.'"/>';
+                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
+                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
                 }
                 $tabel .=  '</td>';
-                $tabel1 .= '<td>'.$noloop.'</td>';
+                $tabel1 .= '<td>'.$no.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->desc.' | Routing: '.$row->routing.' | Transit time : '.$row->transit_time.'</td>';
-                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
+                $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
+                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
                 $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
                 $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($row->sell_val,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell_val),2,',','.').'</td>';
+                $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+                $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell),2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
                 $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
                 if($row->bill_to == null){
-                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$noloop.'" placeholder="Bill to..." class="form-control"></td>';
+                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
                     $tabel1 .= '<td>';
-                    $tabel1 .= '<select onchange="fillBillToName('.$noloop.')" id="bill_to_'.$noloop.'" class="form-control select2bs44" ';
+                    $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" class="form-control select2bs44" ';
                     $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
                     $tabel1 .= '<option value="" selected>-- Select Company --</option>';
                     foreach($company as $item){
                         $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                     }
                     $tabel1 .= '</select>';
-                    $tabel1 .= '<input type="hidden" id="bill_to_name_'.$noloop.'"/>';
-                    $tabel1 .= '<input type="hidden" id="bill_to_id_'.$noloop.'"/>';
+                    $tabel1 .= '<input type="hidden" id="bill_to_name_'.$no.'"/>';
+                    $tabel1 .= '<input type="hidden" id="bill_to_id_'.$no.'"/>';
                     $tabel1 .= '</td>';
                     $display = '';
                 }else{
@@ -1734,7 +1994,7 @@ class BookingController extends Controller
                 $tabel1 .= '<td>';
                 if ($row->t_invoice_id == null) {
                     $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                    . '" onclick="updateDetailSell('.$row->id.', '.$noloop.', '.$b.');" style="'.$display.'"> '
+                    . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
                     . '<i class="fa fa-save"></i></a>';
                     $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                     . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
@@ -1742,7 +2002,7 @@ class BookingController extends Controller
                 }
                 $tabel1 .= '</td>';
                 $tabel1 .= '</tr>';
-                $noloop++;
+                $no++;
 
                 $totalAmount    += $amount;
                 $totalAmount2   += $amount2;
@@ -1754,8 +2014,8 @@ class BookingController extends Controller
 
             foreach($shipping as $profit)
             {
-                $totalCost = $totalAmount + (($profit->qty * $profit->cost_val) * $profit->rate) + $profit->vat;
-                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell_val) * $profit->rate) + $profit->vat;
+                $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
+                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
                 $profitAll = $totalSell - $totalCost;
                 $profitPct = ($profitAll*100)/$totalSell;
                 $tabel2 .= '<tr>';
@@ -1774,7 +2034,7 @@ class BookingController extends Controller
 
 
         header('Content-Type: application/json');
-        echo json_encode([$tabel, $tabel1, $tabel2, $noloop]);
+        echo json_encode([$tabel, $tabel1, $tabel2, $no]);
     }
 
     public function updateSell(Request $request)
@@ -1789,6 +2049,35 @@ class BookingController extends Controller
                 ]);
             }else{
                 DB::table('t_bcharges_dtl')
+                ->where('id', $request->id)
+                ->update([
+                    'bill_to'   => $request->bill_to_name,
+                    'bill_to_id'   => $request->bill_to_id,
+                ]);
+            }
+
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function updateSellshp(Request $request)
+    {
+        try {
+            if($request->v == 1){
+                DB::table('t_quote_shipg_dtl')
+                ->where('id', $request->id)
+                ->update([
+                    'paid_to'   => $request->paid_to_name,
+                    'paid_to_id' => $request->paid_to_id
+                ]);
+            }else{
+                DB::table('t_quote_shipg_dtl')
                 ->where('id', $request->id)
                 ->update([
                     'bill_to'   => $request->bill_to_name,
@@ -2246,6 +2535,128 @@ class BookingController extends Controller
         $barang = BookingModel::get_packages($id);
         $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data, 'barang' => $barang]);
         return $pdf->stream();
+    }
+
+
+    public function quote_addDetail(Request $request)
+    {
+        $cek = DB::table('t_quote_dtl')->where('t_quote_id', $request->quote)->orderBy('created_on', 'desc')->first();
+
+        $shipping   = QuotationModel::get_quoteShipping($request->quote);
+        $shp = $shipping[0];
+
+        if($cek == null){
+            $p = 1;
+        }else{
+            $p = $cek->position_no + 1;
+        }
+
+        if($request->reimburs == 1){
+            $r = 1;
+        }else{
+            $r = 0;
+        }
+
+        // try {
+        $user = Auth::user()->name;
+        $tanggal = Carbon::now();
+        DB::table('t_bcharges_dtl')->insert([
+            't_quote_id'        => $request->quote,
+            'position_no'       => $p,
+            't_mcharge_code_id' => $request->charge,
+            'desc'              => $request->desc,
+            'reimburse_flag'    => $r,
+            'currency'          => $request->currency,
+            'rate'              => $request->rate,
+            'cost'              => $request->cost,
+            'sell'              => $request->sell,
+            'qty'               => $request->qty,
+            'cost_val'          => str_replace(',', '', $request->cost_val),
+            'sell_val'          => str_replace(',','', $request->sell_val),
+            'vat'               => $request->vat,
+            'subtotal'          => str_replace(',','', $request->total),
+            'routing'           => $shp->routing,
+            'transit_time'      => $shp->transit_time,
+            'created_by'        => $user,
+            'created_on'        => $tanggal
+        ]);
+
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+
+        $result = array();
+        foreach ($data as $key)
+        {
+            $result = array_merge($result, $key);
+        }
+
+        $detail = $result;
+
+        $totalCost = 0;
+        $totalSell = 0;
+        foreach($detail as $row)
+        {   
+            $totalCost += $row->cost_val;
+            $totalSell += $row->sell_val;
+        }
+
+        $costV = $totalCost;
+        $sellV = $totalSell;
+        
+        #Insert Tabel t_quote_profit
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+        if(count($detail) > 1){
+            foreach($data as $shipping){
+                $totalCost  = $shipping->cost_val + $costV;
+                $totalSell  = $shipping->sell_val + $sellV;
+                $profit     = $totalSell - $totalCost;
+                $user = Auth::user()->name;
+                $tanggal = Carbon::now();
+                    try {
+                        DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
+                        ->update([
+                            't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                            'total_cost'            => $totalCost,
+                            'total_sell'            => $totalSell,
+                            'total_profit'          => $profit,
+                            'profit_pct'            => ($profit*100)/$totalSell,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                        $return_data = 'sukses';
+                    } catch (\Exception $e) {
+                        $return_data = $e->getMessage();
+                    }
+                }
+            $return_data = 'sukses';
+        }else{
+            foreach($data as $shipping){
+                $totalCost  = $shipping->cost_val + $costV;
+                $totalSell = $shipping->sell_val + $sellV;
+                $profit = $totalSell - $totalCost;
+                $user = Auth::user()->name;
+                $tanggal = Carbon::now();
+                    try {
+                        DB::table('t_quote_profit')->insert([
+                            't_quote_id'            => $shipping->t_quote_id,
+                            't_quote_ship_dtl_id'   => $shipping->id,
+                            't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                            'total_cost'            => $totalCost,
+                            'total_sell'            => $totalSell,
+                            'total_profit'          => $profit,
+                            'profit_pct'            => ($profit*100)/$totalSell,
+                            'created_by'            => $user,
+                            'created_on'            => $tanggal
+                        ]);
+                        $return_data = 'sukses';
+                    } catch (\Exception $e) {
+                        $return_data = $e->getMessage();
+                    }
+                }
+            $return_data = 'sukses';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
     }
 
 }

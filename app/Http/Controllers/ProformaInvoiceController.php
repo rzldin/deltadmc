@@ -102,13 +102,13 @@ class ProformaInvoiceController extends Controller
 
         $rules = [
             't_booking_id' => 'required',
-            'cek_cost_shp' => 'required_without:cek_cost_chrg',
+            'cek_cost_chrg' => 'required',
             'cek_paid_to' => 'required',
         ];
 
         $validatorMsg = [
             't_booking_id.required' => 'Booking ID can not be null!',
-            'cek_cost_shp.required_without' => 'Please choose at least 1 item!',
+            'cek_cost_chrg.required' => 'Please choose at least 1 item!',
             'cek_paid_to.required' => 'Please choose Paid To field!',
         ];
 

@@ -6,7 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Create Pro Forma Invoice
+                    Create Receive Invoice
                 </h1>
             </div>
             <div class="col-sm-6">

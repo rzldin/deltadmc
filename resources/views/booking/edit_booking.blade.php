@@ -642,6 +642,13 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-settings" role="tabpanel" aria-labelledby="custom-content-below-settings-tab">
+                                <div class="container-fluid mt-3">
+                                  <div class="row">
+                                    <div class="col-md-12">
+                                        <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Detail Quote</a>
+                                    </div>
+                                  </div>
+                                </div>
                                 <section class="content">
                                     <div class="container-fluid mt-3">
                                       <div class="row">
@@ -822,6 +829,143 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="detail-quote" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="formku" 
+                      id="formRoad" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Service/Fee<font color="#f00">*</font>
+                        </div>                                
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs44" name="charge" id="charge">
+                                <option value="">--Select Charge Code--</option>
+                                @foreach ($charge as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
+                                @endforeach
+                            </select>
+                        </div>
+                        <input type="hidden" name="id_dtl_quote" id="id_dtl_quote">
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Description
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="desc" id="descx" placeholder="Desc ...">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Currency <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs44" name="currency" id="currencyx" onchange="get_rate(this.value)">
+                                <option value="">--Select Currency--</option>
+                                @foreach ($currency as $item)
+                                <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
+                                @endforeach
+                            </select>
+                        </div>  
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Rate <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." value="" onkeyup="hitungx()">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Cost <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx()">                     
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Sell <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="sell" id="sellx" placeholder="Sell ..." onkeyup="hitungx()">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Qty <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="qty" id="qtyx" placeholder="Qty ..." onkeyup="hitungx()">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Cost Value <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="cost_val" id="cost_valx" placeholder="Cost Value ..." readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Sell Value <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="sell_val" id="sell_valx" placeholder="Sell Value ..." readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Vat 
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Total <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="total" id="totalx" placeholder="Total ..." readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                           Note
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="note" id="notex" placeholder="Note ...">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                           Reimbursment
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="checkbox" name="reimburs" id="reimburs" onclick="checkbox()">
+                            <input type="hidden" name="reimbursx" id="reimbursx" value="">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                        
+                <button type="button" class="btn btn-primary" id="detail_quote_submit" onClick="saveDetailxxx(); this.disabled=true;"><i class="fa fa-save"></i> Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @push('after-scripts')
     <script>
 
@@ -831,6 +975,249 @@
 
         var dsState;
 
+        function newDetailQuote()
+        {
+            $('#charge').val('').trigger('change');
+            $('#descx').val('');
+            $('#currencyx').val('').trigger('change');
+            $('#reimburs').prop('checked',false);
+            $('#reimbursx').val(0);
+            $('#rate').val('');
+            $('#ratex').val('');
+            $('#costx').val('');
+            $('#sellx').val('');
+            $('#qtyx').val('');
+            $('#cost_valx').val('');
+            $('#sell_valx').val('');
+            $('#vatx').val('');
+            $('#totalx').val('');
+            $('#notex').val('');
+
+            dsState = "Input";
+            
+            $("#detail-quote").find('.modal-title').text('Add Detail Quote');
+            $("#detail-quote").modal('show',{backdrop: 'true'}); 
+        }
+
+        /*** Edit Detail Quote **/
+         function editDetailx(id){
+            $.ajax({
+                url: "{{ route('quotation.quote_getDetailQ') }}",
+                type: "POST",
+                data: {
+                    id: id,
+                },
+                dataType: "html",
+                success: function(result) {
+                    let data = JSON.parse(result);
+                    let cost_val = data.cost_val
+                    let sell_val = data.sell_val
+                    let subtotal = data.subtotal
+                    cost_val = numberWithCommas(Number(cost_val));
+                    sell_val = numberWithCommas(Number(sell_val));
+                    subtotal = numberWithCommas(Number(subtotal));
+
+                    $('#charge').val(data.t_mcharge_code_id).trigger('change');
+                    $('#descx').val(data.desc);
+                    $('#id_dtl_quote').val(data.id);
+                    $('#ratex').val(Number(data.rate));
+                    $('#currencyx').val(data.t_mcurrency_id).trigger('change');
+                    if(data.reimburse_flag == 1){
+                        $('#reimburs').prop('checked',true);
+                        $('#reimbursx').val(1);
+                    }else{
+                        $('#reimburs').prop('checked',false);
+                        $('#reimbursx').val(0)
+                    }
+                    $('#costx').val(Number(data.cost));
+                    $('#sellx').val(Number(data.sell));
+                    $('#qtyx').val(data.qty);
+                    $('#cost_valx').val(cost_val);
+                    $('#sell_valx').val(sell_val);
+                    $('#vatx').val(Number(data.vat));
+                    $('#totalx').val(subtotal);
+                    $('#notex').val(data.notes);
+
+                    dsState = "Edit";
+            
+                    $("#detail-quote").find('.modal-title').text('Edit Detail Quote');
+                    $("#detail-quote").modal('show',{backdrop: 'true'});
+                   
+                }
+            });
+        }
+
+        /** Save Detail Quote **/
+         function saveDetailxxx(){
+
+            if($.trim($("#charge").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Select Charge!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else if($.trim($("#currencyx").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Select Currency!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else if($.trim($("#ratex").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Rate!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else if($.trim($("#costx").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Cost!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else if($.trim($("#sellx").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Sell!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else if($.trim($("#qtyx").val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Qty!'
+                });
+                $('#detail_quote_submit').prop('disabled', false);
+            }else{
+                if(dsState == "Input")
+                {
+                    $.ajax({
+                        type:"POST",
+                        url:"{{ route('booking.quote_addDetail') }}",
+                        data:{
+                            booking_id:{{ $quote->id }},
+                            quote:{{ $quote->t_quote_id }},
+                            quote_no : $('#quote_no').val(),
+                            charge:$('#charge').val(),
+                            desc:$('#descx').val(),
+                            reimburs:$('#reimbursx').val(),
+                            currency:$('#currencyx').val(),
+                            rate:$('#ratex').val(),
+                            cost:$('#costx').val(),
+                            sell:$('#sellx').val(),
+                            qty:$('#qtyx').val(),
+                            cost_val:$('#cost_valx').val(),
+                            sell_val:$('#sell_valx').val(),
+                            vat:$('#vatx').val(),
+                            total:$('#totalx').val(),
+                            note:$('#notex').val()
+                        },
+                        success:function(result){
+                            $('#detail-quote').modal('hide')
+                            $('#detail_quote_submit').prop('disabled', false);
+                            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }});
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Add Data!'
+                            });
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {  
+                            $('#detail_quote_submit').prop('disabled', false);         
+                            alert('Gagal menambahkan item!');
+                        },  
+                    });
+                }else{
+                    $.ajax({
+                        type:"POST",
+                        url:"{{ route('quotation.quote_updateDetail') }}",
+                        data:{
+                            id:$('#id_dtl_quote').val(),
+                            charge:$('#charge').val(),
+                            desc:$('#descx').val(),
+                            reimburs:$('#reimbursx').val(),
+                            currency:$('#currencyx').val(),
+                            rate:$('#ratex').val(),
+                            cost:$('#costx').val(),
+                            sell:$('#sellx').val(),
+                            qty:$('#qtyx').val(),
+                            cost_val:$('#cost_valx').val(),
+                            sell_val:$('#sell_valx').val(),
+                            vat:$('#vatx').val(),
+                            total:$('#totalx').val(),
+                            note:$('#notex').val(),
+                            quote:{{ $quote->t_quote_id }}
+                        },
+                        success:function(result){
+                            $('#detail_quote_submit').prop('disabled', false);
+                            $('#detail-quote').modal('hide');
+                            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }});
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Sukses Update Data!'
+                            });
+                        },error: function (xhr, ajaxOptions, thrownError) {  
+                            $('#detail_quote_submit').prop('disabled', false);        
+                            alert('Gagal Mengupdate!');
+                        },          
+                    });
+                }
+            }
+        }
+
+        function get_rate(val)
+        {
+            $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_getCurrencyCode') }}",
+                data:{
+                    id : val
+                },
+                success:function(result){
+                    let text = JSON.parse(result)
+                    let code = text.code
+
+                    if(code == 'IDR' && $('#ratex').val() == ''){
+                        $('#ratex').val(1);
+                    }
+                }
+            });
+        }
+        function hitungx()
+        {
+            let nilai1 = $('#ratex').val()*$('#costx').val();
+            let nilai2 = $('#ratex').val()*$('#sellx').val();
+
+            /** Menghitung Cost Value **/
+            let cost_val = Number(nilai1)*Number($('#qtyx').val());
+            cost_val = cost_val.toFixed(2)
+            cost_val = numberWithCommas(Number(cost_val));
+
+            /** Menghitung Cost Value **/
+            let sell_val = Number(nilai2)*Number($('#qtyx').val());
+            sell_val = sell_val.toFixed(2)
+            sell_val = numberWithCommas(Number(sell_val));
+
+            
+            $('#cost_valx').val(cost_val);
+            $('#sell_valx').val(sell_val);
+            hitungTotalx();
+            
+        }
+
+        /** Hitung Total Detail Quote **/
+        function hitungTotalx()
+        {
+            let sellVal = $('#sell_valx').val();
+            sellVal = sellVal.replace(/,/g, '') 
+            const cost = $('#qtyx').val()*sellVal;
+            let total = Number(cost)+Number($('#vatx').val());
+            total = total.toFixed(2)
+            total = numberWithCommas(Number(total));
+            $('#totalx').val(total);
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+  
         function get_customer(val)
         {
             $.ajax({
@@ -2583,6 +2970,32 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.updateSell') }}",
+                data:{
+                    id:id_detail,
+                    bill_to_name:$('#bill_to_name_'+id).val(),
+                    bill_to_id:$('#bill_to_id_'+id).val(),
+                    paid_to_name:$('#paid_to_name_'+id).val(),
+                    paid_to_id:$('#paid_to_id_'+id).val(),
+                    v : v
+                },
+                success:function(result){
+                    loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Sukses Update Data!'
+                    });
+                },error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Gagal Mengupdate data!');
+                },
+            });
+        }
+
+        function updateDetailSellshp(id_detail, id, v)
+        {
+            // console.log($('#paid_to_id_'+id).val());
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.updateSellshp') }}",
                 data:{
                     id:id_detail,
                     bill_to_name:$('#bill_to_name_'+id).val(),

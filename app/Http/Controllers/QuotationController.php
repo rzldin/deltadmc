@@ -312,6 +312,15 @@ class QuotationController extends Controller
     public function quote_doAdd(Request $request)
     {
 
+        $rules = [
+            'loaded' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
+        }
+
         if($request->hazard == 'on'){
             $h = 1;
         }else{
@@ -555,7 +564,7 @@ class QuotationController extends Controller
             DB::table('t_quote')
             ->where('id', $request->id)
             ->update([
-                'status'            => 1,
+                'status' => 1,
             ]);
 
             $return_data = 'sukses';

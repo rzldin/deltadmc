@@ -73,3 +73,6 @@ note, copy from booking no berapa
 air freight/sea freight tergantung jenis pengiriman dari shipment_by
 
 shipment by, kalo sea, ga boleh pelabuhan udara, kalo air ga boleh laut
+
+master document type
+quote pindah ke tmbcharges

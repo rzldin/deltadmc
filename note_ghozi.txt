@@ -20,11 +20,19 @@ ALTER TABLE `t_external_invoice` ADD `modified_by` INT(3) NULL AFTER `created_on
 
 --------
 
-ALTER TABLE funed713_deltadmc.t_external_invoice ADD truck_no varchar(20) NULL;
-ALTER TABLE funed713_deltadmc.t_external_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER external_invoice_no;
+ALTER TABLE t_external_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE t_external_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER external_invoice_no;
 
-ALTER TABLE funed713_deltadmc.t_invoice ADD truck_no varchar(20) NULL;
-ALTER TABLE funed713_deltadmc.t_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER invoice_no;
+ALTER TABLE t_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE t_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER invoice_no;
 
-ALTER TABLE funed713_deltadmc.t_proforma_invoice ADD truck_no varchar(20) NULL;
-ALTER TABLE funed713_deltadmc.t_proforma_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER proforma_invoice_no;
+ALTER TABLE t_proforma_invoice ADD truck_no varchar(20) NULL;
+ALTER TABLE t_proforma_invoice CHANGE truck_no truck_no varchar(20) NULL AFTER proforma_invoice_no;
+
+--------
+
+ALTER TABLE `t_quote_shipg_dtl` ADD `paid_to` VARCHAR(255) NULL AFTER `notes`, ADD `paid_to_id` INT NULL AFTER `paid_to`, ADD `bill_to` VARCHAR(255) NULL AFTER `paid_to_id`, ADD `bill_to_id` INT NULL AFTER `bill_to`;
+
+--------
+
+ALTER TABLE `t_bcharges_dtl` ADD `flag_shp` TINYINT(1) NOT NULL DEFAULT '0' AFTER `transit_time`;
