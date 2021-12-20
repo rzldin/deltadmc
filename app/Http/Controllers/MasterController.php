@@ -309,7 +309,7 @@ class MasterController extends Controller
         }else{
             $status = 1;
         }
-        
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -401,7 +401,7 @@ class MasterController extends Controller
         }else{
             $status = 1;
         }
-        
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -491,7 +491,7 @@ class MasterController extends Controller
         }else{
             $status = 1;
         }
-        
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -628,7 +628,8 @@ class MasterController extends Controller
                     'client_code'           => $request->client_code,
                     'client_name'           => $request->client_name,
                     'npwp'                  => $request->npwp,
-                    't_maccount_id'         => $request->account,
+                    'account_payable_id'    => $request->account_payable_id,
+                    'account_receivable_id' => $request->account_receivable_id,
                     'sales_by'              => $request->sales,
                     'legal_doc_flag'        => $legal_doc,
                     'customer_flag'         => $cust,
@@ -679,8 +680,9 @@ class MasterController extends Controller
 
         $company = DB::table('t_mcompany')
                     ->leftJoin('users', 't_mcompany.sales_by', '=', 'users.id')
-                    ->leftJoin('t_maccount', 't_mcompany.t_maccount_id', '=', 't_maccount.id')
-                    ->select('t_mcompany.*', 'users.name as user_name', 't_maccount.account_name')
+                    ->leftJoin('t_maccount as ap', 't_mcompany.account_payable_id', '=', 'ap.id')
+                    ->leftJoin('t_maccount as ar', 't_mcompany.account_receivable_id', '=', 'ar.id')
+                    ->select('t_mcompany.*', 'users.name as user_name', 'ap.account_number as ap_number', 'ap.account_name as ap_name', 'ar.account_number as ar_number', 'ar.account_name as ar_name')
                     ->where('t_mcompany.id', $id)->first();
 
         $data['company'] = $company;
@@ -694,7 +696,7 @@ class MasterController extends Controller
     {
         try {
             DB::table('t_mcompany')->where('id', $id)->delete();
-            
+
             #Delete Tabel t_maddress
             DB::table('t_maddress')->where('t_mcompany_id', $id)->delete();
             #Delete Tabel t_mpic
@@ -779,7 +781,8 @@ class MasterController extends Controller
                 'client_code'           => $request->client_code,
                 'client_name'           => $request->client_name,
                 'npwp'                  => $request->npwp,
-                't_maccount_id'         => $request->account,
+                'account_payable_id'    => $request->account_payable_id,
+                'account_receivable_id' => $request->account_receivable_id,
                 'sales_by'              => $request->sales,
                 'legal_doc_flag'        => $legal_doc,
                 'customer_flag'         => $cust,
@@ -834,7 +837,7 @@ class MasterController extends Controller
     }
 
     public function company_loadDetail(Request $request)
-    {        
+    {
         $tbl =  DB::table('t_maddress')
                     ->leftJoin('t_mcompany','t_mcompany.id', '=', 't_maddress.t_mcompany_id')
                     ->leftJoin('t_mcountry', 't_mcountry.id', '=', 't_maddress.t_mcountry_id')
@@ -842,7 +845,7 @@ class MasterController extends Controller
                     ->where('t_maddress.t_mcompany_id', $request['id'])->get();
 
         header('Content-Type: application/json');
-        echo json_encode($tbl); 
+        echo json_encode($tbl);
     }
 
     public function company_deleteAddress(Request $request)
@@ -866,7 +869,7 @@ class MasterController extends Controller
         }else{
             $status = 1;
         }
-        
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -927,14 +930,14 @@ class MasterController extends Controller
     }
 
     public function company_loadDetailPic(Request $request)
-    {        
+    {
         $tbl =  DB::table('t_mpic')
                     ->leftJoin('t_mcompany','t_mcompany.id', '=', 't_mpic.t_mcompany_id')
                     ->select('t_mpic.*', 't_mcompany.client_name')
                     ->where('t_mpic.t_mcompany_id', $request['id'])->get();
 
         header('Content-Type: application/json');
-        echo json_encode($tbl); 
+        echo json_encode($tbl);
     }
 
     public function company_deletePic(Request $request)
@@ -958,7 +961,7 @@ class MasterController extends Controller
         }else{
             $status = 1;
         }
-        
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -1016,7 +1019,7 @@ class MasterController extends Controller
                 'phone2'                => $request->phone2,
                 'fax'                   => $request->fax,
                 'email'                 => $request->email,
-                'active_flag'           => $status,      
+                'active_flag'           => $status,
                 'password'              => bcrypt($request->password),
                 'created_by'            => $user,
                 'created_at'            => $tanggal
@@ -1052,9 +1055,9 @@ class MasterController extends Controller
                 'phone2'                => $request->phone2,
                 'fax'                   => $request->fax,
                 'email'                 => $request->email,
-                'active_flag'           => $status,   
+                'active_flag'           => $status,
                 'updated_by'            => $user,
-                'updated_at'            => $tanggal   
+                'updated_at'            => $tanggal
             ]);
 
             return redirect()->route('master.user')->with('status', 'Successfully updated');
@@ -1095,7 +1098,7 @@ class MasterController extends Controller
         $data['list_parent'] = MasterModel::parent_account_get();
         return view('master.account')->with($data);
     }
- 
+
     public function account_doAdd(Request $request)
     {
         if($request->status == 'on'){
@@ -1151,9 +1154,9 @@ class MasterController extends Controller
                 'parent_account'        => $request->parent_account,
                 'beginning_ballance'    => $request->beginning_ballance,
                 'start_date'            => $request->start_date,
-                'active_flag'           => $status,  
+                'active_flag'           => $status,
                 'updated_by'            => $user,
-                'updated_on'            => $tanggal   
+                'updated_on'            => $tanggal
             ]);
 
             return redirect()->route('master.account')->with('status', 'Successfully updated');

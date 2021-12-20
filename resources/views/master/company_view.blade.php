@@ -35,9 +35,9 @@
                                 <div class="row">
                                     <div class="col-md-4 col-xs-4">
                                         Company Code <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_code" name="client_code" 
+                                        <input type="text" id="client_code" name="client_code"
                                             class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" value="{{ $company->client_code }}" readonly>
                                         <input type="hidden" id="id_company" name="id_company" value="{{ $company->id }}">
                                     </div>
@@ -45,33 +45,41 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Company Name <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="client_name" name="client_name" 
+                                        <input type="text" id="client_name" name="client_name"
                                             class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" value="{{ $company->client_name }}" readonly>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         NPWP <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" id="npwp" name="npwp" 
+                                        <input type="text" id="npwp" name="npwp"
                                             class="form-control myline" style="margin-bottom:5px" onkeyup="this.value = this.value.toUpperCase()" value="{{ $company->npwp }}" readonly>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Account <font color="#f00">*</font>
-                                    </div>                                
+                                        Account Payable <font color="#f00">*</font>
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text"  class="form-control myline" style="margin-bottom:5px" value="{{ $company->account_name  }}" readonly>
+                                        <input type="text"  class="form-control myline" style="margin-bottom:5px" value="@if ($company->ap_number != '') {{ $company->ap_number.' | '.$company->ap_name  }} @endif" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Account Receivable <font color="#f00">*</font>
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <input type="text"  class="form-control myline" style="margin-bottom:5px" value="@if ($company->ar_number != ''){{ $company->ar_number.' | '.$company->ar_name  }} @endif" readonly>
                                     </div>
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Sales By <font color="#f00">*</font>
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text"  class="form-control myline" style="margin-bottom:5px" value="{{ $company->user_name  }}" readonly>
                                     </div>
@@ -95,7 +103,7 @@
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Status
-                                    </div>                                
+                                    </div>
                                     <div class="col-md-8 col-xs-8">
                                         <div class="custom-control custom-checkbox">
                                             <div class="icheck-primary d-inline">
@@ -126,7 +134,7 @@
                                             </div>
                                             <div class="custom-control custom-checkbox mt-2">
                                                 <div class="icheck-primary d-inline">
-                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked 
+                                                    <input type="checkbox" id="vendor" name="vendor" value="1" @if ($company->vendor_flag == 1) checked
                                                     @endif disabled>
                                                     <label for="vendor">
                                                         VENDOR
@@ -203,7 +211,7 @@
                                     <th>Country</th>
                                     <th>Province</th>
                                     <th>City</th>
-                                    <th>Postal Code</th> 
+                                    <th>Postal Code</th>
                                     <th>Address</th>
                                 </tr>
                             </thead>
@@ -217,7 +225,7 @@
                                     <td>{{ $s->city }}</td>
                                     <td>{{ $s->postal_code }}</td>
                                     <td>{{ $s->address }}</td>
-                                </tr>                                            
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -240,7 +248,7 @@
                                     <th>Phone 1</th>
                                     <th>Phone 2</th>
                                     <th>Fax</th>
-                                    <th>Email</th> 
+                                    <th>Email</th>
                                     <th>PIC Desc</th>
                                 </tr>
                             </thead>
@@ -262,8 +270,8 @@
                 </div>
             </div>
             <div class="mt-3 mb-4">
-                <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2"> 
-                    <i class="fa fa-angle-left"></i> Kembali 
+                <a href="{{ route('master.company') }}" class="btn btn-default float-left mr-2">
+                    <i class="fa fa-angle-left"></i> Kembali
                 </a>
             </div>
         </div>

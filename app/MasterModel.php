@@ -154,7 +154,7 @@ class MasterModel extends Model
 
     public static function account_get()
     {
-        return DB::table('t_maccount')->orderBy('account_name')->get();
+        return DB::table('t_maccount')->orderBy('account_number')->get();
     }
 
     public static function loaded_get()
