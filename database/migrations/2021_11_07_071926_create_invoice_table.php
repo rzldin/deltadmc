@@ -16,7 +16,7 @@ class CreateInvoiceTable extends Migration
         Schema::create('t_invoice', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('tipe_inv')->default(0);
-            $table->integer('t_proforma_invoice_id');
+            // $table->integer('t_proforma_invoice_id');
             $table->integer('t_booking_id');
             $table->integer('client_id')->nullable();
             $table->integer('client_addr_id')->nullable();

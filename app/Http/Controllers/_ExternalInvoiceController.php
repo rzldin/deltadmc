@@ -3,24 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\BookingModel;
+use App\ExternalInvoice;
+use App\ExternalInvoiceDetail;
 use App\InvoiceDetailModel;
 use App\InvoiceModel;
 use App\MasterModel;
-use App\ProformaInvoiceDetailModel;
-use App\ProformaInvoiceModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
-class ProformaInvoiceController extends Controller
+class ExternalInvoiceController extends Controller
 {
     public function index()
     {
-        $proforma_invoices = ProformaInvoiceModel::getAllProformaInvoice()->get();
-        return view('proforma_invoice.list_proforma_invoice', compact('proforma_invoices'));
+        $external_invoices = ExternalInvoice::getAllExternalInvoice()->get();
+        return view('external_invoice.list_external_invoice', compact('external_invoices'));
     }
 
     public function create($invoiceId)
@@ -36,25 +35,17 @@ class ProformaInvoiceController extends Controller
         $data['goods'] = BookingModel::get_commodity($data['invoice_header']['t_booking_id']);
         $data['charges'] = MasterModel::charge();
 
-        return view('proforma_invoice.add_proforma_invoice')->with($data);
-    }
-
-    public function deleteSession()
-    {
-        Session::forget('invoice_details');
+        return view('external_invoice.add_external_invoice')->with($data);
     }
 
     public function loadDetail(Request $request)
     {
+        // Session::forget('invoice_details');
         $html = '';
 
         $details = Session::get('invoice_details');
         if ($details == []) {
-            if ($request->proforma_invoice_id != 0) {
-                $data = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->proforma_invoice_id)->get();
-            } else {
-                $data = InvoiceDetailModel::getInvoiceDetails($request->invoice_id)->get();
-            }
+            $data = InvoiceDetailModel::getInvoiceDetails($request->invoice_id)->get();
 
             foreach ($data as $key => $detail) {
                 $newItem = [
@@ -78,6 +69,7 @@ class ProformaInvoiceController extends Controller
             }
         }
         $details = Session::get('invoice_details');
+        // dd($details);
         if ($details != []) {
             foreach ($details as $key => $detail) {
                 if ($detail['reimburse_flag'] == 1) {
@@ -127,9 +119,9 @@ class ProformaInvoiceController extends Controller
             // ex : hanya mengambil data details yang index nya 0 dan 3 // $details[3][field_name]
             foreach ($key as $index => $id) {
                 $total = ($details[$id]['qty'] * $details[$id]['sell_val']);
-                // $amount = ($total * $details[$id]['rate']) + $details[$id]['vat'];
+                $amount = ($total * $details[$id]['rate']) + $details[$id]['vat'];
                 $grand_total += $total;
-                // $total_amount += $amount;
+                $total_amount += $amount;
                 $roe = $details[$id]['rate'];
                 $vat = $details[$id]['vat'];
                 // $total += ($detail['qty'] * $detail['sell_val']);
@@ -160,7 +152,6 @@ class ProformaInvoiceController extends Controller
             $html .= '<tr>';
             $html .= '<td colspan="12">';
             $vat = (10/100) * $grand_total;
-            $total_amount = $vat + $grand_total;
             $html .= '<input type="hidden" name="roe_before" id="roe_before" value="'.$roe.'"/>';
             $html .= '<input type="hidden" name="total_before" id="total_before" value="'.$grand_total.'"/>';
             $html .= '<input type="hidden" name="amount_before" id="amount_before" value="'.$total_amount.'"/>';
@@ -260,69 +251,40 @@ class ProformaInvoiceController extends Controller
         // dd($request->all());
         $rules = [
             'client_id' => 'required',
-            'proforma_invoice_date' => 'required',
+            'external_invoice_no' => 'required|unique:t_external_invoice',
+            'external_invoice_date' => 'required',
             'currency' => 'required',
             // 'pol_id' => 'required',
             // 'pod_id' => 'required',
         ];
-        if ($request->has('proforma_invoice_no')) {
-            $rules = array_merge(['proforma_invoice_no' => 'required|unique:t_proforma_invoice'], $rules);
-        }
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
-
         try {
             DB::beginTransaction();
 
-            // $param = $request->all();
-            $param['id'] = $request->id;
-            $param['t_invoice_id'] = $request->t_invoice_id;
-            $param['t_booking_id'] = $request->t_booking_id;
-            $param['activity'] = $request->activity;
-            $param['client_id'] = $request->client_id;
-            $param['client_addr_id'] = $request->client_addr_id;
-            $param['client_pic_id'] = $request->client_pic_id;
-            if ($request->has('proforma_invoice_no')) {
-                $param['proforma_invoice_no'] = $request->proforma_invoice_no;
-            }
-            $param['truck_no'] = $request->truck_no;
-            $param['proforma_invoice_date'] = date('Y-m-d', strtotime($request->proforma_invoice_date));
+            $param = $request->all();
+            $param['external_invoice_date'] = date('Y-m-d', strtotime($request->external_invoice_date));
+            $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
-            $param['top'] = $request->top;
-            $param['currency'] = $request->currency;
-            $param['mbl_shipper'] = $request->mbl_shipper;
-            $param['hbl_shipper'] = $request->hbl_shipper;
-            $param['vessel'] = $request->vessel;
-            $param['m_vessel'] = $request->m_vessel;
-            $param['pol_id'] = $request->pol_id;
-            $param['pod_id'] = $request->pod_id;
-            $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
-            $param['rate'] = $request->rate;
             // $param['rate'] = 1;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
 
-            $proforma_invoice = ProformaInvoiceModel::saveProformaInvoice($param);
+            $invoice = ExternalInvoice::saveExternalInvoice($param);
 
             $details = $request->session()->get('invoice_details');
             // dd($details);
             $total_invoice = 0;
-
-            // clear proforma details first
-            if ($request->id != 0) {
-                ProformaInvoiceDetailModel::deleteProformaInvoiceDetailsByProformaId($request->id);
-            }
-
             foreach ($details as $key => $detail) {
-                // dd($proforma_invoice->id);
+                // dd($invoice->id);
                 $paramDetail['id'] = 0;
-                $paramDetail['proforma_invoice_id'] = $proforma_invoice->id;
+                $paramDetail['external_invoice_id'] = $invoice->id;
                 $paramDetail['t_mcharge_code_id'] = $detail['t_mcharge_code_id'];
                 $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                 $paramDetail['desc'] = $detail['desc'];
@@ -341,42 +303,25 @@ class ProformaInvoiceController extends Controller
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
                 $total_invoice += $detail['subtotal'];
-                ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
+                ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
             }
 
-            DB::table('t_proforma_invoice')->where('id', $proforma_invoice->id)->update([
+            DB::table('t_external_invoice')->where('id', $invoice->id)->update([
                 'total_invoice' => $total_invoice
             ]);
             DB::commit();
-            Session::forget('invoice_details');
-            return redirect()->route('proforma_invoice.index')->with('success', 'Saved!');
+
+            return redirect()->route('external_invoice.index')->with('success', 'Saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error('ProformaInvoice Save Error '.$th->getMessage());
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
-    public function edit($proformaInvoiceId)
+    public function view($externalInvoiceId)
     {
-        Session::forget('invoice_details');
-        $data['proforma_invoice_header'] = ProformaInvoiceModel::getProformaInvoice($proformaInvoiceId)->first();
-        $data['proforma_invoice_details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($proformaInvoiceId)->get();
-        $data['companies'] = MasterModel::company_data();
-        $data['addresses'] = MasterModel::get_address($data['proforma_invoice_header']['client_id']);
-        $data['pics'] = MasterModel::get_pic($data['proforma_invoice_header']['client_id']);
-        $data['currency']       = MasterModel::currency();
-        $data['containers'] = BookingModel::get_container($data['proforma_invoice_header']['t_booking_id']);
-        $data['goods'] = BookingModel::get_commodity($data['proforma_invoice_header']['t_booking_id']);
-        $data['charges'] = MasterModel::charge();
-
-        return view('proforma_invoice.edit_proforma_invoice')->with($data);
-    }
-
-    public function view($proformaInvoiceId)
-    {
-        $data['header'] = ProformaInvoiceModel::getProformaInvoice($proformaInvoiceId)->first();
-        $data['details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($proformaInvoiceId)->get();
+        $data['header'] = ExternalInvoice::getExternalInvoice($externalInvoiceId)->first();
+        $data['details'] = ExternalInvoiceDetail::getExternalInvoiceDetails($externalInvoiceId)->get();
         $data['companies'] = MasterModel::company_data();
         $data['addresses'] = MasterModel::get_address($data['header']['client_id']);
         $data['pics'] = MasterModel::get_pic($data['header']['client_id']);
@@ -384,6 +329,6 @@ class ProformaInvoiceController extends Controller
         $data['containers'] = BookingModel::get_container($data['header']['t_booking_id']);
         $data['goods'] = BookingModel::get_commodity($data['header']['t_booking_id']);
 
-        return view('proforma_invoice.view_proforma_invoice')->with($data);
+        return view('external_invoice.view_external_invoice')->with($data);
     }
 }

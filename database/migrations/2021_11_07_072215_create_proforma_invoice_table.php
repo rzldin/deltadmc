@@ -15,7 +15,8 @@ class CreateProformaInvoiceTable extends Migration
     {
         Schema::create('t_proforma_invoice', function (Blueprint $table) {
             $table->id();
-            $table->integer('t_booking_id');
+            $table->integer('t_invoice_id')->default(0);
+            $table->integer('t_booking_id')->default(0);
             $table->integer('client_id')->nullable();
             $table->integer('client_addr_id')->nullable();
             $table->integer('client_pic_id')->nullable();
@@ -24,6 +25,7 @@ class CreateProformaInvoiceTable extends Migration
             $table->string('truck_no', 20)->nullable();
             $table->string('activity', 50);
             $table->integer('currency');
+            $table->decimal('total_invoice', 25, 4)->default(0);
             $table->decimal('rate', 25, 4)->default(0);
             $table->integer('reimburse_flag')->nullable();
             $table->integer('debit_note_flag')->nullable();

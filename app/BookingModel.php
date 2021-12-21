@@ -71,11 +71,11 @@ class BookingModel extends Model
 
     public static function getChargesDetail($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.proforma_invoice_no from t_bcharges_dtl a
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.invoice_no from t_bcharges_dtl a
             LEFT JOIN t_booking b ON a.t_booking_id = b.id
             LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id
             LEFT JOIN t_mcurrency d ON a.currency = d.id
-            LEFT JOIN t_proforma_invoice i ON i.id = a.t_invoice_id
+            LEFT JOIN t_invoice i ON i.id = a.t_invoice_id
             LEFT JOIN t_proforma_invoice i2 ON i2.id = a.t_invoice_cost_id
         WHERE a.t_booking_id='".$id."'");
     }

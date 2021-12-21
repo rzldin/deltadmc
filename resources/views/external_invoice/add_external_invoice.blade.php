@@ -25,7 +25,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
-                            <strong>{{ ucwords($invoice_header->activity) }}</strong>
+                            <strong>{{ ucwords($proforma_invoice_header->activity) }}</strong>
                         </h3>
                     </div>
                     <div class="card-body">
@@ -33,11 +33,11 @@
                             id="formInvoice">
                             @csrf
                             <input type="hidden" name="id" value="0">
-                            <input type="hidden" name="total_invoice" value="{{ $invoice_header->total_invoice }}">
-                            <input type="hidden" name="t_invoice_id" id="t_invoice_id" value="{{ $invoice_header->id }}" />
-                            <input type="hidden" name="activity" value="{{ $invoice_header->activity }}">
-                            <input type="hidden" name="t_booking_id" value="{{ $invoice_header->t_booking_id }}">
-                            <input type="hidden" name="rate" value="{{ $invoice_header->rate }}">
+                            <input type="hidden" name="total_invoice" value="{{ $proforma_invoice_header->total_invoice }}">
+                            <input type="hidden" name="t_proforma_invoice_id" id="t_proforma_invoice_id" value="{{ $proforma_invoice_header->id }}" />
+                            <input type="hidden" name="activity" value="{{ $proforma_invoice_header->activity }}">
+                            <input type="hidden" name="t_booking_id" value="{{ $proforma_invoice_header->t_booking_id }}">
+                            <input type="hidden" name="rate" value="{{ $proforma_invoice_header->rate }}">
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h3 class="card-title">Invoice Information</h3>
@@ -55,7 +55,7 @@
                                                         <option value="">Select Company</option>
                                                         @foreach($companies as $company)
                                                             <option value="{{ $company->id }}"
-                                                                <?= $company->id == $invoice_header['client_id'] ? 'selected' : '' ?>>
+                                                                <?= $company->id == $proforma_invoice_header['client_id'] ? 'selected' : '' ?>>
                                                                 {{ $company->client_code }}</option>
                                                         @endforeach
                                                     </select>
@@ -71,7 +71,7 @@
                                                         <option value="">Select Address</option>
                                                         @foreach($addresses as $address)
                                                             <option value="{{ $address->id }}"
-                                                                <?= $company->id == $invoice_header['client_addr_id'] ? 'selected' : '' ?>>
+                                                                <?= $company->id == $proforma_invoice_header['client_addr_id'] ? 'selected' : '' ?>>
                                                                 {{ $address->address }}</option>
                                                         @endforeach
                                                     </select>
@@ -87,7 +87,7 @@
                                                         <option value="">Select PIC</option>
                                                         @foreach($pics as $pic)
                                                             <option value="{{ $pic->id }}"
-                                                                <?= $company->id == $invoice_header['client_pic_id'] ? 'selected' : '' ?>>
+                                                                <?= $company->id == $proforma_invoice_header['client_pic_id'] ? 'selected' : '' ?>>
                                                                 {{ $pic->name }}</option>
                                                         @endforeach
                                                     </select>
@@ -95,11 +95,11 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Invoice No</label>
+                                                    <label>External Invoice No</label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="external_invoice_no"
-                                                    id="external_invoice_no" value="{{ $invoice_header->invoice_no }}">
+                                                    id="external_invoice_no" value="">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -108,7 +108,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="truck_no"
-                                                    id="truck_no" value="{{ $invoice_header->truck_no }}">
+                                                    id="truck_no" value="{{ $proforma_invoice_header->truck_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -117,13 +117,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" onchange="loadDetail({{ $invoice_header->id }})" value="REG" <?= (($invoice_header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
+                                                        id="invoice_type_reg" value="REG" <?= (($proforma_invoice_header->reimburse_flag == '0' && $proforma_invoice_header->debit_note_flag == '0' && $proforma_invoice_header->credit_note_flag == '0') ? 'checked' : '') ?>> Reguler<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" onchange="loadDetail({{ $invoice_header->id }})" value="REM" <?= (($invoice_header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" value="REM" <?= (($proforma_invoice_header->reimburse_flag == '1') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" onchange="loadDetail({{ $invoice_header->id }})" value="DN" <?= (($invoice_header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
+                                                        id="invoice_type_debit_note" value="DN" <?= (($proforma_invoice_header->debit_note_flag == '1') ? 'checked' : '') ?>> Debit Note<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" onchange="loadDetail({{ $invoice_header->id }})" value="CN" <?= (($invoice_header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                        id="invoice_type_credit_note" value="CN" <?= (($proforma_invoice_header->credit_note_flag == '1') ? 'checked' : '') ?>> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -131,7 +131,7 @@
                                                     <label>MB/L</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    : {{ $invoice_header->mbl_shipper }}
+                                                    : {{ $proforma_invoice_header->mbl_shipper }}
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -170,13 +170,13 @@
                                                     <label>Issued Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input-group date" id="reservationdate"
+                                                    <div class="input-group date" id="external_invoice_date_picker"
                                                         data-target-input="nearest">
                                                         <input type="text" name="external_invoice_date"
                                                             id="external_invoice_date"
                                                             class="form-control datetimepicker-input"
-                                                            data-target="#reservationdate" value="{{ date('d/m/Y') }}" />
-                                                        <div class="input-group-append" data-target="#reservationdate"
+                                                            data-target="#external_invoice_date_picker" value="{{ date('d/m/Y') }}" />
+                                                        <div class="input-group-append" data-target="#external_invoice_date_picker"
                                                             data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                             </div>
@@ -189,7 +189,7 @@
                                                     <label>TOP</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <input class="form-control" type="number" name="top" id="top" value="{{ $invoice_header->top }}">
+                                                    <input class="form-control" type="number" name="top" id="top" value="{{ $proforma_invoice_header->top }}">
                                                 </div>
                                                 <div class="col-md-4">
                                                     Days
@@ -203,7 +203,7 @@
                                                     <select class="form-control" name="currency" id="currency">
                                                         <option value="" selected>-- Select Valuta --</option>
                                                         @foreach($currency as $item)
-                                                            <option value="{{ $item->id }}" @if ($invoice_header->
+                                                            <option value="{{ $item->id }}" @if ($proforma_invoice_header->
                                                                 currency == $item->id) selected @endif>
                                                                 {{ $item->code }}</option>
                                                         @endforeach
@@ -216,7 +216,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $invoice_header->mbl_no }}">
+                                                        id="mbl_shipper" value="{{ $proforma_invoice_header->mbl_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -225,7 +225,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="hbl_shipper"
-                                                        id="hbl_shipper" value="{{ $invoice_header->hbl_shipper }}">
+                                                        id="hbl_shipper" value="{{ $proforma_invoice_header->hbl_shipper }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -233,7 +233,7 @@
                                                     <label>VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="vessel" id="vessel" value="{{ $invoice_header->vessel }}">
+                                                    <input class="form-control" type="text" name="vessel" id="vessel" value="{{ $proforma_invoice_header->vessel }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -242,7 +242,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="m_vessel"
-                                                        id="m_vessel" value="{{ $invoice_header->m_vessel }}">
+                                                        id="m_vessel" value="{{ $proforma_invoice_header->m_vessel }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -251,9 +251,9 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pol_name"
-                                                        id="pol_name" value="{{ $invoice_header->pol_name }}" readonly>
+                                                        id="pol_name" value="{{ $proforma_invoice_header->pol_name }}" readonly>
                                                     <input class="form-control" type="hidden" name="pol_id" id="pol_id"
-                                                        value="{{ $invoice_header->pol_id }}">
+                                                        value="{{ $proforma_invoice_header->pol_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -262,9 +262,9 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pod_name"
-                                                        id="pod_name" value="{{ $invoice_header->pod_name }}" readonly>
+                                                        id="pod_name" value="{{ $proforma_invoice_header->pod_name }}" readonly>
                                                     <input class="form-control" type="hidden" name="pod_id" id="pod_id"
-                                                        value="{{ $invoice_header->pod_id }}">
+                                                        value="{{ $proforma_invoice_header->pod_id }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -272,12 +272,12 @@
                                                     <label>On Board Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input-group date" id="reservationdatex"
+                                                    <div class="input-group date" id="onboard_date_picker"
                                                         data-target-input="nearest">
                                                         <input type="text" name="onboard_date" id="onboard_date"
                                                             class="form-control datetimepicker-input"
-                                                            data-target="#reservationdate" value="{{ date('d/m/Y', strtotime($invoice_header->onboard_date)) }}" />
-                                                        <div class="input-group-append" data-target="#reservationdatex"
+                                                            data-target="#onboard_date_picker" value="{{ date('d/m/Y', strtotime($proforma_invoice_header->onboard_date)) }}" />
+                                                        <div class="input-group-append" data-target="#onboard_date_picker"
                                                             data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                             </div>
@@ -292,12 +292,9 @@
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
-                                    <a href="javascript:void(0);" onclick="showModalMerge()"
-                                    class="btn btn-success float-right"><i class="fas fa-check"></i> Merge Detail
-                                    Selected</a>
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                    <table class="table table-bordered table-striped" id="" style="width: 150%">
                                         <thead>
                                             <tr>
                                                 <th></th>
@@ -317,7 +314,22 @@
                                             </tr>
                                         </thead>
                                         <tbody id="tblSell">
-
+                                            @foreach ($proforma_invoice_details as $key => $proforma_invoice_detail)
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $proforma_invoice_detail->charge_name }}</td>
+                                                <td>{{ $proforma_invoice_detail->desc }}</td>
+                                                <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($proforma_invoice_header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
+                                                <td>{{ $proforma_invoice_detail->qty }}</td>
+                                                <td>{{ $proforma_invoice_detail->currency_code }}</td>
+                                                <td>{{ number_format($proforma_invoice_detail->sell_val, 2, ',', '.') }}</td>
+                                                <td>{{ number_format($proforma_invoice_detail->subtotal, 2, ',', '.') }}</td>
+                                                <td>{{ number_format($proforma_invoice_detail->rate, 2, ',', '.') }}</td>
+                                                <td>{{ number_format($proforma_invoice_detail->vat, 2, ',', '.') }}</td>
+                                                <td>{{ number_format((($proforma_invoice_detail->subtotal * $proforma_invoice_detail->rate) + $proforma_invoice_detail->vat), 2, ',', '.') }}</td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -336,140 +348,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalMerge" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Merge Detail</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h5 class="card-title">Before</h5>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Service/Fee</th>
-                                        <th>Description</th>
-                                        <th>Reimbursment</th>
-                                        <th>Unit</th>
-                                        <th>Currency</th>
-                                        <th>rate/unit</th>
-                                        <th>Total</th>
-                                        <th>ROE</th>
-                                        <th>Vat</th>
-                                        <th>Amount</th>
-                                        <th>Note</th>
-                                        {{-- <th>Action</th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody id="tblBefore">
 
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td>Merge to</td>
-                                        <td>
-                                            <select class="form-control select2bs44" name="charge" id="charge">
-                                                <option value="">--Select Charge Code--</option>
-                                                @foreach ($charges as $charge)
-                                                <option value="{{ $charge->id }}">{{ $charge->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="desc" id="desc" class="form-control">
-                                        </td>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" name="reimburse_flag" id="reimburse_flag" onclick="return false">
-                                        </td>
-                                        <td>
-                                            <input type="text" name="unit" id="unit" class="form-control">
-                                        </td>
-                                        <td>
-                                            <select class="form-control" name="currency_dtl" id="currency_dtl" disabled>
-                                                <option value="" selected>-- Select Valuta --</option>
-                                                @foreach($currency as $item)
-                                                    <option value="{{ $item->id }}" @if ($invoice_header->
-                                                        currency == $item->id) selected @endif>
-                                                        {{ $item->code }}</option>
-                                                @endforeach
-                                            </select>
-                                            <input type="hidden" name="currency_id" id="currency_id">
-                                            <input type="hidden" name="currency_code" id="currency_code">
-                                        </td>
-                                        <td>
-                                            <input type="text" name="rate" id="rate" class="form-control">
-                                        </td>
-                                        <td>
-                                            <input type="text" name="total" id="total" class="form-control" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="roe" id="roe" class="form-control" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="vat" id="vat" class="form-control" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="amount" id="amount" class="form-control" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="text" name="note" id="note" class="form-control">
-                                        </td>
-                                        {{-- <td>
-                                            <a href="javascript:;" class="btn btn-xs btn-primary" onclick="saveMergeDetail()"><i class="fa fa-plus"></i></a>
-                                        </td> --}}
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-
-                    {{-- <div class="card card-primary">
-                        <div class="card-header">
-                            <h5 class="card-title">After</h5>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Service/Fee</th>
-                                        <th>Description</th>
-                                        <th>Reimbursment</th>
-                                        <th>Unit</th>
-                                        <th>Currency</th>
-                                        <th>rate/unit</th>
-                                        <th>Total</th>
-                                        <th>ROE</th>
-                                        <th>Vat</th>
-                                        <th>Amount</th>
-                                        <th>Note</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblAfter">
-
-                                </tbody>
-
-                            </table>
-                        </div>
-                    </div> --}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveMergeDetail()">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </section>
 @push('after-scripts')
@@ -507,142 +386,13 @@
             }
         }
 
-        function loadDetail(invoiceId) {
-            url = `{{ route('external_invoice.loadDetail') }}`;
-            $.ajax({
-                type: 'post',
-                url: url,
-                data: {
-                    invoice_id: invoiceId,
-                    invoice_type: $('input[name="invoice_type"]:checked').val(),
-                },
-                success: function(result) {
-                    $('#tblSell').html(result);
-                }
-            });
-        }
-
-        function showModalMerge() {
-            loadDetailBefore();
-            // loadDetailAfter();
-            var id = $.map($('input[name="detail_id"]:checked'), function(c){return c.value; });
-            if (id == '') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Please select data!',
-                })
-            } else {
-                currency = $('#currency_dtl option:selected');
-                $('#currency_id').val(currency.val());
-                $('#currency_code').val(currency.text());
-                $('#modalMerge').modal('show');
-            }
-        }
-
-        function loadDetailBefore() {
-            var id = $.map($('input[name="detail_id"]:checked'), function(c){return c.value; });
-            var invoice_type = $('input[name="invoice_type"]:checked').val();
-            console.log('id', id);
-            url = `{{ route('external_invoice.loadDetailBefore') }}`;
-            $.ajax({
-                type: 'post',
-                url: url,
-                data: {
-                    id: id,
-                    invoice_type: invoice_type,
-                },
-                success: function(result) {
-                    $('#tblBefore').html(result);
-                    if (invoice_type == 'REM') {
-                        $('#reimburse_flag').prop('checked', true);
-                    } else {
-                        $('#reimburse_flag').prop('checked', false);
-                    }
-                    $('#unit').val();
-                    $('#currency_dtl').val();
-                    $('#rate').val();
-                    $('#total').val($('#total_before').val());
-                    $('#roe').val($('#roe_before').val());
-                    $('#vat').val($('#vat_before').val());
-                    $('#amount').val($('#amount_before').val());
-                }
-            });
-        }
-
-        function loadDetailAfter() {
-
-            url = `{{ route('external_invoice.loadDetailAfter') }}`;
-            $.ajax({
-                type: 'post',
-                url: url,
-                success: function(result) {
-                    $('#tblAfter').html(result);
-                }
-            });
-        }
-
-        function saveMergeDetail() {
-            var id_to_delete = $.map($('input[name="id_to_delete[]"]'), function(c){return c.value; });
-            var t_mcharge_code_id = $('#charge option:selected');
-            var desc = $('#desc');
-            var reimburse_flag = ($('#reimburse_flag').is(':checked') ? 1 : 0);
-            var unit = $('#unit');
-            var currency = $('#currency_dtl option:selected');
-            var currency_id = $('#currency_id');
-            var currency_code = $('#currency_code');
-            var rate = $('#rate');
-            var total = $('#total');
-            var roe = $('#roe');
-            var vat = $('#vat');
-            var amount = $('#amount');
-            var note = $('#note');
-
-            $.ajax({
-                type: 'post',
-                url: `{{ route('external_invoice.saveMergeDetail') }}`,
-                data: {
-                    id_to_delete : id_to_delete,
-                    t_mcharge_code_id : t_mcharge_code_id.val(),
-                    t_mcharge_code_name : t_mcharge_code_id.text(),
-                    desc : desc.val(),
-                    reimburse_flag : reimburse_flag,
-                    unit : unit.val(),
-                    currency_id : currency_id.val(),
-                    currency_code : currency_code.val(),
-                    rate : rate.val(),
-                    total : total.val(),
-                    roe : roe.val(),
-                    vat : vat.val(),
-                    amount : amount.val(),
-                    note : note.val(),
-                },
-                success: function(result) {
-                    loadDetail(`{{ $invoice_header['id'] }}`);
-                    clearFields();
-                    $('#modalMerge').modal('hide');
-                }
-            });
-        }
-
-        function clearFields() {
-            $('#charge').val('');
-            $('#desc').val('');
-            $('#reimburse_flag').val('');
-            $('#unit').val('');
-            $('#currency_dtl').val('');
-            $('#currency_id').val('');
-            $('#currency_code').val('');
-            $('#rate').val('');
-            $('#total').val('');
-            $('#roe').val('');
-            $('#vat').val('');
-            $('#amount').val('');
-            $('#note').val('');
-        }
-
         $(function() {
-            loadDetail(`{{ $invoice_header['id'] }}`);
+            $('#external_invoice_date_picker').datetimepicker({
+                format: 'L'
+            });
+            $('#onboard_date_picker').datetimepicker({
+                format: 'L'
+            });
         });
     </script>
 @endpush

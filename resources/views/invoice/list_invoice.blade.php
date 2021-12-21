@@ -56,8 +56,8 @@
                                 <td>{{ $invoice->activity }}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
-                                    @if ($invoice->external_invoice_id == 0 && $invoice->tipe_inv == 0)
-                                    <a class="btn btn-info btn-sm" href="{{ route('external_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Ext. Inv. </a>
+                                    @if ($invoice->proforma_invoice_id == 0 && $invoice->tipe_inv == 0)
+                                    <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
 
                                     @endif
                                 </td>

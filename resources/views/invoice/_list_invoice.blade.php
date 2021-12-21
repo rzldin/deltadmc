@@ -5,12 +5,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Proforma Invoice List</h1>
+          <h1>Invoice List</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-            <li class="breadcrumb-item active">Proforma Invoice List</li>
+            <li class="breadcrumb-item active">Invoice List</li>
           </ol>
         </div>
       </div>
@@ -30,8 +30,9 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Proforma Invoice No.</th>
+                                <th>Invoice No.</th>
                                 <th>Date</th>
+                                <th>Jenis</th>
                                 <th>Booking Number</th>
                                 <th>Booking Date</th>
                                 <th>Shipper</th>
@@ -42,20 +43,22 @@
                             </tr>
                         </thead>
                         <tbody style="font-size: 14px">
-                            @foreach ($proforma_invoices as $proforma_invoice)
+                            @foreach ($invoices as $invoice)
                             <tr>
-                                <td>{{ $proforma_invoice->proforma_invoice_no }}</td>
-                                <td>{{ \Carbon\Carbon::parse($proforma_invoice->proforma_invoice_date)->format('d/m/Y') }}</td>
-                                <td>{{ $proforma_invoice->booking_no }}</td>
-                                <td>{{ \Carbon\Carbon::parse($proforma_invoice->booking_date)->format('d/m/Y') }}</td>
-                                <td>{{ $proforma_invoice->company_d }}</td>
-                                <td>{{ $proforma_invoice->company_c }}</td>
-                                <td>{{ $proforma_invoice->company_b }}</td>
-                                <td>{{ $proforma_invoice->activity }}</td>
+                                <td>{{ $invoice->invoice_no }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</td>
+                                <td><?=($invoice->tipe_inv==0)?'Piutang':'Hutang';?></td>
+                                <td>{{ $invoice->booking_no }}</td>
+                                <td>{{ \Carbon\Carbon::parse($invoice->booking_date)->format('d/m/Y') }}</td>
+                                <td>{{ $invoice->company_d }}</td>
+                                <td>{{ $invoice->company_c }}</td>
+                                <td>{{ $invoice->company_b }}</td>
+                                <td>{{ $invoice->activity }}</td>
                                 <td>
-                                    <a class="btn btn-primary btn-sm" href="{{ route('proforma_invoice.view', ['id' => $proforma_invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
-                                        @if ($proforma_invoice->t_external_invoice_id == 0)
-                                    <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.edit', ['proformaInvoiceId' => $proforma_invoice->id]) }}"><i class="fa fa-edit"></i> Edit </a>
+                                    <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
+                                    @if ($invoice->external_invoice_id == 0 && $invoice->tipe_inv == 0)
+                                    <a class="btn btn-info btn-sm" href="{{ route('external_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Ext. Inv. </a>
+
                                     @endif
                                 </td>
                             </tr>

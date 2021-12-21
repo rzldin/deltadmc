@@ -25,11 +25,8 @@ class ExternalInvoice extends Model
         return ExternalInvoice::leftJoin('t_mport as pol', 'pol.id', '=', 't_external_invoice.pol_id')
             ->leftJoin('t_mport as pod', 'pod.id', '=', 't_external_invoice.pod_id')
             ->leftJoin('t_booking as b', 'b.id', '=', 't_external_invoice.t_booking_id')
-            ->leftJoin('t_invoice as ti', 'ti.id', '=', 't_external_invoice.t_invoice_id')
-            ->leftJoin('t_proforma_invoice as pi', 'pi.id', '=', 'ti.t_proforma_invoice_id')
-            ->leftJoin('t_bcharges_dtl AS chrg', 'chrg.t_invoice_id', '=', 'pi.id')
-            ->leftJoin('t_quote_shipg_dtl AS shp', 'shp.t_invoice_id', '=', 'pi.id')
-            ->select('t_external_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
+            ->leftJoin('t_proforma_invoice as pi', 'pi.id', '=', 't_external_invoice.t_proforma_invoice_id')
+            ->select('t_external_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name')
             ->where('t_external_invoice.id', $id);
     }
 
@@ -38,7 +35,7 @@ class ExternalInvoice extends Model
         return ExternalInvoice::updateOrCreate(
             ['id' => $request['id']],
             [
-                't_invoice_id' => $request['t_invoice_id'],
+                't_proforma_invoice_id' => $request['t_proforma_invoice_id'],
                 't_booking_id' => $request['t_booking_id'],
                 'activity' => $request['activity'],
                 'client_id' => $request['client_id'],

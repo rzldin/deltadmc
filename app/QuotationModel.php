@@ -52,8 +52,8 @@ class QuotationModel extends Model
                 ->leftJoin('t_mcarrier', 't_mcarrier.id', '=', 't_quote_shipg_dtl.t_mcarrier_id')
                 ->leftJoin('t_quote', 't_quote.id', '=', 't_quote_shipg_dtl.t_quote_id')
                 ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_quote_shipg_dtl.t_mcurrency_id')
-                ->leftJoin('t_proforma_invoice', 't_proforma_invoice.id', '=', 't_quote_shipg_dtl.t_invoice_id')
-                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code', 't_proforma_invoice.proforma_invoice_no', 't_quote.shipment_by')
+                ->leftJoin('t_invoice', 't_invoice.id', '=', 't_quote_shipg_dtl.t_invoice_id')
+                ->select('t_quote_shipg_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code', 't_invoice.invoice_no', 't_quote.shipment_by')
                 ->where('t_quote_shipg_dtl.t_quote_id', $id)->get();
     }
 

@@ -838,18 +838,18 @@
             </div>
             <br>
             <div class="modal-body">
-                <form class="eventInsForm" method="post" target="_self" name="formku" 
+                <form class="eventInsForm" method="post" target="_self" name="formku"
                       id="formRoad" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
                             Service/Fee<font color="#f00">*</font>
-                        </div>                                
+                        </div>
                         <div class="col-md-8 col-xs-8">
                             <select class="form-control select2bs44" name="charge" id="charge">
                                 <option value="">--Select Charge Code--</option>
                                 @foreach ($charge as $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>                                                
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -871,10 +871,10 @@
                             <select class="form-control select2bs44" name="currency" id="currencyx" onchange="get_rate(this.value)">
                                 <option value="">--Select Currency--</option>
                                 @foreach ($currency as $item)
-                                <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
+                                <option value="{{ $item->id }}">{{ $item->code }}</option>
                                 @endforeach
                             </select>
-                        </div>  
+                        </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
@@ -889,7 +889,7 @@
                             Cost <font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx()">                     
+                            <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx()">
                         </div>
                     </div>
                     <div class="row mb-2">
@@ -926,7 +926,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
-                            Vat 
+                            Vat
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
@@ -959,7 +959,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">                        
+            <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="detail_quote_submit" onClick="saveDetailxxx(); this.disabled=true;"><i class="fa fa-save"></i> Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
             </div>
@@ -994,9 +994,9 @@
             $('#notex').val('');
 
             dsState = "Input";
-            
+
             $("#detail-quote").find('.modal-title').text('Add Detail Quote');
-            $("#detail-quote").modal('show',{backdrop: 'true'}); 
+            $("#detail-quote").modal('show',{backdrop: 'true'});
         }
 
         /*** Edit Detail Quote **/
@@ -1039,10 +1039,10 @@
                     $('#notex').val(data.notes);
 
                     dsState = "Edit";
-            
+
                     $("#detail-quote").find('.modal-title').text('Edit Detail Quote');
                     $("#detail-quote").modal('show',{backdrop: 'true'});
-                   
+
                 }
             });
         }
@@ -1119,10 +1119,10 @@
                                 title: 'Sukses Add Data!'
                             });
                         },
-                        error: function (xhr, ajaxOptions, thrownError) {  
-                            $('#detail_quote_submit').prop('disabled', false);         
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            $('#detail_quote_submit').prop('disabled', false);
                             alert('Gagal menambahkan item!');
-                        },  
+                        },
                     });
                 }else{
                     $.ajax({
@@ -1153,10 +1153,10 @@
                                 icon: 'success',
                                 title: 'Sukses Update Data!'
                             });
-                        },error: function (xhr, ajaxOptions, thrownError) {  
-                            $('#detail_quote_submit').prop('disabled', false);        
+                        },error: function (xhr, ajaxOptions, thrownError) {
+                            $('#detail_quote_submit').prop('disabled', false);
                             alert('Gagal Mengupdate!');
-                        },          
+                        },
                     });
                 }
             }
@@ -1195,18 +1195,18 @@
             sell_val = sell_val.toFixed(2)
             sell_val = numberWithCommas(Number(sell_val));
 
-            
+
             $('#cost_valx').val(cost_val);
             $('#sell_valx').val(sell_val);
             hitungTotalx();
-            
+
         }
 
         /** Hitung Total Detail Quote **/
         function hitungTotalx()
         {
             let sellVal = $('#sell_valx').val();
-            sellVal = sellVal.replace(/,/g, '') 
+            sellVal = sellVal.replace(/,/g, '')
             const cost = $('#qtyx').val()*sellVal;
             let total = Number(cost)+Number($('#vatx').val());
             total = total.toFixed(2)
@@ -1217,7 +1217,7 @@
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-  
+
         function get_customer(val)
         {
             $.ajax({
@@ -3017,12 +3017,12 @@
         }
 
         function redirectToCostInvoice() {
-            $('#fCost').attr('action', `{{ route('proformainvoice.create_cost') }}`);
+            $('#fCost').attr('action', `{{ route('invoice.create_cost') }}`);
             $('#fCost').submit();
         }
 
         function redirectToProformaInvoice() {
-            $('#fSell').attr('action', `{{ route('proformainvoice.create') }}`);
+            $('#fSell').attr('action', `{{ route('invoice.create') }}`);
             $('#fSell').submit();
         }
 

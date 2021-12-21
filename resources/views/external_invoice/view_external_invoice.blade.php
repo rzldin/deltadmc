@@ -117,13 +117,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" <?= (($header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
+                                                        id="invoice_type_reg" value="REG" <?= (($header->reimburse_flag == '0' && $header->debit_note_flag == '0' && $header->credit_note_flag == '0') ? 'checked' : '') ?>> Reguler<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->reimburse_flag == '1') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" <?= (($header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
+                                                        id="invoice_type_debit_note" value="DN" <?= (($header->debit_note_flag == '1') ? 'checked' : '') ?>> Debit Note<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" <?= (($header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                        id="invoice_type_credit_note" value="CN" <?= (($header->credit_note_flag == '1') ? 'checked' : '') ?>> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -278,7 +278,7 @@
                                     Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                    <table class="table table-bordered table-striped" style="width: 150%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>

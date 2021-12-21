@@ -6,7 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    View Pro Forma Invoice
+                    Proforma Invoice
                 </h1>
             </div>
             <div class="col-sm-6">
@@ -29,15 +29,18 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ route('proformainvoice.update') }}"
-                            id="formProforma">
+                        <form method="post" action="{{ route('invoice.save') }}"
+                            id="formInvoice">
                             @csrf
-                            <input readonly type="hidden" name="id" id="id" value="{{ $header->id }}" />
-                            <input readonly type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $header->t_booking_id }}" />
-                            <input readonly type="hidden" name="activity" value="{{ $header->activity }}">
+                            <input type="hidden" name="id" value="0">
+                            <input type="hidden" name="t_proforma_invoice_id" id="t_proforma_invoice_id" value="{{ $header->id }}" />
+                            <input type="hidden" name="activity" value="{{ $header->activity }}">
+                            <input type="hidden" name="t_booking_id" value="{{ $header->t_booking_id }}">
+                            <input type="hidden" name="rate" value="{{ $header->rate }}">
+                            {{-- <input type="hidden" name="t_proforma_invoice_id" id="t_proforma_invoice_id" value="{{ $header->t_proforma_invoice_id }}" /> --}}
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Pro Forma Invoice Information</h3>
+                                    <h3 class="card-title">Proforma Invoice Information</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -92,11 +95,11 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Pro Forma Invoice No</label>
+                                                    <label>Invoice No</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="proforma_invoice_no"
-                                                    id="proforma_invoice_no" value="{{ $header->proforma_invoice_no }}" readonly>
+                                                    <input readonly class="form-control" type="text" name="external_invoice_no"
+                                                    id="external_invoice_no" value="{{ $header->external_invoice_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -114,13 +117,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" <?= (($header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
+                                                        id="invoice_type_reg" value="REG" <?= (($header->reimburse_flag == '0' && $header->reimburse_flag == '0' && $header->debit_note_flag == '0' && $header->credit_note_flag == '0') ? 'checked' : '') ?>> Reguler<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->reimburse_flag == '1') ? 'checked' : '') ?>> Reimbursment<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" <?= (($header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
+                                                        id="invoice_type_debit_note" value="DN" <?= (($header->debit_note_flag == '1') ? 'checked' : '') ?>> Debit Note<br>
                                                     <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" <?= (($header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                        id="invoice_type_credit_note" value="CN" <?= (($header->credit_note_flag == '1') ? 'checked' : '') ?>> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -167,12 +170,8 @@
                                                     <label>Issued Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input readonly-group date" id="reservationdate" data-target-input readonly="nearest">
-                                                        <input readonly type="text" name="proforma_invoice_date" id="proforma_invoice_date" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('d/m/Y') }}" class="form-control datetimepicker-input readonly" data-target="#reservationdate" readonly/>
-                                                        {{-- <div class="input readonly-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                                            <div class="input readonly-group-text"><i class="fa fa-calendar"></i></div>
-                                                        </div> --}}
-                                                    </div>
+                                                    <input readonly type="text" name="external_invoice_date" id="external_invoice_date"
+                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->external_invoice_date)) }}" />
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -263,12 +262,8 @@
                                                     <label>On Board Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <div class="input readonly-group date" id="reservationdatex" data-target-input readonly="nearest">
-                                                        <input readonly type="text" name="onboard_date" id="onboard_date" value="{{ \Carbon\Carbon::parse($header->onboard_date)->format('d/m/Y') }}" class="form-control datetimepicker-input readonly" data-target="#reservationdatex" readonly/>
-                                                        {{-- <div class="input readonly-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
-                                                            <div class="input readonly-group-text"><i class="fa fa-calendar"></i></div>
-                                                        </div> --}}
-                                                    </div>
+                                                    <input readonly type="text" name="onboard_date" id="onboard_date"
+                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->onboard_date)) }}" />
                                                 </div>
                                             </div>
                                         </div>
@@ -283,7 +278,7 @@
                                     Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                    <table class="table table-bordered table-striped" style="width: 150%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -307,14 +302,14 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
                                                     <td>{{ $detail->desc }}</td>
-                                                    <td align="center"> <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?></td>
+                                                    <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
                                                     <td>{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
-                                                    <td>{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
+                                                    <td>{{ number_format(($detail->sell_val * $detail->rate), 2, ',', '.') }}</td>
                                                     <td>{{ number_format($detail->rate, 2, ',', '.') }}</td>
                                                     <td>{{ number_format($detail->vat, 2, ',', '.') }}</td>
-                                                    <td>{{ number_format((($detail->subtotal * $detail->rate) + $detail->vat), 2, ',', '.') }}</td>
+                                                    <td>{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                                                     <td></td>
                                                 </tr>
                                             @endforeach
@@ -324,7 +319,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <a href="{{ url()->previous() }}" class="btn btn-info">Back</a>
+                                    <a href="{{ url()->previous() }}" class="btn btn-info" >Back</a>
                                 </div>
                             </div>
 
@@ -337,7 +332,6 @@
 </section>
 @push('after-scripts')
     <script>
-
     </script>
 @endpush
 @endsection

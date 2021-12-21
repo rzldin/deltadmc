@@ -6,13 +6,13 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Internal Invoice
+                    View Pro Forma Invoice
                 </h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Internal Invoice</li>
+                    <li class="breadcrumb-item active">Proforma Invoice</li>
                 </ol>
             </div>
         </div>
@@ -29,16 +29,15 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ route('invoice.save') }}"
-                            id="formInvoice">
+                        <form method="post" action="{{ route('proformainvoice.update') }}"
+                            id="formProforma">
                             @csrf
-                            <input type="hidden" name="id" id="id" value="{{ $header->id }}" />
-                            <input type="hidden" name="activity" value="{{ $header->activity }}">
-                            <input type="hidden" name="t_booking_id" value="{{ $header->t_booking_id }}">
-                            <input type="hidden" name="rate" value="{{ $header->rate }}">
+                            <input readonly type="hidden" name="id" id="id" value="{{ $header->id }}" />
+                            <input readonly type="hidden" name="t_booking_id" id="t_booking_id" value="{{ $header->t_booking_id }}" />
+                            <input readonly type="hidden" name="activity" value="{{ $header->activity }}">
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h3 class="card-title">Invoice Information</h3>
+                                    <h3 class="card-title">Pro Forma Invoice Information</h3>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -93,11 +92,11 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Invoice No</label>
+                                                    <label>Pro Forma Invoice No</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="invoice_no"
-                                                    id="invoice_no" value="{{ $header->invoice_no }}">
+                                                    <input readonly class="form-control" type="text" name="proforma_invoice_no"
+                                                    id="proforma_invoice_no" value="{{ $header->proforma_invoice_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -168,8 +167,12 @@
                                                     <label>Issued Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly type="text" name="invoice_date" id="invoice_date"
-                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->invoice_date)) }}" />
+                                                    <div class="input readonly-group date" id="reservationdate" data-target-input readonly="nearest">
+                                                        <input readonly type="text" name="proforma_invoice_date" id="proforma_invoice_date" value="{{ \Carbon\Carbon::parse($header->proforma_invoice_date)->format('d/m/Y') }}" class="form-control datetimepicker-input readonly" data-target="#reservationdate" readonly/>
+                                                        {{-- <div class="input readonly-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                            <div class="input readonly-group-text"><i class="fa fa-calendar"></i></div>
+                                                        </div> --}}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -260,8 +263,12 @@
                                                     <label>On Board Date</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly type="text" name="onboard_date" id="onboard_date"
-                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->onboard_date)) }}" />
+                                                    <div class="input readonly-group date" id="reservationdatex" data-target-input readonly="nearest">
+                                                        <input readonly type="text" name="onboard_date" id="onboard_date" value="{{ \Carbon\Carbon::parse($header->onboard_date)->format('d/m/Y') }}" class="form-control datetimepicker-input readonly" data-target="#reservationdatex" readonly/>
+                                                        {{-- <div class="input readonly-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
+                                                            <div class="input readonly-group-text"><i class="fa fa-calendar"></i></div>
+                                                        </div> --}}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -276,7 +283,7 @@
                                     Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="" style="width: 150%">
+                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -300,7 +307,7 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
                                                     <td>{{ $detail->desc }}</td>
-                                                    <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
+                                                    <td align="center"> <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
                                                     <td>{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
@@ -317,7 +324,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <a href="{{ url()->previous() }}" class="btn btn-info" >Back</a>
+                                    <a href="{{ url()->previous() }}" class="btn btn-info">Back</a>
                                 </div>
                             </div>
 
@@ -330,6 +337,7 @@
 </section>
 @push('after-scripts')
     <script>
+
     </script>
 @endpush
 @endsection
