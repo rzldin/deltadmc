@@ -47,3 +47,8 @@ ALTER TABLE deltadmc.t_proforma_invoice CHANGE total_invoice total_invoice DECIM
 ALTER TABLE deltadmc.t_invoice DROP COLUMN t_proforma_invoice_id;
 
 ALTER TABLE deltadmc.t_external_invoice CHANGE t_invoice_id t_proforma_invoice_id int(11) NOT NULL;
+
+--------
+
+ALTER TABLE deltadmc.t_pembayaran_detail ADD deposit_detail_id INT DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_pembayaran_detail CHANGE deposit_detail_id deposit_detail_id INT DEFAULT 0 NULL AFTER id_invoice;

@@ -106,8 +106,8 @@
                                     <th>No.</th>
                                     <th>Bill To</th>
                                     <th>Booking No.</th>
-                                    <th>Proforma No.</th>
                                     <th>Invoice No.</th>
+                                    <th>Proforma No.</th>
                                     <th>Invoice outgoing No.</th>
                                     <th>Date</th>
                                     <th>Saldo</th>
@@ -120,8 +120,8 @@
                                         <td align="center">{{ ($key + 1) }}</td>
                                         <td>{{ $ar->client_code }}</td>
                                         <td>{{ $ar->booking_no }}</td>
-                                        <td>{{ $ar->proforma_invoice_no }}</td>
                                         <td>{{ $ar->invoice_no }}</td>
+                                        <td>{{ $ar->proforma_invoice_no }}</td>
                                         <td>{{ $ar->external_invoice_no }}</td>
                                         <td>{{ date('d/m/Y', strtotime($ar->external_invoice_date)) }}</td>
                                         <td align="right">{{ number_format(($ar->total_invoice - $ar->invoice_bayar), 2, ',', '.') }}</td>

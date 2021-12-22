@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Deposit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\PembayaranModel;
@@ -85,6 +86,8 @@ class PembayaranController extends Controller
         $data['header'] = PembayaranModel::leftJoin('t_mcompany AS b', 't_pembayaran.id_company', '=', 'b.id')->where('t_pembayaran.id',$id)->select('t_pembayaran.*','b.client_name')->first();
         $data['company'] = MasterModel::company_data();
         $data['bank'] = MasterModel::bank_account();
+        // $data['deposit'] = Deposit::findDepositByCompanyId($data['header']->id_company)->first();
+        // dd($data);
 
         if($data['header']->jenis_pmb==0){
             return view('pembayaran.edit_piutang')->with($data);
@@ -364,6 +367,7 @@ class PembayaranController extends Controller
 
         DB::table('t_pembayaran_detail')->insert([
             'id_pmb' => $request->id_pmb,
+            'deposit_detail_id' => $request->deposit_detail_id,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
             'nilai' => $nilai_bayar
@@ -395,7 +399,21 @@ class PembayaranController extends Controller
             'modified_at' => Carbon::now()
         ]);
 
+        // kalau ada deposit
+        if ($data->deposit_detail_id != 0) {
+            $param['deposit_detail_id'] = $data->deposit_detail_id;
+            DepositController::deleteDepositPembayaran($param);
+        }
+
         DB::table('t_pembayaran_detail')->where('id',$request->id)->delete();
+
+        // $deposit = Deposit::where('company_id', $header->id_company)->first();
+        // if ($deposit != []) {
+
+        //     $depositCon = new DepositController();
+        //     $depositCon->processSave();
+        // }
+
 
         $return_data['status']= "sukses";
         $return_data['message']= "Berhasil menyimpan detail pembayaran!";

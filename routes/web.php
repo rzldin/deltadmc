@@ -454,7 +454,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/deposit/saveDetail', 'DepositController@saveDetail')->name('deposit.saveDetail');
     Route::post('/deposit/deleteDetail', 'DepositController@deleteDetail')->name('deposit.deleteDetail');
     Route::post('/deposit', 'DepositController@save')->name('deposit.save');
+    Route::post('/deposit/processSave', 'DepositController@processSave')->name('deposit.processSave');
     Route::get('/deposit/view/{id}', 'DepositController@view')->name('deposit.view');
+    Route::post('/deposit/getDepositCompany', 'DepositController@getDepositCompany')->name('deposit.getDepositCompany');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

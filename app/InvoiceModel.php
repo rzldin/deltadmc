@@ -70,8 +70,7 @@ class InvoiceModel extends Model
     {
         $ars = InvoiceModel::from('t_invoice AS i')
             ->leftJoin('t_mcompany AS c', 'c.id', '=', 'i.client_id')
-            ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'i.t_proforma_invoice_id')
-            ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
+            ->leftJoin('t_booking AS b', 'b.id', '=', 'i.t_booking_id')
             ->select('i.*', 'c.client_code', 'c.client_name', 'b.booking_no')
             ->where('i.tipe_inv', 1)
             ->where('i.flag_bayar', '<>', 1);
