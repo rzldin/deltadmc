@@ -451,6 +451,7 @@ class InvoiceController extends Controller
                     $paramDetail['qty'] = $chrg_dtl->qty;
                     $paramDetail['cost_val'] = $chrg_dtl->cost_val;
                     $paramDetail['sell_val'] = $chrg_dtl->sell_val;
+                    $paramDetail['vat'] = $chrg_dtl->vat;
                     $paramDetail['subtotal'] = $chrg_dtl->subtotal;
                     $paramDetail['routing'] = $chrg_dtl->routing;
                     $paramDetail['transit_time'] = $chrg_dtl->transit_time;

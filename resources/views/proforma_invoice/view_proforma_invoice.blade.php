@@ -292,25 +292,25 @@
                                                 <th>ROE</th>
                                                 <th>Vat</th>
                                                 <th>Amount</th>
-                                                <th>Note</th>
+                                                {{-- <th>Note</th> --}}
                                                 {{-- <th>Action</th> --}}
                                             </tr>
                                         </thead>
                                         <tbody id="tblSell">
                                             @foreach ($details as $key => $detail)
                                                 <tr>
-                                                    <td>{{ $key + 1 }}</td>
+                                                    <td align="center">{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
                                                     <td>{{ $detail->desc }}</td>
                                                     <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
-                                                    <td>{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
-                                                    <td>{{ number_format(($detail->sell_val * $detail->rate), 2, ',', '.') }}</td>
-                                                    <td>{{ number_format($detail->rate, 2, ',', '.') }}</td>
-                                                    <td>{{ number_format($detail->vat, 2, ',', '.') }}</td>
-                                                    <td>{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
-                                                    <td></td>
+                                                    <td align="right">{{ number_format($detail->sell, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->rate, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
+                                                    {{-- <td></td> --}}
                                                 </tr>
                                             @endforeach
                                         </tbody>

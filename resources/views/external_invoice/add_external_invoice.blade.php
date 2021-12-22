@@ -297,7 +297,7 @@
                                     <table class="table table-bordered table-striped" id="" style="width: 150%">
                                         <thead>
                                             <tr>
-                                                <th></th>
+                                                {{-- <th></th> --}}
                                                 <th>No.</th>
                                                 <th>Service/Fee</th>
                                                 <th>Description</th>
@@ -309,7 +309,7 @@
                                                 <th>ROE</th>
                                                 <th>Vat</th>
                                                 <th>Amount</th>
-                                                <th>Note</th>
+                                                {{-- <th>Note</th> --}}
                                                 {{-- <th>Action</th> --}}
                                             </tr>
                                         </thead>
@@ -322,12 +322,12 @@
                                                 <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($proforma_invoice_header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
                                                 <td>{{ $proforma_invoice_detail->qty }}</td>
                                                 <td>{{ $proforma_invoice_detail->currency_code }}</td>
+                                                <td>{{ number_format($proforma_invoice_detail->sell, 2, ',', '.') }}</td>
                                                 <td>{{ number_format($proforma_invoice_detail->sell_val, 2, ',', '.') }}</td>
-                                                <td>{{ number_format($proforma_invoice_detail->subtotal, 2, ',', '.') }}</td>
                                                 <td>{{ number_format($proforma_invoice_detail->rate, 2, ',', '.') }}</td>
                                                 <td>{{ number_format($proforma_invoice_detail->vat, 2, ',', '.') }}</td>
-                                                <td>{{ number_format((($proforma_invoice_detail->subtotal * $proforma_invoice_detail->rate) + $proforma_invoice_detail->vat), 2, ',', '.') }}</td>
-                                                <td></td>
+                                                <td>{{ number_format($proforma_invoice_detail->subtotal, 2, ',', '.') }}</td>
+                                                {{-- <td></td> --}}
                                             </tr>
                                         @endforeach
                                         </tbody>

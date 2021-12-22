@@ -326,7 +326,7 @@
                                                 <th>ROE</th>
                                                 <th>Vat</th>
                                                 <th>Amount</th>
-                                                <th>Note</th>
+                                                {{-- <th>Note</th> --}}
                                                 {{-- <th>Action</th> --}}
                                             </tr>
                                         </thead>
@@ -380,7 +380,7 @@
                                         <th>ROE</th>
                                         <th>Vat</th>
                                         <th>Amount</th>
-                                        <th>Note</th>
+                                        {{-- <th>Note</th> --}}
                                         {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
@@ -405,7 +405,7 @@
                                             <input type="checkbox" name="reimburse_flag" id="reimburse_flag" onclick="return false">
                                         </td>
                                         <td>
-                                            <input type="text" name="unit" id="unit" class="form-control">
+                                            <input type="text" name="qty" id="qty" class="form-control" readonly>
                                         </td>
                                         <td>
                                             <select class="form-control" name="currency_dtl" id="currency_dtl" disabled>
@@ -420,23 +420,30 @@
                                             <input type="hidden" name="currency_code" id="currency_code">
                                         </td>
                                         <td>
-                                            <input type="text" name="rate" id="rate" class="form-control">
+                                            <input type="hidden" name="total_cost" id="total_cost" class="form-control" readonly>
+                                            <input type="text" name="total_sell" id="total_sell" class="form-control" readonly>
                                         </td>
                                         <td>
-                                            <input type="text" name="total" id="total" class="form-control" readonly>
+                                            <input type="hidden" name="total_cost_val" id="total_cost_val" class="form-control" readonly>
+                                            <input type="text" name="total_sell_val" id="total_sell_val" class="form-control" readonly>
                                         </td>
                                         <td>
-                                            <input type="text" name="roe" id="roe" class="form-control" readonly>
+                                            <input type="text" name="rate" id="rate" class="form-control" readonly>
                                         </td>
                                         <td>
-                                            <input type="text" name="vat" id="vat" class="form-control" readonly>
+                                            <input type="text" name="total_vat" id="total_vat" class="form-control" readonly>
                                         </td>
                                         <td>
-                                            <input type="text" name="amount" id="amount" class="form-control" readonly>
+                                            <input type="text" name="subtotal" id="subtotal" class="form-control" readonly>
+                                            <input type="hidden" name="routing" id="routing" class="form-control">
+                                            <input type="hidden" name="transit_time" id="transit_time" class="form-control">
                                         </td>
-                                        <td>
-                                            <input type="text" name="note" id="note" class="form-control">
-                                        </td>
+                                        {{-- <td> --}}
+                                            {{-- <input type="text" name="note" id="note" class="form-control"> --}}
+                                        {{-- </td> --}}
+                                        {{-- <td>
+                                            <a href="javascript:;" class="btn btn-xs btn-primary" onclick="saveMergeDetail()"><i class="fa fa-plus"></i></a>
+                                        </td> --}}
                                         {{-- <td>
                                             <a href="javascript:;" class="btn btn-xs btn-primary" onclick="saveMergeDetail()"><i class="fa fa-plus"></i></a>
                                         </td> --}}
@@ -445,37 +452,6 @@
                             </table>
                         </div>
                     </div>
-
-                    {{-- <div class="card card-primary">
-                        <div class="card-header">
-                            <h5 class="card-title">After</h5>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Service/Fee</th>
-                                        <th>Description</th>
-                                        <th>Reimbursment</th>
-                                        <th>Unit</th>
-                                        <th>Currency</th>
-                                        <th>rate/unit</th>
-                                        <th>Total</th>
-                                        <th>ROE</th>
-                                        <th>Vat</th>
-                                        <th>Amount</th>
-                                        <th>Note</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblAfter">
-
-                                </tbody>
-
-                            </table>
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -588,44 +564,39 @@
                     } else {
                         $('#reimburse_flag').prop('checked', false);
                     }
-                    // $('#unit').val();
-                    // $('#currency_dtl').val();
-                    // $('#rate').val();
-                    $('#total').val($('#total_before').val());
-                    $('#roe').val($('#roe_before').val());
-                    $('#vat').val($('#vat_before').val());
-                    $('#amount').val($('#amount_before').val());
+                    $('#qty').val($('#qty_before').val());
+                    $('#total_cost').val($('#total_cost_before').val());
+                    $('#total_sell').val($('#total_sell_before').val());
+                    $('#total_cost_val').val($('#total_cost_val_before').val());
+                    $('#total_sell_val').val($('#total_sell_val_before').val());
+                    $('#rate').val($('#rate_before').val());
+                    $('#total_vat').val($('#total_vat_before').val());
+                    $('#subtotal').val($('#subtotal_before').val());
+                    $('#routing').val($('#routing_before').val());
+                    $('#transit_time').val($('#transit_time_before').val());
                 }
             });
         }
-
-        // function loadDetailAfter() {
-
-        //     url = `{{ route('proforma_invoice.loadDetailAfter') }}`;
-        //     $.ajax({
-        //         type: 'post',
-        //         url: url,
-        //         success: function(result) {
-        //             $('#tblAfter').html(result);
-        //         }
-        //     });
-        // }
 
         function saveMergeDetail() {
             var id_to_delete = $.map($('input[name="id_to_delete[]"]'), function(c){return c.value; });
             var t_mcharge_code_id = $('#charge option:selected');
             var desc = $('#desc');
             var reimburse_flag = ($('#reimburse_flag').is(':checked') ? 1 : 0);
-            var unit = $('#unit');
+            var qty = $('#qty');
             var currency = $('#currency_dtl option:selected');
             var currency_id = $('#currency_id');
             var currency_code = $('#currency_code');
+            var cost = $('#total_cost');
+            var sell = $('#total_sell');
+            var cost_val = $('#total_cost_val');
+            var sell_val = $('#total_sell_val');
             var rate = $('#rate');
-            var total = $('#total');
-            var roe = $('#roe');
-            var vat = $('#vat');
-            var amount = $('#amount');
-            var note = $('#note');
+            var vat = $('#total_vat');
+            var subtotal = $('#subtotal');
+            var routing = $('#routing');
+            var transit_time = $('#transit_time');
+            // var note = $('#note');
 
             $.ajax({
                 type: 'post',
@@ -636,15 +607,19 @@
                     t_mcharge_code_name : t_mcharge_code_id.text(),
                     desc : desc.val(),
                     reimburse_flag : reimburse_flag,
-                    unit : unit.val(),
+                    qty : qty.val(),
                     currency_id : currency_id.val(),
                     currency_code : currency_code.val(),
+                    cost : cost.val(),
+                    sell : sell.val(),
+                    cost_val : cost_val.val(),
+                    sell_val : sell_val.val(),
                     rate : rate.val(),
-                    total : total.val(),
-                    roe : roe.val(),
                     vat : vat.val(),
-                    amount : amount.val(),
-                    note : note.val(),
+                    subtotal : subtotal.val(),
+                    routing : routing.val(),
+                    transit_time : transit_time.val(),
+                    // note : note.val(),
                 },
                 success: function(result) {
                     loadDetail(`{{ $proforma_invoice_header['id'] }}`, `{{ $proforma_invoice_header['t_invoice_id'] }}`);
@@ -658,16 +633,20 @@
             $('#charge').val('');
             $('#desc').val('');
             $('#reimburse_flag').val('');
-            $('#unit').val('');
+            $('#qty').val('');
             $('#currency_dtl').val('');
             $('#currency_id').val('');
             $('#currency_code').val('');
+            $('#total_cost').val('');
+            $('#total_sell').val('');
+            $('#total_cost_val').val('');
+            $('#total_sell_val').val('');
             $('#rate').val('');
-            $('#total').val('');
-            $('#roe').val('');
-            $('#vat').val('');
-            $('#amount').val('');
-            $('#note').val('');
+            $('#total_vat').val('');
+            $('#subtotal').val('');
+            $('#routing').val('');
+            $('#transit_time').val('');
+            // $('#note').val('');
         }
 
         function confirmInvoice() {

@@ -66,12 +66,16 @@ class ProformaInvoiceController extends Controller
                     'qty' => $detail['qty'],
                     'currency' => $detail['currency'],
                     'currency_code' => $detail['currency_code'],
+                    'cost' => $detail['cost'],
+                    'sell' => $detail['sell'],
+                    'cost_val' => $detail['cost_val'],
                     'sell_val' => $detail['sell_val'],
-                    'total' => ($detail['qty'] * $detail['sell_val']),
                     'rate' => $detail['rate'],
                     'vat' => $detail['vat'],
                     'subtotal' => $detail['subtotal'],
-                    'note' => $detail['note'],
+                    'routing' => $detail['routing'],
+                    'transit_time' => $detail['transit_time'],
+                    // 'note' => $detail['note'],
                 ];
                 // push data dari db ke dalam session invoice_details
                 Session::push('invoice_details', $newItem);
@@ -87,7 +91,7 @@ class ProformaInvoiceController extends Controller
                 }
                 $html .= '<tr>';
                 $html .= '<td><input type="checkbox" name="detail_id" id="detail_id_'.$key.'" value="'.$key.'"/></td>';
-                $html .= '<td>';
+                $html .= '<td class="text-center">';
                 $html .= ($key + 1);
                 $html .= '</td>';
                 $html .= '<td class="text-left">' . $detail['charge_name'] . '</td>';
@@ -95,12 +99,12 @@ class ProformaInvoiceController extends Controller
                 $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($key + 1) . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                 $html .= '<td class="text-left">' . $detail['qty'] . '</td>';
                 $html .= '<td class="text-left">' . $detail['currency_code'] . '</td>';
+                $html .= '<td class="text-right">' . number_format($detail['sell'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($detail['sell_val'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format(($detail['qty'] * $detail['sell_val']), 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($detail['rate'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($detail['vat'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($detail['subtotal'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-left"></td>';
+                // $html .= '<td class="text-left"></td>';
             }
         }
 
@@ -113,25 +117,31 @@ class ProformaInvoiceController extends Controller
         $key = $request->id;
         // var key adalah array dari id / key yang akan di delete
         // ex : $key = [0,3];
-        $total = 0;
-        $vat = 0;
-        $roe = 0;
-        $amount = 0;
-
-        $grand_total = 0;
-        $total_amount = 0;
+        $total_cost = 0;
+        $total_sell = 0;
+        $total_cost_val = 0;
+        $total_sell_val = 0;
+        $rate = 0;
+        $total_vat = 0;
+        $subtotal = 0;
+        $routing = '';
+        $transit_time = '';
         // $details = InvoiceDetailModel::getInvoiceDetailsInId($request->id)->get();
         $details = Session::get('invoice_details');
         if ($details != []) {
             // loop array key untuk mendapatkan data details yang index / key nya sesuai dengan var key
             // ex : hanya mengambil data details yang index nya 0 dan 3 // $details[3][field_name]
             foreach ($key as $index => $id) {
-                $total = ($details[$id]['qty'] * $details[$id]['sell_val']);
-                // $amount = ($total * $details[$id]['rate']) + $details[$id]['vat'];
-                $grand_total += $total;
-                // $total_amount += $amount;
-                $roe = $details[$id]['rate'];
-                $vat = $details[$id]['vat'];
+                $total_cost += $details[$id]['cost'];
+                $total_sell += $details[$id]['sell'];
+                $total_cost_val += $details[$id]['cost_val'];
+                $total_sell_val += $details[$id]['sell_val'];
+                $rate = $details[$id]['rate'];
+                $total_vat += $details[$id]['vat'];
+                $subtotal += $details[$id]['subtotal'];
+                $routing = $details[$id]['routing'];
+                $transit_time = $details[$id]['transit_time'];
+                // $vat = $details[$id]['vat'];
                 // $total += ($detail['qty'] * $detail['sell_val']);
                 if ($details[$id]['reimburse_flag'] == 1) {
                     $style = 'checked';
@@ -149,66 +159,28 @@ class ProformaInvoiceController extends Controller
                 $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($index + 1) . '" onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                 $html .= '<td class="text-left">' . $details[$id]['qty'] . '</td>';
                 $html .= '<td class="text-left">' . $details[$id]['currency_code'] . '</td>';
+                $html .= '<td class="text-right">' . number_format($details[$id]['sell'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($details[$id]['sell_val'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format(($details[$id]['qty'] * $details[$id]['sell_val']), 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($details[$id]['rate'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($details[$id]['vat'], 2, ',', '.') . '</td>';
                 $html .= '<td class="text-right">' . number_format($details[$id]['subtotal'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-left"></td>';
+                // $html .= '<td class="text-left"></td>';
 
             }
             $html .= '<tr>';
             $html .= '<td colspan="12">';
-            $vat = (10/100) * $grand_total;
-            $total_amount = $vat + $grand_total;
-            $html .= '<input type="hidden" name="roe_before" id="roe_before" value="'.$roe.'"/>';
-            $html .= '<input type="hidden" name="total_before" id="total_before" value="'.$grand_total.'"/>';
-            $html .= '<input type="hidden" name="amount_before" id="amount_before" value="'.$total_amount.'"/>';
-            $html .= '<input type="hidden" name="vat_before" id="vat_before" value="'.$vat.'"/>';
+            $html .= '<input type="hidden" name="qty_before" id="qty_before" value="1"/>';
+            $html .= '<input type="hidden" name="total_cost_before" id="total_cost_before" value="'.$total_cost.'"/>';
+            $html .= '<input type="hidden" name="total_sell_before" id="total_sell_before" value="'.$total_sell.'"/>';
+            $html .= '<input type="hidden" name="total_cost_val_before" id="total_cost_val_before" value="'.$total_cost_val.'"/>';
+            $html .= '<input type="hidden" name="total_sell_val_before" id="total_sell_val_before" value="'.$total_sell_val.'"/>';
+            $html .= '<input type="hidden" name="rate_before" id="rate_before" value="'.$rate.'"/>';
+            $html .= '<input type="hidden" name="total_vat_before" id="total_vat_before" value="'.$total_vat.'"/>';
+            $html .= '<input type="hidden" name="subtotal_before" id="subtotal_before" value="'.$subtotal.'"/>';
+            $html .= '<input type="hidden" name="routing_before" id="routing_before" value="'.$routing.'"/>';
+            $html .= '<input type="hidden" name="transit_time_before" id="transit_time_before" value="'.$transit_time.'"/>';
             $html .= '</td>';
             $html .= '</tr>';
-        }
-
-        return $html;
-    }
-
-    public function loadDetailAfter(Request $request)
-    {
-        $html = '';
-
-        $details = Session::get('invoice_detail_after');
-
-        if ($details != []) {
-            foreach ($details as $key => $detail) {
-                if ($detail['reimburse_flag'] == 1) {
-                    $style = 'checked';
-                } else {
-                    $style = '';
-                }
-                $html .= '<tr>';
-                $html .= '<td>';
-                $html .= ($key + 1);
-                $html .= '</td>';
-                $html .= '<td class="text-left">' . $detail['charge_name'] . '</td>';
-                $html .= '<td class="text-left">' . $detail['desc'] . '</td>';
-                $html .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . ($key + 1) . '" ' . $style . '></td>';
-                $html .= '<td class="text-left">' . $detail['qty'] . '</td>';
-                $html .= '<td class="text-left">' . $detail['currency_code'] . '</td>';
-                $html .= '<td class="text-right">' . number_format($detail['sell_val'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format(($detail['qty'] * $detail['sell_val']), 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format($detail['rate'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format($detail['vat'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-right">' . number_format($detail['subtotal'], 2, ',', '.') . '</td>';
-                $html .= '<td class="text-left"></td>';
-                $html .= '<td style="text-align:center;">';
-                        $html .= '<a href="javascript:;" class="btn btn-xs btn-primary'
-                                . '" onclick="editDetailx();" id="btnEditx_'.$detail['id'].'"> '
-                                . '<i class="fa fa-edit"></i></a>';
-                        $html .= '<a href="javascript:;" class="btn btn-xs btn-danger'
-                                . '" onclick="hapusDetailx();" style="margin-left:2px"> '
-                                . '<i class="fa fa-trash"></i></a>';
-                        $html .= '</td>';
-            }
         }
 
         return $html;
@@ -231,15 +203,19 @@ class ProformaInvoiceController extends Controller
             'charge_name' => $request->t_mcharge_code_name,
             'desc' => $request->desc,
             'reimburse_flag' => $request->reimburse_flag,
-            'qty' => $request->unit,
+            'qty' => $request->qty,
             'currency' => $request->currency_id,
             'currency_code' => $request->currency_code,
-            'sell_val' => $request->rate,
-            'total' => $request->total,
-            'rate' => $request->roe,
+            'cost' => $request->cost,
+            'sell' => $request->sell,
+            'cost_val' => $request->cost_val,
+            'sell_val' => $request->sell_val,
+            'rate' => $request->rate,
             'vat' => $request->vat,
-            'subtotal' => $request->amount,
-            'note' => $request->note,
+            'subtotal' => $request->subtotal,
+            'routing' => $request->routing,
+            'transit_time' => $request->transit_time,
+            // 'note' => $request->note,
         ];
 
         // push item baru ke array
@@ -327,19 +303,19 @@ class ProformaInvoiceController extends Controller
                 $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                 $paramDetail['desc'] = $detail['desc'];
                 $paramDetail['currency'] = $request['currency'];
-                $paramDetail['rate'] = $request['rate'];
-                $paramDetail['cost'] = 0;
-                $paramDetail['sell'] = 0;
+                $paramDetail['rate'] = $detail['rate'];
+                $paramDetail['cost'] = $detail['cost'];
+                $paramDetail['sell'] = $detail['sell'];
                 $paramDetail['qty'] = $detail['qty'];
-                $paramDetail['cost_val'] = 0;
+                $paramDetail['cost_val'] = $detail['cost_val'];
                 $paramDetail['sell_val'] = $detail['sell_val'];
                 $paramDetail['vat'] = $detail['vat'];
                 $paramDetail['subtotal'] = $detail['subtotal'];
-                $paramDetail['routing'] = '';
-                $paramDetail['transit_time'] = '';
+                $paramDetail['routing'] = $detail['routing'];
+                $paramDetail['transit_time'] = $detail['transit_time'];
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
-
+                // dd($details, $paramDetail);
                 $total_invoice += $detail['subtotal'];
                 ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
             }

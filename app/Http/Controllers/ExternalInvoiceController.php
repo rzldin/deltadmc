@@ -68,7 +68,7 @@ class ExternalInvoiceController extends Controller
 
             $invoice = ExternalInvoice::saveExternalInvoice($param);
 
-            $details = $request->session()->get('invoice_details');
+            $details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->t_proforma_invoice_id)->get();
             // dd($details);
             $total_invoice = 0;
             foreach ($details as $key => $detail) {
@@ -79,16 +79,16 @@ class ExternalInvoiceController extends Controller
                 $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
                 $paramDetail['desc'] = $detail['desc'];
                 $paramDetail['currency'] = $request['currency'];
-                $paramDetail['rate'] = $request['rate'];
-                $paramDetail['cost'] = 0;
-                $paramDetail['sell'] = 0;
+                $paramDetail['rate'] = $detail['rate'];
+                $paramDetail['cost'] = $detail['cost'];
+                $paramDetail['sell'] = $detail['sell'];
                 $paramDetail['qty'] = $detail['qty'];
-                $paramDetail['cost_val'] = 0;
+                $paramDetail['cost_val'] = $detail['cost_val'];
                 $paramDetail['sell_val'] = $detail['sell_val'];
                 $paramDetail['vat'] = $detail['vat'];
                 $paramDetail['subtotal'] = $detail['subtotal'];
-                $paramDetail['routing'] = '';
-                $paramDetail['transit_time'] = '';
+                $paramDetail['routing'] = $detail['routing'];
+                $paramDetail['transit_time'] = $detail['transit_time'];
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
