@@ -27,13 +27,13 @@ class InvoiceController extends Controller
 
         $rules = [
             't_booking_id' => 'required',
-            'cek_sell_shp' => 'required_without:cek_sell_chrg',
+            'cek_sell_chrg' => 'required',
             'cek_bill_to' => 'required',
         ];
 
         $validatorMsg = [
             't_booking_id.required' => 'Booking ID can not be null!',
-            'cek_sell_shp.required_without' => 'Please choose at least 1 item!',
+            'cek_sell_chrg.required' => 'Please choose at least 1 item!',
             'cek_bill_to.required' => 'Please choose Bill To field!',
         ];
 
@@ -102,13 +102,13 @@ class InvoiceController extends Controller
 
         $rules = [
             't_booking_id' => 'required',
-            'cek_cost_shp' => 'required_without:cek_cost_chrg',
+            'cek_cost_chrg' => 'required',
             'cek_paid_to' => 'required',
         ];
 
         $validatorMsg = [
             't_booking_id.required' => 'Booking ID can not be null!',
-            'cek_cost_shp.required_without' => 'Please choose at least 1 item!',
+            'cek_cost_chrg.required' => 'Please choose at least 1 item!',
             'cek_paid_to.required' => 'Please choose Paid To field!',
         ];
 
@@ -411,32 +411,32 @@ class InvoiceController extends Controller
             // dd($invoice);
             $paramDetail['id'] = '';
             $paramDetail['invoice_id'] = $invoice->id;
-            if (isset($request->cek_sell_shp)) {
-                foreach ($request->cek_sell_shp as $key => $shp_dtl_id) {
-                    $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
-                    $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
-                    $paramDetail['currency'] = $request->currency;
-                    $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-                    $paramDetail['rate'] = 1;
-                    $paramDetail['cost'] = $shp_dtl->cost;
-                    $paramDetail['sell'] = $shp_dtl->sell;
-                    $paramDetail['qty'] = $shp_dtl->qty;
-                    $paramDetail['cost_val'] = $shp_dtl->cost_val;
-                    $paramDetail['sell_val'] = $shp_dtl->sell_val;
-                    $paramDetail['subtotal'] = $shp_dtl->subtotal;
-                    $paramDetail['created_by'] = Auth::user()->name;
-                    $paramDetail['created_on'] = date('Y-m-d h:i:s');
+            // if (isset($request->cek_sell_shp)) {
+            //     foreach ($request->cek_sell_shp as $key => $shp_dtl_id) {
+            //         $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
+            //         $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
+            //         $paramDetail['currency'] = $request->currency;
+            //         $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
+            //         $paramDetail['rate'] = 1;
+            //         $paramDetail['cost'] = $shp_dtl->cost;
+            //         $paramDetail['sell'] = $shp_dtl->sell;
+            //         $paramDetail['qty'] = $shp_dtl->qty;
+            //         $paramDetail['cost_val'] = $shp_dtl->cost_val;
+            //         $paramDetail['sell_val'] = $shp_dtl->sell_val;
+            //         $paramDetail['subtotal'] = $shp_dtl->subtotal;
+            //         $paramDetail['created_by'] = Auth::user()->name;
+            //         $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
-                    InvoiceDetailModel::saveInvoiceDetail($paramDetail);
+            //         InvoiceDetailModel::saveInvoiceDetail($paramDetail);
 
-                    $shpDtlParam['id'] = $shp_dtl_id;
-                    $shpDtlParam['t_invoice_id'] = $invoice->id;
-                    $shpDtlParam['invoice_type'] = $request->invoice_type;
-                    $shpDtlParam['created_by'] = Auth::user()->name;
-                    $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
-                    QuotationModel::saveShipDetail($shpDtlParam);
-                }
-            }
+            //         $shpDtlParam['id'] = $shp_dtl_id;
+            //         $shpDtlParam['t_invoice_id'] = $invoice->id;
+            //         $shpDtlParam['invoice_type'] = $request->invoice_type;
+            //         $shpDtlParam['created_by'] = Auth::user()->name;
+            //         $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
+            //         QuotationModel::saveShipDetail($shpDtlParam);
+            //     }
+            // }
 
             if (isset($request->cek_sell_chrg)) {
                 foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {

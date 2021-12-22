@@ -67,9 +67,9 @@ class ExternalInvoice extends Model
     {
         $ars = ExternalInvoice::from('t_external_invoice AS ei')
             ->leftJoin('t_mcompany AS c', 'c.id', '=', 'ei.client_id')
-            ->leftJoin('t_invoice AS i', 'i.id', '=', 't_invoice_id')
-            ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'i.t_proforma_invoice_id')
-            ->leftJoin('t_booking AS b', 'b.id', '=', 'pi.t_booking_id')
+            ->leftJoin('t_proforma_invoice AS pi', 'pi.id', '=', 'ei.t_proforma_invoice_id')
+            ->leftJoin('t_invoice AS i', 'i.id', '=', 'pi.t_invoice_id')
+            ->leftJoin('t_booking AS b', 'b.id', '=', 'ei.t_booking_id')
             ->select('ei.*', 'c.client_code', 'c.client_name', 'b.booking_no', 'pi.proforma_invoice_no', 'i.invoice_no', 'ei.external_invoice_no')
             ->where('ei.flag_bayar', '<>', 1);
 
