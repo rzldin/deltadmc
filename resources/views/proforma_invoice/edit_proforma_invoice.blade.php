@@ -338,7 +338,9 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <button type="button" class="btn btn-info" onclick="confirmInvoice()">Confirm</button>
+                                    @if ($responsibility->t_mresponsibility_id == 1 || $responsibility->t_mresponsibility_id == 3)
+                                        <button type="button" class="btn btn-info" onclick="confirmInvoice()">Confirm</button>
+                                    @endif
                                     <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Save</button>
                                 </div>
                             </div>

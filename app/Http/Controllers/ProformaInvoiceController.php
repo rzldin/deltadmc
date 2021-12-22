@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BookingModel;
+use App\Helpers\SiteHelpers;
 use App\InvoiceDetailModel;
 use App\InvoiceModel;
 use App\MasterModel;
@@ -336,6 +337,7 @@ class ProformaInvoiceController extends Controller
     public function edit($proformaInvoiceId)
     {
         Session::forget('invoice_details');
+        $data['responsibility'] = SiteHelpers::getUserRole();
         $data['proforma_invoice_header'] = ProformaInvoiceModel::getProformaInvoice($proformaInvoiceId)->first();
         $data['proforma_invoice_details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($proformaInvoiceId)->get();
         $data['companies'] = MasterModel::company_data();

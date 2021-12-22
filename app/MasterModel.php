@@ -302,4 +302,12 @@ class MasterModel extends Model
         return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100']);
     }
 
+    public static function getUserRole($userId)
+    {
+        return DB::table('t_mmatrix AS m')
+            ->leftJoin('t_mresponsibility AS r', 'r.id', '=', 'm.t_mresponsibility_id')
+            ->select('m.*', 'r.responsibility_name')
+            ->where('m.t_muser_id', $userId);
+    }
+
 }

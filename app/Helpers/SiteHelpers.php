@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\MasterModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,6 +38,15 @@ class SiteHelpers {
         ->orderBy('t_mapps_menu.apps_menu_name', 'asc')->get();
 
         return $sub_menu;
+    }
+
+    public static function getUserRole()
+    {
+        $user_id = Auth::user()->id;
+
+        $responsibility = MasterModel::getUserRole($user_id)->first();
+
+        return $responsibility;
     }
 
 }
