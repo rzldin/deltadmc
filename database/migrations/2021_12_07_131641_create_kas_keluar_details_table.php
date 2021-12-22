@@ -17,7 +17,7 @@ class CreateKasKeluarDetailsTable extends Migration
             $table->id();
             $table->integer('kas_keluar_id')->index();
             $table->integer('account_id')->index();
-            $table->decimal('amount', 25, 4);
+            $table->decimal('amount', 14, 2);
             $table->string('created_by', 100)->nullable();
             $table->dateTime('created_on')->nullable();
         });

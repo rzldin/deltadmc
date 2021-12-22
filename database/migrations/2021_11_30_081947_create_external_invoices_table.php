@@ -15,7 +15,7 @@ class CreateExternalInvoicesTable extends Migration
     {
         Schema::create('t_external_invoice', function (Blueprint $table) {
             $table->id();
-            $table->integer('t_invoice_id');
+            $table->integer('t_proforma_invoice_id');
             $table->integer('t_booking_id');
             $table->integer('client_id')->nullable();
             $table->integer('client_addr_id')->nullable();
@@ -25,6 +25,9 @@ class CreateExternalInvoicesTable extends Migration
             $table->string('truck_no', 20)->nullable();
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
+            $table->decimal('total_invoice', 25, 4)->default(0);
+            $table->decimal('invoice_bayar', 25, 4)->default(0);
+            $table->tinyInteger('flag_bayar')->default(0);
             $table->integer('reimburse_flag')->nullable();
             $table->integer('debit_note_flag')->nullable();
             $table->integer('credit_note_flag')->nullable();

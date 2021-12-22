@@ -21,7 +21,7 @@ class CreateKasMasuksTable extends Migration
             $table->integer('client_id')->default(0)->unsigned();
             $table->string('transaction_no')->nullable();
             $table->string('transaction_date')->nullable();
-            $table->decimal('total', 25, 4);
+            $table->decimal('total', 14, 2);
             $table->string('no_giro')->nullable();
             $table->date('due_date')->nullable();
             $table->string('bank')->nullable();

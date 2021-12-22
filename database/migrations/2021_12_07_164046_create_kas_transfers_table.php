@@ -19,7 +19,7 @@ class CreateKasTransfersTable extends Migration
             $table->integer('to_account_id')->unsigned()->default(0);
             $table->date('transfer_date');
             $table->string('reference')->nullable();
-            $table->decimal('amount', 25, 4);
+            $table->decimal('amount', 14, 2);
             $table->string('memo')->nullable();
             $table->string('created_by', 100)->nullable();
             $table->dateTime('created_on')->nullable();

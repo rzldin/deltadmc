@@ -18,7 +18,7 @@ class CreateJournalsTable extends Migration
             $table->date('journal_date');
             $table->string('journal_no')->unique();
             $table->integer('currency_id')->unsigned()->default(0);
-            $table->decimal('amount', 25, 4)->default(0);
+            $table->decimal('amount', 14, 2)->default(0);
             $table->integer('flag_post')->unsigned()->default(0);
             $table->integer('attr1')->nullable()->unsigned()->default(0);
             $table->integer('attr2')->nullable()->unsigned()->default(0);

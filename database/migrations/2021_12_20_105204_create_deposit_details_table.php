@@ -17,7 +17,7 @@ class CreateDepositDetailsTable extends Migration
             $table->id();
             $table->integer('deposit_id');
             $table->date('deposit_date');
-            $table->decimal('amount', 25, 4)->default(0);
+            $table->decimal('amount', 14, 2)->default(0);
             $table->integer('invoice_id')->nullable()->default(0);
             $table->text('remark')->nullable();
             $table->string('created_by', 100)->nullable();

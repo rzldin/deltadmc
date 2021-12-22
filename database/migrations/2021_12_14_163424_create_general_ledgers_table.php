@@ -18,9 +18,9 @@ class CreateGeneralLedgersTable extends Migration
             $table->integer('journal_id')->unsigned()->default(0);
             $table->integer('account_id')->unsigned()->default(0);
             $table->string('transaction_type', 1);
-            $table->decimal('debit', 25, 4)->default(0);
-            $table->decimal('credit', 25, 4)->default(0);
-            $table->decimal('balance', 25, 4)->default(0);
+            $table->decimal('debit', 14, 2)->default(0);
+            $table->decimal('credit', 14, 2)->default(0);
+            $table->decimal('balance', 14, 2)->default(0);
             $table->text('memo')->nullable();
             $table->string('created_by', 100)->nullable();
             $table->dateTime('created_on')->nullable();

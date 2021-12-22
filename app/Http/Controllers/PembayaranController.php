@@ -407,14 +407,6 @@ class PembayaranController extends Controller
 
         DB::table('t_pembayaran_detail')->where('id',$request->id)->delete();
 
-        // $deposit = Deposit::where('company_id', $header->id_company)->first();
-        // if ($deposit != []) {
-
-        //     $depositCon = new DepositController();
-        //     $depositCon->processSave();
-        // }
-
-
         $return_data['status']= "sukses";
         $return_data['message']= "Berhasil menyimpan detail pembayaran!";
 
