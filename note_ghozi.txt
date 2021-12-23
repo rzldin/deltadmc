@@ -39,11 +39,11 @@ ALTER TABLE `t_bcharges_dtl` ADD `flag_shp` TINYINT(1) NOT NULL DEFAULT '0' AFTE
 
 ---------
 
-ALTER TABLE deltadmc.t_proforma_invoice ADD t_invoice_id varchar(20) NULL;
-ALTER TABLE deltadmc.t_proforma_invoice CHANGE t_invoice_id t_invoice_id varchar(20) NULL AFTER id;
-ALTER TABLE deltadmc.t_proforma_invoice ADD total_invoice DECIMAL(25,4) DEFAULT 0 NULL;
-ALTER TABLE deltadmc.t_proforma_invoice CHANGE total_invoice total_invoice DECIMAL(25,4) DEFAULT 0 NULL AFTER currency;
+ALTER TABLE t_proforma_invoice ADD t_invoice_id varchar(20) NULL;
+ALTER TABLE t_proforma_invoice CHANGE t_invoice_id t_invoice_id varchar(20) NULL AFTER id;
+ALTER TABLE t_proforma_invoice ADD total_invoice DECIMAL(25,4) DEFAULT 0 NULL;
+ALTER TABLE t_proforma_invoice CHANGE total_invoice total_invoice DECIMAL(25,4) DEFAULT 0 NULL AFTER currency;
 
-ALTER TABLE deltadmc.t_invoice DROP COLUMN t_proforma_invoice_id;
+ALTER TABLE t_invoice DROP COLUMN t_proforma_invoice_id;
 
-ALTER TABLE deltadmc.t_external_invoice CHANGE t_invoice_id t_proforma_invoice_id int(11) NOT NULL;
+ALTER TABLE t_external_invoice CHANGE t_invoice_id t_proforma_invoice_id int(11) NOT NULL;

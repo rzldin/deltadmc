@@ -152,7 +152,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('client')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -200,7 +201,9 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+
+                        <a href="javascript:;" onclick="addCustomer('shipper')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipper-detail">
@@ -235,7 +238,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('consignee')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> 
                     </div>
                 </div>
                 <div class="consignee-detail">
@@ -270,7 +274,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('notifyParty')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="not-detail">
@@ -305,7 +310,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('agent')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="agent-detail">
@@ -340,7 +346,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('shipline')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="shipline-detail">
@@ -391,7 +398,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/company_add') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCustomer('vendor')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="vendor-detail">
@@ -431,7 +439,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ url('master/carrier') }}" target="_blank" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addCarrier()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -483,7 +492,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addPort('pol')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -509,7 +519,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addPort('pot')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -527,7 +538,8 @@
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
-                        <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                        {{-- <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a> --}}
+                        <a href="javascript:;" onclick="addPort('pod')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">

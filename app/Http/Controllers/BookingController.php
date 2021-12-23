@@ -35,8 +35,17 @@ class BookingController extends Controller
         $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
         $data['success']        = (isset($_GET['success']) ? 1 : 0);
         $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
-        $data['charge'] = MasterModel::charge();
-        $data['currency'] = MasterModel::currency();
+        $data['charge']         = MasterModel::charge();
+        $data['currency']       = MasterModel::currency();
+        $data['list_account']   = MasterModel::account_get();
+        $data['list_country']   = MasterModel::country();
+        $sales = DB::table('t_mmatrix')
+        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+        ->select('users.name as user_name', 'users.id as user_id')
+        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+        ->where('t_mmatrix.active_flag', '1')->get();
+        $data['list_sales']     = $sales;
 
         return view('booking.edit_booking')->with($data);
     }
