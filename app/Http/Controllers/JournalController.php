@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\GeneralLedger;
+use App\InvoiceModel;
 use App\Journal;
 use App\JournalDetail;
 use App\MasterModel;
+use App\PembayaranModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,12 +24,20 @@ class JournalController extends Controller
         return view('journal.list_journal', compact('journals'));
     }
 
-    public function addJournal()
+    public function addJournal(Request $request)
     {
-        $accounts = MasterModel::account_get();
-        $currency = MasterModel::currency();
+        $data['accounts'] = MasterModel::account_get();
+        $data['currency'] = MasterModel::currency();
+        $data['reference_no'] = $request->reference_no;
+        $data['reference_id'] = $request->reference_id;
+        $data['client_id'] = $request->client_id;
+        $data['source'] = $request->source;
 
-        return view('journal.add_journal', compact('accounts', 'currency'));
+        Session::forget('journal_details');
+        // $journals = Session::get('journal_details');
+        if ($request->has('source')) $this->saveDefaultDetailJournal($request);
+
+        return view('journal.add_journal')->with($data);
     }
 
     public function loadDetailJournal(Request $request)
@@ -65,6 +75,104 @@ class JournalController extends Controller
         $html .= '<input type="hidden" name="amount" id="amount" value="' . $amount . '"/>';
 
         return $html;
+    }
+
+    public function saveDefaultDetailJournal(Request $request)
+    {
+        if ($request->source == 'invoice') $this->saveDetailJournalInvoice($request);
+        if ($request->source == 'pembayaran') $this->saveDetailJournalPembayaran($request);
+    }
+
+    public function saveDetailJournalInvoice(Request $request)
+    {
+        $company = MasterModel::company_detail_get($request->client_id);
+        $invoice = InvoiceModel::find($request->reference_id);
+
+        if ($company != []) {
+            // account ar di debit
+            $newItem = [
+                'account_id' => $company[0]->account_receivable_id,
+                'account_number' => $company[0]->account_receivable_number,
+                'account_name' => $company[0]->account_receivable_name,
+                'transaction_type' => 'D',
+                'debit' => $invoice->total_invoice,
+                'credit' => 0,
+                'memo' => 'AR '.$company[0]->client_name.' '.$invoice->invoice_no,
+            ];
+
+            $request->session()->push('journal_details', $newItem);
+
+            // account tax di credit
+            $account_pajak = MasterModel::findAccountByAccountNumber('2-1200')->first();
+            $newItem = [
+                'account_id' => $account_pajak->id,
+                'account_number' => $account_pajak->account_number,
+                'account_name' => $account_pajak->account_name,
+                'transaction_type' => 'C',
+                'debit' => 0,
+                'credit' => $invoice->total_vat,
+                'memo' => 'VAT 10%',
+            ];
+
+            $request->session()->push('journal_details', $newItem);
+
+            // account pendapatan di credit
+            $account_number = 0;
+            if ($invoice->activity == 'export') $account_number = '4-1001';
+            else if ($invoice->activity == 'import') $account_number = '4-1002';
+            else if ($invoice->activity == 'logistic') $account_number = '4-1003';
+            else if ($invoice->activity == 'domestic') $account_number = '4-1004';
+            else $account_number = '4-1005';
+            $account_pendapatan = MasterModel::findAccountByAccountNumber($account_number)->first();
+            $newItem = [
+                'account_id' => $account_pendapatan->id,
+                'account_number' => $account_pendapatan->account_number,
+                'account_name' => $account_pendapatan->account_name,
+                'transaction_type' => 'C',
+                'debit' => 0,
+                'credit' => $invoice->total_before_vat,
+                'memo' => 'Sales '.$company[0]->client_name.' '.$invoice->invoice_no,
+            ];
+
+            $request->session()->push('journal_details', $newItem);
+        }
+    }
+
+    public function saveDetailJournalPembayaran(Request $request)
+    {
+        $company = MasterModel::company_detail_get($request->client_id);
+        $pembayaran = PembayaranModel::find($request->reference_id);
+
+        if ($company != []) {
+            // account bank di debit
+            $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
+            $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
+            $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
+            $newItem = [
+                'account_id' => $account->id,
+                'account_number' => $account->account_number,
+                'account_name' => $account->account_name,
+                'transaction_type' => 'D',
+                'debit' => $pembayaran->nilai_pmb,
+                'credit' => 0,
+                'memo' => 'Payment '.$company[0]->client_name.' '.$pembayaran->no_pembayaran,
+            ];
+
+            $request->session()->push('journal_details', $newItem);
+
+            // account ar di credit
+            $newItem = [
+                'account_id' => $company[0]->account_receivable_id,
+                'account_number' => $company[0]->account_receivable_number,
+                'account_name' => $company[0]->account_receivable_name,
+                'transaction_type' => 'C',
+                'debit' => 0,
+                'credit' => $pembayaran->nilai_pmb,
+                'memo' => 'Payment '.$company[0]->client_name.' '.$pembayaran->no_pembayaran,
+            ];
+
+            $request->session()->push('journal_details', $newItem);
+        }
     }
 
     public function saveDetailJournal(Request $request)
@@ -124,6 +232,14 @@ class JournalController extends Controller
             $param['amount'] = $request->amount;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
+
+            if ($request->has('source')) {
+                if ($request->source == 'invoice') {
+                    $param['invoice_id'] = $request->reference_id;
+                }else if ($request->source == 'pembayaran') {
+                    $param['pembayaran_id'] = $request->reference_id;
+                }
+            }
 
             $journal = Journal::saveJournal($param);
 

@@ -52,3 +52,20 @@ ALTER TABLE deltadmc.t_external_invoice CHANGE t_invoice_id t_proforma_invoice_i
 
 ALTER TABLE deltadmc.t_pembayaran_detail ADD deposit_detail_id INT DEFAULT 0 NULL;
 ALTER TABLE deltadmc.t_pembayaran_detail CHANGE deposit_detail_id deposit_detail_id INT DEFAULT 0 NULL AFTER id_invoice;
+
+---------
+
+ALTER TABLE deltadmc.t_external_invoice ADD total_before_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_external_invoice CHANGE total_before_vat total_before_vat decimal(14,2) DEFAULT 0 NULL AFTER rate;
+ALTER TABLE deltadmc.t_external_invoice ADD total_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_external_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 0 NULL AFTER total_before_vat;
+
+ALTER TABLE deltadmc.t_invoice ADD total_before_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_invoice CHANGE total_before_vat total_before_vat decimal(14,2) DEFAULT 0 NULL AFTER rate;
+ALTER TABLE deltadmc.t_invoice ADD total_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 0 NULL AFTER total_before_vat;
+
+ALTER TABLE deltadmc.t_proforma_invoice ADD total_before_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_proforma_invoice CHANGE total_before_vat total_before_vat decimal(14,2) DEFAULT 0 NULL AFTER rate;
+ALTER TABLE deltadmc.t_proforma_invoice ADD total_vat decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE deltadmc.t_proforma_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 0 NULL AFTER total_before_vat;

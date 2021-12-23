@@ -25,6 +25,8 @@ class CreateExternalInvoicesTable extends Migration
             $table->string('truck_no', 20)->nullable();
             $table->integer('currency');
             $table->decimal('rate', 25, 4)->default(0);
+            $table->decimal('total_before_vat', 14, 2)->default(0);
+            $table->decimal('total_vat', 14, 2)->default(0);
             $table->decimal('total_invoice', 25, 4)->default(0);
             $table->decimal('invoice_bayar', 25, 4)->default(0);
             $table->tinyInteger('flag_bayar')->default(0);

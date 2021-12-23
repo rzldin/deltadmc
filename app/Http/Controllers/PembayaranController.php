@@ -8,16 +8,16 @@ use Illuminate\Support\Facades\Validator;
 use App\PembayaranModel;
 use App\InvoiceModel;
 use App\MasterModel;
-use Auth;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PembayaranController extends Controller
 {
     //
     public function index()
     {
-        $pembayaran = PembayaranModel::where('jenis_pmb',1)->get();
+        $pembayaran = PembayaranModel::getAllPembayaranByJenis(1)->get();
         return view('pembayaran.index', compact('pembayaran'));
     }
 
@@ -297,7 +297,7 @@ class PembayaranController extends Controller
 
     public function piutang()
     {
-        $pembayaran = PembayaranModel::where('jenis_pmb',0)->get();
+        $pembayaran = PembayaranModel::getAllPembayaranByJenis(0)->get();
         return view('pembayaran.piutang', compact('pembayaran'));
     }
 

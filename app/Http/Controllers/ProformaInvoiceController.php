@@ -289,6 +289,8 @@ class ProformaInvoiceController extends Controller
 
             $details = $request->session()->get('invoice_details');
             // dd($details);
+            $total_before_vat = 0;
+            $total_vat = 0;
             $total_invoice = 0;
 
             // clear proforma details first
@@ -317,12 +319,16 @@ class ProformaInvoiceController extends Controller
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
                 // dd($details, $paramDetail);
+                $total_before_vat += $detail['sell_val'];
+                $total_vat += $detail['vat'];
                 $total_invoice += $detail['subtotal'];
                 ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
             }
 
             DB::table('t_proforma_invoice')->where('id', $proforma_invoice->id)->update([
-                'total_invoice' => $total_invoice
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
+                'total_invoice' => $total_invoice,
             ]);
             DB::commit();
             Session::forget('invoice_details');

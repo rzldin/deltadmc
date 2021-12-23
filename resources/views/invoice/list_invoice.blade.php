@@ -57,8 +57,12 @@
                                 <td>
                                     <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
                                     @if ($invoice->proforma_invoice_id == 0 && $invoice->tipe_inv == 0)
-                                    <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
-
+                                        <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
+                                    @endif
+                                    @if ($invoice->journal_id == 0)
+                                        <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
+                                                <i class="fa fa-book"></i> Journal
+                                        </a>
                                     @endif
                                 </td>
                             </tr>

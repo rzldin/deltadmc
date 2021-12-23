@@ -23,6 +23,7 @@ class KasKeluarController extends Controller
 
     public function addKasKeluar()
     {
+        Session::forget('kas_keluar_details');
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();

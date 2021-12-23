@@ -23,6 +23,7 @@ class KasMasukController extends Controller
 
     public function addKasMasuk()
     {
+        Session::forget('kas_masuk_details');
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
