@@ -397,6 +397,10 @@ class InvoiceController extends Controller
         try {
             DB::beginTransaction();
 
+            $total_before_vat = 0;
+            $total_vat = 0;
+            $total_invoice = 0;
+
             $param = $request->all();
             $param['invoice_date'] = date('Y-m-d', strtotime($request->invoice_date));
             $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
@@ -466,8 +470,18 @@ class InvoiceController extends Controller
                     $chrgDtlParam['created_by'] = Auth::user()->name;
                     $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
                     QuotationModel::saveChargeDetail($chrgDtlParam);
+
+                    $total_before_vat += $chrg_dtl->sell_val;
+                    $total_vat += $chrg_dtl->vat;
+                    $total_invoice += $chrg_dtl->subtotal;
                 }
             }
+
+            DB::table('t_invoice')->where('id', $invoice->id)->update([
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
+                'total_invoice' => $total_invoice,
+            ]);
             DB::commit();
             return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Invoice Created!');
         } catch (\Throwable $th) {
@@ -548,6 +562,8 @@ class InvoiceController extends Controller
             );
 
             $pno = 0;
+            $total_before_vat = 0;
+            $total_vat = 0;
             $total_sub = 0;
             // if (isset($request->cek_cost_shp)) {
             //     foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
@@ -614,11 +630,15 @@ class InvoiceController extends Controller
                     $chrgDtlParam['created_by'] = Auth::user()->name;
                     $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
                     QuotationModel::saveChargeDetail($chrgDtlParam);
+                    $total_before_vat += $chrg_dtl->sell_val;
+                    $total_vat += $chrg_dtl->vat;
                     $total_sub += $sub_total;
                 }
             }
 
             DB::table('t_invoice')->where('id', $invoice_id)->update([
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
                 'total_invoice' => $total_sub
             ]);
             DB::commit();

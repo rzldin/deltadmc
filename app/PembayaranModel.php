@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class PembayaranModel extends Model
 {
@@ -11,6 +11,14 @@ class PembayaranModel extends Model
     protected $table = 't_pembayaran';
     protected $guarded = [];
     public $timestamps = false;
+
+    public static function getAllPembayaranByJenis($jenis)
+    {
+        return PembayaranModel::from('t_pembayaran as p')
+            ->leftJoin('t_journals as j', 'j.pembayaran_id', '=', 'p.id')
+            ->select('p.*', DB::raw('COALESCE(j.id, 0) journal_id'))
+            ->where('p.jenis_pmb', $jenis);
+    }
 
     public static function get_list_detail($id)
     {

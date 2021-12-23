@@ -17,6 +17,11 @@ class Deposit extends Model
             ->select('d.*', 'c.client_code', 'c.client_name');
     }
 
+    public static function findDepositByCompanyId($companyId)
+    {
+        return Deposit::where('company_id', $companyId);
+    }
+
     public static function saveDeposit($request)
     {
         return Deposit::updateOrCreate(

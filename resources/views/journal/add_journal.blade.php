@@ -84,6 +84,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            @if ($source != '')
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label>Reference</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input class="form-control" type="hidden" name="source" id="source" value="{{ $source }}" readonly>
+                                                        <input class="form-control" type="hidden" name="reference_id" id="reference_id" value="{{ $reference_id }}" readonly>
+                                                        <input class="form-control" type="text" name="reference_no" id="reference_no" value="{{ $reference_no }}" readonly>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

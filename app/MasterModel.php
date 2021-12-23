@@ -104,7 +104,14 @@ class MasterModel extends Model
 
     public static function company_detail_get($id)
     {
-        return DB::select("SELECT a.*, b.account_name, c.name as user_name FROM t_mcompany a LEFT JOIN t_maccount b ON a.t_maccount_id = b.id LEFT JOIN users c ON a.sales_by = c.id WHERE a.id='".$id."'");
+        return DB::select("SELECT
+            c.*, ap.account_name as account_payable_name, ap.account_number as account_payable_number,
+            ar.account_name as account_receivable_name, ar.account_number as account_receivable_number, u.name as user_name
+            FROM t_mcompany c
+            LEFT JOIN t_maccount ap ON c.account_payable_id = ap.id
+            LEFT JOIN t_maccount ar ON c.account_receivable_id = ar.id
+            LEFT JOIN users u ON c.sales_by = u.id
+            WHERE c.id='".$id."'");
     }
 
 
@@ -300,6 +307,19 @@ class MasterModel extends Model
     public static function getKasAccount()
     {
         return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100']);
+    }
+
+    public static function findAccountByAccountNumber($accountNumber)
+    {
+        return DB::table('t_maccount')->where('account_number', $accountNumber);
+    }
+
+    public static function getUserRole($userId)
+    {
+        return DB::table('t_mmatrix AS m')
+            ->leftJoin('t_mresponsibility AS r', 'r.id', '=', 'm.t_mresponsibility_id')
+            ->select('m.*', 'r.responsibility_name')
+            ->where('m.t_muser_id', $userId);
     }
 
 }

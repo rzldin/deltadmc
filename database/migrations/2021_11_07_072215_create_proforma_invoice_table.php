@@ -25,8 +25,10 @@ class CreateProformaInvoiceTable extends Migration
             $table->string('truck_no', 20)->nullable();
             $table->string('activity', 50);
             $table->integer('currency');
-            $table->decimal('total_invoice', 25, 4)->default(0);
-            $table->decimal('rate', 25, 4)->default(0);
+            $table->decimal('total_before_vat', 14, 2)->default(0);
+            $table->decimal('total_vat', 14, 2)->default(0);
+            $table->decimal('total_invoice', 14, 2)->default(0);
+            $table->decimal('rate', 14, 2)->default(0);
             $table->integer('reimburse_flag')->nullable();
             $table->integer('debit_note_flag')->nullable();
             $table->integer('credit_note_flag')->nullable();
