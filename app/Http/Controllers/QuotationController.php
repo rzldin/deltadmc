@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\SiteHelpers;
 use App\QuotationModel;
 use App\MasterModel;
 use Carbon\Carbon;
@@ -15,29 +16,35 @@ class QuotationController extends Controller
 {
     public function index()
     {
+        $responsibility = SiteHelpers::getUserRole();
         $data = QuotationModel::getQuote();
-        return view('quotation.list_quote', compact('data'));
+        return view('quotation.list_quote', compact('data','responsibility'));
     }
 
     public function quote_add(Request $request)
     {
-        $sales = DB::table('t_mmatrix')
-        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
-        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
-        ->select('users.name as user_name', 'users.id as user_id')
-        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
-        ->where('t_mmatrix.active_flag', '1')->get();
-        
-        $list_account = MasterModel::account_get();
-        $list_country = MasterModel::country();
-        $list_sales   = $sales;
-        $version = $request->segment(3);
-        $loaded = MasterModel::loaded_get();
-        $company = MasterModel::company_data();
-        $inco = MasterModel::incoterms_get();
-        $port = MasterModel::port();
-        $uom = MasterModel::uom();
-        return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded', 'list_account', 'list_country', 'list_sales'));
+        $responsibility = SiteHelpers::getUserRole();
+        if($responsibility->t_mresponsibility_id == 1 || $responsibility->t_mresponsibility_id == 4){
+            $sales = DB::table('t_mmatrix')
+            ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+            ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+            ->select('users.name as user_name', 'users.id as user_id')
+            ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+            ->where('t_mmatrix.active_flag', '1')->get();
+            
+            $list_account = MasterModel::account_get();
+            $list_country = MasterModel::country();
+            $list_sales   = $sales;
+            $version = $request->segment(3);
+            $loaded = MasterModel::loaded_get();
+            $company = MasterModel::company_data();
+            $inco = MasterModel::incoterms_get();
+            $port = MasterModel::port();
+            $uom = MasterModel::uom();
+            return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded', 'list_account', 'list_country', 'list_sales'));
+        }else{
+            return abort(403);
+        }
     }
 
     public function get_pic(Request $request)

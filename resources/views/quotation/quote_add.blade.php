@@ -113,7 +113,7 @@
                                 <div class="col-md-4" style="padding: 10px">
                                     @foreach ($loaded as $l)
                                     <div class="icheck-primary d-inline">
-                                        <input type="radio" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}">
+                                        <input type="radio" class="loaded" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}">
                                         <label for="loaded_{{ $l->id }}">
                                             {{ $l->loaded_type }}
                                         </label>
@@ -816,7 +816,22 @@
     }
 
     $("#saveData").click(function(){
-        if($.trim($("#quote_no").val()) == ""){
+        const rbs = document.querySelectorAll('input[name="loaded"]');
+        let selectedLoaded;
+        for (const rb of rbs) {
+            if (rb.checked) {
+                selectedLoaded = rb.value;
+                break;
+            }
+        }
+
+        if (!selectedLoaded){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Harap pilih FCL/LCL',
+                icon: 'error'
+            })
+        }else if($.trim($("#quote_no").val()) == ""){
             Swal.fire({
                 title: 'Error!',
                 text: 'Please input Quote Number',

@@ -994,6 +994,7 @@ class MasterController extends Controller
     {
         $data['list_data'] = MasterModel::users();
         $data['list_country'] = MasterModel::country();
+        $data['list_role'] = MasterModel::roles();
         return view('master.users')->with($data);
     }
 
@@ -1007,7 +1008,7 @@ class MasterController extends Controller
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
-            DB::table('users')->insert([
+            $id = DB::table('users')->insertGetId([
                 'name'                  => $request->name,
                 'username'              => $request->username,
                 'address'               => $request->address,
@@ -1023,6 +1024,13 @@ class MasterController extends Controller
                 'password'              => bcrypt($request->password),
                 'created_by'            => $user,
                 'created_at'            => $tanggal
+            ]);
+
+            DB::table('t_mmatrix')->insert([
+                't_muser_id' => $id,
+                't_mresponsibility_id' => $request->role,
+                'active_flag' => 1,
+                'created_on' => date('Y-m-d H:i:s')
             ]);
 
             return redirect()->route('master.user')->with('status', 'Successfully added');
@@ -1058,6 +1066,10 @@ class MasterController extends Controller
                 'active_flag'           => $status,
                 'updated_by'            => $user,
                 'updated_at'            => $tanggal
+            ]);
+
+            DB::table('t_mmatrix')->where('t_muser_id', $request->id)->update([
+                't_mresponsibility_id' => $request->role,
             ]);
 
             return redirect()->route('master.user')->with('status', 'Successfully updated');

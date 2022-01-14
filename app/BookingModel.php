@@ -17,6 +17,16 @@ class BookingModel extends Model
                 ->groupBy('a.booking_no')->get();
     }
 
+    public static function get_booking_header($id){    
+        return DB::table('t_booking AS a')
+                ->leftJoin('t_mcompany AS b', 'a.client_id', '=', 'b.id')
+                ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
+                ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
+                ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
+                ->where('a.id', $id)
+                ->groupBy('a.booking_no')->first();
+    }
+
     public static function getAllBokingHasProforma()
     {
         return DB::table('t_booking AS b')

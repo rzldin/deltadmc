@@ -38,8 +38,9 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th width="30%">Name</th>
-                                <th width="40%">Address</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Roles</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -49,7 +50,8 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $list->name }}</td>
-                                <td>{{ $list->address }}</td>
+                                <td>{{ $list->username }}</td>
+                                <td>{{ $list->role_name }}</td>
                                 <td align="center">
                                     @if ($list->active_flag == 1)
                                         <span class="badge badge-success">ACTIVE</span>
@@ -103,7 +105,20 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Country 
+                            Roles <font color="#f00">*</font>
+                        </div>                                
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="role" id="role">
+                                <option value="" disabled selected>-- Select Country --</option>
+                                @foreach ($list_role as $role)
+                                <option value="{{ $role->id }}">{{ $role->responsibility_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4 col-xs-4">
+                            Country <font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="country" id="country">
@@ -125,7 +140,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                            Address <font color="#f00">*</font>
+                            Address
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                            <textarea name="address" id="address" class="form-control" rows="3" placeholder="Input Address.."></textarea>
@@ -273,16 +288,16 @@
                     text: 'Please Select Country!',
                     icon: 'error'
                 })
-            }else if($.trim($("#address").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Address!',
-                    icon: 'error'
-                })
             }else if($.trim($("#email").val()) == ""){
                 Swal.fire({
                     title: 'Error!',
                     text: 'Please input Email!',
+                    icon: 'error'
+                })
+            }else if($.trim($("#role").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Roles!',
                     icon: 'error'
                 })
             }else{
@@ -324,6 +339,7 @@
                     $('#name').val(result.name);
                     $('#username').val(result.username);
                     $('#country').val(result.t_mcountry_id).trigger("change");
+                    $('#role').val(result.roles_id).trigger("change");
                     $('#province').val(result.province);
                     $('#address').val(result.address);
                     $('#city').val(result.city);

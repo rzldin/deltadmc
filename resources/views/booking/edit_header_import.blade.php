@@ -1200,7 +1200,7 @@
                                         <label>Exchange Valuta</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta" onchange="get_rate(this.value)">
+                                        <select class="form-control select2bs44" style="width: 100%;" name="exchange_valuta" id="exchange_valuta" onchange="get_exchange_rate(this.value)">
                                             <option value="" selected>-- Select Valuta --</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}" @if ($quote->exchange_valuta_comm == $item->id)

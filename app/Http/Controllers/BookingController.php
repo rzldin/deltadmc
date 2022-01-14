@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\SiteHelpers;
 use App\QuotationModel;
 use App\MasterModel;
 use App\BookingModel;
@@ -21,6 +22,8 @@ class BookingController extends Controller
 
     public function edit_booking($id)
     {
+        $data['responsibility'] = SiteHelpers::getUserRole();
+        $data['booking']        = BookingModel::get_booking_header($id);
         $data['quote']          = BookingModel::get_bookingDetail($id)[0];
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
@@ -2549,7 +2552,7 @@ class BookingController extends Controller
 
     public function quote_addDetail(Request $request)
     {
-        $cek = DB::table('t_quote_dtl')->where('t_quote_id', $request->quote)->orderBy('created_on', 'desc')->first();
+        $cek = DB::table('t_bcharges_dtl')->where('t_booking_id', $request->booking_id)->orderBy('created_on', 'desc')->first();
 
         $shipping   = QuotationModel::get_quoteShipping($request->quote);
         $shp = $shipping[0];
@@ -2570,7 +2573,7 @@ class BookingController extends Controller
         $user = Auth::user()->name;
         $tanggal = Carbon::now();
         DB::table('t_bcharges_dtl')->insert([
-            't_quote_id'        => $request->quote,
+            't_booking_id'      => $request->booking_id,
             'position_no'       => $p,
             't_mcharge_code_id' => $request->charge,
             'desc'              => $request->desc,

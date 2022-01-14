@@ -69,3 +69,8 @@ ALTER TABLE t_proforma_invoice ADD total_before_vat decimal(14,2) DEFAULT 0 NULL
 ALTER TABLE t_proforma_invoice CHANGE total_before_vat total_before_vat decimal(14,2) DEFAULT 0 NULL AFTER rate;
 ALTER TABLE t_proforma_invoice ADD total_vat decimal(14,2) DEFAULT 0 NULL;
 ALTER TABLE t_proforma_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 0 NULL AFTER total_before_vat;
+
+
+----- Jan 2022
+
+ALTER TABLE `users` ADD `roles_id` TINYINT(2) NOT NULL AFTER `address`;

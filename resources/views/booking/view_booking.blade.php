@@ -886,7 +886,9 @@
                                                 <div class="col-md-6">
                                                     <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
                                                     <a class="btn btn-md btn-dark" onclick="print_hbl({{ $booking->id }})"><i class="fa fa-print"></i> Print HBL</a>
-                                                    <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
+                                                    <?php if($booking->shipment_by=='AIR'){ ?>
+                                                    <a class="btn btn-md btn-dark" href="{{ url('booking/cetak_awb').'/'.$booking->id }}" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
+                                                    <?php } ?>
                                                 </div>
                                             </div>
                                             <div class="card card-primary mt-3">

@@ -813,6 +813,11 @@
                     icon: 'error',
                     title: 'Please input Province!'
                 });
+            }else if($.trim($("#address_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Address!'
+                });
             }else{
                 $.ajax({
                     type:"POST",
@@ -858,6 +863,11 @@
                 Toast.fire({
                     icon: 'error',
                     title: 'Please input Province!'
+                });
+            }else if($.trim($("#address_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please input Address!'
                 });
             }else{
                 $('#add_address').text('Please Wait...');

@@ -22,7 +22,9 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
+                    @if ($responsibility->t_mresponsibility_id == 1 || $responsibility->t_mresponsibility_id == 4)
                     <a class="btn btn-primary btn-sm" href="{{ url('quotation/quote_add') }}"><i class="fa fa-plus"></i> Add Data</a>
+                    @endif
                 </div>
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->

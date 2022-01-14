@@ -76,3 +76,10 @@ shipment by, kalo sea, ga boleh pelabuhan udara, kalo air ga boleh laut
 
 master document type
 quote pindah ke tmbcharges
+
+HAWB hanya ada di jenis udara, text nya doang (DONE)
+
+Create Quotation : Sales, (done)
+Confirm Quotation : Sales Manager, (done)
+Role Dokumen -> Charges and Fee gabisa lihat tapi bisa nambah (button invoice mati, tab yg lain bisa),
+Selain Role Dokumen -> Bisa semua

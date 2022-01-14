@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class KasKeluarDetail extends Model
 {
-    protected $table = 't_kas_keluar_detatils';
+    protected $table = 't_kas_keluar_details';
     protected $guarded = [];
     public $timestamps = false;
 
     public static function getAllKasKeluarDetail($kasKeluarId)
     {
-        return KasKeluarDetail::from('t_kas_keluar_detatils AS kkd')
+        return KasKeluarDetail::from('t_kas_keluar_details AS kkd')
             ->join('t_maccount AS a', 'a.id', '=', 'kkd.account_id')
             ->select('kkd.*', 'a.account_number', 'a.account_name')
             ->where('kas_keluar_id', $kasKeluarId);

@@ -35,6 +35,7 @@ class SiteHelpers {
         ->select('t_mapps_menu.*')
         ->where('t_mmatrix.t_muser_id', $id)
         ->where('t_mapps_menu.apps_menu_level', 'sub menu')
+        ->where('t_mapps_menu.active_flag',1)
         ->orderBy('t_mapps_menu.apps_menu_name', 'asc')->get();
 
         return $sub_menu;

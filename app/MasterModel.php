@@ -9,12 +9,15 @@ class MasterModel extends Model
 {
     public static function users()
     {
-        return DB::table('users')->orderBy('name')->get();
+        return DB::table('users')->leftJoin('t_mmatrix','users.id','=','t_mmatrix.t_muser_id')
+                ->leftJoin('t_mresponsibility','t_mmatrix.t_mresponsibility_id','=','t_mresponsibility.id')
+                ->select('users.*','t_mmatrix.t_mresponsibility_id as role_id','t_mresponsibility.responsibility_name as role_name')->orderBy('name')->get();
     }
 
     public static function users_get($id)
     {
-        return DB::table('users')->where('id', $id)->first();
+        return DB::table('users')->leftJoin('t_mmatrix','users.id','=','t_mmatrix.t_muser_id')
+                ->where('users.id', $id)->select('users.*','t_mmatrix.t_mresponsibility_id as role_id')->first();
     }
 
     public static function cek_username($name)
@@ -320,6 +323,10 @@ class MasterModel extends Model
             ->leftJoin('t_mresponsibility AS r', 'r.id', '=', 'm.t_mresponsibility_id')
             ->select('m.*', 'r.responsibility_name')
             ->where('m.t_muser_id', $userId);
+    }
+
+    public static function roles(){
+        return DB::table('t_mresponsibility')->where('active_flag',1)->get();
     }
 
 }

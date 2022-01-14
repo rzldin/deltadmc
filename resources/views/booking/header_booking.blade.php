@@ -402,7 +402,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-4 col-xs-4">
-                                Address
+                                Address <font color="#f00">*</font>
                             </div>
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" name="address" class="form-control" id="address" placeholder="Input Address ...">
@@ -1207,6 +1207,12 @@
             Swal.fire({
                 title: 'Error!',
                 text: 'Please select Address Country',
+                icon: 'error'
+            })
+        }else if($.trim($("#address").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Address',
                 icon: 'error'
             })
         }else{

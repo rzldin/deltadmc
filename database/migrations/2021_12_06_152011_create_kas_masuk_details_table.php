@@ -13,7 +13,7 @@ class CreateKasMasukDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('t_kas_masuk_detatils', function (Blueprint $table) {
+        Schema::create('t_kas_masuk_details', function (Blueprint $table) {
             $table->id();
             $table->integer('kas_masuk_id')->index();
             $table->integer('account_id')->index();
@@ -30,6 +30,6 @@ class CreateKasMasukDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('t_kas_masuk_detatils');
+        Schema::dropIfExists('t_kas_masuk_details');
     }
 }

@@ -435,6 +435,11 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="tblRoadCons">
+                                                            <div class="align-items-center bg-white justify-content-center spinner_load_cons">
+                                                                <div class="spinner-border" role="status">
+                                                                  <span class="sr-only">Loading...</span>
+                                                                </div>
+                                                            </div>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -649,6 +654,7 @@
                                     </div>
                                   </div>
                                 </div>
+                                @if ($responsibility->t_mresponsibility_id != 5)
                                 <section class="content">
                                     <div class="container-fluid mt-3">
                                       <div class="row">
@@ -768,6 +774,7 @@
                                         </div>
                                     </div>
                                 </section>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -1755,7 +1762,7 @@
                         type:"POST",
                         url:"{{ route('booking.quote_addDetail') }}",
                         data:{
-                            booking_id:{{ $quote->id }},
+                            booking_id:{{ $booking->id }},
                             quote:{{ $quote->t_quote_id }},
                             quote_no : $('#quote_no').val(),
                             charge:$('#charge').val(),
@@ -1835,6 +1842,7 @@
                 success:function(result){
                     let text = JSON.parse(result)
                     let code = text.code
+                    console.log(code);
 
                     if(code == 'IDR' && $('#ratex').val() == ''){
                         $('#ratex').val(1);
@@ -2259,7 +2267,7 @@
             }
         }
 
-        function get_rate(val)
+        function get_exchange_rate(val)
         {
             $.ajax({
                 type:"POST",
@@ -2576,12 +2584,14 @@
 
         /** Load Road Cons **/
         function loadRoadCons(id){
+            $('.spinner_load_cons').show();
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadRoadCons') }}",
                 data:"id="+id,
                 dataType:"html",
                 success:function(result){
+                    $('.spinner_load_cons').hide();
                     var tabel = JSON.parse(result);
                     $('#tblRoadCons').html(tabel);
                 }
