@@ -382,6 +382,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
 
     /** Pembayaran **/
+    Route::get('/pembayaran/cancel/{id}', 'PembayaranController@cancelPembayaran')->name('pembayaran.cancel');
+
     //HUTANG
     Route::get('/pembayaran/index', 'PembayaranController@index')->name('pembayaran.index');
     Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');

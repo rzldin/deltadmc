@@ -15,10 +15,12 @@ class DepositController extends Controller
 {
     public function index()
     {
+        $account = MasterModel::account_get_detail(265);
+        $saldo = Deposit::findSaldoDeposit();
         $deposits = Deposit::getAllDeposits()->get();
         $companies = MasterModel::company_data();
 
-        return view('deposit.list_deposit', compact('deposits', 'companies'));
+        return view('deposit.list_deposit', compact('account', 'saldo', 'deposits', 'companies'));
     }
 
     public function save(Request $request)
@@ -50,6 +52,7 @@ class DepositController extends Controller
         $response = [];
         try {
             $paramHeader['id'] = $request->id;
+            $paramHeader['account_id'] = $request->account_id;
             $paramHeader['company_id'] = $request->company_id;
             $paramHeader['balance'] = $request->amount;
             $paramHeader['created_by'] = Auth::user()->name;
@@ -77,7 +80,7 @@ class DepositController extends Controller
                 'data' => ['deposit' => $deposit, 'deposit_detail' => $depositDetail]
             ];
 
-            return response()->json($response);
+            return json_encode($response);
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -86,9 +89,8 @@ class DepositController extends Controller
                 'message' => $th->getMessage(),
                 'data' => null
             ];
-
             Log::error('SaveDeposit Error '.$th->getMessage());
-            return response()->json($response);
+            return json_encode($response);
         }
     }
 

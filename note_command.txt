@@ -74,3 +74,6 @@ ALTER TABLE t_proforma_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 
 ----- Jan 2022
 
 ALTER TABLE `users` ADD `roles_id` TINYINT(2) NOT NULL AFTER `address`;
+--
+ALTER TABLE deltadmc.t_deposits ADD account_id INT UNSIGNED NULL;
+ALTER TABLE deltadmc.t_deposits CHANGE account_id account_id INT UNSIGNED NULL AFTER id;
