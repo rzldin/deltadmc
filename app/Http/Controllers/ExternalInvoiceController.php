@@ -127,4 +127,18 @@ class ExternalInvoiceController extends Controller
 
         return view('external_invoice.view_external_invoice')->with($data);
     }
+
+    public static function getListExternalInvoiceByCompanyId(Request $request)
+    {
+        $html = "";
+
+        $invoices = ExternalInvoice::getExternalInvoicesByCompanyId($request->company_id)->orderBy('external_invoice_no')->get();
+        if ($invoices != []) {
+            foreach ($invoices as $key => $inv) {
+                $html .= "<option value='{$inv->id}'>{$inv->external_invoice_no}</option>";
+            }
+        }
+
+        return $html;
+    }
 }

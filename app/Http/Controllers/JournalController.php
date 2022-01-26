@@ -26,6 +26,7 @@ class JournalController extends Controller
 
     public function addJournal(Request $request)
     {
+        $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
         $data['reference_no'] = $request->reference_no;
@@ -48,19 +49,68 @@ class JournalController extends Controller
         $total_credit = 0;
 
         $details = Session::get('journal_details');
+        if ($details == [] && ($request->journal_type == "deposit_vendor" || $request->journal_type == "deposit_client")) {
+            $account_deposit = MasterModel::findAccountByAccountName('DEPOSIT')->first();
+            // $param = new Request();
+            $request->account_id = $account_deposit->id;
+            $request->account_number = $account_deposit->account_number;
+            $request->account_name = $account_deposit->account_name;
+            $request->debit = 1;
+            $request->credit = 0;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+
+            $account_deposit = MasterModel::findAccountByAccountName('OVERPAYMENT')->first();
+            // $request = new Request();
+            $request->account_id = $account_deposit->id;
+            $request->account_number = $account_deposit->account_number;
+            $request->account_name = $account_deposit->account_name;
+            $request->debit = 0;
+            $request->credit = 1;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+        }
+        $details = Session::get('journal_details');
         if ($details != []) {
+            $accounts = MasterModel::account_get();
             foreach ($details as $key => $detail) {
                 $html .= '<tr>';
                 $html .= '<td align="center">' . ($key + 1) . '</td>';
-                $html .= '<td>' . $detail['account_number'] . '</td>';
-                $html .= '<td>' . $detail['account_name'] . '</td>';
-                $html .= '<td align="right">' . number_format($detail['debit'], 2, ',', '.') . '</td>';
-                $html .= '<td align="right">' . number_format($detail['credit'], 2, ',', '.') . '</td>';
-                $html .= '<td>' . $detail['memo'] . '</td>';
+                $html .= '<td>';
+                $html .= '<label class="" id="label_account_number_' . $key . '">' . $detail['account_number'] . '</label>';
+                $html .= '<select id="account_id_' . $key . '" class="form-control select2 display-none" onchange="getDetailAccountForEdit(this.value, ' . $key . ')">';
+                foreach ($accounts as $idx => $acc) {
+                    $html .= '<option value="' . $acc->id . '" ' . ($acc->id == $detail['account_id'] ? 'selected' : '') . '>' . $acc->account_number . ' - ' . $acc->account_name . '</option>';
+                }
+                $html .= '</select>';
+                $html .= '</td>';
+                $html .= '<td>';
+                $html .= '<label class="" id="label_account_name_' . $key . '">' . $detail['account_name'] . '</label>';
+                $html .= '<input type="hidden" id="account_number_' . $key . '" value="' . $detail['account_number'] . '"/>';
+                $html .= '<input type="text" id="account_name_' . $key . '" class="form-control display-none" value="' . $detail['account_name'] . '" readonly/>';
+                $html .= '</td>';
+                $html .= '<td align="right">';
+                $html .= '<label class="" id="label_debit_' . $key . '">' . number_format($detail['debit'], 2, ',', '.') . '</label>';
+                $html .= '<input type="number" id="debit_' . $key . '" class="form-control display-none" value="' . $detail['debit'] . '"/>';
+                $html .= '</td>';
+                $html .= '<td align="right">';
+                $html .= '<label class="" id="label_credit_' . $key . '">' . number_format($detail['credit'], 2, ',', '.') . '</label>';
+                $html .= '<input type="number" id="credit_' . $key . '" class="form-control display-none" value="' . $detail['credit'] . '"/>';
+                $html .= '</td>';
+                $html .= '<td>';
+                $html .= '<label class="" id="label_memo_' . $key . '">' . $detail['memo'] . '</label>';
+                $html .= '<textarea id="memo_' . $key . '" class="form-control display-none">' . $detail['memo'] . '</textarea>';
+                $html .= '</td>';
                 $html .= '<td align="center">';
+                $html .= '<a href="javascript:void(0);" id="btn_edit_' . $key . '" class="btn btn-xs btn-warning" onclick="editDetailJournal(' . $key . ')">';
+                $html .= '<i class="fa fa-edit"></i>';
+                $html .= '</a>&nbsp;';
+                $html .= '<a href="javascript:void(0);" id="btn_update_' . $key . '" class="btn btn-xs btn-primary display-none" onclick="updateDetailJournal(' . $key . ')">';
+                $html .= '<i class="fa fa-save"></i>';
+                $html .= '</a>&nbsp;';
                 $html .= '<a href="javascript:void(0);" class="btn btn-xs btn-danger" onclick="deleteDetailJournal(' . $key . ')">';
                 $html .= '<i class="fa fa-trash"></i>';
-                $html .= '</a>';
+                $html .= '</a>&nbsp;';
                 $html .= '</td>';
                 $html .= '</tr>';
 
@@ -97,7 +147,7 @@ class JournalController extends Controller
                 'transaction_type' => 'D',
                 'debit' => $invoice->total_invoice,
                 'credit' => 0,
-                'memo' => 'AR '.$company[0]->client_name.' '.$invoice->invoice_no,
+                'memo' => 'AR ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
             ];
 
             $request->session()->push('journal_details', $newItem);
@@ -131,7 +181,7 @@ class JournalController extends Controller
                 'transaction_type' => 'C',
                 'debit' => 0,
                 'credit' => $invoice->total_before_vat,
-                'memo' => 'Sales '.$company[0]->client_name.' '.$invoice->invoice_no,
+                'memo' => 'Sales ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
             ];
 
             $request->session()->push('journal_details', $newItem);
@@ -155,7 +205,7 @@ class JournalController extends Controller
                 'transaction_type' => 'D',
                 'debit' => $pembayaran->nilai_pmb,
                 'credit' => 0,
-                'memo' => 'Payment '.$company[0]->client_name.' '.$pembayaran->no_pembayaran,
+                'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
             ];
 
             $request->session()->push('journal_details', $newItem);
@@ -168,7 +218,7 @@ class JournalController extends Controller
                 'transaction_type' => 'C',
                 'debit' => 0,
                 'credit' => $pembayaran->nilai_pmb,
-                'memo' => 'Payment '.$company[0]->client_name.' '.$pembayaran->no_pembayaran,
+                'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
             ];
 
             $request->session()->push('journal_details', $newItem);
@@ -191,6 +241,25 @@ class JournalController extends Controller
         ];
 
         $request->session()->push('journal_details', $newItem);
+    }
+
+    public function updateDetailJournal(Request $request)
+    {
+        // dd($request->session()->get('journal_details'));
+        $transaction_type = 'D';
+        if ($request->credit != 0) $transaction_type = 'C';
+
+        $newItem = [
+            'account_id' => $request->account_id,
+            'account_number' => $request->account_number,
+            'account_name' => $request->account_name,
+            'transaction_type' => $transaction_type,
+            'debit' => $request->debit,
+            'credit' => $request->credit,
+            'memo' => $request->memo,
+        ];
+
+        $request->session()->put('journal_details.' . $request->key, $newItem);
     }
 
     public function deleteDetailJournal(Request $request)
@@ -229,6 +298,15 @@ class JournalController extends Controller
             $param['journal_no'] = $request->journal_no;
             $param['journal_date'] = date('Y-m-d', strtotime($request->journal_date));
             $param['currency_id'] = $request->currency_id;
+            if ($request->has('journal_type')) {
+                $param['company_id'] = $request->company_id;
+                $param['invoice_id_deposit'] = $request->invoice_id_deposit;
+                $param['external_invoice_id_deposit'] = 0;
+                if ($request->journal_type == 'deposit_client') {
+                    $param['invoice_id_deposit'] = 0;
+                    $param['external_invoice_id_deposit'] = $request->invoice_id_deposit;
+                }
+            }
             $param['amount'] = $request->amount;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
@@ -236,7 +314,7 @@ class JournalController extends Controller
             if ($request->has('source')) {
                 if ($request->source == 'invoice') {
                     $param['invoice_id'] = $request->reference_id;
-                }else if ($request->source == 'pembayaran') {
+                } else if ($request->source == 'pembayaran') {
                     $param['pembayaran_id'] = $request->reference_id;
                 }
             }
@@ -260,19 +338,23 @@ class JournalController extends Controller
             return redirect()->route('journal.index')->with('success', 'Data saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error("saveJournal Error ".$th->getMessage());
+            Log::error("saveJournal Error " . $th->getMessage());
             return redirect()->back()->with('error', 'Something wrong, try again later!');
         }
     }
 
     public function editJournal($journalId)
     {
+        Session::forget('journal_details');
+        $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
-        $data['header'] = Journal::find($journalId);
+        $data['header'] = Journal::findJournal($journalId)->first();
+        $data['header']->journal_type = 'general_journal';
+        if ($data['header']->invoice_id_deposit != 0) $data['header']->journal_type = 'deposit_vendor';
+        else if ($data['header']->external_invoice_id_deposit != 0) $data['header']->journal_type = 'deposit_client';
         $details = JournalDetail::findAllJournalDetails($journalId)->get();
-
-        if (Session::get('journal_details') == []) Session::put('journal_details', $details);
+        if (Session::get('journal_details') == []) Session::put('journal_details', $details->toArray());
 
         return view('journal.edit_journal')->with($data);
     }
@@ -322,7 +404,7 @@ class JournalController extends Controller
             return redirect()->route('journal.index')->with('success', 'Journal posted!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error("postJournal Error ".$th->getMessage());
+            Log::error("postJournal Error " . $th->getMessage());
             return redirect()->back()->with('error', 'Something wrong, try again later!');
         }
     }

@@ -371,6 +371,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
     Route::post('/invoice/internal/loadSellCost', 'InvoiceController@loadSellCost')->name('invoice.loadSellCost');
+    Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
 
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
@@ -380,6 +381,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/external/create/loadDetailBefore', 'ExternalInvoiceController@loadDetailBefore')->name('external_invoice.loadDetailBefore');
     Route::post('/invoice/external/create/loadDetailAfter', 'ExternalInvoiceController@loadDetailAfter')->name('external_invoice.loadDetailAfter');
     Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
+    Route::post('/invoice/external/getListExternalInvoiceByCompanyId', 'ExternalInvoiceController@getListExternalInvoiceByCompanyId')->name('external_invoice.getListExternalInvoiceByCompanyId');
 
     /** Pembayaran **/
     Route::get('/pembayaran/cancel/{id}', 'PembayaranController@cancelPembayaran')->name('pembayaran.cancel');
@@ -443,6 +445,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/accounting/journal/view/{id}', 'JournalController@viewJournal')->name('journal.view');
     Route::post('/accounting/journal/loadDetail', 'JournalController@loadDetailJournal')->name('journal.loadDetail');
     Route::post('/accounting/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
+    Route::post('/accounting/journal/updateDetail', 'JournalController@updateDetailJournal')->name('journal.updateDetail');
     Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
 
     /** General Ledgers */
