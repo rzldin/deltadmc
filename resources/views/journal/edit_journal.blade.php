@@ -71,6 +71,7 @@
                                                         <label>Company</label>
                                                     </div>
                                                     <div class="col-md-8">
+                                                        <input type="hidden" name="company_id" value="{{ $header->company_id }}">
                                                         <select id="company_id" class="form-control select2" onchange="getListInvoice(this.value)" disabled>
                                                             <option value="">Select Company</option>
                                                             @foreach ($companies as $company)

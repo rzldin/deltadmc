@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Deposit;
+use App\DepositDetail;
 use App\GeneralLedger;
 use App\InvoiceModel;
 use App\Journal;
@@ -321,8 +323,17 @@ class JournalController extends Controller
 
             $journal = Journal::saveJournal($param);
 
+            $amount = 0;
             if ($request->id != 0) JournalDetail::deleteJournalDetailByJournalId($request->id);
             foreach ($details as $key => $detail) {
+                $account_deposit = MasterModel::findAccountByAccountName('DEPOSIT')->first();
+                if ($detail['account_id'] == $account_deposit->id && $detail['debit'] > 0) {
+                    #jika detail account adalah account deposit, dan posisi nya ada di debit, maka tambah saldo deposit
+                    $amount += $detail['debit'];
+                } else if ($detail['account_id'] == $account_deposit->id && $detail['credit'] > 0) {
+                    #jika account deposit ada di kredit, maka kurangi saldo deposit
+                    $amount += ($detail['credit'] * -1);
+                }
                 unset($detail['account_number']);
                 unset($detail['account_name']);
                 $detail['id'] = 0;
@@ -332,6 +343,30 @@ class JournalController extends Controller
 
                 JournalDetail::saveJournalDetail($detail);
             }
+
+            $deposit = Deposit::where('company_id', $request->company_id)->first();
+            $paramDepositH['id'] = $deposit == null ? 0 : $deposit->id;
+            $paramDepositH['company_id'] = $request->company_id;
+            $paramDepositH['balance'] = $deposit == null ? 0 + $amount : $deposit->balance + $amount;
+            $paramDepositH['created_by'] = Auth::user()->name;
+            $paramDepositH['created_on'] = date('Y-m-d h:i:s');
+            $deposit = Deposit::saveDeposit($paramDepositH);
+
+            $deposit_detail = DepositDetail::where('journal_id', $journal->id)->first();
+            $deposit->balance = $deposit->balance + ($amount - $deposit_detail->amount);
+            $deposit->save();
+            $paramDepositD['id'] = $deposit_detail->id == null ? 0 : $deposit_detail->id;
+            $paramDepositD['deposit_id'] = $deposit->id;
+            $paramDepositD['deposit_date'] = date('Y-m-d', strtotime($request->journal_date));
+            $paramDepositD['amount'] = $amount;
+            $paramDepositD['invoice_id'] = ($request->has('invoice_id') ? $request->invoice_id : 0);
+            $paramDepositD['journal_id'] = $journal->id;
+            $paramDepositD['remark'] = ($request->has('remark') ? $request->remark : null);
+            $paramDepositD['created_by'] = Auth::user()->name;
+            $paramDepositD['created_on'] = date('Y-m-d h:i:s');
+            $depositDetail = DepositDetail::saveDepositDetail($paramDepositD);
+            #cek disini, bug di deposit balance
+            // dd($request->amount, $amount, $deposit_detail->amount, $paramDepositH, $paramDepositD, $deposit, $depositDetail);
             DB::commit();
 
             Session::forget('journal_details');

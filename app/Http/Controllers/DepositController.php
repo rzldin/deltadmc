@@ -68,6 +68,7 @@ class DepositController extends Controller
             $paramDetail['deposit_date'] = date('Y-m-d', strtotime($request->deposit_date));
             $paramDetail['amount'] = $request->amount;
             $paramDetail['invoice_id'] = ($request->has('invoice_id') ? $request->invoice_id : 0);
+            $paramDetail['journal_id'] = ($request->has('journal_id') ? $request->journal_id : 0);
             $paramDetail['remark'] = ($request->has('remark') ? $request->remark : null);
             $paramDetail['created_by'] = Auth::user()->name;
             $paramDetail['created_on'] = date('Y-m-d h:i:s');
