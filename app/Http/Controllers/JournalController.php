@@ -363,7 +363,10 @@ class JournalController extends Controller
     {
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
-        $data['header'] = Journal::find($journalId);
+        $data['header'] = Journal::findJournal($journalId)->first();
+        $data['header']->journal_type = 'General Journal';
+        if ($data['header']->invoice_id_deposit != 0) $data['header']->journal_type = 'Deposit Vendor';
+        else if ($data['header']->external_invoice_id_deposit != 0) $data['header']->journal_type = 'Deposit Client';
         $data['details'] = JournalDetail::findAllJournalDetails($journalId)->get();
 
         return view('journal.view_journal')->with($data);
