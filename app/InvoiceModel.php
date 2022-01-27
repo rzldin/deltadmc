@@ -34,6 +34,11 @@ class InvoiceModel extends Model
             ->where('i.id', $id);
     }
 
+    public static function getInvoicesByCompanyId($clientId)
+    {
+        return InvoiceModel::where('client_id', $clientId);
+    }
+
     public static function saveInvoice($request)
     {
         return InvoiceModel::updateOrCreate(

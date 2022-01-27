@@ -91,4 +91,9 @@ class ExternalInvoice extends Model
 
         return $ars;
     }
+
+    public static function getExternalInvoicesByCompanyId($clientId)
+    {
+        return ExternalInvoice::where('client_id', $clientId);
+    }
 }

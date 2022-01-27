@@ -16,9 +16,11 @@ class CreateDepositDetailsTable extends Migration
         Schema::create('t_deposit_details', function (Blueprint $table) {
             $table->id();
             $table->integer('deposit_id');
+            $table->integer('company_id')->unsigned();
             $table->date('deposit_date');
             $table->decimal('amount', 14, 2)->default(0);
             $table->integer('invoice_id')->nullable()->default(0);
+            $table->integer('journal_id')->nullable()->default(0);
             $table->text('remark')->nullable();
             $table->string('created_by', 100)->nullable();
             $table->dateTime('created_on')->nullable();

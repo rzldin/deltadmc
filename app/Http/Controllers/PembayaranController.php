@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Deposit;
+use App\ExternalInvoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\PembayaranModel;
@@ -421,5 +422,33 @@ class PembayaranController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode($data);
+    }
+
+    public function cancelPembayaran($id, Request $request)
+    {
+        $user_id = Auth::user()->id;
+        $now = Carbon::now();
+        DB::beginTransaction();
+        try {
+            $pmb_detail = PembayaranModel::getAllDetailsByIdPmb($id)->get();
+            foreach ($pmb_detail as $key => $detail) {
+                $ext_invoice = ExternalInvoice::find($detail->id_invoice);
+                $invoice_bayar = $ext_invoice->invoice_bayar - $pmb_detail->nilai;
+                if ($invoice_bayar == 0) $flag = 0;
+                else $flag = 2;
+
+                $ext_invoice->invoice_bayar = $invoice_bayar;
+                $ext_invoice->flag_bayar = $flag;
+                $ext_invoice->tanggal_lunas = null;
+                $ext_invoice->modified_at = $now;
+                $ext_invoice->modified_by = $user_id;
+                $ext_invoice->save();
+            }
+
+            $pmb_detail->status = 0;
+            $pmb_detail->save();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

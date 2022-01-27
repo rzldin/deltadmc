@@ -2,7 +2,7 @@ detail ukuran
 calculate semua, gausah milih2
 shipping detail otomatis terisi perkalian
 ganti modal semua
-mandatory field semenatara 
+mandatory field semenatara
 add compNY DARI BOOKING
 COSTUMER DARI QUOTE '=' SHIPPER DI BOOKING
 MANDATORY SHIPPER, CONSIGNEE, NOTIFY PARTY
@@ -21,10 +21,10 @@ PAID TO = COMPANY, KELUARIN CODE PERUSAHAAN
 
 pieces, weight, volume ga mandatory
 
-quotation 
+quotation
 
 alur aplikasi, orang buat jika create booking, di cek dulu jika shipping detail jika lebih dari 1, ada warning alert quotation lebih dari satu, baru dibikinin booking order
-kolom lain yang gaada digabungin ke note, 
+kolom lain yang gaada digabungin ke note,
 detail kebawa semua, shipping line option (mindahin ke booking, shipping detail ga kebawa)
 
 quote ke booking hanya yg final
@@ -83,3 +83,8 @@ Create Quotation : Sales, (done)
 Confirm Quotation : Sales Manager, (done)
 Role Dokumen -> Charges and Fee gabisa lihat tapi bisa nambah (button invoice mati, tab yg lain bisa),
 Selain Role Dokumen -> Bisa semua
+
+t_invoice:
+flag_bayar = 0 ->belum dibayar
+flag_bayar = 1 -> lunas
+flag_bayar = 2 -> sudah dibayar sebagian

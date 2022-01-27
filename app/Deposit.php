@@ -3,12 +3,19 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Deposit extends Model
 {
     protected $table = 't_deposits';
     protected $guarded = [];
     public $timestamps = false;
+
+    public static function findSaldoDeposit()
+    {
+        return DB::table('t_deposits')
+            ->sum('balance');
+    }
 
     public static function getAllDeposits()
     {

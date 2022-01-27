@@ -683,4 +683,18 @@ class InvoiceController extends Controller
 
         return view('invoice.view_invoice')->with($data);
     }
+
+    public static function getListInvoiceByCompanyId(Request $request)
+    {
+        $html = "";
+
+        $invoices = InvoiceModel::getInvoicesByCompanyId($request->company_id)->orderBy('invoice_no')->get();
+        if ($invoices != []) {
+            foreach ($invoices as $key => $inv) {
+                $html .= "<option value='{$inv->id}'>{$inv->invoice_no}</option>";
+            }
+        }
+
+        return $html;
+    }
 }

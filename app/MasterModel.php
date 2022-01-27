@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class MasterModel extends Model
 {
@@ -320,6 +320,11 @@ class MasterModel extends Model
     public static function findAccountByAccountNumber($accountNumber)
     {
         return DB::table('t_maccount')->where('account_number', $accountNumber);
+    }
+
+    public static function findAccountByAccountName($accountName)
+    {
+        return DB::table('t_maccount')->where('account_name', 'LIKE', "%{$accountName}%");
     }
 
     public static function getUserRole($userId)

@@ -22,6 +22,8 @@ class CreateJournalsTable extends Migration
             $table->integer('flag_post')->unsigned()->default(0);
             $table->integer('invoice_id')->nullable()->unsigned()->default(0);
             $table->integer('pembayaran_id')->nullable()->unsigned()->default(0);
+            $table->integer('company_id')->nullable()->unsigned()->default(0);
+            $table->integer('invoice_id_deposit')->nullable()->unsigned()->default(0);
             $table->string('attr3', 100)->nullable();
             $table->string('attr4', 100)->nullable();
             $table->string('attr5', 100)->nullable();

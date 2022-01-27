@@ -54,4 +54,9 @@ class PembayaranModel extends Model
             ->leftJoin('t_external_invoice AS i', 'pd.id_invoice', '=', 'i.id')
             ->where('pd.id', $id)->select('pd.*', 'i.external_invoice_no', 'i.external_invoice_date', 'i.invoice_bayar', 'i.total_invoice');
     }
+
+    public static function getAllDetailsByIdPmb($id_pmb)
+    {
+        return DB::table('t_pembayaran_detas as pd')->where('id_pmb', $id_pmb);
+    }
 }

@@ -46,6 +46,7 @@
                                     {{-- <a class="btn btn-primary btn-sm" href="{{ route('pembayaran.view', ['id' => $pmb->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a> --}}
                                 {{-- </td> --}}
                                 <td>
+                                    <a class="btn btn-danger btn-sm" href="{{ route('pembayaran.cancel', $pmb->id) }}" ><i class="fa fa-undo"></i>  Cancel</a>
                                     @if ($pmb->journal_id == 0)
                                         <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $pmb->no_pembayaran }}&reference_id={{ $pmb->id }}&client_id={{ $pmb->id_company }}&source=pembayaran">
                                                 <i class="fa fa-book"></i> Journal
