@@ -53,9 +53,9 @@
                             <label>Tanggal <font color="red">*</font></label>
                         </div>
                         <div class="col-md-8">
-                          <div class="input-group date" id="date_id" data-target-input="nearest">
-                              <input type="text" name="tanggal" class="form-control datetimepicker-input" id="tanggal_dt" data-target="#date_id" placeholder="Tanggal ..." value="{{ $header->tanggal }}" />
-                              <div class="input-group-append" data-target="#date_id" data-toggle="datetimepicker">
+                          <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                              <input type="text" name="etd" id="etd" value="@if($header->tanggal != null){{ \Carbon\Carbon::parse($header->tanggal)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                              <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                               </div>
                           </div>
@@ -132,9 +132,9 @@
                             <label>Tanggal Giro</label>
                         </div>
                         <div class="col-md-8">
-                          <div class="input-group date" id="date_jt" data-target-input="nearest">
-                              <input type="text" name="tanggal_giro" class="form-control datetimepicker-input" id="tanggal_jt" data-target="#date_jt" placeholder="Tanggal ..." value="{{ $header->tgl_jatuh_tempo }}" />
-                              <div class="input-group-append" data-target="#date_jt" data-toggle="datetimepicker">
+                          <div class="input-group date" id="reservationdatex" data-target-input="nearest">
+                              <input type="text" name="etd" id="etd" value="@if($header->tgl_jatuh_tempo != null){{ \Carbon\Carbon::parse($header->tgl_jatuh_tempo)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdatex"/>
+                              <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                               </div>
                           </div>

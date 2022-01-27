@@ -54,11 +54,11 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        NPWP <font color="#f00">*</font>
+                                        Tax ID <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp"
-                                            class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP..." value="{{ $company->npwp }}">
+                                            class="form-control myline" style="margin-bottom:5px"  placeholder="Tax ID..." value="{{ $company->npwp }}">
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -434,12 +434,6 @@
                 Swal.fire({
                     title: 'Error!',
                     text: 'Please enter Company Name',
-                    icon: 'error'
-                })
-            }else if($.trim($("#npwp").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please enter NPWP',
                     icon: 'error'
                 })
             }else if($.trim($("#sales").val()) == ""){

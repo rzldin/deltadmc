@@ -114,8 +114,9 @@
                         <div class="col-md-8 col-xs-8">
                             <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="account_type" id="account_type">
                                 <option value="" disabled selected>-- Select Account Type --</option>
-                                <option value="Cash/Bank">Cash/Bank</option>
-                                <option value="Fixed Asset">Fixed Asset</option>
+                                @foreach ($list_acc_type as $lt)
+                                <option value="{{ $lt->id }}">{{ $lt->type_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>

@@ -177,7 +177,7 @@ class PembayaranController extends Controller
         $sisa = $invoice->total_invoice - $invoice_bayar;
         if($sisa <= 0){
             $flag = 1;
-            $tanggal_lunas = $request->tanggal_bayar;
+            $tanggal_lunas = date('Y-m-d', strtotime($request->tanggal_bayar));
         }else{
             $flag = 2;
             $tanggal_lunas = null;
@@ -352,7 +352,7 @@ class PembayaranController extends Controller
         $sisa = $invoice->total_invoice - $invoice_bayar;
         if($sisa <= 0){
             $flag = 1;
-            $tanggal_lunas = $request->tanggal_bayar;
+            $tanggal_lunas = date('Y-m-d', strtotime($request->tanggal_bayar));;
         }else{
             $flag = 2;
             $tanggal_lunas = null;

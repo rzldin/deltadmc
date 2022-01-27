@@ -74,3 +74,9 @@ ALTER TABLE t_proforma_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 
 ----- Jan 2022
 
 ALTER TABLE `users` ADD `roles_id` TINYINT(2) NOT NULL AFTER `address`;
+ALTER TABLE `t_booking` CHANGE `t_quote_id` `t_quote_id` INT(11) NULL DEFAULT '0';
+
+----- 
+ALTER TABLE `t_booking` ADD `flag_invoice` TINYINT(1) NOT NULL DEFAULT '0' AFTER `final_flag`;
+ALTER TABLE `t_booking`  ADD `updated_by` VARCHAR(100) NULL  AFTER `created_on`,  ADD `updated_at` DATETIME NULL  AFTER `updated_by`
+ALTER TABLE `t_booking` ADD `open_remarks` VARCHAR(200) NULL AFTER `profit_pct`;

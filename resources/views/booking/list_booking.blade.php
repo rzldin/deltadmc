@@ -27,6 +27,22 @@
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <div class="row mb-1">
+                      <div class="col-md-1">
+                        <label for="Doctor-name">Status</label>
+                      </div>
+                      <div class="col-md-3">
+                        <select class="form-control" name="status" id="status" style="width: 100%;" placeholder="Silahkan pilih...">
+                            <option value="">Silahkan Pilih ...</option>
+                            <option value="0">Draft</option>
+                            <option value="1">Approved</option>
+                            <option value="9">Canceled</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <a href="javascript:;" class="btn btn-info btn" id="filter"><i class="fa fa-search"></i> Filter </a>
+                      </div>
+                    </div>
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -37,11 +53,12 @@
                                 <th>Client</th>
                                 <th>Activity</th>
                                 <th>Status</th>
+                                <th>Invoice Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 14px">
-                            @foreach ($data as $row)
+                            @foreach ($list as $row)
                             <tr>
                                 <td>{{ $row->booking_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($row->booking_date)->format('d/m/Y') }}</td>
@@ -53,10 +70,30 @@
                                 <td class="bg-secondary text-center">NEW</td>
                                 @elseif($row->status == 1) 
                                 <td class="bg-success text-center">Approve</td>
+                                @elseif($row->status == 8) 
+                                <td class="bg-warning text-center">On Request</td>
+                                @elseif($row->status == 9) 
+                                <td class="bg-danger text-center">Canceled</td>
+                                @endif
+
+                                @if ($row->flag_invoice == 0)
+                                <td class="bg-secondary text-center">No Invoice</td>
+                                @elseif($row->flag_invoice == 1) 
+                                <td class="bg-success text-center">Invoice Created</td>
                                 @endif
                                 <td>
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
+                                    @if($row->status!=9)
                                     <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'edit', '{{ $row->id }}')"><i class="fa fa-edit"></i> Edit </a>
+                                    @endif
+
+                                    @if($row->flag_invoice == 1 && $row->status == 0)
+                                    <a class="btn btn-warning btn-sm" onclick="requestOpen('{{ $row->id }}')"><i class="fa fa-question"></i> Request Open </a>
+                                    @endif
+
+                                    @if($row->status == 8 && ($user->role_id == 3 || $user->role_id == 1))
+                                            <button type="button" class="btn btn-primary btn-sm" onClick="approveRequest({{ $row->id }});"><i class="fa fa-save"></i> Approve Request</button>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -67,6 +104,11 @@
         </div>
     </div>
 </section>
+<form  method="post" target="_self" name="request_form" action="{{ route('booking.approve_request') }}" 
+  id="request_form" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="hidden" name="id_booking" id="approve_request_id">  
+</form>
 <!--- Modal Form -->
 <div class="modal fade" id="myModal" tabindex="-1" role="basic" aria-hidden="true">
     <div class="modal-dialog">
@@ -102,11 +144,56 @@
         </div>
     </div>
 </div>
+
+<!--- Request Form -->
+<div class="modal fade" id="requestOpen" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="request_form" action="{{ route('booking.update_request') }}" 
+                      id="request_form" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Keterangan
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <textarea class="form-control" name="open_remarks" id="open_remarks"></textarea>
+                            <input type="hidden" name="id_booking" id="id_booking_request">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                        
+                <button type="button" class="btn btn-primary" onClick="$('#request_form').submit()"><i class="fa fa-save"></i> Ajukan Request</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('after-scripts')
     <script>
         var dsState;
+
+        function requestOpen(id){
+            $('#id_booking_request').val(id);
+            $("#requestOpen").find('.modal-title').text('Request Open Booking');
+            $("#requestOpen").modal('show',{backdrop: 'true'}); 
+        }
+
+        function approveRequest(id){
+            if (confirm('Anda yakin meng-approve request booking ini ?')) {
+                $('#approve_request_id').val(id);
+                $('#request_form').submit(); 
+            }
+        }
 
         function viewVersion(booking_no, verse, status, id){
             $.ajax({
@@ -167,5 +254,9 @@
             }
             $('#formku').submit();    
         }
+
+        $("#filter").click(function () {
+            window.location = "{{ route('booking.list') }}?status="+$('#status').val();
+        });
     </script>
 @endpush

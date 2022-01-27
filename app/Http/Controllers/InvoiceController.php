@@ -532,6 +532,10 @@ class InvoiceController extends Controller
 
             $param = $request->all();
 
+            DB::table('t_booking')->where('id',$request->t_booking_id)->update([
+                'flag_invoice' => 1
+            ]);
+
             $invoice_id = DB::table('t_invoice')->insertGetId([
                     'tipe_inv' => 1,
                     // 't_proforma_invoice_id' => 0,

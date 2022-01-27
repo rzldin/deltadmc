@@ -53,11 +53,10 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Address</label>
+                                                    <label>Address <font color="#f00">*</font></label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_addr_id"
-                                                        id="client_addr_id">
+                                                    <select class="form-control select2bs44" name="client_addr_id" id="client_addr_id">
                                                         <option value="">Select Address</option>
                                                         @foreach($addresses as $address)
                                                             <option value="{{ $address->id }}">
@@ -68,11 +67,10 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>PIC</label>
+                                                    <label>PIC <font color="#f00">*</font></label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_pic_id"
-                                                        id="client_pic_id">
+                                                    <select class="form-control select2bs44" name="client_pic_id" id="client_pic_id">
                                                         <option value="">Select PIC</option>
                                                         @foreach($pics as $pic)
                                                             <option value="{{ $pic->id }}">
@@ -83,7 +81,7 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Invoice No</label>
+                                                    <label>Invoice No <font color="#f00">*</font></label>
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="invoice_no"
@@ -176,15 +174,15 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
-                                                    <label>Currency</label>
+                                                    <label>Currency <font color="#f00">*</font></label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="currency" id="currency">
+                                                    <select class="form-control select2bs44" name="currency" id="currency">
                                                         <option value="" selected>-- Select Valuta --</option>
                                                         @foreach($currency as $item)
                                                             <option value="{{ $item->id }}" @if ($booking->
                                                                 valuta_payment == $item->id) selected @endif>
-                                                                {{ $item->code }}</option>
+                                                                {{ '('.$item->code.') '.$item->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -302,7 +300,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    <button class="btn btn-primary" onclick="$('#formInvoice').submit()">Save</button>
+                                    <button type="button" class="btn btn-primary" id="saveData">Save</button>
                                 </div>
                             </div>
 
@@ -315,6 +313,52 @@
 </section>
 @push('after-scripts')
     <script>
+        $("#saveData").click(function(){
+            const rbs = document.querySelectorAll('input[name="loaded"]');
+            let selectedLoaded;
+            for (const rb of rbs) {
+                if (rb.checked) {
+                    selectedLoaded = rb.value;
+                    break;
+                }
+            }
+
+            if($.trim($("#invoice_no").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Nomor Invoice',
+                    icon: 'error'
+                })
+            }else if($.trim($("#invoice_date").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Issue Date',
+                    icon: 'error'
+                })
+            }else if($.trim($("#top").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input Top',
+                    icon: 'error'
+                })
+            }else if($.trim($("#currency").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please Select Currency',
+                    icon: 'error'
+                })
+            }else if($.trim($("#onboard_date").val()) == ""){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Please input On Board Date',
+                    icon: 'error'
+                })
+            }else{
+                $(this).prop('disabled', true).text('Please Wait ...');
+                $('#formInvoice').submit()
+            }
+        });
+
         function client_detail(val) {
             if (val != '') {
 

@@ -339,7 +339,7 @@
                     $('#name').val(result.name);
                     $('#username').val(result.username);
                     $('#country').val(result.t_mcountry_id).trigger("change");
-                    $('#role').val(result.roles_id).trigger("change");
+                    $('#role').val(result.role_id).trigger("change");
                     $('#province').val(result.province);
                     $('#address').val(result.address);
                     $('#city').val(result.city);

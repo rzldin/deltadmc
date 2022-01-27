@@ -142,7 +142,7 @@
     <!-- ChartJS -->
     <script src="{{ asset('admin/plugins/chart.js/Chart.min.js')}}"></script>
     <!-- Sparkline -->
-    <script src="{{ asset('admin/plugins/sparklines/sparkline.js')}}"></script>
+    {{-- <script src="{{ asset('admin/plugins/sparklines/sparkline.js')}}"></script> --}}
     <!-- JQVMap -->
     <script src="{{ asset('admin/plugins/jqvmap/jquery.vmap.min.js')}}"></script>
     <script src="{{ asset('admin/plugins/jqvmap/maps/jquery.vmap.usa.js')}}"></script>
@@ -159,10 +159,6 @@
     <script src="{{ asset('admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js')}}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('admin/dist/js/adminlte.js') }}"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="{{ asset('admin/dist/js/demo.js') }}"></script>
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="{{ asset('admin/dist/js/pages/dashboard.js') }}"></script>
     <!-- SweetAlert -->
     <script src="{{ asset('swal/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('js/myapps.js') }}"></script>
@@ -221,7 +217,8 @@
 
     $('#stuffingDate').datetimepicker({
         format : 'L'
-    })
+    });
+
       $(function () {
         $('#myTable').DataTable({
           "paging": true,
@@ -263,7 +260,7 @@
 
       $(document).ready(function(){
         $(".dataTables_empty").hide();
-      })
+      });
 
       $(function () {
         $('#myTable3').DataTable({
@@ -280,15 +277,11 @@
         });
       });
 
-
-
       $(document).ready(function () {
-      $('#dtHorizontalExample').DataTable({
-      "scrollX": true
+        $('#dtHorizontalExample').DataTable({
+          "scrollX": true
+        });
       });
-      // $('.dataTables_length').addClass('bs-select');
-      });
-
 
       $(function(){
         $('.select2bs4').select2({
@@ -297,12 +290,17 @@
           dropdownParent: $("#myModal")
         })
       })
-
       $(function(){
         $('.select2bs4k').select2({
           theme: 'bootstrap4',
           tags: true,
           dropdownParent: $("#myModalx")
+        })
+      })
+      $(function(){
+        $('.select2bs44').select2({
+          theme: 'bootstrap4',
+          tags: true,
         })
       })
 
@@ -317,13 +315,8 @@
                     $(root).val(reet);
                 }
             }
-        }
+      }
 
-      $(function(){
-        $('.select2bs44').select2({
-          theme: 'bootstrap4'
-        })
-      })
 
       $('#date_id').datetimepicker({
           format: 'YYYY-MM-DD',
@@ -334,6 +327,8 @@
       });
 
       $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+      $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     </script>
 
     @stack('after-scripts')

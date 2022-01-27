@@ -139,6 +139,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/account_get', 'MasterController@account_get')->name('master.account_get');
     Route::get('/master/account_delete/{id}', 'MasterController@account_delete')->name('master.account_delete');
 
+    //Account Type
+    Route::get('/master/acc_type', 'MasterController@acc_type')->name('master.acc_type');
+    Route::post('/master/acc_type_doAdd', 'MasterController@acc_type_doAdd')->name('master.acc_type_doAdd');
+    Route::post('/master/acc_type_doEdit', 'MasterController@acc_type_doEdit')->name('master.acc_type_doEdit');
+    Route::post('/master/acc_type_get', 'MasterController@acc_type_get')->name('master.acc_type_get');
+    Route::get('/master/acc_type_delete/{id}', 'MasterController@acc_type_delete')->name('master.acc_type_delete');
+
 
     //Schedule Type
     Route::get('/master/schedule', 'MasterController@schedule')->name('master.schedule');
@@ -210,7 +217,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/master/vehicleType_delete/{id}', 'MasterController@vehicleType_delete')->name('master.vehicleType_delete');
 
 
-    /** Quontation */
+    /** Quotation */
     Route::get('quotation/list', 'QuotationController@index')->name('quotation.list');
     Route::get('/quotation/quote_add', 'QuotationController@quote_add')->name('quotation.quote_add');
     Route::post('/quotation/quote_doAdd', 'QuotationController@quote_doAdd')->name('quotation.quote_doAdd');
@@ -288,6 +295,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/loadSchedule','BookingController@loadSchedule')->name('booking.loadSchedule');
     Route::post('booking/getSchedule', 'BookingController@getSchedule')->name('booking.getSchedule');
     Route::post('/booking/deleteSchedule','BookingController@deleteSchedule')->name('booking.deleteSchedule');
+    Route::post('/booking/deleteCF','BookingController@deleteCF')->name('booking.deleteCF');
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
     Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
     Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
@@ -302,8 +310,13 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('booking/cetak_si_trucking_fcl/{id}', 'BookingController@cetak_si_trucking_fcl');
     Route::get('booking/cetak_si_trucking_lcl/{id}', 'BookingController@cetak_si_trucking_lcl');
     Route::get('booking/cetak_suratjalan/{id}', 'BookingController@cetak_suratJalan');
+    Route::post('/booking/update_request', 'BookingController@update_request')->name('booking.update_request');
+    Route::post('/booking/approve_request', 'BookingController@approve_request')->name('booking.approve_request');
 
     Route::post('/booking/quote_addDetail', 'BookingController@quote_addDetail')->name('booking.quote_addDetail');
+    Route::post('booking/cancel', 'BookingController@booking_cancel')->name('booking.cancel');
+    Route::post('/booking/getPort/','BookingController@getPort')->name('booking.getPort');
+    Route::post('/booking/getExistingPort/','BookingController@getExistingPort')->name('booking.getExistingPort');
 
     #Load Detail Commodity
     Route::post('/booking/addCommodity', 'BookingController@addCommodity')->name('booking.addCommodity');

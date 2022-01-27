@@ -49,12 +49,12 @@
                                     <label>Tanggal <font color="red">*</font></label>
                                 </div>
                                 <div class="col-md-8">
-                                  <div class="input-group date" id="date_id" data-target-input="nearest">
-                                      <input type="text" name="tanggal" class="form-control datetimepicker-input" id="tanggal_dt" data-target="#date_id" placeholder="Tanggal ..."/>
-                                      <div class="input-group-append" data-target="#date_id" data-toggle="datetimepicker">
-                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                      </div>
-                                  </div>
+                                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                        <input type="text" name="tanggal" id="tanggal" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mt-3" id="hide_giro">

@@ -425,7 +425,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="shipping-detail" tabindex="-1" role="basic" aria-hidden="true">
+            <div class="modal fade myModal" id="shipping-detail" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -484,7 +484,7 @@
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" name="currency" id="currency_ship_dtl" onchange="get_rate(this.value)">
-                                            <option value="">--Select Currency--</option>
+                                            <option value="" selected>--Select Currency--</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
                                             @endforeach
@@ -608,7 +608,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="detail-quote" tabindex="-1" role="basic" aria-hidden="true">
+            <div class="modal fade myModal" id="detail-quote" tabindex="-1" role="basic" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -648,7 +648,7 @@
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" name="currency" id="currencyx" onchange="get_rate(this.value)">
-                                            <option value="">--Select Currency--</option>
+                                            <option value="" selected>--Select Currency--</option>
                                             @foreach ($currency as $item)
                                             <option value="{{ $item->id }}">{{ $item->code }}</option>                                                
                                             @endforeach
@@ -739,7 +739,7 @@
                             </form>
                         </div>
                         <div class="modal-footer">                        
-                            <button type="button" class="btn btn-primary" id="detail_quote_submit" onClick="saveDetailxxx(); this.disabled=true;"><i class="fa fa-save"></i> Save</button>
+                            <button type="button" class="btn btn-primary" id="detail_quote_submit" onClick="saveDetailxxx();"><i class="fa fa-save"></i> Save</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                         </div>
                     </div>
@@ -795,7 +795,7 @@
         </div>
     </div>
     <!-- Modal Add Customer -->
-    <div class="modal fade" id="add-customer" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal fade myModal" id="add-customer" tabindex="-1" role="basic" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -827,11 +827,11 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                                NPWP <font color="#f00">*</font>
+                                Tax ID <font color="#f00">*</font>
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="npwp" name="npwp" 
-                                    class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
+                                    class="form-control myline" style="margin-bottom:5px"  placeholder="Tax ID...">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -970,7 +970,7 @@
     </div>
 
     <!-- Modal Add PIC -->
-    <div class="modal fade" id="add-pic" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal fade myModal" id="add-pic" tabindex="-1" role="basic" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1287,23 +1287,25 @@
 
     function get_rate(val)
     {
-        $.ajax({
-            type:"POST",
-            url:"{{ route('quotation.quote_getCurrencyCode') }}",
-            data:{
-                id : val
-            },
-            success:function(result){
-                let text = JSON.parse(result)
-                let code = text.code
+        if(val!=''){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('quotation.quote_getCurrencyCode') }}",
+                data:{
+                    id : val
+                },
+                success:function(result){
+                    let text = JSON.parse(result);
+                    let code = text.code;
 
-                // if(code == 'IDR' && $('#rate').val() == '' && $('#ratex').val() == ''){
-                if(code == 'IDR'){
-                    $('#rate').val(1);
-                    $('#ratex').val(1);
+                    // if(code == 'IDR' && $('#rate').val() == '' && $('#ratex').val() == ''){
+                    if(code == 'IDR'){
+                        $('#rate').val(1);
+                        $('#ratex').val(1);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     function get_fromto(val)
@@ -2039,7 +2041,7 @@
 
      /** Save Detail Quote **/
      function saveDetailxxx(){
-
+        $('#detail_quote_submit').prop('disabled', true);
         if($.trim($("#charge").val()) == ""){
             Toast.fire({
                 icon: 'error',

@@ -104,11 +104,11 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                                NPWP <font color="#f00">*</font>
+                                Tax ID <font color="#f00">*</font>
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="npwp" name="npwp" 
-                                    class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
+                                    class="form-control myline" style="margin-bottom:5px"  placeholder="Tax ID...">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -1653,12 +1653,35 @@
     });
 
     $(function() {
+        $('.select-ajax-port').select2({
+            theme: "bootstrap4",
+          ajax: {
+            url: "{{route('booking.getPort')}}",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              var query = {
+                search: params.term,
+              }
+
+              // Query parameters will be ?search=[term]&type=public
+              return query;
+            },
+            processResults: function(data, params) {
+                console.log(data);
+                return {results: data};
+            },
+            cache: true
+          },
+        });
+
         get_customer({{ $quote->customer_id }});
         get_pic({{ $quote->customer_id }})
         load_carrier({{ $quote->carrier_id }})
-        portOfLoading();
-        portOfTransit();
-        portOfDischarge();
+        // portOfLoading();
+        // portOfTransit();
+        // portOfDischarge();
         get_shipper();
         get_consignee();
         get_notifyParty();

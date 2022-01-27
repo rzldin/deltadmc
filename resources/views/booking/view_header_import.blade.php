@@ -529,12 +529,13 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Port Of Loading</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pol" id="pol">
 
                         </select>
                     </div>
@@ -555,7 +556,7 @@
                         <label>Port Of Transit</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pot" id="pot">
                             
                         </select>
                     </div>
@@ -568,7 +569,7 @@
                         <label>Port Of Discharge</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="podisc" id="podisc">
                         
                         </select>
                     </div>

@@ -396,12 +396,19 @@
                                             <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
+                                        @if ($quote->flag_invoice == 0)
                                             <a href="{{ url('booking/booking_new/'.$quote->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2">
                                                 <i class="fa fa-plus"></i> New Version
                                             </a>
-                                            <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2">
-                                                <i class="fa fa-times"></i> Cancel
-                                            </a>
+                                        @endif
+
+                                            <form action="{{ route('booking.cancel') }}" method="post" target="_self" name="form_cancel" id="form_cancel">
+                                                <input type="hidden" name="booking" value="{{ $quote->id }}">
+                                                {{ csrf_field() }}
+                                                <button type="button" class="btn btn-danger float-left mr-2" id="cancel_confirm">
+                                                    <i class="fa fa-times"></i> Cancel
+                                                </button>
+                                            </form>
                                             <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)">
                                                 <i class="fa fa-save"></i> Save
                                             </a>
@@ -1008,11 +1015,11 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                                NPWP <font color="#f00">*</font>
+                                Tax ID <font color="#f00">*</font>
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="npwp" name="npwp" 
-                                    class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
+                                    class="form-control myline" style="margin-bottom:5px"  placeholder="Tax ID...">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -1340,14 +1347,86 @@
             </div>
         </div>
     </div>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
 @push('after-scripts')
     <script>
 
-        $(document).ready(function(){
-            $(".dataTables_empty").hide();
-        })
+    $(document).ready(function(){
 
-        var dsState;
+        $('.select-ajax-port').select2({
+            theme: "bootstrap4",
+          ajax: {
+            url: "{{route('booking.getPort')}}",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              var query = {
+                search: params.term,
+              }
+
+              // Query parameters will be ?search=[term]&type=public
+              return query;
+            },
+            processResults: function(data, params) {
+                console.log(data);
+                return {results: data};
+            },
+            cache: true
+          },
+        });
+
+        var pol = $('#pol');
+        var pot = $('#pot');
+        var podisc = $('#podisc');
+        $.ajax({
+            type: 'POST',
+            url: "{{route('booking.getExistingPort')}}",
+            data : {
+                booking_id:$('#booking_id').val(),
+            },
+        }).then(function (data) {
+            // create the option and append to Select2
+            var pol_option = new Option(data.pol.text, data.pol.id, true, true);
+            pol.append(pol_option).trigger('change');
+            pol.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var pot_option = new Option(data.pot.text, data.pot.id, true, true);
+            pot.append(pot_option).trigger('change');
+            pot.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var podisc_option = new Option(data.pod.text, data.pod.id, true, true);
+            podisc.append(podisc_option).trigger('change');
+            podisc.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+        });
+        $(".dataTables_empty").hide();
+    })
+
+    var dsState;
+
+    $("#cancel_confirm").click(function(){
+        var result = confirm("Anda yakin ingin meng-cancel booking ini ?");
+        if (result) {
+            $('#form_cancel').submit();
+        }
+    });
 
     /** Add Customer **/
     function addCustomer(val)
@@ -1619,13 +1698,13 @@
                             success:function(result){
                                 $('#add-port').modal('hide')
 
-                                if(type == 'pol'){
-                                    portOfLoading();
-                                }else if(type == 'pot'){
-                                    portOfTransit();
-                                }else if(type == 'pod'){
-                                    portOfDischarge();
-                                }
+                                // if(type == 'pol'){
+                                //     portOfLoading();
+                                // }else if(type == 'pot'){
+                                //     portOfTransit();
+                                // }else if(type == 'pod'){
+                                //     portOfDischarge();
+                                // }
                                 // portOfLoading()
                                 // portOfTransit()
                                 // portOfDischarge()
@@ -1897,7 +1976,7 @@
                 dataType: "html",
                 success: function(result) {
                     var final = JSON.parse(result);
-                    $("#customer_add").html(final)
+                    $("#customer_add").html(final);
                 }
             })
         }
@@ -2641,12 +2720,12 @@
         }
 
         function loadProfit(id){
-            if(id != null){
+            if(id != null && id != 0){
                 $.ajax({
                     type:"POST",
                     url:"{{ route('quotation.quote_loadProfit') }}",
                     data:{
-                        id       : id
+                        id: id
                     },
                     dataType:"html",
                     success:function(result){
@@ -2688,6 +2767,27 @@
                     data:"id="+ id,
                     success:function(result){
                         loadSchedule({{ Request::segment(3) }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Deleted!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Gagal Menghapus data!');
+                    },
+                });
+            }
+        }
+
+        /** Hapus Detail Charges And Fee **/
+        function hapusDetailCF(id){
+            var r=confirm("Anda yakin menghapus data ini?");
+            if (r==true){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.deleteCF') }}",
+                    data:"id="+ id,
+                    success:function(result){
+                        loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }});
                         Toast.fire({
                             icon: 'success',
                             title: 'Deleted!'

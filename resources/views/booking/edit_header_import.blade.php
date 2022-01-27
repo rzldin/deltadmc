@@ -1011,13 +1011,7 @@
                         <label>Port Of Loading</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
-                            <option value="" selected>-- Select Port Of Loading --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}" @if ($quote->pol_id == $item->id)
-                                selected
-                            @endif>{{ $item->port_name }}</option>
-                            @endforeach
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pol" id="pol">
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
@@ -1037,13 +1031,7 @@
                         <label>Port Of Transit</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
-                            <option value="" selected>-- Select Port Of Transit --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}" @if ($quote->pot_id == $item->id)
-                                selected
-                            @endif>{{ $item->port_name }}</option>
-                            @endforeach
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pot" id="pot">
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
@@ -1055,13 +1043,7 @@
                         <label>Port Of Discharge</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
-                            <option value="" selected>-- Select Port Of Discharge --</option>
-                            @foreach ($port as $item)
-                            <option value="{{ $item->id }}" @if ($quote->pod_id == $item->id)
-                                selected
-                            @endif>{{ $item->port_name }}</option>
-                            @endforeach
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="podisc" id="podisc">
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">

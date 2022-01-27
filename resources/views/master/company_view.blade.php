@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        NPWP <font color="#f00">*</font>
+                                        Tax ID <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp"
