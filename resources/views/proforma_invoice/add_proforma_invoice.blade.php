@@ -66,7 +66,7 @@
                                                     <label>Address</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_addr_id"
+                                                    <select class="form-control select2bs44" name="client_addr_id"
                                                         id="client_addr_id">
                                                         <option value="">Select Address</option>
                                                         @foreach($addresses as $address)
@@ -82,7 +82,7 @@
                                                     <label>PIC</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_pic_id"
+                                                    <select class="form-control select2bs44" name="client_pic_id"
                                                         id="client_pic_id">
                                                         <option value="">Select PIC</option>
                                                         @foreach($pics as $pic)
@@ -200,7 +200,7 @@
                                                     <label>Currency</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="currency" id="currency">
+                                                    <select class="form-control select2bs44" name="currency" id="currency">
                                                         <option value="" selected>-- Select Valuta --</option>
                                                         @foreach($currency as $item)
                                                             <option value="{{ $item->id }}" @if ($invoice_header->

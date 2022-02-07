@@ -296,6 +296,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('booking/getSchedule', 'BookingController@getSchedule')->name('booking.getSchedule');
     Route::post('/booking/deleteSchedule','BookingController@deleteSchedule')->name('booking.deleteSchedule');
     Route::post('/booking/deleteCF','BookingController@deleteCF')->name('booking.deleteCF');
+    Route::post('/booking/booking_getDetailCharges','BookingController@booking_getDetailCharges')->name('booking.booking_getDetailCharges');
     Route::post('/booking/schedule_doUpdate', 'BookingController@schedule_doUpdate')->name('booking.schedule_doUpdate');
     Route::post('/booking/loadSellCost', 'BookingController@loadSellCost')->name('booking.loadSellCost');
     Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
@@ -379,12 +380,15 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/create_cost', 'InvoiceController@create_cost')->name('invoice.create_cost');
     Route::post('/invoice/save', 'InvoiceController@save')->name('invoice.save');
     Route::post('/invoice/save_cost', 'InvoiceController@save_cost')->name('invoice.save_cost');
-    Route::get('/invoice/internal', 'InvoiceController@index')->name('invoice.index');
+    Route::get('/invoice/internal/index/{tipe?}', 'InvoiceController@index')->name('invoice.index');
+    Route::get('/invoice/internal/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
     Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
+    Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
     Route::post('/invoice/internal/loadSellCost', 'InvoiceController@loadSellCost')->name('invoice.loadSellCost');
     Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
+    Route::post('/invoice/internal/openINV', 'InvoiceController@openINV')->name('invoice.openINV');
 
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
@@ -401,6 +405,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     //HUTANG
     Route::get('/pembayaran/index', 'PembayaranController@index')->name('pembayaran.index');
+    Route::get('/pembayaran/view/{id}', 'PembayaranController@view')->name('pembayaran.view');
     Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');
     Route::post('/pembayaran/save', 'PembayaranController@save')->name('pembayaran.save');
     Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
@@ -410,6 +415,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/pembayaran/list_detail', 'PembayaranController@list_detail')->name('pembayaran.list_detail');
     Route::post('/pembayaran/deleteDetailPembayaran', 'PembayaranController@deleteDetailPembayaran')->name('pembayaran.deleteDetailPembayaran');
     Route::post('/pembayaran/update', 'PembayaranController@update')->name('pembayaran.update');
+    Route::post('/pembayaran/openPMB', 'PembayaranController@openPMB')->name('pembayaran.openPMB');
 
     /** list hutang */
     Route::get('/hutang', 'HutangController@index')->name('hutang.index');

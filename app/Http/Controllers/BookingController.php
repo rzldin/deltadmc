@@ -21,7 +21,6 @@ class BookingController extends Controller
         }else{
             $data['list'] = BookingModel::get_booking();
         }
-        $data['user'] = MasterModel::users_get(Auth::user()->id);
         return view('booking.list_booking', $data);
     }
 
@@ -30,32 +29,37 @@ class BookingController extends Controller
         $data['responsibility'] = SiteHelpers::getUserRole();
         $data['booking']        = BookingModel::get_booking_header($id);
         $data['quote']          = BookingModel::get_bookingDetail($id)[0];
-        $data['doc']            = MasterModel::get_doc();
-        $data['company']        = MasterModel::company_data();
-        $data['inco']           = MasterModel::incoterms_get();
-        $data['uom']            = MasterModel::uom();
-        $data['container']      = MasterModel::container_get();
-        $data['loaded']         = MasterModel::loaded_get();
-        $data['vehicle_type']   = MasterModel::vehicleType_get();
-        $data['vehicle']        = MasterModel::vehicle();
-        $data['schedule']       = MasterModel::schedule_get();
-        $data['error']          = (isset($_GET['error']) ? 1 : 0);
-        $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
-        $data['success']        = (isset($_GET['success']) ? 1 : 0);
-        $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
-        $data['charge']         = MasterModel::charge();
-        $data['currency']       = MasterModel::currency();
-        $data['list_account']   = MasterModel::account_get();
-        $data['list_country']   = MasterModel::country();
-        $sales = DB::table('t_mmatrix')
-        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
-        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
-        ->select('users.name as user_name', 'users.id as user_id')
-        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
-        ->where('t_mmatrix.active_flag', '1')->get();
-        $data['list_sales']     = $sales;
+        if($data['booking']->status != 9){
+            $data['doc']            = MasterModel::get_doc();
+            $data['company']        = MasterModel::company_data();
+            $data['inco']           = MasterModel::incoterms_get();
+            $data['uom']            = MasterModel::uom();
+            $data['container']      = MasterModel::container_get();
+            $data['loaded']         = MasterModel::loaded_get();
+            $data['vehicle_type']   = MasterModel::vehicleType_get();
+            $data['vehicle']        = MasterModel::vehicle();
+            $data['schedule']       = MasterModel::schedule_get();
+            $data['error']          = (isset($_GET['error']) ? 1 : 0);
+            $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
+            $data['success']        = (isset($_GET['success']) ? 1 : 0);
+            $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
+            $data['charge']         = MasterModel::charge();
+            $data['currency']       = MasterModel::currency();
+            $data['list_account']   = MasterModel::account_get();
+            $data['list_country']   = MasterModel::country();
+            $data['user'] = MasterModel::users_get(Auth::user()->id);
+            $sales = DB::table('t_mmatrix')
+            ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+            ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+            ->select('users.name as user_name', 'users.id as user_id')
+            ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+            ->where('t_mmatrix.active_flag', '1')->get();
+            $data['list_sales']     = $sales;
 
-        return view('booking.edit_booking')->with($data);
+            return view('booking.edit_booking')->with($data);
+        }else{
+            return view('booking.booking_cancel')->with($data);
+        }
     }
 
     public function header_booking($id)
@@ -81,11 +85,11 @@ class BookingController extends Controller
     public function nomination()
     {
         $data['doc']            = MasterModel::get_doc();
+        $data['loaded']         = MasterModel::loaded_get();
         $data['company']        = MasterModel::company_data();
         $data['cust_addr']      = DB::table('t_maddress')->get();
         $data['cust_pic']       = DB::table('t_mpic')->get();
         $data['carrier']        = MasterModel::carrier();
-        $data['port']           = MasterModel::port();
         $data['currency']       = MasterModel::currency();
         $data['freight']        = MasterModel::freight_get();
         $data['mbl_issued']     = MasterModel::get_mbl_issued();
@@ -96,6 +100,7 @@ class BookingController extends Controller
     public static function header_domestic($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -112,6 +117,7 @@ class BookingController extends Controller
     public static function header_export($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -128,6 +134,7 @@ class BookingController extends Controller
     public static function header_import($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -144,6 +151,7 @@ class BookingController extends Controller
     public static function edit_header_domestic($quote,$verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -161,6 +169,7 @@ class BookingController extends Controller
     public static function edit_header_export($quote, $verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -178,6 +187,7 @@ class BookingController extends Controller
     public static function edit_header_import($quote, $verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -291,8 +301,10 @@ class BookingController extends Controller
                         'booking_date'          => Carbon::parse($request->booking_date),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
+                        'shipment_by'           => $request->shipment_by,
                         'nomination_flag'       => $nomination_flag,
                         't_mdoc_type_id'        => $request->doctype,
+                        't_mloaded_type_id'     => $request->t_mloaded_type_id,
                         'custom_doc_no'         => $request->doc_no,
                         'custom_doc_date'       => $doc_date,
                         'igm_no'                => $request->igm_number,
@@ -487,6 +499,7 @@ class BookingController extends Controller
                         'booking_date'          => Carbon::parse($request->booking_date),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
+                        'shipment_by'           => $request->shipment_by,
                         'nomination_flag'       => $nomination_flag,
                         't_mdoc_type_id'        => $request->doctype,
                         'custom_doc_no'         => $request->doc_no,
@@ -845,6 +858,7 @@ class BookingController extends Controller
                     $tabel .= '</div>';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCom('.$row->uom_comm.','.$row->uom_packages.','.$row->weight_uom.','.$row->volume_uom.','.$no.');" style="margin-top:5px" id="btnEditCom_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -854,6 +868,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailCom('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -960,6 +975,7 @@ class BookingController extends Controller
                     $tabel .= '</select>';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailPckg('.$row->qty_uom.','.$no.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -969,6 +985,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailPckg('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1089,6 +1106,7 @@ class BookingController extends Controller
                     $tabel .= '<td class="text-left"><label id="lbl_wparty_'.$no.'">'.$row->weighing_party.'</label><input type="text" id="w_party_'.$no.'" name="w_party" class="form-control" value="'.$row->weighing_party.'" style="display:none"></td>';
                 }
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCon('.$row->t_mloaded_type_id.','.$row->t_mcontainer_type_id.','.$no.');" style="margin-top:5px" id="btnEditCon_'.$no.'"> '
                         . '<i class="fa fa-edit"></i></a>';
@@ -1098,6 +1116,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailCon('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i></a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1216,6 +1235,7 @@ class BookingController extends Controller
                 $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.Carbon::parse($row->doc_date)->format('d/m/Y').'" style="display:none">';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailDoc('.$row->t_mdoc_type_id.','.$no.');" style="margin-top:5px" id="btnEditDoc_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -1225,6 +1245,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailDoc('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1426,12 +1447,14 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-">'.$row->delivery_addr.'</td>';
                 $tabel .= '<td class="text-">'.$row->notes.'</td>';
                 $tabel .= '<td>';
+                if($request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailRoad('.$row->id.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailRoad('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1535,12 +1558,14 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-left">'.Carbon::parse($row->date).'</td>';
                 $tabel .= '<td class="text-">'.$row->notes.'</td>';
                 $tabel .= '<td>';
+                if($request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailSch('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailSch('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
             }
@@ -1629,14 +1654,16 @@ class BookingController extends Controller
             // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
             $tabel .= '<td>';
             if ($row->t_invoice_cost_id == null) {
-                $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$no.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$no.'">
-                <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$no.'"/>';
+                if($row->paid_to != null){
+                    $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$no.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$no.'">
+                    <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$no.'"/>';
+                }
             }
             $tabel .=  '</td>';
             $tabel .= '<td>'.($no).'</td>';
             $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
             $tabel .= '<td class="text-left">'.$row->desc.'</td>';
-            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
+            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
             $tabel .= '<td class="text-left">'.$row->qty.'</td>';
             $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
             $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
@@ -1661,12 +1688,15 @@ class BookingController extends Controller
                 $displayx = 'display:none';
             }
 
-            $tabel .= '<td class="text-left"></td>';
+            $tabel .= '<td class="text-left">'.$row->invoice_no_cost.'</td>';
             $tabel .= '<td>';
             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
                     . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
                     . '<i class="fa fa-save"></i></a>';
             if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
+            $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
+                    . '" onclick="editDetailCF('.$row->id.');"> '
+                    . '<i class="fa fa-edit"></i></a>';
             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
                     . '" onclick="hapusDetailCF('.$row->id.');"> '
                     . '<i class="fa fa-trash"></i></a>';
@@ -1678,14 +1708,16 @@ class BookingController extends Controller
             $tabel1 .= '<tr>';
             $tabel1 .= '<td>';
             if ($row->t_invoice_id == null) {
-                $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
-                <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
+                if($row->bill_to != null){
+                    $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
+                    <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
+                }
             }
             $tabel .=  '</td>';
             $tabel1 .= '<td>'.$no.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
-            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
             $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
             $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
@@ -1991,7 +2023,7 @@ class BookingController extends Controller
         $id =   DB::table('t_booking')->insertGetId([
             't_quote_id'            => $booking->t_quote_id,
             'booking_date'          => Carbon::parse($booking->booking_date),
-            'version_no'            => $booking->version_no,
+            'version_no'            => 1,
             'activity'              => $booking->activity,
             'nomination_flag'       => $booking->nomination_flag,
             'copy_booking'          => $booking->booking_no,
@@ -2525,13 +2557,20 @@ class BookingController extends Controller
             ->update([
                 'status'            => 0,
                 'flag_invoice'      => 0,
-                'updated_by'        => $user,
-                'updated_at'        => $tanggal
+                'approved_by'        => $user,
+                'approved_at'        => $tanggal
             ]);
 
             return redirect('booking/list')->with('status', 'Successfully Approved');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
+    }
+
+    public function booking_getDetailCharges(Request $request)
+    { 
+        $data = BookingModel::getChargesDetailById($request->id);
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 }

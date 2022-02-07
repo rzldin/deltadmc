@@ -297,12 +297,6 @@
           dropdownParent: $("#myModalx")
         })
       })
-      $(function(){
-        $('.select2bs44').select2({
-          theme: 'bootstrap4',
-          tags: true,
-        })
-      })
 
       function numberOnly(root){
         var reet = root.value;
@@ -317,6 +311,12 @@
             }
       }
 
+      $(function(){
+        $('.select2bs44').select2({
+          theme: 'bootstrap4',
+          tags: true,
+        })
+      })
 
       $('#date_id').datetimepicker({
           format: 'YYYY-MM-DD',

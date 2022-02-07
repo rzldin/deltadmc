@@ -94,13 +94,13 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" checked> Reguler<br>
+                                                        id="invoice_type_reg" value="REG" onchange="loadSellCost({{ $booking->id }})" checked> Reguler<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM"> Reimbursment<br>
+                                                        id="invoice_type_reimbursment" value="REM" onchange="loadSellCost({{ $booking->id }})"> Reimbursment<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN"> Debit Note<br>
+                                                        id="invoice_type_debit_note" value="DN" onchange="loadSellCost({{ $booking->id }})"> Debit Note<br>
                                                     <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN"> Credit Note<br>
+                                                        id="invoice_type_credit_note" value="CN" onchange="loadSellCost({{ $booking->id }})"> Credit Note<br>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -228,7 +228,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pol_name"
-                                                        id="pol_name" value="{{ $booking->port1 }}">
+                                                        id="pol_name" value="{{ $booking->port1 }}" readonly>
                                                     <input class="form-control" type="hidden" name="pol_id" id="pol_id"
                                                         value="{{ $booking->pol_id }}">
                                                 </div>
@@ -239,7 +239,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="pod_name"
-                                                        id="pod_name" value="{{ $booking->port3 }}">
+                                                        id="pod_name" value="{{ $booking->port3 }}" readonly>
                                                     <input class="form-control" type="hidden" name="pod_id" id="pod_id"
                                                         value="{{ $booking->pod_id }}">
                                                 </div>
@@ -393,16 +393,14 @@
 
         /** Load Schedule **/
         function loadSellCost(id) {
-            console.log('loadSellCost');
-
             if (id != null) {
                 $.ajax({
                     type: "POST",
                     url: "{{ route('invoice.loadSellCost') }}",
                     data: {
                         id: id,
-                        shipping_dtl_id: @json($shipping_dtl_id),
                         chrg_dtl_id: @json($chrg_dtl_id),
+                        invoice_type: $('input[name="invoice_type"]:checked').val(),
                         tipe_inv: '{{$tipe_inv}}'
                     },
                     dataType: "html",

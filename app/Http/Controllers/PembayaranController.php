@@ -42,7 +42,7 @@ class PembayaranController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
-
+        DB::beginTransaction();
         try {
             $flag_giro = 0;
             $id_kas = $request->akun_kas;
@@ -95,6 +95,15 @@ class PembayaranController extends Controller
         }else{
             return view('pembayaran.edit')->with($data);
         }
+    }
+
+    public function view($id)
+    {
+        $data['header'] = PembayaranModel::leftJoin('t_mcompany AS b', 't_pembayaran.id_company', '=', 'b.id')->where('t_pembayaran.id',$id)
+                            ->leftJoin('t_maccount As bank', 't_pembayaran.id_kas', '=', 'bank.id')
+                            ->select('t_pembayaran.*','b.client_name','bank.account_name')->first();
+        $data['detail'] = PembayaranModel::get_list_detail($data['header']->id);
+        return view('pembayaran.view')->with($data);
     }
 
     public function list_detail(Request $request)
@@ -245,6 +254,7 @@ class PembayaranController extends Controller
             return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
 
+        DB::beginTransaction();
         try {
             $flag_giro = 0;
             $id_kas = $request->akun_kas;
@@ -269,27 +279,31 @@ class PembayaranController extends Controller
                 $nilai_pembayaran += $v->nilai;
             }
 
-            $id_pmb = PembayaranModel::where('id',$request->id)->update([
-                'no_pembayaran' => $request->no_pembayaran,
-                'status' => 1,
-                'tanggal' => date('Y-m-d', strtotime($request->tanggal)),
-                'id_kas' => $id_kas,
-                'flag_giro' => $flag_giro,
-                'no_giro' => $no_giro,
-                'tgl_jatuh_tempo' => $tgl_jatuh_tempo,
-                'no_rekening' => $no_rekening,
-                'bank' => $bank,
-                'keterangan' => $request->keterangan,
-                'nilai_pmb' => $nilai_pembayaran
-            ]);
+            if($nilai_pembayaran != 0){
 
-            DB::commit();
-
-            if($request->jenis_pmb==0){
-                return redirect()->route('pembayaran.piutang');
+                $id_pmb = PembayaranModel::where('id',$request->id)->update([
+                    'no_pembayaran' => $request->no_pembayaran,
+                    'status' => 1,
+                    'tanggal' => date('Y-m-d', strtotime($request->tanggal)),
+                    'id_kas' => $id_kas,
+                    'flag_giro' => $flag_giro,
+                    'no_giro' => $no_giro,
+                    'tgl_jatuh_tempo' => $tgl_jatuh_tempo,
+                    'no_rekening' => $no_rekening,
+                    'bank' => $bank,
+                    'keterangan' => $request->keterangan,
+                    'nilai_pmb' => $nilai_pembayaran
+                ]);
+                DB::commit();
+                if($request->jenis_pmb==0){
+                    return redirect()->route('pembayaran.piutang')->with('status', 'Pembayaran berhasil di approve!');
+                }else{
+                    return redirect()->route('pembayaran.index')->with('status', 'Pembayaran berhasil di approve!');
+                }
             }else{
-                return redirect()->route('pembayaran.index');
+                return redirect()->route('pembayaran.edit', ['id'=>$request->id])->with('error', 'Pembayaran detail masih kosong !');
             }
+
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -451,4 +465,40 @@ class PembayaranController extends Controller
             //throw $th;
         }
     }
+
+    public function openPMB(Request $request)
+    {
+        $rules = [
+            'id_pmb' => 'required',
+            'jenis_pmb' => 'required'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
+        }
+
+        DB::beginTransaction();
+        try {
+            PembayaranModel::where('id',$request->id_pmb)->update([
+                'status' => 0,
+            ]);
+
+            DB::table('log_detail')->insert([
+                'jenis' => 'Pembayaran',
+                'id_table' => $request->id_pmb,
+                'keterangan' => 'Open PMB '.(($request->jenis_pmb==0)? 'Piutang':'Hutang'),
+                'created_by' => Auth::user()->id,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('pembayaran.edit', ['id'=>$request->id_pmb])->with('status', 'Berhasil dibuka');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
 }

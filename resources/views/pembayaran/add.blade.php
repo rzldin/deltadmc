@@ -81,7 +81,7 @@
                                         <option value="">Silahkan Pilih Customer ...</option>
                                         <?php 
                                             foreach($company as $item){
-                                                echo '<option value="'.$item->id.'">'.$item->client_code.'</option>';
+                                                echo '<option value="'.$item->id.'">('.$item->client_code.') '.$item->client_name.'</option>';
                                             }
                                         ?>
                                     </select>

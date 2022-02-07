@@ -45,6 +45,7 @@
                     @endif
                     <form action="{{ route('booking.doAdd') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                         {{ csrf_field() }}
+                    <input type="hidden" id="t_mloaded_type_id" name="t_mloaded_type_id" value="{{ $quote->t_mloaded_type_id }}">
                     <div class="card-body">
                         <div class="container-fluid mt-3">
                             <div class="row">
@@ -1645,7 +1646,13 @@
                 title: 'Error!',
                 text: 'Please input Booking Number',
                 icon: 'error'
-            })
+            });
+        }else if($.trim($('#booking_date').val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Booking Date',
+                icon: 'error'
+            });
         }else{
             $(this).prop('disabled', true).text('Please Wait ...');
             $('#formku').submit();

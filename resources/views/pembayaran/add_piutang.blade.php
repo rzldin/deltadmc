@@ -7,11 +7,11 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Add Pembayaran Hutang</h1>
+                <h1>Add Pembayaran Piutang</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="{{ route('pembayaran.index') }}">List Pembayaran Hutang</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('pembayaran.piutang') }}">List Pembayaran Piutang</a></li>
                     <li class="breadcrumb-item active">Add Data</li>
                 </ol>
             </div>
@@ -27,7 +27,7 @@
           <!-- general form elements -->
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Pembayaran Hutang</h3>
+                    <h3 class="card-title">Pembayaran Piutang</h3>
                 </div>
                 @if(count($errors)>0)
                     @foreach($errors->all() as $error)
@@ -81,7 +81,7 @@
                                         <option value="">Silahkan Pilih Customer ...</option>
                                         <?php 
                                             foreach($company as $item){
-                                                echo '<option value="'.$item->id.'">'.$item->client_code.'</option>';
+                                                echo '<option value="'.$item->id.'">('.$item->client_code.') '.$item->client_name.'</option>';
                                             }
                                         ?>
                                     </select>
@@ -192,7 +192,7 @@
     });
 
     $("#saveData").click(function(){
-        if($.trim($("#tanggal_dt").val()) == ""){
+        if($.trim($("#tanggal").val()) == ""){
             Swal.fire({
                 title: 'Error!',
                 text: 'Please input Tanggal',

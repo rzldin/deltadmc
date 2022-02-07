@@ -79,14 +79,22 @@ ALTER TABLE `t_booking` CHANGE `t_quote_id` `t_quote_id` INT(11) NULL DEFAULT '0
 ALTER TABLE `t_booking` ADD `flag_invoice` TINYINT(1) NOT NULL DEFAULT '0' AFTER `final_flag`;
 ALTER TABLE `t_booking`  ADD `updated_by` VARCHAR(100) NULL  AFTER `created_on`,  ADD `updated_at` DATETIME NULL  AFTER `updated_by`
 ALTER TABLE `t_booking` ADD `open_remarks` VARCHAR(200) NULL AFTER `profit_pct`;
+ALTER TABLE `t_booking` ADD `approved_at` DATETIME NULL AFTER `updated_at`, ADD `approved_by` INT(4) NULL AFTER `approved_at`;
 
-ALTER TABLE deltadmc.t_deposits ADD account_id INT UNSIGNED NULL;
-ALTER TABLE deltadmc.t_deposits CHANGE account_id account_id INT UNSIGNED NULL AFTER id;
+----
 
-ALTER TABLE deltadmc.t_journals ADD company_id INT UNSIGNED DEFAULT 0 NULL;
-ALTER TABLE deltadmc.t_journals CHANGE company_id company_id INT UNSIGNED DEFAULT 0 NULL AFTER pembayaran_id;
-ALTER TABLE deltadmc.t_journals ADD invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
-ALTER TABLE deltadmc.t_journals CHANGE invoice_id_deposit invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER company_id;
-ALTER TABLE deltadmc.t_journals ADD external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
-ALTER TABLE deltadmc.t_journals CHANGE external_invoice_id_deposit external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER invoice_id_deposit;
-ALTER TABLE deltadmc.t_journal_details MODIFY COLUMN memo text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+ALTER TABLE t_deposits ADD account_id INT UNSIGNED NULL;
+ALTER TABLE t_deposits CHANGE account_id account_id INT UNSIGNED NULL AFTER id;
+
+ALTER TABLE t_journals ADD company_id INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE company_id company_id INT UNSIGNED DEFAULT 0 NULL AFTER pembayaran_id;
+ALTER TABLE t_journals ADD invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE invoice_id_deposit invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER company_id;
+ALTER TABLE t_journals ADD external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE external_invoice_id_deposit external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER invoice_id_deposit;
+ALTER TABLE t_journal_details MODIFY COLUMN memo text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+
+---- ghozi
+ALTER TABLE `t_pembayaran` ADD `modified_at` DATETIME NULL AFTER `created_at`, ADD `modified_by` INT(4) NULL AFTER `modified_at`;
+ALTER TABLE `t_mapps_menu` ADD `ordered` INT(2) NOT NULL DEFAULT '1' AFTER `apps_menu_url`;
+ALTER TABLE `t_booking` ADD `shipment_by` VARCHAR(50) NOT NULL AFTER `activity`;

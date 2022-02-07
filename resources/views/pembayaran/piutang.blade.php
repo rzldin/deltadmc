@@ -33,6 +33,7 @@
                                 <th>No Pembayaran</th>
                                 <th>Date</th>
                                 <th>Nilai PMB</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -45,12 +46,25 @@
                                 {{-- <td> --}}
                                     {{-- <a class="btn btn-primary btn-sm" href="{{ route('pembayaran.view', ['id' => $pmb->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a> --}}
                                 {{-- </td> --}}
+                                @if ($pmb->status == 0)
+                                    <td class="bg-secondary text-center">Draft</td>
+                                @elseif($pmb->status == 1) 
+                                    <td class="bg-success text-center">Approved</td>
+                                @endif
                                 <td>
-                                    <a class="btn btn-danger btn-sm" href="{{ route('pembayaran.cancel', $pmb->id) }}" ><i class="fa fa-undo"></i>  Cancel</a>
+                                    @if ($pmb->status == 1)
+                                        <a class="btn btn-danger btn-sm" href="{{ route('pembayaran.cancel', $pmb->id) }}" ><i class="fa fa-undo"></i>  Cancel</a>
+                                        <a class="btn btn-primary btn-sm" href="{{route('pembayaran.view', ['id'=>$pmb->id])}}"><i class="fa fa-file-alt"></i> View </a>
+                                    @else
+                                        <a class="btn btn-info btn-sm" href="{{route('pembayaran.edit', ['id'=>$pmb->id])}}"><i class="fa fa-edit"></i> Edit </a>
+                                    @endif
                                     @if ($pmb->journal_id == 0)
                                         <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $pmb->no_pembayaran }}&reference_id={{ $pmb->id }}&client_id={{ $pmb->id_company }}&source=pembayaran">
                                                 <i class="fa fa-book"></i> Journal
                                         </a>
+                                    @endif
+                                    @if($pmb->status==1)
+                                        <a class="btn btn-success btn-sm" onclick="openPMB({{$pmb->id}});"><i class="fa fa-undo"></i> Open PMB </a>
                                     @endif
                                 </td>
                             </tr>
@@ -62,9 +76,21 @@
         </div>
     </div>
 </section>
+<form action="{{ route('pembayaran.openPMB') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" style="display: none;">
+{{ csrf_field() }} 
+<input type="hidden" name="id_pmb" id="id_pmb">
+<input type="hidden" name="jenis_pmb" id="jenis_pmb">
+</form>
 @endsection
 
 @push('after-scripts')
-    <script>
-    </script>
+<script>
+    function openPMB(id){
+        if (confirm('Anda yakin ingin membuka pembayaran ini kembali ?')) {
+            $('#id_pmb').val(id);
+            $('#jenis_pmb').val(0);
+            $('#formku').submit();
+        }
+    }
+</script>
 @endpush
