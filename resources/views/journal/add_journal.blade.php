@@ -220,7 +220,19 @@
                     $('#row_company_id').removeClass('display-none');
                     $('#row_invoice_id_deposit').removeClass('display-none');
                 }
+                clearSession();
                 loadDetailJournal();
+            }
+
+            function clearSession() {
+                $.ajax({
+                    type: 'post',
+                    async: false,
+                    url: `{{ route('journal.clearSession') }}`,
+                    success: function() {
+
+                    }
+                });
             }
 
             function getListInvoice(company_id) {

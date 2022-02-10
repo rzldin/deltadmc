@@ -368,7 +368,7 @@ class PembayaranController extends Controller
 
         DB::table('t_pembayaran_detail')->insert([
             'id_pmb' => $request->id_pmb,
-            'deposit_detail_id' => $request->deposit_detail_id,
+            // 'deposit_detail_id' => $request->deposit_detail_id,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
             'nilai' => $nilai_bayar

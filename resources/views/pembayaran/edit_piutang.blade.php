@@ -256,21 +256,24 @@
                           <input type="text" class="form-control" name="invoice_bayar" id="invoice_bayar" readonly>
                         </div>
                     </div>
-                    <div class="separator_hr">Deposit</div>
-                    <div class="row mb-2">
-                        <div class="col-md-5">
-                            Saldo
-                        </div>
-                        <div class="col-md-7">
-                            <div class="row form-group">
-                                <input type="hidden" name="deposit_id" id="deposit_id" value="0">
-                                <input type="hidden" id="is_deposit" value="0">
-                                <input type="text" class="form-control" name="balance" id="balance" value="" readonly>
+                    <div id="deposit_blok">
+                        <div class="separator_hr">Deposit</div>
+                        <div class="row mb-2">
+                            <div class="col-md-5">
+                                Saldo
                             </div>
-                            <div class="row form-group">
-                                <a href="javascript:void(0);" onclick="useDepositBalance()" class="btn btn-primary" style="width: 100%"><span class="fa fa-chevron-circle-down"></span> Bayar dengan saldo deposit</a>
+                            <div class="col-md-7">
+                                <div class="row form-group">
+                                    <input type="hidden" name="deposit_id" id="deposit_id" value="0">
+                                    <input type="hidden" id="is_deposit" value="0">
+                                    <input type="text" class="form-control" name="balance" id="balance" value="" readonly>
+                                </div>
+                                {{-- <div class="row form-group">
+                                    <a href="javascript:void(0);" onclick="useDepositBalance()" class="btn btn-primary" style="width: 100%"><span class="fa fa-chevron-circle-down"></span> Bayar dengan saldo deposit</a>
+                                </div> --}}
                             </div>
                         </div>
+                        <div id="boxListDeposit"></div>
                     </div>
                     <div class="separator_hr">Pembayaran</div>
                     <div class="row mb-2">
@@ -345,6 +348,33 @@ function loadInvoice(){
     });
 }
 
+function useDeposit(journal_id) {
+    // console.log(journal_id);
+    let nilai_bayar = $('#nilai_bayar');
+    let nilai_deposit = $('#amount_'+journal_id);
+    let journal_id_check = $('#check_'+journal_id);
+
+    let nilai_bayar_val = nilai_bayar.val().toString().replace(/\,/g, "");
+    let nilai_deposit_val = nilai_deposit.val().toString().replace(/\,/g, "");
+
+    let result = 0;
+    if (journal_id_check.is(':checked')) {
+        result = Number(nilai_bayar_val) + Number(nilai_deposit_val);
+        nilai_bayar.val(numberWithCommas(result));
+        nilai_deposit.prop('readonly', 'true');
+        // console.log('checked');
+    } else {
+        result = Number(nilai_bayar_val) - Number(nilai_deposit_val);
+        nilai_bayar.val(numberWithCommas(result));
+        nilai_deposit.removeAttr('readonly');
+        // console.log(journal_id_check.val());
+        // console.log('unchecked');
+    }
+
+    hitungSubTotalSJ();
+
+}
+
 function useDepositBalance() {
     let total_invoice = $('#total_invoice');
     let invoice_bayar = $('#invoice_bayar');
@@ -401,6 +431,7 @@ function hitungSubTotalSJ(){
 }
 
 function input_bayar(id){
+    console.log($('#akun_kas').val());
   $.ajax({
     url: "{{ route('pembayaran.getDataInvExt') }}",
     type: "POST",
@@ -409,13 +440,23 @@ function input_bayar(id){
     },
     dataType: "json",
     success: function(result){
-        getDepositBalance();
-      // console.log(result);
-      $("#INVModal").find('.modal-title').text('Input Pembayaran');
-      $("#INVModal").modal('show',{backdrop: 'true'});
-      $("#tambah_inv").show();
-      $("#alert-danger").hide();
-      $('#nilai_bayar').attr('readonly', false);
+        // console.log(result);
+        $("#INVModal").find('.modal-title').text('Input Pembayaran');
+        $("#INVModal").modal('show',{backdrop: 'true'});
+        $("#tambah_inv").show();
+        $("#alert-danger").hide();
+        if ($('#akun_kas').val() == 263) {
+            getDepositBalance();
+            getListDeposit();
+            $('#nilai_bayar').attr('readonly', true);
+            $('#deposit_blok').show();
+            $('#is_deposit').val(1);
+        } else {
+            $('#nilai_bayar').attr('readonly', false);
+            $('#deposit_blok').hide();
+            $('#is_deposit').val(0);
+
+      }
 
       $("#id_modal_inv").val(result['id']);
       $("#invoice_no").val(result['external_invoice_no']);
@@ -442,27 +483,84 @@ function getDepositBalance() {
     });
 }
 
-function updateDepositBalance() {
-    console.log($('#nilai_bayar').val().toString().replace(/\,/g, "") * -1);
+function getListDeposit() {
     $.ajax({
         type: 'post',
-        url: `{{ route('deposit.processSave') }}`,
+        url: `{{ route('deposit.getListDeposit') }}`,
+        data: {
+            company_id: @json($header->id_company),
+        },
+        success: function(result) {
+            // console.log(result);
+            $('#boxListDeposit').html(result);
+        }
+    });
+}
+
+function updateDepositBalance(pembayaran_id = 0) {
+    let deposit_journal_id = $('input[name="deposit[journal_id]"]').map(function(){
+        return $(this).val();
+    }).get();
+    console.log(deposit_journal_id);
+    let deposit_amount = $('input[name="deposit[amount]"]').map(function(){
+        return Number($(this).val().toString().replace(/\,/g, "")) * Number(-1);
+    }).get();
+    console.log(deposit_amount);
+
+    $.ajax({
+        type: 'post',
+        url: `{{ route('deposit.processSavePembayaranDeposit') }}`,
         data: {
             id: $('#deposit_id').val(),
+            pembayaran_id: pembayaran_id,
             company_id: @json($header->id_company),
-            amount: ($('#nilai_bayar').val().toString().replace(/\,/g, "") * -1),
+            amount: deposit_amount,
+            journal_id: deposit_journal_id,
             deposit_date: $('#tanggal_dt').val(),
             invoice_id: $('#id_modal_inv').val(),
         },
         success: function(response) {
+            let obj = JSON.parse(response);
             console.log(response);
+            console.log(obj);
             // let result = JSON.parse(response);
-            if (response['status'] == 'success') {
+            if (obj.status == 'success') {
                 // console.log(response['data']['deposit_detail']['id']);
-                proceed_bayar(response['data']['deposit_detail']['id']);
+                // proceed_bayar(response['data']['deposit_detail']['id']);
+                alert('Transaksi Berhasil di Bayar');
+                $("#INVModal").modal('hide');
+            } else {
+                alert(obj.message);
+                $("#INVModal").modal('hide');
             }
         }
     });
+
+    /**
+     * Old method
+     *
+     * //
+    // console.log($('#nilai_bayar').val().toString().replace(/\,/g, "") * -1);
+    // $.ajax({
+    //     type: 'post',
+    //     url: `{{ route('deposit.processSave') }}`,
+    //     data: {
+    //         id: $('#deposit_id').val(),
+    //         company_id: @json($header->id_company),
+    //         amount: ($('#nilai_bayar').val().toString().replace(/\,/g, "") * -1),
+    //         deposit_date: $('#tanggal_dt').val(),
+    //         invoice_id: $('#id_modal_inv').val(),
+    //     },
+    //     success: function(response) {
+    //         console.log(response);
+    //         // let result = JSON.parse(response);
+    //         if (response['status'] == 'success') {
+    //             // console.log(response['data']['deposit_detail']['id']);
+    //             proceed_bayar(response['data']['deposit_detail']['id']);
+    //         }
+    //     }
+    // });
+    */
 }
 
 $('#tambah_inv').click(function(event) {
@@ -484,22 +582,24 @@ $('#tambah_inv').click(function(event) {
         var r=confirm("Anda yakin meng-approve Pembayaran ini?");
         if (r==true){
           $(this).prop('disabled', true);
-            if ($('#is_deposit').val() == 0) {
-                proceed_bayar();/// LANJUT BAYAR
-            } else {
-                updateDepositBalance();
-            }
+            // if ($('#is_deposit').val() == 0) {
+            //     proceed_bayar();/// LANJUT BAYAR
+            // } else {
+            //     updateDepositBalance();
+            // }
+            proceed_bayar();
         }
     }
 });
 
-function proceed_bayar(deposit_detail_id = 0){
+// function proceed_bayar(deposit_detail_id = 0){
+function proceed_bayar(){
   $('#tambah_inv_txt').text('Please Wait ...');
   $.ajax({// Run getUnlockedCall() and return values to form
       url: "{{ route('pembayaran.saveDetailPembayaranPiutang') }}",
       data:{
          id_pmb:'{{ $header->id }}',
-         deposit_detail_id: deposit_detail_id,
+        //  deposit_detail_id: deposit_detail_id,
          jenis_pmb:'{{ $header->jenis_pmb }}',
          id_invoice:$('#id_modal_inv').val(),
          total_invoice:$('#total_invoice').val(),
@@ -511,8 +611,12 @@ function proceed_bayar(deposit_detail_id = 0){
       dataType: "json",
       success: function(result){
         if (result['status'] == 'sukses') {
-          alert('Transaksi Berhasil di Bayar');
-          $("#INVModal").modal('hide');
+            if ($('#is_deposit').val() == 1) {
+                updateDepositBalance(@json($header->id));
+            } else {
+                alert('Transaksi Berhasil di Bayar');
+                $("#INVModal").modal('hide');
+            }
         } else {
           alert(result['message']);
           $("#INVModal").modal('hide');

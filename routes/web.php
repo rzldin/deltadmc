@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 // use App\User;
 
 /*
@@ -447,6 +449,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/accounting/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
     Route::post('/accounting/journal/updateDetail', 'JournalController@updateDetailJournal')->name('journal.updateDetail');
     Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
+    Route::post('/accounting/journal/clearSession', 'JournalController@clearSessionJournal')->name('journal.clearSession');
 
     /** General Ledgers */
     Route::get('/accounting/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
@@ -460,8 +463,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/deposit/deleteDetail', 'DepositController@deleteDetail')->name('deposit.deleteDetail');
     Route::post('/deposit', 'DepositController@save')->name('deposit.save');
     Route::post('/deposit/processSave', 'DepositController@processSave')->name('deposit.processSave');
+    Route::post('/deposit/processSavePembayaranDeposit', 'DepositController@processSavePembayaranDeposit')->name('deposit.processSavePembayaranDeposit');
     Route::get('/deposit/view/{id}', 'DepositController@view')->name('deposit.view');
     Route::post('/deposit/getDepositCompany', 'DepositController@getDepositCompany')->name('deposit.getDepositCompany');
+    Route::post('/deposit/getListDeposit', 'DepositController@getListDeposit')->name('deposit.getListDeposit');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

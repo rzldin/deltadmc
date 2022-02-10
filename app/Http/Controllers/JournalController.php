@@ -51,8 +51,50 @@ class JournalController extends Controller
         $total_credit = 0;
 
         $details = Session::get('journal_details');
-        if ($details == [] && ($request->journal_type == "deposit_vendor" || $request->journal_type == "deposit_client")) {
-            $account_deposit = MasterModel::findAccountByAccountName('DEPOSIT')->first();
+        if ($details == [] && $request->journal_type == "deposit_client") {
+            # deposit client (customer terjadi lebih bayar ke deltadmc)
+            $account_bank = MasterModel::findAccountByAccountNumber('1-1100')->first();
+            // $request = new Request();
+            $request->account_id = $account_bank->id;
+            $request->account_number = $account_bank->account_number;
+            $request->account_name = $account_bank->account_name;
+            $request->debit = 1;
+            $request->credit = 0;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+
+            $account_piutang = MasterModel::findAccountByAccountNumber('1-1200')->first();
+            // $request = new Request();
+            $request->account_id = $account_piutang->id;
+            $request->account_number = $account_piutang->account_number;
+            $request->account_name = $account_piutang->account_name;
+            $request->debit = 0;
+            $request->credit = 1;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+
+            $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
+            // $param = new Request();
+            $request->account_id = $account_deposit->id;
+            $request->account_number = $account_deposit->account_number;
+            $request->account_name = $account_deposit->account_name;
+            $request->debit = 0;
+            $request->credit = 1;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+        } else if ($details == [] && $request->journal_type == "deposit_vendor") {
+            # deposit vendor (deltadmc terjadi lebih bayar ke vendor)
+            $account_hutang = MasterModel::findAccountByAccountNumber('2-1000')->first();
+            // $request = new Request();
+            $request->account_id = $account_hutang->id;
+            $request->account_number = $account_hutang->account_number;
+            $request->account_name = $account_hutang->account_name;
+            $request->debit = 1;
+            $request->credit = 0;
+            $request->memo = null;
+            $this->saveDetailJournal($request);
+
+            $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
             // $param = new Request();
             $request->account_id = $account_deposit->id;
             $request->account_number = $account_deposit->account_number;
@@ -62,11 +104,11 @@ class JournalController extends Controller
             $request->memo = null;
             $this->saveDetailJournal($request);
 
-            $account_deposit = MasterModel::findAccountByAccountName('OVERPAYMENT')->first();
+            $account_bank = MasterModel::findAccountByAccountNumber('1-1100')->first();
             // $request = new Request();
-            $request->account_id = $account_deposit->id;
-            $request->account_number = $account_deposit->account_number;
-            $request->account_name = $account_deposit->account_name;
+            $request->account_id = $account_bank->id;
+            $request->account_number = $account_bank->account_number;
+            $request->account_name = $account_bank->account_name;
             $request->debit = 0;
             $request->credit = 1;
             $request->memo = null;
@@ -127,6 +169,11 @@ class JournalController extends Controller
         $html .= '<input type="hidden" name="amount" id="amount" value="' . $amount . '"/>';
 
         return $html;
+    }
+
+    public function clearSessionJournal(Request $request)
+    {
+        Session::forget('journal_details');
     }
 
     public function saveDefaultDetailJournal(Request $request)
@@ -326,13 +373,13 @@ class JournalController extends Controller
             $amount = 0;
             if ($request->id != 0) JournalDetail::deleteJournalDetailByJournalId($request->id);
             foreach ($details as $key => $detail) {
-                $account_deposit = MasterModel::findAccountByAccountName('DEPOSIT')->first();
+                $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
                 if ($detail['account_id'] == $account_deposit->id && $detail['debit'] > 0) {
-                    #jika detail account adalah account deposit, dan posisi nya ada di debit, maka tambah saldo deposit
-                    $amount += $detail['debit'];
+                    #jika detail account adalah account deposit, dan posisi nya ada di debit, maka kurangi saldo deposit
+                    $amount += ($detail['debit'] * -1);
                 } else if ($detail['account_id'] == $account_deposit->id && $detail['credit'] > 0) {
-                    #jika account deposit ada di kredit, maka kurangi saldo deposit
-                    $amount += ($detail['credit'] * -1);
+                    #jika account deposit ada di kredit, maka tambah saldo deposit
+                    $amount += $detail['credit'];
                 }
                 unset($detail['account_number']);
                 unset($detail['account_name']);
@@ -343,19 +390,27 @@ class JournalController extends Controller
 
                 JournalDetail::saveJournalDetail($detail);
             }
-
+            $deposit_detail = DepositDetail::where('journal_id', $journal->id)->first();
             $deposit = Deposit::where('company_id', $request->company_id)->first();
-            $paramDepositH['id'] = $deposit == null ? 0 : $deposit->id;
+            if ($deposit_detail != [] && $deposit != []) {
+                # kalau edit jurnal, nilai balance deposit di reset ke posisi awal dulu
+                # balance di deposit kurangi dulu dengan amount di deposit detail, agar dapet nilai balance awal, kemudian baru ditambah dengan amount yang baru diedit di jurnal
+                $paramDepositH['balance'] = $deposit->balance - $deposit_detail->amount + $amount;
+            } else if ($deposit_detail == [] && $deposit != []) {
+                # kalau jurnal baru, tapi sudah pernah deposit
+                $paramDepositH['balance'] = $deposit->balance + $amount;
+            } else {
+                # jurnal baru, dan belum pernah deposit sama sekali
+                $paramDepositH['balance'] = $amount;
+            }
+
+            $paramDepositH['id'] = $deposit == [] ? 0 : $deposit->id;
             $paramDepositH['company_id'] = $request->company_id;
-            $paramDepositH['balance'] = $deposit == null ? 0 + $amount : $deposit->balance + $amount;
             $paramDepositH['created_by'] = Auth::user()->name;
             $paramDepositH['created_on'] = date('Y-m-d h:i:s');
             $deposit = Deposit::saveDeposit($paramDepositH);
 
-            $deposit_detail = DepositDetail::where('journal_id', $journal->id)->first();
-            $deposit->balance = $deposit->balance + ($amount - $deposit_detail->amount);
-            $deposit->save();
-            $paramDepositD['id'] = $deposit_detail->id == null ? 0 : $deposit_detail->id;
+            $paramDepositD['id'] = $deposit_detail == [] ? 0 : $deposit_detail->id;
             $paramDepositD['deposit_id'] = $deposit->id;
             $paramDepositD['deposit_date'] = date('Y-m-d', strtotime($request->journal_date));
             $paramDepositD['amount'] = $amount;
@@ -365,15 +420,13 @@ class JournalController extends Controller
             $paramDepositD['created_by'] = Auth::user()->name;
             $paramDepositD['created_on'] = date('Y-m-d h:i:s');
             $depositDetail = DepositDetail::saveDepositDetail($paramDepositD);
-            #cek disini, bug di deposit balance
-            // dd($request->amount, $amount, $deposit_detail->amount, $paramDepositH, $paramDepositD, $deposit, $depositDetail);
             DB::commit();
 
             Session::forget('journal_details');
             return redirect()->route('journal.index')->with('success', 'Data saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            Log::error("saveJournal Error " . $th->getMessage());
+            Log::error("saveJournal Error ", $th->getTrace());
             return redirect()->back()->with('error', 'Something wrong, try again later!');
         }
     }
