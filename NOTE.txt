@@ -88,3 +88,7 @@ t_invoice:
 flag_bayar = 0 ->belum dibayar
 flag_bayar = 1 -> lunas
 flag_bayar = 2 -> sudah dibayar sebagian
+
+tipe_inv dan jenis_pmb
+0 = Piutang
+1 = Hutang

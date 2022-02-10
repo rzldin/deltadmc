@@ -171,6 +171,34 @@
             <div class="col-md-6">
                 <div class="row mb-3">
                     <div class="col-md-4">
+                        <label>Shipment By</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="shipment_by" id="shipment_by" value="{{ $quote->shipment_by }}" readonly>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Activity</label>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="activity" id="activity" value="{{ $quote->activity }}" readonly>
+                    </div>
+                    <div class="col-md-4" style="padding: 10px">
+                        @foreach ($loaded as $l)
+                        <div class="icheck-primary d-inline">
+                            <input type="radio" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}"  @if ($l->id == $quote->t_mloaded_type_id)
+                                checked
+                            @endif disabled>
+                            <label for="loaded_{{ $l->id }}">
+                                {{ $l->loaded_type }}
+                            </label>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
                         <label>Client <font color="red">*</font></label>
                     </div>
                     <div class="col-md-7">
@@ -529,12 +557,13 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>Port Of Loading</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pol" id="pol">
 
                         </select>
                     </div>
@@ -555,7 +584,7 @@
                         <label>Port Of Transit</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="pot" id="pot">
                             
                         </select>
                     </div>
@@ -568,7 +597,7 @@
                         <label>Port Of Discharge</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
+                        <select class="form-control select-ajax-port" style="width: 100%;" name="podisc" id="podisc">
                         
                         </select>
                     </div>

@@ -98,15 +98,25 @@
                                                     </div>
                                                     <div class="row mb-3">
                                                         <div class="col-md-4">
-                                                            <label>Activity <font color="red">*</font></label>
+                                                            <label>Activity  <font color="red">*</font></label>
                                                         </div>
-                                                        <div class="col-md-8">
+                                                        <div class="col-md-4">
                                                             <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity" onchange="get_activity(this.value)">
                                                                 <option value="" selected>-- Select Activity --</option>
                                                                 <option value="export">EXPORT</option>
                                                                 <option value="import">IMPORT</option>
                                                                 <option value="domestic">DOMESTIC</option>
                                                             </select>
+                                                        </div>
+                                                        <div class="col-md-4" style="padding: 10px">
+                                                            @foreach ($loaded as $l)
+                                                            <div class="icheck-primary d-inline">
+                                                                <input type="radio" class="loaded" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}">
+                                                                <label for="loaded_{{ $l->id }}">
+                                                                    {{ $l->loaded_type }}
+                                                                </label>
+                                                            </div>
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
@@ -213,6 +223,19 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label>Shipment By</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select class="form-control select2bs44" name="shipment_by" id="shipment_by">
+                                                    <option selected>-- Select Shipment --</option>
+                                                    <option value="SEA">SEA</option>
+                                                    <option value="AIR">AIR</option>
+                                                    <option value="LAND">LAND</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label>Client <font color="red">*</font></label>
@@ -557,23 +580,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 port-of-loading">
+                                        <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label>Port Of Loading</label>
                                             </div>
                                             <div class="col-md-7">
-                                                <select class="form-control select2bs44" style="width: 100%;" name="pol" id="pol">
-                                                    <option value="" selected>-- Select Port Of Loading --</option>
-                                                    @foreach ($port as $item)
-                                                    <option value="{{ $item->id }}">{{ $item->port_name }}</option>
-                                                    @endforeach
+                                                <select class="form-control select-ajax-port" style="width: 100%;" name="pol" id="pol">
                                                 </select>
                                             </div>
                                             <div class="col-md-1 mt-1">
-                                                <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                                <a href="javascript:;" onclick="addPort('pol')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 pol-custom-desc">
+                                        <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label>POL Custom Desc</label>
                                             </div>
@@ -581,36 +600,28 @@
                                                 <input type="text" name="pol_desc" id="pol_desc" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="row mb-3 port-of-transit">
+                                        <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label>Port Of Transit</label>
                                             </div>
                                             <div class="col-md-7">
-                                                <select class="form-control select2bs44" style="width: 100%;" name="pot" id="pot">
-                                                    <option value="" selected>-- Select Port Of Transit --</option>
-                                                    @foreach ($port as $item)
-                                                    <option value="{{ $item->id }}"f>{{ $item->port_name }}</option>
-                                                    @endforeach
+                                                <select class="form-control select-ajax-port" style="width: 100%;" name="pot" id="pot">
                                                 </select>
                                             </div>
                                             <div class="col-md-1 mt-1">
-                                                <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                                <a href="javascript:;" onclick="addPort('pot')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
-                                        <div class="row mb-3 port-of-discharge">
+                                        <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label>Port Of Discharge</label>
                                             </div>
                                             <div class="col-md-7">
-                                                <select class="form-control select2bs44" style="width: 100%;" name="podisc" id="podisc">
-                                                    <option value="" selected>-- Select Port Of Discharge --</option>
-                                                    @foreach ($port as $item)
-                                                    <option value="{{ $item->id }}">{{ $item->port_name }}</option>
-                                                    @endforeach
+                                                <select class="form-control select-ajax-port" style="width: 100%;" name="podisc" id="podisc">
                                                 </select>
                                             </div>
                                             <div class="col-md-1 mt-1">
-                                                <a href="{{ route('master.port') }}" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                                <a href="javascript:;" onclick="addPort('pod')" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                                             </div>
                                         </div>
                                         <div class="row mb-3 pod-custom-desc">
@@ -1042,6 +1053,29 @@
         $(".bl-issued").hide();
         $(".print-hbl-awb").hide();
         $(".remarks").hide();
+        
+        $('.select-ajax-port').select2({
+          theme: "bootstrap4",
+          ajax: {
+            url: "{{route('booking.getPort')}}",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              var query = {
+                search: params.term,
+              }
+
+              // Query parameters will be ?search=[term]&type=public
+              return query;
+            },
+            processResults: function(data, params) {
+                console.log(data);
+                return {results: data};
+            },
+            cache: true
+          },
+        });
     })
 
     function get_activity(val)
@@ -1251,10 +1285,37 @@
     }
 
     $("#saveData").click(function(){
-        if($.trim($("#booking_no").val()) == ""){
+        const rbs = document.querySelectorAll('input[name="loaded"]');
+        let selectedLoaded;
+        for (const rb of rbs) {
+            if (rb.checked) {
+                selectedLoaded = rb.value;
+                break;
+            }
+        }
+
+        if (!selectedLoaded){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Harap pilih FCL/LCL',
+                icon: 'error'
+            })
+        }else if($.trim($("#booking_no").val()) == ""){
             Swal.fire({
                 title: 'Error!',
                 text: 'Please input Booking Number',
+                icon: 'error'
+            })
+        }else if($.trim($("#booking_date").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Booking Date',
+                icon: 'error'
+            })
+        }else if($.trim($("#shipment_by").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please select Shipment By',
                 icon: 'error'
             })
         }else{

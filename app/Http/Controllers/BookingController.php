@@ -16,8 +16,12 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $data = BookingModel::get_booking();
-        return view('booking.list_booking', compact('data'));
+        if(isset($_GET['status'])){
+            $data['list'] = BookingModel::get_booking_status($_GET['status']);
+        }else{
+            $data['list'] = BookingModel::get_booking();
+        }
+        return view('booking.list_booking', $data);
     }
 
     public function edit_booking($id)
@@ -25,32 +29,37 @@ class BookingController extends Controller
         $data['responsibility'] = SiteHelpers::getUserRole();
         $data['booking']        = BookingModel::get_booking_header($id);
         $data['quote']          = BookingModel::get_bookingDetail($id)[0];
-        $data['doc']            = MasterModel::get_doc();
-        $data['company']        = MasterModel::company_data();
-        $data['inco']           = MasterModel::incoterms_get();
-        $data['uom']            = MasterModel::uom();
-        $data['container']      = MasterModel::container_get();
-        $data['loaded']         = MasterModel::loaded_get();
-        $data['vehicle_type']   = MasterModel::vehicleType_get();
-        $data['vehicle']        = MasterModel::vehicle();
-        $data['schedule']       = MasterModel::schedule_get();
-        $data['error']          = (isset($_GET['error']) ? 1 : 0);
-        $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
-        $data['success']        = (isset($_GET['success']) ? 1 : 0);
-        $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
-        $data['charge']         = MasterModel::charge();
-        $data['currency']       = MasterModel::currency();
-        $data['list_account']   = MasterModel::account_get();
-        $data['list_country']   = MasterModel::country();
-        $sales = DB::table('t_mmatrix')
-        ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
-        ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
-        ->select('users.name as user_name', 'users.id as user_id')
-        ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
-        ->where('t_mmatrix.active_flag', '1')->get();
-        $data['list_sales']     = $sales;
+        if($data['booking']->status != 9){
+            $data['doc']            = MasterModel::get_doc();
+            $data['company']        = MasterModel::company_data();
+            $data['inco']           = MasterModel::incoterms_get();
+            $data['uom']            = MasterModel::uom();
+            $data['container']      = MasterModel::container_get();
+            $data['loaded']         = MasterModel::loaded_get();
+            $data['vehicle_type']   = MasterModel::vehicleType_get();
+            $data['vehicle']        = MasterModel::vehicle();
+            $data['schedule']       = MasterModel::schedule_get();
+            $data['error']          = (isset($_GET['error']) ? 1 : 0);
+            $data['errorMsg']       = (isset($_GET['errorMsg']) ? $_GET['errorMsg'] : '');
+            $data['success']        = (isset($_GET['success']) ? 1 : 0);
+            $data['successMsg']     = (isset($_GET['successMsg']) ? $_GET['successMsg'] : '');
+            $data['charge']         = MasterModel::charge();
+            $data['currency']       = MasterModel::currency();
+            $data['list_account']   = MasterModel::account_get();
+            $data['list_country']   = MasterModel::country();
+            $data['user'] = MasterModel::users_get(Auth::user()->id);
+            $sales = DB::table('t_mmatrix')
+            ->leftJoin('users', 't_mmatrix.t_muser_id', '=', 'users.id')
+            ->leftJoin('t_mresponsibility', 't_mmatrix.t_mresponsibility_id', '=', 't_mresponsibility.id')
+            ->select('users.name as user_name', 'users.id as user_id')
+            ->where('t_mresponsibility.responsibility_name', ['Administrator', 'Sales'])
+            ->where('t_mmatrix.active_flag', '1')->get();
+            $data['list_sales']     = $sales;
 
-        return view('booking.edit_booking')->with($data);
+            return view('booking.edit_booking')->with($data);
+        }else{
+            return view('booking.booking_cancel')->with($data);
+        }
     }
 
     public function header_booking($id)
@@ -76,11 +85,11 @@ class BookingController extends Controller
     public function nomination()
     {
         $data['doc']            = MasterModel::get_doc();
+        $data['loaded']         = MasterModel::loaded_get();
         $data['company']        = MasterModel::company_data();
         $data['cust_addr']      = DB::table('t_maddress')->get();
         $data['cust_pic']       = DB::table('t_mpic')->get();
         $data['carrier']        = MasterModel::carrier();
-        $data['port']           = MasterModel::port();
         $data['currency']       = MasterModel::currency();
         $data['freight']        = MasterModel::freight_get();
         $data['mbl_issued']     = MasterModel::get_mbl_issued();
@@ -91,6 +100,7 @@ class BookingController extends Controller
     public static function header_domestic($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -107,6 +117,7 @@ class BookingController extends Controller
     public static function header_export($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -123,6 +134,7 @@ class BookingController extends Controller
     public static function header_import($quote)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -139,6 +151,7 @@ class BookingController extends Controller
     public static function edit_header_domestic($quote,$verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -156,6 +169,7 @@ class BookingController extends Controller
     public static function edit_header_export($quote, $verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -173,6 +187,7 @@ class BookingController extends Controller
     public static function edit_header_import($quote, $verse)
     {
         $data['quote']          = $quote;
+        $data['loaded']         = MasterModel::loaded_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -194,8 +209,6 @@ class BookingController extends Controller
         $address = MasterModel::get_address($request->id);
         $pic = MasterModel::get_pic($request->id);
         $table2 = MasterModel::company_get($request->id);
-        $table .= '<option value="">-- Select Address --</option>';
-        $table1 .= '<option value="">-- Select PIC --</option>';
 
         foreach($address as $addr)
         {
@@ -288,8 +301,10 @@ class BookingController extends Controller
                         'booking_date'          => Carbon::parse($request->booking_date),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
+                        'shipment_by'           => $request->shipment_by,
                         'nomination_flag'       => $nomination_flag,
                         't_mdoc_type_id'        => $request->doctype,
+                        't_mloaded_type_id'     => $request->t_mloaded_type_id,
                         'custom_doc_no'         => $request->doc_no,
                         'custom_doc_date'       => $doc_date,
                         'igm_no'                => $request->igm_number,
@@ -484,6 +499,7 @@ class BookingController extends Controller
                         'booking_date'          => Carbon::parse($request->booking_date),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
+                        'shipment_by'           => $request->shipment_by,
                         'nomination_flag'       => $nomination_flag,
                         't_mdoc_type_id'        => $request->doctype,
                         'custom_doc_no'         => $request->doc_no,
@@ -758,7 +774,6 @@ class BookingController extends Controller
 
     }
 
-
     public function loadCommodity(Request $request)
     {
         $tabel = "";
@@ -843,6 +858,7 @@ class BookingController extends Controller
                     $tabel .= '</div>';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCom('.$row->uom_comm.','.$row->uom_packages.','.$row->weight_uom.','.$row->volume_uom.','.$no.');" style="margin-top:5px" id="btnEditCom_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -852,6 +868,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailCom('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -958,6 +975,7 @@ class BookingController extends Controller
                     $tabel .= '</select>';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailPckg('.$row->qty_uom.','.$no.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -967,6 +985,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailPckg('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1087,6 +1106,7 @@ class BookingController extends Controller
                     $tabel .= '<td class="text-left"><label id="lbl_wparty_'.$no.'">'.$row->weighing_party.'</label><input type="text" id="w_party_'.$no.'" name="w_party" class="form-control" value="'.$row->weighing_party.'" style="display:none"></td>';
                 }
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailCon('.$row->t_mloaded_type_id.','.$row->t_mcontainer_type_id.','.$no.');" style="margin-top:5px" id="btnEditCon_'.$no.'"> '
                         . '<i class="fa fa-edit"></i></a>';
@@ -1096,6 +1116,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailCon('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i></a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1214,6 +1235,7 @@ class BookingController extends Controller
                 $tabel .= '<input type="date" class="form-control" name="doc_date" id="doc_date_'.$no.'" value="'.Carbon::parse($row->doc_date)->format('d/m/Y').'" style="display:none">';
                 $tabel .= '</td>';
                 $tabel .= '<td style="text-align:center;">';
+                if($$request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailDoc('.$row->t_mdoc_type_id.','.$no.');" style="margin-top:5px" id="btnEditDoc_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
@@ -1223,6 +1245,7 @@ class BookingController extends Controller
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailDoc('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1424,12 +1447,14 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-">'.$row->delivery_addr.'</td>';
                 $tabel .= '<td class="text-">'.$row->notes.'</td>';
                 $tabel .= '<td>';
+                if($request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailRoad('.$row->id.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailRoad('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
                 $no++;
@@ -1533,12 +1558,14 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-left">'.Carbon::parse($row->date).'</td>';
                 $tabel .= '<td class="text-">'.$row->notes.'</td>';
                 $tabel .= '<td>';
+                if($request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                         . '" onclick="editDetailSch('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                         . '" onclick="hapusDetailSch('.$row->id.');" style="margin-top:5px"> '
                         . '<i class="fa fa-trash"></i> Delete </a>';
+                }
                 $tabel .= '</td>';
                 $tabel .= '</tr>';
             }
@@ -1546,7 +1573,6 @@ class BookingController extends Controller
             header('Content-Type: application/json');
             echo json_encode($tabel);
     }
-
 
     public function deleteSchedule(Request $request)
     {
@@ -1590,295 +1616,6 @@ class BookingController extends Controller
         echo json_encode($return_data);
     }
 
-    // public function loadSellCost(Request $request)
-    // {
-    //     $tabel      = "";
-    //     $tabel1     = "";
-    //     $tabel2     = "";
-    //     $no         = 2;
-    //     $noloo      = 1;
-    //     $noloop     = 2;
-    //     $data       = BookingModel::getChargesDetail($request->id);
-    //     $company    = MasterModel::company_data();
-    //     $booking    = DB::table('t_booking')->where('id', $request->id)->first();
-    //     // $booking    = BookingModel::getDetailBooking($request->id);
-    //     $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
-    //     $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
-    //     $total      = 0;
-    //     $total2     = 0;
-    //     $amount     = 0;
-    //     $amount2    = 0;
-    //     $a          = 1;
-    //     $b          = 2;
-
-    //     foreach($shipping as $shp)
-    //     {
-
-    //         // Cost
-    //         $tabel .= '<tr>';
-    //         // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$shp->id.'"  id="cekx_'.$no.'"></td>';
-    //         $tabel .= '<td>';
-    //         if ($shp->t_invoice_cost_id == null) {
-    //             $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.($no-1).')" name="cek_cost_shp[]" value="'.$shp->id.'"  id="cekx_'.($no-1).'">
-    //                         <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$booking->client_id.'" id="cek_paid_to_'.($no-1).'"/>';
-    //         }
-    //         $tabel .= '</td>';
-    //         $tabel .= '<td>'.($no-1).'</td>';
-    //             if($quote->shipment_by == 'LAND'){
-    //                 $tabel .= '<td>'.$shp->truck_size.'</td>';
-    //             }else{
-    //                 $tabel .= '<td>'.$shp->name_carrier.'</td>';
-    //             }
-    //         $tabel .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-    //         $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" onclick="return false;"></td>';
-    //         $tabel .= '<td class="text-left">'.$shp->qty.'</td>';
-    //         $tabel .= '<td class="text-left">'.$shp->code_currency.'</td>';
-    //         $tabel .= '<td class="text-right">'.number_format($shp->cost,2,',','.').'</td>';
-    //         $tabel .= '<td class="text-right">'.number_format(($shp->qty * $shp->cost),2,',','.').'</td>';
-    //         $tabel .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
-    //         $tabel .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
-    //         $tabel .= '<td class="text-right">'.number_format((($shp->qty * $shp->cost) * $shp->rate) + $shp->vat,2,',','.').'</td>';
-    //             if($shp->paid_to == null){
-    //                 $tabel .= '<td>';
-    //                 $tabel .= '<select onchange="fillPaidToName('.$noloo.')" id="paid_to_'.$noloo.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
-    //                 $tabel .= '<option value="" selected>-- Select Company --</option>';
-    //                 foreach($company as $item){
-    //                     $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-    //                 }
-    //                 $tabel .= '</select>';
-    //                 $tabel .= '</td>';
-    //                 $tabel .= '<input type="hidden" id="paid_to_name_'.$noloo.'"/>';
-    //                 $tabel .= '<input type="hidden" id="paid_to_id_'.$noloo.'"/>';
-    //                 $displayx = '';
-    //             }else{
-    //                 $tabel .= '<td class="text-left">'.$shp->paid_to.'</td>';
-    //                 $displayx = 'display:none';
-    //             }
-    //         $display = '';
-    //         $tabel .= '<td></td>';
-    //             $tabel .= '<td>';
-    //             if ($shp->t_invoice_cost_id == null) {
-    //             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
-    //                     . '" onclick="updateDetailSellshp('.$shp->id.', '.$noloo.','.$a.');" style="'.$displayx.'"> '
-    //                     . '<i class="fa fa-save"></i></a>';
-    //             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
-    //                     . '" onclick="hapusDetailSchshp('.$shp->id.');"> '
-    //                     . '<i class="fa fa-trash"></i></a>';
-    //             $tabel .= '</td>';
-    //             }
-    //         $tabel .= '</tr>';
-
-    //         $tabel1 .= '<tr>';
-    //         $tabel1 .= '<td>';
-    //         if ($shp->t_invoice_id == null) {
-    //             $tabel1 .= '<input type="checkbox" onchange="checkedBillTo('.($no-1).')" name="cek_sell_shp[]" value="'.$shp->id.'"  id="cekxx_'.($no-1).'">
-    //                         <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$booking->client_id.'" id="cek_bill_to_'.($no-1).'"/>';
-    //         }
-    //         $tabel1 .= '</td>';
-    //         $tabel1 .= '<td>'.($no-1).'</td>';
-    //             if($quote->shipment_by == 'LAND'){
-    //                 $tabel1 .= '<td>'.$shp->truck_size.'</td>';
-    //             }else{
-    //                 $tabel1 .= '<td>'.$shp->name_carrier.'</td>';
-    //             }
-    //         $tabel1 .= '<td class="text-left">'.$shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time.'</td>';
-    //         $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.($no-1).'" onclick="return false;"></td>';
-    //         $tabel1 .= '<td class="text-left">'.$shp->qty.'</td>';
-    //         $tabel1 .= '<td class="text-left">'.$shp->code_currency.'</td>';
-    //         $tabel1 .= '<td class="text-right">'.number_format($shp->sell,2,',','.').'</td>';
-    //         $tabel1 .= '<td class="text-right">'.number_format(($shp->qty * $shp->sell),2,',','.').'</td>';
-    //         $tabel1 .= '<td class="text-right">'.number_format($shp->rate,2,',','.').'</td>';
-    //         $tabel1 .= '<td class="text-right">'.number_format($shp->vat,2,',','.').'</td>';
-    //         $tabel1 .= '<td class="text-right">'.number_format((($shp->qty * $shp->sell) * $shp->rate) + $shp->vat,2,',','.').'</td>';
-    //             if($shp->bill_to == null){
-    //                 //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$noloo.'" placeholder="Bill to..." class="form-control"></td>';
-    //                 $tabel1 .= '<td>';
-    //                 $tabel1 .= '<select onchange="fillBillToName('.$noloo.')" id="bill_to_'.$noloo.'" class="form-control select2bs44" ';
-    //                 $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
-    //                 $tabel1 .= '<option value="" selected>-- Select Company --</option>';
-    //                 foreach($company as $item){
-    //                     $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-    //                 }
-    //                 $tabel1 .= '</select>';
-    //                 $tabel1 .= '<input type="hidden" id="bill_to_name_'.$noloo.'"/>';
-    //                 $tabel1 .= '<input type="hidden" id="bill_to_id_'.$noloo.'"/>';
-    //                 $tabel1 .= '</td>';
-    //                 $display = '';
-    //             }else{
-    //                 $tabel1 .= '<td class="text-left">'.$shp->bill_to.'</td>';
-    //                 $display = 'display:none';
-    //             }
-    //         $display = '';
-    //         $displayx = 'display:none';
-
-    //         $tabel1 .= '<td class="text-left"></td>';
-    //         $tabel1 .= '<td class="text-left">'.$shp->invoice_type.'</td>';
-    //         $tabel1 .= '<td class="text-left">'.$shp->proforma_invoice_no.'</td>';
-    //             $tabel1 .= '<td>';
-    //             if ($shp->t_invoice_id == null) {
-    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-    //                 . '" onclick="updateDetailSellshp('.$shp->id.', '.$noloo.', '.$b.');" style="'.$display.'"> '
-    //                 . '<i class="fa fa-save"></i></a>';
-    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-    //                 . '" onclick="hapusDetailSellshp('.$shp->id.');" style="margin-left:2px;"> '
-    //                 . '<i class="fa fa-trash"></i></a>';
-    //             }
-    //             $tabel1 .= '</td>';
-    //         $tabel1 .= '</tr>';
-    //         $no++;
-    //     }
-
-    //     $totalAmount    = 0;
-    //     $totalAmount2   = 0;
-    //     foreach($data as $row)
-    //         {
-    //             if($row->reimburse_flag == 1){
-    //                 $style = 'checked';
-    //             }else{
-    //                 $style = '';
-    //             }
-
-    //             $total = ($row->qty * $row->cost);
-    //             $total2 = ($row->qty * $row->sell);
-    //             $amount = ($total * $row->rate) + $row->vat;
-    //             $amount2 = ($total2 * $row->rate) + $row->vat;
-
-    //             // Cost
-    //             $tabel .= '<tr>';
-    //             // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
-    //             $tabel .= '<td>';
-    //             if ($row->t_invoice_cost_id == null) {
-    //                 $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$noloop.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$noloop.'">
-    //                 <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$noloop.'"/>';
-    //             }
-    //             $tabel .=  '</td>';
-    //             $tabel .= '<td>'.($noloop).'</td>';
-    //             $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
-    //             $tabel .= '<td class="text-left">'.$row->desc.'</td>';
-    //             $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
-    //             $tabel .= '<td class="text-left">'.$row->qty.'</td>';
-    //             $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
-    //             $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
-    //             $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
-    //             $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
-    //             $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
-    //             $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
-    //             if($row->paid_to == null){
-    //                 $tabel .= '<td>';
-    //                 $tabel .= '<select onchange="fillPaidToName('.$noloop.')" id="paid_to_'.$noloop.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
-    //                 $tabel .= '<option value="" selected>-- Select Company --</option>';
-    //                 foreach($company as $item){
-    //                     $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-    //                 }
-    //                 $tabel .= '</select>';
-    //                 $tabel .= '</td>';
-    //                 $tabel .= '<input type="hidden" id="paid_to_name_'.$noloop.'"/>';
-    //                 $tabel .= '<input type="hidden" id="paid_to_id_'.$noloop.'"/>';
-    //                 $displayx = '';
-    //             }else{
-    //                 $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
-    //                 $displayx = 'display:none';
-    //             }
-
-    //             $tabel .= '<td class="text-left"></td>';
-    //             $tabel .= '<td>';
-    //             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
-    //                     . '" onclick="updateDetailSell('.$row->id.', '.$noloop.','.$a.');" style="'.$displayx.'"> '
-    //                     . '<i class="fa fa-save"></i></a>';
-    //             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
-    //                     . '" onclick="hapusDetailSch('.$row->id.');"> '
-    //                     . '<i class="fa fa-trash"></i></a>';
-    //             $tabel .= '</td>';
-    //             $tabel .= '</tr>';
-
-    //             // Sell
-    //             $tabel1 .= '<tr>';
-    //             $tabel1 .= '<td>';
-    //             if ($row->t_invoice_id == null) {
-    //                 $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$noloop.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$noloop.'">
-    //                 <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$noloop.'"/>';
-    //             }
-    //             $tabel .=  '</td>';
-    //             $tabel1 .= '<td>'.$noloop.'</td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
-    //             $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$noloop.'" '.$style.' onclick="return false;"></td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
-    //             $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
-    //             $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell),2,',','.').'</td>';
-    //             $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
-    //             $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
-    //             $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
-    //             if($row->bill_to == null){
-    //                 //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$noloop.'" placeholder="Bill to..." class="form-control"></td>';
-    //                 $tabel1 .= '<td>';
-    //                 $tabel1 .= '<select onchange="fillBillToName('.$noloop.')" id="bill_to_'.$noloop.'" class="form-control select2bs44" ';
-    //                 $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
-    //                 $tabel1 .= '<option value="" selected>-- Select Company --</option>';
-    //                 foreach($company as $item){
-    //                     $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-    //                 }
-    //                 $tabel1 .= '</select>';
-    //                 $tabel1 .= '<input type="hidden" id="bill_to_name_'.$noloop.'"/>';
-    //                 $tabel1 .= '<input type="hidden" id="bill_to_id_'.$noloop.'"/>';
-    //                 $tabel1 .= '</td>';
-    //                 $display = '';
-    //             }else{
-    //                 $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';
-    //                 $display = 'display:none';
-    //             }
-
-
-    //             $tabel1 .= '<td class="text-left"></td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
-    //             $tabel1 .= '<td class="text-left">'.$row->proforma_invoice_no.'</td>';
-    //             $tabel1 .= '<td>';
-    //             if ($row->t_invoice_id == null) {
-    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-    //                 . '" onclick="updateDetailSell('.$row->id.', '.$noloop.', '.$b.');" style="'.$display.'"> '
-    //                 . '<i class="fa fa-save"></i></a>';
-    //                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-    //                 . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
-    //                 . '<i class="fa fa-trash"></i></a>';
-    //             }
-    //             $tabel1 .= '</td>';
-    //             $tabel1 .= '</tr>';
-    //             $noloop++;
-
-    //             $totalAmount    += $amount;
-    //             $totalAmount2   += $amount2;
-    //         }
-
-    //         $totalCost = 0;
-    //         $totalSell = 0;
-    //         $profitAll = 0;
-
-    //         foreach($shipping as $profit)
-    //         {
-    //             $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
-    //             $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
-    //             $profitAll = $totalSell - $totalCost;
-    //             $profitPct = ($profitAll*100)/$totalSell;
-    //             $tabel2 .= '<tr>';
-    //                 if($quote->shipment_by != 'LAND'){
-    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->carrier_code.'</strong></td>';
-    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
-    //                     $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
-    //                 }
-    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
-    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
-    //                 $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
-    //                 $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
-    //                 $tabel2 .= '</tr>';
-    //                 $no++;
-    //         }
-
-
-    //     header('Content-Type: application/json');
-    //     echo json_encode([$tabel, $tabel1, $tabel2, $noloop]);
-    // }
-
     public function loadSellCost(Request $request)
     {
         $tabel      = "";
@@ -1900,153 +1637,184 @@ class BookingController extends Controller
 
         $totalAmount    = 0;
         $totalAmount2   = 0;
-        foreach($data as $row)
-            {
-                if($row->reimburse_flag == 1){
-                    $style = 'checked';
-                }else{
-                    $style = '';
-                }
+        foreach($data as $row){
+            if($row->reimburse_flag == 1){
+                $style = 'checked';
+            }else{
+                $style = '';
+            }
 
-                $total = ($row->qty * $row->cost);
-                $total2 = ($row->qty * $row->sell);
-                $amount = ($total * $row->rate) + $row->vat;
-                $amount2 = ($total2 * $row->rate) + $row->vat;
+            $total = ($row->qty * $row->cost);
+            $total2 = ($row->qty * $row->sell);
+            $amount = ($total * $row->rate) + $row->vat;
+            $amount2 = ($total2 * $row->rate) + $row->vat;
 
-                // Cost
-                $tabel .= '<tr>';
-                // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
-                $tabel .= '<td>';
-                if ($row->t_invoice_cost_id == null) {
+            // Cost
+            $tabel .= '<tr>';
+            // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$row->id.'"  id="cekx_'.$noloop.'"></td>';
+            $tabel .= '<td>';
+            if ($row->t_invoice_cost_id == null) {
+                if($row->paid_to != null){
                     $tabel .= '<input type="checkbox" onchange="checkedPaidTo('.$no.')" name="cek_cost_chrg[]" value="'.$row->id.'" id="cekx_'.$no.'">
                     <input type="checkbox" style="display: none;" name="cek_paid_to[]" value="'.$row->paid_to_id.'" id="cek_paid_to_'.$no.'"/>';
                 }
-                $tabel .=  '</td>';
-                $tabel .= '<td>'.($no).'</td>';
-                $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
-                $tabel .= '<td class="text-left">'.$row->desc.'</td>';
-                $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
-                $tabel .= '<td class="text-left">'.$row->qty.'</td>';
-                $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
-                $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
-                $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
-                if($row->paid_to == null){
-                    $tabel .= '<td>';
-                    $tabel .= '<select onchange="fillPaidToName('.$no.')" id="paid_to_'.$no.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
-                    $tabel .= '<option value="" selected>-- Select Company --</option>';
-                    foreach($company as $item){
-                        $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-                    }
-                    $tabel .= '</select>';
-                    $tabel .= '</td>';
-                    $tabel .= '<input type="hidden" id="paid_to_name_'.$no.'"/>';
-                    $tabel .= '<input type="hidden" id="paid_to_id_'.$no.'"/>';
-                    $displayx = '';
-                }else{
-                    $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
-                    $displayx = 'display:none';
-                }
-
-                $tabel .= '<td class="text-left"></td>';
+            }
+            $tabel .=  '</td>';
+            $tabel .= '<td>'.($no).'</td>';
+            $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
+            $tabel .= '<td class="text-left">'.$row->desc.'</td>';
+            $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
+            $tabel .= '<td class="text-left">'.$row->qty.'</td>';
+            $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
+            $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
+            if($row->paid_to == null){
                 $tabel .= '<td>';
-                $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
-                        . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
-                        . '<i class="fa fa-save"></i></a>';
-                $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
-                        . '" onclick="hapusDetailSch('.$row->id.');"> '
-                        . '<i class="fa fa-trash"></i></a>';
+                $tabel .= '<select onchange="fillPaidToName('.$no.')" id="paid_to_'.$no.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
+                $tabel .= '<option value="" selected>-- Select Company --</option>';
+                foreach($company as $item){
+                    $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+                }
+                $tabel .= '</select>';
                 $tabel .= '</td>';
-                $tabel .= '</tr>';
+                $tabel .= '<input type="hidden" id="paid_to_name_'.$no.'"/>';
+                $tabel .= '<input type="hidden" id="paid_to_id_'.$no.'"/>';
+                $displayx = '';
+            }else{
+                $tabel .= '<td class="text-left">'.$row->paid_to.'</td>';
+                $displayx = 'display:none';
+            }
 
-                // Sell
-                $tabel1 .= '<tr>';
-                $tabel1 .= '<td>';
-                if ($row->t_invoice_id == null) {
+            $tabel .= '<td class="text-left">'.$row->invoice_no_cost.'</td>';
+            $tabel .= '<td>';
+            $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
+                    . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
+                    . '<i class="fa fa-save"></i></a>';
+            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
+            $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
+                    . '" onclick="editDetailCF('.$row->id.');"> '
+                    . '<i class="fa fa-edit"></i></a>';
+            $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
+                    . '" onclick="hapusDetailCF('.$row->id.');"> '
+                    . '<i class="fa fa-trash"></i></a>';
+            }
+            $tabel .= '</td>';
+            $tabel .= '</tr>';
+
+            // Sell
+            $tabel1 .= '<tr>';
+            $tabel1 .= '<td>';
+            if ($row->t_invoice_id == null) {
+                if($row->bill_to != null){
                     $tabel1 .=    '<input type="checkbox" onchange="checkedBillTo('.$no.')" name="cek_sell_chrg[]" value="'.$row->id.'"  id="cekxx_'.$no.'">
                     <input type="checkbox" style="display: none;" name="cek_bill_to[]" value="'.$row->bill_to_id.'" id="cek_bill_to_'.$no.'"/>';
                 }
-                $tabel .=  '</td>';
-                $tabel1 .= '<td>'.$no.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
-                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;"></td>';
-                $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell),2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
-                $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
-                if($row->bill_to == null){
-                    //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
-                    $tabel1 .= '<td>';
-                    $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" class="form-control select2bs44" ';
-                    $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
-                    $tabel1 .= '<option value="" selected>-- Select Company --</option>';
-                    foreach($company as $item){
-                        $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
-                    }
-                    $tabel1 .= '</select>';
-                    $tabel1 .= '<input type="hidden" id="bill_to_name_'.$no.'"/>';
-                    $tabel1 .= '<input type="hidden" id="bill_to_id_'.$no.'"/>';
-                    $tabel1 .= '</td>';
-                    $display = '';
-                }else{
-                    $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';
-                    $display = 'display:none';
-                }
-
-
-                $tabel1 .= '<td class="text-left"></td>';
-                $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
-                $tabel1 .= '<td class="text-left">'.$row->invoice_no.'</td>';
+            }
+            $tabel .=  '</td>';
+            $tabel1 .= '<td>'.$no.'</td>';
+            $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
+            $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
+            $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
+            $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
+            $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format(($row->qty * $row->sell),2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
+            $tabel1 .= '<td class="text-right">'.number_format($amount2,2,',','.').'</td>';
+            if($row->bill_to == null){
+                //$tabel1 .= '<td class="text-left"><input type="text" name="bill_to" id="bill_to_'.$no.'" placeholder="Bill to..." class="form-control"></td>';
                 $tabel1 .= '<td>';
-                if ($row->t_invoice_id == null) {
-                    $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                    . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
-                    . '<i class="fa fa-save"></i></a>';
-                    $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                    . '" onclick="hapusDetailSell('.$row->id.');" style="margin-left:2px;"> '
-                    . '<i class="fa fa-trash"></i></a>';
+                $tabel1 .= '<select onchange="fillBillToName('.$no.')" id="bill_to_'.$no.'" class="form-control select2bs44" ';
+                $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
+                $tabel1 .= '<option value="" selected>-- Select Company --</option>';
+                foreach($company as $item){
+                    $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
                 }
+                $tabel1 .= '</select>';
+                $tabel1 .= '<input type="hidden" id="bill_to_name_'.$no.'"/>';
+                $tabel1 .= '<input type="hidden" id="bill_to_id_'.$no.'"/>';
                 $tabel1 .= '</td>';
-                $tabel1 .= '</tr>';
+                $display = '';
+            }else{
+                $tabel1 .= '<td class="text-left">'.$row->bill_to.'</td>';
+                $display = 'display:none';
+            }
+
+
+            $tabel1 .= '<td class="text-left"></td>';
+            $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
+            $tabel1 .= '<td class="text-left">'.$row->invoice_no.'</td>';
+            $tabel1 .= '<td>';
+            if ($row->t_invoice_id == null) {
+                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
+                . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
+                . '<i class="fa fa-save"></i></a>';
+            }
+
+            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
+                $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
+                . '" onclick="hapusDetailCF('.$row->id.');" style="margin-left:2px;"> '
+                . '<i class="fa fa-trash"></i></a>';
+            }
+            $tabel1 .= '</td>';
+            $tabel1 .= '</tr>';
+            $no++;
+
+            $totalAmount    += $amount;
+            $totalAmount2   += $amount2;
+        }
+
+        $totalCost = 0;
+        $totalSell = 0;
+        $profitAll = 0;
+
+        foreach($shipping as $profit)
+        {
+            $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
+            $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
+            $profitAll = $totalSell - $totalCost;
+            $profitPct = ($profitAll*100)/$totalSell;
+            $tabel2 .= '<tr>';
+                if($quote->shipment_by != 'LAND'){
+                    $tabel2 .= '<td class="text-center"><strong>'.$profit->carrier_code.'</strong></td>';
+                    $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
+                    $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
+                }
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
+                $tabel2 .= '</tr>';
                 $no++;
+        }
 
-                $totalAmount    += $amount;
-                $totalAmount2   += $amount2;
-            }
-
-            $totalCost = 0;
-            $totalSell = 0;
-            $profitAll = 0;
-
-            foreach($shipping as $profit)
-            {
-                $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
-                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
-                $profitAll = $totalSell - $totalCost;
-                $profitPct = ($profitAll*100)/$totalSell;
-                $tabel2 .= '<tr>';
-                    if($quote->shipment_by != 'LAND'){
-                        $tabel2 .= '<td class="text-center"><strong>'.$profit->carrier_code.'</strong></td>';
-                        $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
-                        $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
-                    }
-                    $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
-                    $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
-                    $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
-                    $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
-                    $tabel2 .= '</tr>';
-                    $no++;
-            }
-
-
+        if(empty($data)){
+            $tabel .= '<tr><td colspan="10">No Data ...</td></tr>';
+            $tabel1 .= '<tr><td colspan="10">No Data ...</td></tr>';
+        }
+        if(empty($shipping)){
+            $tabel2 .= '<tr><td colspan="10">No Data ...</td></tr>';
+        }
         header('Content-Type: application/json');
         echo json_encode([$tabel, $tabel1, $tabel2, $no]);
+    }
+
+    public function deleteCF(Request $request)
+    {
+        try {
+            DB::table('t_bcharges_dtl')->where('id', $request['id'])->delete();
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
     }
 
     public function updateSell(Request $request)
@@ -2110,7 +1878,7 @@ class BookingController extends Controller
     public function cek_version(Request $request)
     {
         $quote = DB::select("SELECT * FROM t_booking WHERE booking_no = '".$request->booking_no."'");
-        if(count($quote) == 1){
+        if(count($quote) == 1 || count($quote) == 0){
             $a = true;
         }else{
             $a = false;
@@ -2255,7 +2023,7 @@ class BookingController extends Controller
         $id =   DB::table('t_booking')->insertGetId([
             't_quote_id'            => $booking->t_quote_id,
             'booking_date'          => Carbon::parse($booking->booking_date),
-            'version_no'            => $booking->version_no,
+            'version_no'            => 1,
             'activity'              => $booking->activity,
             'nomination_flag'       => $booking->nomination_flag,
             'copy_booking'          => $booking->booking_no,
@@ -2554,8 +2322,14 @@ class BookingController extends Controller
     {
         $cek = DB::table('t_bcharges_dtl')->where('t_booking_id', $request->booking_id)->orderBy('created_on', 'desc')->first();
 
-        $shipping   = QuotationModel::get_quoteShipping($request->quote);
-        $shp = $shipping[0];
+        $shp_routing = '';
+        $shp_transit_time = '';
+        if($request->quote != 0){
+            $shipping   = QuotationModel::get_quoteShipping($request->quote);
+            $shp = $shipping[0];
+            $shp_routing = $shp->routing;
+            $shp_transit_time = $shp->transit_time;
+        }
 
         if($cek == null){
             $p = 1;
@@ -2587,8 +2361,8 @@ class BookingController extends Controller
             'sell_val'          => str_replace(',','', $request->sell_val),
             'vat'               => $request->vat,
             'subtotal'          => str_replace(',','', $request->total),
-            'routing'           => $shp->routing,
-            'transit_time'      => $shp->transit_time,
+            'routing'           => $shp_routing,
+            'transit_time'      => $shp_transit_time,
             'created_by'        => $user,
             'created_on'        => $tanggal
         ]);
@@ -2671,4 +2445,132 @@ class BookingController extends Controller
         echo json_encode($return_data);
     }
 
+    public function booking_cancel(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_booking')->where('id', $request->booking)->update([
+                'status'            => 9,
+                'updated_by'        => $user,
+                'updated_at'        => $tanggal
+            ]);
+
+            $return_data = 'sukses';
+            return redirect('booking/list')->with('status', 'Successfully Cancelled');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+
+    }
+
+    public function getPort(Request $request){
+
+      $search = $request->search;
+
+      if($search == '' || strlen($search) < 3){
+         $ports = DB::table('t_mport')->select('*')->orderBy('port_name','asc')->limit(5)->get();
+      }else{
+         $ports = DB::table('t_mport')->select('*')->where('port_name', 'like', '%' .$search . '%')->orderBy('port_name','asc')->get();
+      }
+
+      $response = array();
+      foreach($ports as $port){
+         $response[] = array(
+              "id"=>$port->id,
+              "text"=>$port->port_name,
+         );
+      }
+
+      return response()->json($response);
+    }
+
+
+    public function getExistingPort(Request $request){
+
+      $booking_id = $request->booking_id;
+      $response = [];
+
+      $data = collect(DB::select('SELECT b.pol_id, b.pot_id, b.pod_id, pol.port_name as pol, pot.port_name as pot, pod.port_name as pod 
+            FROM t_booking b
+                left join t_mport pol on b.pol_id = pol.id
+                left join t_mport pot on b.pot_id = pot.id
+                left join t_mport pod on b.pod_id = pod.id
+            where b.id ='.$booking_id))->first();
+
+      if($data->pol_id>0){
+         $response['pol'] = array(
+              "id"=>$data->pol_id,
+              "text"=>$data->pol,
+         );
+      }
+
+      if($data->pot_id>0){
+         $response['pot'] = array(
+              "id"=>$data->pot_id,
+              "text"=>$data->pot,
+         );
+      }
+
+      if($data->pod_id>0){
+         $response['pod'] = array(
+              "id"=>$data->pod_id,
+              "text"=>$data->pod,
+         );
+      }
+      // $response['id'] = [
+      //   'pol' => $data->pol_id,
+      //   'pot' => $data->pot_id,
+      //   'podisc' => $data->pod_id,
+      // ];
+
+      return response()->json($response);
+    }
+
+    public function update_request(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_booking')
+            ->where('id', $request->id_booking)
+            ->update([
+                'status'            => 8,
+                'open_remarks'      => $request->open_remarks,
+                'updated_by'        => $user,
+                'updated_at'        => $tanggal
+            ]);
+
+            return redirect('booking/list')->with('status', 'Successfully Requested');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function approve_request(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_booking')
+            ->where('id', $request->id_booking)
+            ->update([
+                'status'            => 0,
+                'flag_invoice'      => 0,
+                'approved_by'        => $user,
+                'approved_at'        => $tanggal
+            ]);
+
+            return redirect('booking/list')->with('status', 'Successfully Approved');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function booking_getDetailCharges(Request $request)
+    { 
+        $data = BookingModel::getChargesDetailById($request->id);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
 }

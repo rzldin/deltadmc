@@ -38,6 +38,7 @@
                                 <th>Shipper</th>
                                 <th>Consignee</th>
                                 <th>Client</th>
+                                <th>Status</th>
                                 <th>Activity</th>
                                 <th>Action</th>
                             </tr>
@@ -53,16 +54,40 @@
                                 <td>{{ $invoice->company_d }}</td>
                                 <td>{{ $invoice->company_c }}</td>
                                 <td>{{ $invoice->company_b }}</td>
+                                @if($invoice->tipe_inv == 1)<!-- Hutang -->
+                                    @if ($invoice->flag_bayar == 0)
+                                        <td class="bg-secondary text-center">Draft</td>
+                                    @elseif($invoice->flag_bayar == 2) 
+                                        <td class="bg-success text-center">Partially Paid</td>
+                                    @else 
+                                        <td class="bg-success text-center">Paid</td>
+                                    @endif
+                                @else<!-- Piutang -->
+                                    @if($invoice->proforma_invoice_id == 0)
+                                        <td class="bg-secondary text-center">Draft</td>
+                                    @else
+                                        <td class="bg-success text-center">Proforma Created</td>
+                                    @endif
+                                @endif
                                 <td>{{ $invoice->activity }}</td>
                                 <td>
                                     <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
-                                    @if ($invoice->proforma_invoice_id == 0 && $invoice->tipe_inv == 0)
-                                        <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
-                                    @endif
-                                    @if ($invoice->journal_id == 0)
-                                        <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
-                                                <i class="fa fa-book"></i> Journal
-                                        </a>
+                                    @if($invoice->tipe_inv == 0)
+                                        @if ($invoice->proforma_invoice_id == 0)
+                                            <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
+                                        @endif
+                                        @if ($invoice->journal_id == 0)
+                                            <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
+                                                    <i class="fa fa-book"></i> Journal
+                                            </a>
+                                        @endif
+                                        @if($invoice->proforma_invoice_id==0)
+                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
+                                        @endif
+                                    @else
+                                        @if($invoice->flag_bayar==0)
+                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
@@ -77,6 +102,6 @@
 @endsection
 
 @push('after-scripts')
-    <script>
-    </script>
+<script>
+</script>
 @endpush

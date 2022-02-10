@@ -1106,6 +1106,7 @@ class MasterController extends Controller
     public function account()
     {
         $data['list_data'] = MasterModel::account_get();
+        $data['list_acc_type'] = MasterModel::acc_type();
         $data['list_segment'] = MasterModel::segment_get();
         $data['list_parent'] = MasterModel::parent_account_get();
         return view('master.account')->with($data);
@@ -1865,6 +1866,69 @@ class MasterController extends Controller
             DB::table('t_muom')->where('id', $id)->delete();
 
             return redirect()->route('master.uom')->with('status', 'Successfully deleted');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    /** ACCOUNT TYPE **/
+
+    /** Country */
+    public function acc_type()
+    {
+        $data['list_data'] = MasterModel::acc_type();
+
+        return view('master.account_type')->with($data);
+    }
+
+    public function acc_type_doAdd(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_macc_type')->insert([
+                'type_name'          => $request->account_name,
+                'created_by'            => $user,
+                'created_at'            => $tanggal
+            ]);
+
+            return redirect()->route('master.acc_type')->with('status', 'Successfully added');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function acc_type_doEdit(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_macc_type')
+            ->where('id', $request->id)
+            ->update([
+                'type_name'          => $request->account_name,
+                'created_by'            => $user,
+                'created_at'            => $tanggal
+            ]);
+
+            return redirect()->route('master.acc_type')->with('status', 'Successfully updated');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function acc_type_get(Request $request)
+    {
+        $data = MasterModel::acc_type_get($request['id']);
+        return json_encode($data);
+    }
+
+    public function acc_type_delete($id)
+    {
+        try {
+            DB::table('t_macc_type')->where('id', $id)->delete();
+
+            return redirect()->route('master.acc_type')->with('status', 'Successfully Deleted!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }

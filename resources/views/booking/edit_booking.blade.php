@@ -25,7 +25,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
-                            <strong>{{ ucwords($quote->activity) }}</strong>
+                            <strong>{{ ucwords($booking->activity) }}</strong>
                         </h3>
                     </div>
                     <div class="card-body">
@@ -58,27 +58,26 @@
                                                 </div>
                                                 @endforeach
                                                 @endif
-                                                <?php $verse = $quote->version_no; ?>
-                                                @if ($quote->activity == 'domestic')
-                                                {{\App\Http\Controllers\BookingController::edit_header_domestic($quote, $verse)}}
-                                                @elseif($quote->activity == 'export')
-                                                {{\App\Http\Controllers\BookingController::edit_header_export($quote, $verse)}}
-                                                @elseif($quote->activity == 'import')
-                                                {{\App\Http\Controllers\BookingController::edit_header_import($quote, $verse)}}
+                                                <?php $verse = $booking->version_no; ?>
+                                                @if ($booking->activity == 'domestic')
+                                                    {{\App\Http\Controllers\BookingController::edit_header_domestic($booking, $verse)}}
+                                                @elseif($booking->activity == 'export')
+                                                    {{\App\Http\Controllers\BookingController::edit_header_export($booking, $verse)}}
+                                                @elseif($booking->activity == 'import')
+                                                    {{\App\Http\Controllers\BookingController::edit_header_import($booking, $verse)}}
                                                 @endif
                                             </form>
                                             <div class="row float-right mt-2">
-
-                                                <?php if($quote->shipment_by == 'SEA') {?>
-                                                    @if ($quote->loaded_type == 'FCL')
-                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$quote->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_fcl/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                <?php if($booking->shipment_by == 'SEA') {?>
+                                                    @if ($booking->loaded_type == 'FCL')
+                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_fcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
                                                     @else
-                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$quote->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_lcl/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_lcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
                                                     @endif
-                                                <?php }elseif($quote->shipment_by == 'AIR'){?>
-                                                    <a href="{{ url('booking/cetak_si_air/'.$quote->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
+                                                <?php }elseif($booking->shipment_by == 'AIR'){?>
+                                                    <a href="{{ url('booking/cetak_si_air/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
                                                 <?php }?>
 
                                             </div>
@@ -108,6 +107,7 @@
                                                            <tbody id="tblCommodity">
 
                                                            </tbody>
+                                                        @if($booking->flag_invoice == 0)
                                                            <tr>
                                                                 <td>
                                                                     <i class="fa fa-plus"></i>
@@ -188,6 +188,7 @@
                                                                     <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailCom(1)"><i class="fa fa-plus"></i> Add</button>
                                                                 </td>
                                                            </tr>
+                                                        @endif
                                                        </tbody>
                                                    </table>
                                                 </div>
@@ -213,6 +214,7 @@
                                                            <tbody id="tblPackages">
 
                                                            </tbody>
+                                                        @if($booking->flag_invoice == 0)
                                                            <tr>
                                                                 <td>
                                                                     <i class="fa fa-plus"></i>
@@ -235,6 +237,7 @@
                                                                     <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailPckg(1)"><i class="fa fa-plus"></i> Add</button>
                                                                 </td>
                                                            </tr>
+                                                        @endif
                                                        </tbody>
                                                    </table>
                                                 </div>
@@ -246,7 +249,7 @@
                                                     <h3 class="card-title">Container</h3>
                                                 </div>
                                                 <div class="card-body table-responsive p-0">
-                                                    @if ($quote->activity == 'export')
+                                                    @if ($booking->activity == 'export')
                                                     <table class="table table_lowm table-bordered" id="myTable3" width="200%">
                                                     @else
                                                     <table class="table table_lowm table-bordered" width="100%">
@@ -259,7 +262,7 @@
                                                                <th width="10%">Loaded Type</th>
                                                                <th width="10%">Container Type</th>
                                                                <th width="10%">Seal No</th>
-                                                               @if ($quote->activity == 'export')
+                                                               @if ($booking->activity == 'export')
                                                                 <th width="10%">VGM</th>
                                                                 <th width="7%">Uom</th>
                                                                 <th width="10%">Resp.Party</th>
@@ -274,6 +277,7 @@
                                                            <tbody id="tblContainer">
 
                                                            </tbody>
+                                                        @if($booking->flag_invoice == 0)
                                                            <tr>
                                                                 <td>
                                                                     <i class="fa fa-plus"></i>
@@ -303,7 +307,7 @@
                                                                 <td>
                                                                     <input type="text" class="form-control" name="seal_no" id="seal_no_1" placeholder="Seal No ...">
                                                                 </td>
-                                                                @if ($quote->activity == 'export')
+                                                                @if ($booking->activity == 'export')
                                                                 <td>
                                                                     <input type="text" class="form-control" name="vgm" id="vgm_1" placeholder="VGM ...">
                                                                 </td>
@@ -332,15 +336,16 @@
                                                                     <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailCon(1)"><i class="fa fa-plus"></i> Add</button>
                                                                 </td>
                                                            </tr>
+                                                        @endif
                                                        </tbody>
                                                    </table>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        @if ($quote->activity == 'export')
+                                        @if ($booking->activity == 'export')
                                         <div class="col-md-12 mb-3 ">
-                                            <a href="{{ url('booking/cetak_vgm/'.$quote->id) }}" class="btn btn-md btn-success float-right" target="_blank"><i class="fa fa-file"></i> Print VGM Certificate</a>
+                                            <a href="{{ url('booking/cetak_vgm/'.$booking->id) }}" class="btn btn-md btn-success float-right" target="_blank"><i class="fa fa-file"></i> Print VGM Certificate</a>
                                         </div>
                                         @endif
                                         <div class="col-md-12">
@@ -363,6 +368,7 @@
                                                            <tbody id="tblDoc">
 
                                                            </tbody>
+                                                        @if($booking->flag_invoice == 0)
                                                            <tr>
                                                                 <td>
                                                                     <i class="fa fa-plus"></i>
@@ -387,21 +393,37 @@
                                                                     <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailDoc(1)"><i class="fa fa-plus"></i> Add</button>
                                                                 </td>
                                                            </tr>
+                                                        @endif
                                                        </tbody>
                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
+                                        @if($booking->flag_invoice == 1 && $booking->status == 0)
+                                        <a class="btn btn-warning mb-4 float-right mr-2" onclick="requestOpen('{{ $booking->id }}')"><i class="fa fa-question"></i> Request Open </a>
+                                        @endif
+
+                                        @if($booking->status == 8 && ($user->role_id == 3 || $user->role_id == 1))
+                                            <button type="button" class="btn btn-primary mb-4 float-right mr-2" onClick="approveRequest({{ $booking->id }});"><i class="fa fa-save"></i> Approve Request</button>
+                                        @endif
                                             <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
-                                            <a href="{{ url('booking/booking_new/'.$quote->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2">
+                                        @if($booking->flag_invoice == 0)
+                                            <a href="{{ url('booking/booking_new/'.$booking->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2">
                                                 <i class="fa fa-plus"></i> New Version
                                             </a>
-                                            <a href="{{ route('booking.list') }}" class="btn btn-danger float-left mr-2">
-                                                <i class="fa fa-times"></i> Cancel
-                                            </a>
+                                        @endif
+                                        @if($booking->status != 9)
+                                            <form action="{{ route('booking.cancel') }}" method="post" target="_self" name="form_cancel" id="form_cancel">
+                                                <input type="hidden" name="booking" value="{{ $booking->id }}">
+                                                {{ csrf_field() }}
+                                                <button type="button" class="btn btn-danger float-left mr-2" id="cancel_confirm">
+                                                    <i class="fa fa-times"></i> Cancel
+                                                </button>
+                                            </form>
+                                        @endif
                                             <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)">
                                                 <i class="fa fa-save"></i> Save
                                             </a>
@@ -416,8 +438,10 @@
                                         <div class="col-md-12">
                                             <div class="card card-primary">
                                                 <div class="card-header">
+                                                @if($booking->flag_invoice == 0)
                                                     <a class="btn btn-dark btn-sm float-left" onclick="newRoad()"><i class="fa fa-plus"></i> Add Data</a>
-                                                    <a href="{{ url('booking/cetak_suratjalan/'.$quote->id) }}" target="_blank" class="btn btn-success btn-sm float-right"><i class="fa fa-print"></i> Print Surat Jalan</a>
+                                                @endif
+                                                    <a href="{{ url('booking/cetak_suratjalan/'.$booking->id) }}" target="_blank" class="btn btn-success btn-sm float-right"><i class="fa fa-print"></i> Print Surat Jalan</a>
                                                 </div>
                                                 <div class="card-body">
                                                     <table id="myTable" class="table table-bordered table-striped" width="100%">
@@ -460,7 +484,7 @@
                                             <form class="eventInsForm" method="post" target="_self" name="formku"
                                                   id="formRoad" enctype="multipart/form-data">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
+                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $booking->id }}">
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         No. SJ <font color="#f00">*</font>
@@ -554,7 +578,9 @@
                                         <div class="col-md-12">
                                             <div class="card card-primary">
                                                 <div class="card-header">
+                                                    @if($booking->flag_invoice == 0)
                                                     <a class="btn btn-dark btn-sm float-right" onclick="newSchedule()"><i class="fa fa-plus"></i> Add Data</a>
+                                                    @endif
                                                 </div>
                                                 <div class="card-body">
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
@@ -590,7 +616,7 @@
                                             <form class="eventInsForm" method="post" target="_self" name="formku"
                                                   id="formRoad" enctype="multipart/form-data">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $quote->id }}">
+                                                <input type="hidden" name="booking_id" id="booking_id" value="{{ $booking->id }}">
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
                                                         Schedule<font color="#f00">*</font>
@@ -662,11 +688,11 @@
                                             <form id="fCost" method="get">
                                                 @csrf
                                                 <div class="card card-warning">
-                                                    <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
+                                                    <input type="hidden" name="t_booking_id" value="{{ $booking->id }}">
                                                     <div class="card-header">
                                                         <h5 class="card-title">Cost</h5>
                                                         <a class="btn btn-success float-right" onclick="redirectToCostInvoice()"><i class="fas fa-check"></i> Input Invoice for selected</a>
-                                                        <a href="{{ url('booking/preview/'.$quote->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
+                                                        <a href="{{ url('booking/preview/'.$booking->id) }}" class="btn btn-info float-right" style="margin-right: 5px" target="_blank"><i class="fa fa-file"></i> Preview Booking</a>
                                                     </div>
                                                     <div class="card-body table-responsive p-0 text-center">
                                                         <table class="table table-bordered table-striped" id="myTable2" style="width: 150%;">
@@ -685,7 +711,7 @@
                                                                     <th>Vat</th>
                                                                     <th>Amount</th>
                                                                     <th width="10%">Paid To</th>
-                                                                    <th>Note</th>
+                                                                    <th>Invoice No.</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -703,7 +729,7 @@
                                             <form id="fSell" method="get">
                                                     @csrf
                                                 <div class="card-success">
-                                                    <input type="hidden" name="t_booking_id" value="{{ $quote->id }}">
+                                                    <input type="hidden" name="t_booking_id" value="{{ $booking->id }}">
                                                     <div class="card-header">
                                                         <h5 class="card-title">Sell</h5>
                                                         <a href="javascript:void(0)" onclick="redirectToProformaInvoice()" class="btn btn-warning float-right"><i class="fas fa-check"></i> Create Invoice Selected</a>
@@ -750,7 +776,7 @@
                                                     <table id="myTablex" class="table table-bordered table-striped" width="100%">
                                                         <thead>
                                                           <tr>
-                                                            @if ($quote->shipment_by != 'LAND')
+                                                            @if ($booking->shipment_by != 'LAND')
                                                             <td class="text-center">Carrier</td>
                                                             <td class="text-center">Routing</td>
                                                             <td class="text-center">Transit Time</td>
@@ -782,20 +808,20 @@
             </div>
         </div>
     </div>
-    <input type="hidden" id="client_addrx" value="{{ $quote->client_addr_id }}">
-    <input type="hidden" id="client_picx" value="{{ $quote->client_pic_id }}">
-    <input type="hidden" id="shipper_addrx" value="{{ $quote->shipper_addr_id }}">
-    <input type="hidden" id="shipper_picx" value="{{ $quote->shipper_pic_id }}">
-    <input type="hidden" id="consignee_addrx" value="{{ $quote->consignee_addr_id }}">
-    <input type="hidden" id="consignee_picx" value="{{ $quote->consignee_pic_id }}">
-    <input type="hidden" id="notifyParty_addrx" value="{{ $quote->not_party_addr_id }}">
-    <input type="hidden" id="notifyParty_picx" value="{{ $quote->not_party_pic_id }}">
-    <input type="hidden" id="agent_addrx" value="{{ $quote->agent_addr_id }}">
-    <input type="hidden" id="agent_picx" value="{{ $quote->agent_pic_id }}">
-    <input type="hidden" id="shipline_addrx" value="{{ $quote->shpline_addr_id }}">
-    <input type="hidden" id="shipline_picx" value="{{ $quote->shpline_pic_id }}">
-    <input type="hidden" id="vendor_addrx" value="{{ $quote->vendor_addr_id }}">
-    <input type="hidden" id="vendor_picx" value="{{ $quote->vendor_pic_id }}">
+    <input type="hidden" id="client_addrx" value="{{ $booking->client_addr_id }}">
+    <input type="hidden" id="client_picx" value="{{ $booking->client_pic_id }}">
+    <input type="hidden" id="shipper_addrx" value="{{ $booking->shipper_addr_id }}">
+    <input type="hidden" id="shipper_picx" value="{{ $booking->shipper_pic_id }}">
+    <input type="hidden" id="consignee_addrx" value="{{ $booking->consignee_addr_id }}">
+    <input type="hidden" id="consignee_picx" value="{{ $booking->consignee_pic_id }}">
+    <input type="hidden" id="notifyParty_addrx" value="{{ $booking->not_party_addr_id }}">
+    <input type="hidden" id="notifyParty_picx" value="{{ $booking->not_party_pic_id }}">
+    <input type="hidden" id="agent_addrx" value="{{ $booking->agent_addr_id }}">
+    <input type="hidden" id="agent_picx" value="{{ $booking->agent_pic_id }}">
+    <input type="hidden" id="shipline_addrx" value="{{ $booking->shpline_addr_id }}">
+    <input type="hidden" id="shipline_picx" value="{{ $booking->shpline_pic_id }}">
+    <input type="hidden" id="vendor_addrx" value="{{ $booking->vendor_addr_id }}">
+    <input type="hidden" id="vendor_picx" value="{{ $booking->vendor_pic_id }}">
 </section>
 <!--- Modal Form -->
 <div class="modal fade" id="HBLMODAL" tabindex="-1" role="basic" aria-hidden="true">
@@ -957,10 +983,10 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
-                           Reimbursment
+                           Reimbursement
                         </div>
                         <div class="col-md-8 col-xs-8">
-                            <input type="checkbox" name="reimburs" id="reimburs" onclick="checkbox()">
+                            <input type="checkbox" name="reimburs" id="reimburs">
                             <input type="hidden" name="reimbursx" id="reimbursx" value="">
                         </div>
                     </div>
@@ -1008,11 +1034,11 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                                NPWP <font color="#f00">*</font>
+                                Tax ID <font color="#f00">*</font>
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="npwp" name="npwp" 
-                                    class="form-control myline" style="margin-bottom:5px"  placeholder="NPWP...">
+                                    class="form-control myline" style="margin-bottom:5px"  placeholder="Tax ID...">
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -1340,14 +1366,141 @@
             </div>
         </div>
     </div>
+
+<!--- Request Form -->
+<div class="modal fade" id="requestOpen" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="request_form" action="{{ route('booking.update_request') }}" 
+                      id="request_form" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Keterangan
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <textarea class="form-control" name="open_remarks" id="open_remarks"></textarea>
+                            <input type="hidden" name="id_booking" id="id_booking_request">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">                        
+                <button type="button" class="btn btn-primary" onClick="$('#request_form').submit()"><i class="fa fa-save"></i> Ajukan Request</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<form  method="post" target="_self" name="approve_request_form" action="{{ route('booking.approve_request') }}" 
+  id="approve_request_form" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="hidden" name="id_booking" id="approve_request_id">  
+</form>
 @push('after-scripts')
     <script>
 
-        $(document).ready(function(){
-            $(".dataTables_empty").hide();
-        })
+    function requestOpen(id){
+        $('#id_booking_request').val(id);
+        $("#requestOpen").find('.modal-title').text('Request Open Booking');
+        $("#requestOpen").modal('show',{backdrop: 'true'}); 
+    }
 
-        var dsState;
+    function approveRequest(id){
+        if (confirm('Anda yakin meng-approve request booking ini ?')) {
+            $('#approve_request_id').val(id);
+            $('#approve_request_form').submit(); 
+        }
+    }
+
+    $(document).ready(function(){
+        $('#reimburs').click(function() {
+            if($('#reimburs').is(':checked')){
+                $('#reimbursx').val(1);
+            }else{
+                $('#reimbursx').val(0);
+            }
+            console.log($('#reimbursx').val());
+        });
+
+        $('.select-ajax-port').select2({
+          theme: "bootstrap4",
+          ajax: {
+            url: "{{route('booking.getPort')}}",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              var query = {
+                search: params.term,
+              }
+
+              // Query parameters will be ?search=[term]&type=public
+              return query;
+            },
+            processResults: function(data, params) {
+                console.log(data);
+                return {results: data};
+            },
+            cache: true
+          },
+        });
+
+        var pol = $('#pol');
+        var pot = $('#pot');
+        var podisc = $('#podisc');
+        $.ajax({
+            type: 'POST',
+            url: "{{route('booking.getExistingPort')}}",
+            data : {
+                booking_id:$('#booking_id').val(),
+            },
+        }).then(function (data) {
+            // create the option and append to Select2
+            var pol_option = new Option(data.pol.text, data.pol.id, true, true);
+            pol.append(pol_option).trigger('change');
+            pol.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var pot_option = new Option(data.pot.text, data.pot.id, true, true);
+            pot.append(pot_option).trigger('change');
+            pot.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var podisc_option = new Option(data.pod.text, data.pod.id, true, true);
+            podisc.append(podisc_option).trigger('change');
+            podisc.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+        });
+        $(".dataTables_empty").hide();
+    })
+
+    var dsState;
+
+    $("#cancel_confirm").click(function(){
+        var result = confirm("Anda yakin ingin meng-cancel booking ini ?");
+        if (result) {
+            $('#form_cancel').submit();
+        }
+    });
 
     /** Add Customer **/
     function addCustomer(val)
@@ -1430,7 +1583,7 @@
                 $('#add-customer').modal('hide')
 
                 if($('#company_type').val() == 'client'){
-                    get_customer({{ $quote->client_id }});
+                    get_customer({{ $booking->client_id }});
                 }else if($('#company_type').val() == 'shipper'){
                     get_shipper();
                 }else if($('#company_type').val() == 'consignee'){
@@ -1513,7 +1666,7 @@
                             },
                             success:function(result){
                                 $('#add-carrier').modal('hide')
-                                load_carrier({{ $quote->carrier_id }})
+                                load_carrier({{ $booking->carrier_id }})
                                 Toast.fire({
                                     icon: 'success',
                                     title: 'Sukses Add Data!'
@@ -1619,13 +1772,13 @@
                             success:function(result){
                                 $('#add-port').modal('hide')
 
-                                if(type == 'pol'){
-                                    portOfLoading();
-                                }else if(type == 'pot'){
-                                    portOfTransit();
-                                }else if(type == 'pod'){
-                                    portOfDischarge();
-                                }
+                                // if(type == 'pol'){
+                                //     portOfLoading();
+                                // }else if(type == 'pot'){
+                                //     portOfTransit();
+                                // }else if(type == 'pod'){
+                                //     portOfDischarge();
+                                // }
                                 // portOfLoading()
                                 // portOfTransit()
                                 // portOfDischarge()
@@ -1669,9 +1822,9 @@
         }
 
         /*** Edit Detail Quote **/
-         function editDetailx(id){
+         function editDetailCF(id){
             $.ajax({
-                url: "{{ route('quotation.quote_getDetailQ') }}",
+                url: "{{ route('booking.booking_getDetailCharges') }}",
                 type: "POST",
                 data: {
                     id: id,
@@ -1690,7 +1843,7 @@
                     $('#descx').val(data.desc);
                     $('#id_dtl_quote').val(data.id);
                     $('#ratex').val(Number(data.rate));
-                    $('#currencyx').val(data.t_mcurrency_id).trigger('change');
+                    $('#currencyx').val(data.currency).trigger('change');
                     if(data.reimburse_flag == 1){
                         $('#reimburs').prop('checked',true);
                         $('#reimbursx').val(1);
@@ -1763,7 +1916,7 @@
                         url:"{{ route('booking.quote_addDetail') }}",
                         data:{
                             booking_id:{{ $booking->id }},
-                            quote:{{ $quote->t_quote_id }},
+                            quote:{{ ($booking->t_quote_id)? $booking->t_quote_id:0 }},
                             quote_no : $('#quote_no').val(),
                             charge:$('#charge').val(),
                             desc:$('#descx').val(),
@@ -1782,7 +1935,7 @@
                         success:function(result){
                             $('#detail-quote').modal('hide')
                             $('#detail_quote_submit').prop('disabled', false);
-                            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }});
+                            loadSellCost({{ $booking->id }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Add Data!'
@@ -1812,12 +1965,12 @@
                             vat:$('#vatx').val(),
                             total:$('#totalx').val(),
                             note:$('#notex').val(),
-                            quote:{{ $quote->t_quote_id }}
+                            quote:{{ ($booking->t_quote_id)? $booking->t_quote_id:0 }}
                         },
                         success:function(result){
                             $('#detail_quote_submit').prop('disabled', false);
                             $('#detail-quote').modal('hide');
-                            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }});
+                            loadSellCost({{ $booking->id }});
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Sukses Update Data!'
@@ -1842,7 +1995,6 @@
                 success:function(result){
                     let text = JSON.parse(result)
                     let code = text.code
-                    console.log(code);
 
                     if(code == 'IDR' && $('#ratex').val() == ''){
                         $('#ratex').val(1);
@@ -1897,7 +2049,7 @@
                 dataType: "html",
                 success: function(result) {
                     var final = JSON.parse(result);
-                    $("#customer_add").html(final)
+                    $("#customer_add").html(final);
                 }
             })
         }
@@ -2588,7 +2740,10 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadRoadCons') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     $('.spinner_load_cons').hide();
@@ -2603,7 +2758,10 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadSchedule') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2613,7 +2771,7 @@
         }
 
         /** Load Schedule **/
-        function loadSellCost(val, id){
+        function loadSellCost(id){
             $('.spinner_load').show();
             if(id != null)
             {
@@ -2621,7 +2779,6 @@
                     type:"POST",
                     url:"{{ route('booking.loadSellCost') }}",
                     data:{
-                        quote_no : val,
                         id : id
                     },
                     dataType:"html",
@@ -2641,12 +2798,12 @@
         }
 
         function loadProfit(id){
-            if(id != null){
+            if(id != null && id != 0){
                 $.ajax({
                     type:"POST",
                     url:"{{ route('quotation.quote_loadProfit') }}",
                     data:{
-                        id       : id
+                        id: id
                     },
                     dataType:"html",
                     success:function(result){
@@ -2699,12 +2856,36 @@
             }
         }
 
+        /** Hapus Detail Charges And Fee **/
+        function hapusDetailCF(id){
+            var r=confirm("Anda yakin menghapus data ini?");
+            if (r==true){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.deleteCF') }}",
+                    data:"id="+ id,
+                    success:function(result){
+                        loadSellCost({{ $booking->id }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Deleted!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Gagal Menghapus data!');
+                    },
+                });
+            }
+        }
+
         /** Load Commodity **/
         function loadCommodity(id){
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadCommodity') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2719,7 +2900,10 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadPackages') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2734,7 +2918,10 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadContainer') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -2749,7 +2936,10 @@
             $.ajax({
                 type:"POST",
                 url:"{{ route('booking.loadDoc') }}",
-                data:"id="+id,
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
                 dataType:"html",
                 success:function(result){
                     var tabel = JSON.parse(result);
@@ -3420,7 +3610,7 @@
                 type:"POST",
                 url:"{{ route('booking.addCommodity') }}",
                 data:{
-                    booking:{{ $quote->id }},
+                    booking:{{ $booking->id }},
                     hs_code:$('#hs_code_'+id).val(),
                     desc:$('#desc_'+id).val(),
                     origin:$('#origin_'+id).val(),
@@ -3481,7 +3671,7 @@
                 type:"POST",
                 url:"{{ route('booking.addPackages') }}",
                 data:{
-                    booking:{{ $quote->id }},
+                    booking:{{ $booking->id }},
                     merk:$('#merk_'+id).val(),
                     qty:$('#qtyx_'+id).val(),
                     unit:$('#unit_'+id).val()
@@ -3529,7 +3719,7 @@
                 type:"POST",
                 url:"{{ route('booking.addContainer') }}",
                 data:{
-                    booking:{{ $quote->id }},
+                    booking:{{ $booking->id }},
                     con_numb:$('#con_numb_'+id).val(),
                     size:$('#size_'+id).val(),
                     container:$('#container_'+id).val(),
@@ -3588,7 +3778,7 @@
                 type:"POST",
                 url:"{{ route('booking.addDoc') }}",
                 data:{
-                    booking:{{ $quote->id }},
+                    booking:{{ $booking->id }},
                     doc:$('#docx_'+id).val(),
                     number:$('#doc_number_'+id).val(),
                     date:$('#doc_date_'+id).val()
@@ -3651,7 +3841,7 @@
                     v : v
                 },
                 success:function(result){
-                    loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
+                    loadSellCost({{ $booking->id }})
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Update Data!'
@@ -3677,7 +3867,7 @@
                     v : v
                 },
                 success:function(result){
-                    loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
+                    loadSellCost({{ $booking->id }})
                     Toast.fire({
                         icon: 'success',
                         title: 'Sukses Update Data!'
@@ -3689,13 +3879,29 @@
         }
 
         function redirectToCostInvoice() {
-            $('#fCost').attr('action', `{{ route('invoice.create_cost') }}`);
-            $('#fCost').submit();
+            if ($("[id^='cek_paid_to_']:checked").length == 0){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Harap pilih Item Cost',
+                    icon: 'error'
+                })
+            }else{
+                $('#fCost').attr('action', `{{ route('invoice.create_cost') }}`);
+                $('#fCost').submit();
+            }
         }
 
         function redirectToProformaInvoice() {
-            $('#fSell').attr('action', `{{ route('invoice.create') }}`);
-            $('#fSell').submit();
+            if ($("[id^='cek_bill_to_']:checked").length == 0){
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Harap pilih Item Sell',
+                    icon: 'error'
+                })
+            }else{
+                $('#fSell').attr('action', `{{ route('invoice.create') }}`);
+                $('#fSell').submit();
+            }
         }
 
         function checkedPaidTo(key) {
@@ -3739,26 +3945,26 @@
         }
 
         $(function() {
-            get_customer({{ $quote->client_id }});
-            client_detail({{ $quote->client_id }});
+            get_customer({{ $booking->client_id }});
+            client_detail({{ $booking->client_id }});
 
-            get_shipper({{ $quote->shipper_id }});
-            shipper_detail({{ $quote->shipper_id }})
+            get_shipper({{ $booking->shipper_id }});
+            shipper_detail({{ $booking->shipper_id }})
 
-            get_consignee({{ $quote->consignee_id }})
-            consignee_detail({{ $quote->consignee_id }})
+            get_consignee({{ $booking->consignee_id }})
+            consignee_detail({{ $booking->consignee_id }})
 
-            get_notParty({{ $quote->not_party_id }})
-            not_detail({{ $quote->not_party_id }})
+            get_notParty({{ $booking->not_party_id }})
+            not_detail({{ $booking->not_party_id }})
 
-            get_agent({{ $quote->agent_id }})
-            agent_detail({{ $quote->agent_id }})
+            get_agent({{ $booking->agent_id }})
+            agent_detail({{ $booking->agent_id }})
 
-            get_shipline({{ $quote->shipping_line_id }})
-            shipline_detail({{ $quote->shipping_line_id }})
+            get_shipline({{ $booking->shipping_line_id }})
+            shipline_detail({{ $booking->shipping_line_id }})
 
-            get_vendor({{ $quote->vendor_id }})
-            vendor_detail({{ $quote->vendor_id }})
+            get_vendor({{ $booking->vendor_id }})
+            vendor_detail({{ $booking->vendor_id }})
 
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});
@@ -3766,8 +3972,8 @@
             loadDoc({{ Request::segment(3) }});
             loadRoadCons({{ Request::segment(3) }});
             loadSchedule({{ Request::segment(3) }});
-            loadSellCost('{{ $quote->quote_no }}', {{ $quote->id }})
-            loadProfit({{ $quote->t_quote_id }})
+            loadSellCost({{ $booking->id }})
+            loadProfit({{ $booking->t_quote_id }})
 
             if ({{ $error }} == 1) showErrorMsg('{{ $errorMsg }}');
             if ({{ $success }} == 1) showSuccessMsg('{{ $successMsg }}');

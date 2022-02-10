@@ -27,6 +27,22 @@
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->
                 <div class="card-body">
+                    <div class="row mb-1">
+                      <div class="col-md-1">
+                        <label for="Doctor-name">Status</label>
+                      </div>
+                      <div class="col-md-3">
+                        <select class="form-control" name="status" id="status" style="width: 100%;" placeholder="Silahkan pilih...">
+                            <option value="">Silahkan Pilih ...</option>
+                            <option value="0">Draft</option>
+                            <option value="1">Approved</option>
+                            <option value="9">Canceled</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <a href="javascript:;" class="btn btn-info btn" id="filter"><i class="fa fa-search"></i> Filter </a>
+                      </div>
+                    </div>
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -37,11 +53,12 @@
                                 <th>Client</th>
                                 <th>Activity</th>
                                 <th>Status</th>
+                                <th>Invoice Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 14px">
-                            @foreach ($data as $row)
+                            @foreach ($list as $row)
                             <tr>
                                 <td>{{ $row->booking_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($row->booking_date)->format('d/m/Y') }}</td>
@@ -53,10 +70,22 @@
                                 <td class="bg-secondary text-center">NEW</td>
                                 @elseif($row->status == 1) 
                                 <td class="bg-success text-center">Approve</td>
+                                @elseif($row->status == 8) 
+                                <td class="bg-warning text-center">On Request</td>
+                                @elseif($row->status == 9) 
+                                <td class="bg-danger text-center">Canceled</td>
+                                @endif
+
+                                @if ($row->flag_invoice == 0)
+                                <td class="bg-secondary text-center">No Invoice</td>
+                                @elseif($row->flag_invoice == 1) 
+                                <td class="bg-success text-center">Invoice Created</td>
                                 @endif
                                 <td>
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>
+                                    @if($row->status!=9)
                                     <a class="btn btn-info btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'edit', '{{ $row->id }}')"><i class="fa fa-edit"></i> Edit </a>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -167,5 +196,9 @@
             }
             $('#formku').submit();    
         }
+
+        $("#filter").click(function () {
+            window.location = "{{ route('booking.list') }}?status="+$('#status').val();
+        });
     </script>
 @endpush

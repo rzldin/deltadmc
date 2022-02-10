@@ -21,6 +21,13 @@
       <div class="row">
         <div class="col-12">
             <div class="card">
+                @if(count($errors)>0)
+                    @foreach($errors->all() as $error)
+                    <div class="alert alert-danger" role="alert">
+                        {{ $error }}
+                    </div>          
+                    @endforeach
+                @endif
                 <div class="card-header">
                     <a class="btn btn-primary btn-sm" href="{{ route('pembayaran.add') }}"><i class="fa fa-plus"></i> Create Pembayaran</a>
                 </div>
@@ -32,7 +39,9 @@
                             <tr>
                                 <th>No Pembayaran</th>
                                 <th>Date</th>
+                                <th>Status</th>
                                 <th>Nilai PMB</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 14px">
@@ -40,10 +49,22 @@
                             <tr>
                                 <td>{{ $pmb->no_pembayaran }}</td>
                                 <td>{{ \Carbon\Carbon::parse($pmb->pmb_date)->format('d/m/Y') }}</td>
+                                @if ($pmb->status == 0)
+                                    <td class="bg-secondary text-center">Draft</td>
+                                @elseif($pmb->status == 1) 
+                                    <td class="bg-success text-center">Approved</td>
+                                @endif
                                 <td>{{ number_format($pmb->nilai_pmb,2,',','.') }}</td>
-                                {{-- <td> --}}
-                                    {{-- <a class="btn btn-primary btn-sm" href="{{ route('pembayaran.view', ['id' => $pmb->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a> --}}
-                                {{-- </td> --}}
+                                <td>
+                                    @if($pmb->status==0)
+                                        <a class="btn btn-info btn-sm" href="{{route('pembayaran.edit', ['id'=>$pmb->id])}}"><i class="fa fa-edit"></i> Edit </a>
+                                    @else
+                                        <a class="btn btn-primary btn-sm" href="{{route('pembayaran.view', ['id'=>$pmb->id])}}"><i class="fa fa-file-alt"></i> View </a>
+                                    @endif
+                                    @if($pmb->status==1)
+                                        <a class="btn btn-success btn-sm" onclick="openPMB({{$pmb->id}});"><i class="fa fa-undo"></i> Open PMB </a>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -53,9 +74,21 @@
         </div>
     </div>
 </section>
+<form action="{{ route('pembayaran.openPMB') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" style="display: none;">
+{{ csrf_field() }} 
+<input type="hidden" name="id_pmb" id="id_pmb">
+<input type="hidden" name="jenis_pmb" id="jenis_pmb">
+</form>
 @endsection
 
 @push('after-scripts')
-    <script>
-    </script>
+<script>
+    function openPMB(id){
+        if (confirm('Anda yakin ingin membuka pembayaran ini kembali ?')) {
+            $('#id_pmb').val(id);
+            $('#jenis_pmb').val(1);
+            $('#formku').submit();
+        }
+    }
+</script>
 @endpush

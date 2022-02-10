@@ -7,16 +7,23 @@ use App\InvoiceDetailModel;
 use App\InvoiceModel;
 use App\MasterModel;
 use App\QuotationModel;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
     public function index()
     {
-        $invoices = InvoiceModel::getAllInvoice()->get();
+        $tipe = \Request::segment(3);
+        if($tipe=='piutang'){
+            $invoices = InvoiceModel::getInvoiceByType(0)->get();
+        }else if($tipe=='hutang'){
+            $invoices = InvoiceModel::getInvoiceByType(1)->get();
+        }else{
+            $invoices = InvoiceModel::getAllInvoice()->get();
+        }
         return view('invoice.list_invoice', compact('invoices'));
     }
 
@@ -114,16 +121,29 @@ class InvoiceController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $validatorMsg);
         if ($validator->fails()) {
-            $errorMsg = '';
-            foreach ($validator->errors()->messages() as $err) {
-                foreach ($err as $msg) {
-                    $errorMsg .= $msg . "<br>";
-                }
-            }
-            $previousUrl = parse_url(app('url')->previous());
+            // $errorMsg = '';
+            // foreach ($validator->errors()->messages() as $err) {
+            //     foreach ($err as $msg) {
+            //         $errorMsg .= $msg . "<br>";
+            //     }
+            // }
+            // $previousUrl = parse_url(app('url')->previous());
 
-            return redirect()->to($previousUrl['path'] . '?' . http_build_query(['error' => '1', 'errorMsg' => $errorMsg]));
+            // return redirect()->to($previousUrl['path'] . '?' . http_build_query(['error' => '1', 'errorMsg' => $errorMsg]));
+
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
+        // if ($validator->fails()) {
+        //     $errorMsg = '';
+        //     foreach ($validator->errors()->messages() as $err) {
+        //         foreach ($err as $msg) {
+        //             $errorMsg .= $msg . "<br>";
+        //         }
+        //     }
+        //     $previousUrl = parse_url(app('url')->previous());
+
+        //     return redirect()->to($previousUrl['path'] . '?' . http_build_query(['error' => '1', 'errorMsg' => $errorMsg]));
+        // }
 
         if (isset($request->cek_paid_to)) {
             foreach ($request->cek_paid_to as $key => $paid_to) {
@@ -140,14 +160,14 @@ class InvoiceController extends Controller
             }
         }
 
-        $data['shipping_dtl_id'] = [];
+        // $data['shipping_dtl_id'] = [];
         $data['chrg_dtl_id'] = [];
 
-        if (isset($request->cek_cost_shp)) {
-            foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
-                $data['shipping_dtl_id'][$key] = $shp_dtl_id;
-            }
-        }
+        // if (isset($request->cek_cost_shp)) {
+        //     foreach ($request->cek_cost_shp as $key => $shp_dtl_id) {
+        //         $data['shipping_dtl_id'][$key] = $shp_dtl_id;
+        //     }
+        // }
 
         if (isset($request->cek_cost_chrg)) {
             foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
@@ -169,11 +189,10 @@ class InvoiceController extends Controller
 
     public function loadSellCost(Request $request)
     {
-
         $shp_dtl_id = [];
         $chrg_dtl_id = [];
 
-        if (isset($request->shipping_dtl_id)) $shp_dtl_id = $request->shipping_dtl_id;
+        // if (isset($request->shipping_dtl_id)) $shp_dtl_id = $request->shipping_dtl_id;
         if (isset($request->chrg_dtl_id)) $chrg_dtl_id = $request->chrg_dtl_id;
 
         $tabel1     = "";
@@ -285,47 +304,6 @@ class InvoiceController extends Controller
                 $tabel1 .= '</tr>';
             }
         }else{
-
-            if(isset($request->shipping_dtl_id)){
-                $data   = BookingModel::getChargesDetailUsingInId($shp_dtl_id);
-                foreach ($data as $row) {
-                    if ($row->reimburse_flag == 1) {
-                        $style = 'checked';
-                    } else {
-                        $style = '';
-                    }
-
-                    $total = ($row->qty * $row->cost_val);
-                    $total2 = ($row->qty * $row->sell_val);
-                    $amount = ($total * $row->rate) + $row->vat;
-                    $amount2 = ($total2 * $row->rate) + $row->vat;
-
-                    // Sell
-                    $tabel1 .= '<tr>';
-                    $tabel1 .= '<td>';
-                    $tabel1 .= ($no);
-                    $tabel1 .= '<input type="hidden" name="cek_cost_shp[]" value="'.$row->id.'" />';
-                    $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
-                    $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;"></td>';
-                    $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($row->cost_val, 2, ',', '.') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format(($row->qty * $row->cost_val), 2, ',', '.') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, ',', '.') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($row->vat, 2, ',', '.') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($amount, 2, ',', '.') . '</td>';
-                    $tabel1 .= '<td class="text-left"></td>';
-                    $tabel1 .= '</tr>';
-                    $no++;
-
-                    $totalAmount    += $amount;
-                    $totalAmount2   += $amount2;
-                }
-            }
-
             if(isset($request->chrg_dtl_id)){
                 $data   = BookingModel::getChargesDetailUsingInId($chrg_dtl_id);
                 foreach ($data as $row) {
@@ -347,9 +325,9 @@ class InvoiceController extends Controller
                     $tabel1 .= '<input type="hidden" name="cek_cost_chrg[]" value="'.$row->id.'" />';
                     $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="'.$row->bill_to_id.'" />';
                     $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;"></td>';
+                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" '.($request->invoice_type == 'REM' ? 'checked' : '').'></td>';
                     $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->cost_val, 2, ',', '.') . '</td>';
@@ -396,6 +374,10 @@ class InvoiceController extends Controller
 
         try {
             DB::beginTransaction();
+
+            DB::table('t_booking')->where('id',$request->t_booking_id)->update([
+                'flag_invoice' => 1
+            ]);
 
             $total_before_vat = 0;
             $total_vat = 0;
@@ -532,6 +514,10 @@ class InvoiceController extends Controller
 
             $param = $request->all();
 
+            DB::table('t_booking')->where('id',$request->t_booking_id)->update([
+                'flag_invoice' => 1
+            ]);
+
             $invoice_id = DB::table('t_invoice')->insertGetId([
                     'tipe_inv' => 1,
                     // 't_proforma_invoice_id' => 0,
@@ -642,7 +628,7 @@ class InvoiceController extends Controller
                 'total_invoice' => $total_sub
             ]);
             DB::commit();
-            return redirect()->route('invoice.index')->with('success', 'Saved!');
+            return redirect()->route('invoice.index', ['tipe'=>'hutang'])->with('success', 'Saved!');
         } catch (\Throwable $th) {
             DB::rollBack();
             // $errorMsg = $th->getMessage();
@@ -680,6 +666,23 @@ class InvoiceController extends Controller
         return view('invoice.view_invoice')->with($data);
     }
 
+    public function edit($id)
+    {
+        $data['header'] = InvoiceModel::getInvoice($id)->first();
+        $data['details'] = InvoiceDetailModel::getInvoiceDetails($id)->get();
+        $data['companies'] = MasterModel::company_data();
+        $data['addresses'] = MasterModel::get_address($data['header']->client_id);
+        $data['pics'] = MasterModel::get_pic($data['header']->client_id);
+        $data['currency'] = MasterModel::currency();
+        $data['containers'] = BookingModel::get_container($data['header']->t_booking_id);
+        $data['goods'] = BookingModel::get_commodity($data['header']->t_booking_id);
+        if($data['header']->tipe_inv==1){
+            return view('invoice.edit_invoice_cost')->with($data);
+        }else{
+            return view('invoice.edit_invoice')->with($data);
+        }
+    }
+
     public static function getListInvoiceByCompanyId(Request $request)
     {
         $html = "";
@@ -692,5 +695,52 @@ class InvoiceController extends Controller
         }
 
         return $html;
+    }
+
+    public function delete(Request $request)
+    {
+        $rules = [
+            'id' => 'required',
+            'tipe_inv' => 'required',
+            't_booking_id' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
+        }
+
+        DB::beginTransaction();
+        try {
+            $param = $request->all();
+
+            DB::table('t_invoice')->where('id',$request->id)->delete();
+
+            if (isset($request->cek_cost_chrg)) {
+                foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
+                    $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
+                    $sub_total = ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat;
+                    DB::table('t_invoice_detail')->where('id', $chrg_dtl->t_invoice_cost_id)->delete();
+
+                    DB::table('t_bcharges_dtl')->where('id',$chrg_dtl_id)->update([
+                        't_invoice_cost_id' => null
+                    ]);
+                }
+            }
+
+            $jumlah_inv = DB::table('t_invoice')->where('t_booking_id',$request->t_booking_id)->count();
+            if($jumlah_inv==0){
+                DB::table('t_booking')->where('id',$request->t_booking_id)->update([
+                    'flag_invoice' => 0,
+                    'updated_by' => Auth::user()->name,
+                    'updated_at' => date('Y-m-d h:i:s')
+                ]);
+            }
+            DB::commit();
+            return redirect()->route('invoice.index', ['tipe'=>'hutang'])->with('success', 'Invoice have been deleted!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

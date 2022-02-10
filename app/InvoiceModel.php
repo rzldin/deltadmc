@@ -22,6 +22,18 @@ class InvoiceModel extends Model
             ->select('t_invoice.*', DB::raw('COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
+    public static function getInvoiceByType($tipe)
+    {
+        return InvoiceModel::join('t_booking AS a', 'a.id', '=', 't_invoice.t_booking_id')
+            ->leftJoin('t_mcompany AS b', 't_invoice.client_id', '=', 'b.id')
+            ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
+            ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
+            ->leftJoin('t_proforma_invoice AS p', 'p.t_invoice_id', '=', 't_invoice.id')
+            ->leftJoin('t_journals AS j', 'j.invoice_id', '=', 't_invoice.id')
+            ->where('tipe_inv', $tipe)
+            ->select('t_invoice.*', DB::raw('COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+    }
+
     public static function getInvoice($id)
     {
         return InvoiceModel::from('t_invoice AS i')
@@ -30,7 +42,11 @@ class InvoiceModel extends Model
             ->leftJoin('t_booking as b', 'b.id', '=', 'i.t_booking_id')
             ->leftJoin('t_bcharges_dtl AS chrg', 'chrg.t_invoice_id', '=', 'i.id')
             ->leftJoin('t_quote_shipg_dtl AS shp', 'shp.t_invoice_id', '=', 'i.id')
-            ->select('i.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
+            ->leftJoin('t_mcompany as c', 'i.client_id', '=', 'c.id')
+            ->leftJoin('t_maddress as addr', 'i.client_addr_id', '=', 'addr.id')
+            ->leftJoin('t_mpic as mp', 'i.client_pic_id', '=', 'mp.id')
+            ->leftJoin('t_mcurrency as mc', 'i.currency', '=', 'mc.id')
+            ->select('i.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', 'c.client_code', 'c.client_name', 'addr.address', 'mp.name as pic_name', 'mc.code as currency_code', 'mc.name as currency_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
             ->where('i.id', $id);
     }
 

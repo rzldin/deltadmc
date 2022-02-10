@@ -14,15 +14,29 @@ class BookingModel extends Model
                 ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
                 ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
                 ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
+                ->where('a.status', '!=', 9)
                 ->groupBy('a.booking_no')->get();
     }
 
-    public static function get_booking_header($id){    
+    public static function get_booking_status($status)
+    {
         return DB::table('t_booking AS a')
                 ->leftJoin('t_mcompany AS b', 'a.client_id', '=', 'b.id')
                 ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
                 ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
                 ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
+                ->where('a.status', $status)
+                ->groupBy('a.booking_no')->get();
+    }
+
+    public static function get_booking_header($id){    
+        return DB::table('t_booking AS a')
+                ->leftJoin('t_quote AS q', 'a.t_quote_id', '=', 'q.id')
+                ->leftJoin('t_mcompany AS b', 'a.client_id', '=', 'b.id')
+                ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
+                ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
+                ->leftJoin('t_mloaded_type AS e', 'a.t_mloaded_type_id', '=', 'e.id')
+                ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d', 'e.loaded_type', 'q.quote_no', 'q.quote_date')
                 ->where('a.id', $id)
                 ->groupBy('a.booking_no')->first();
     }
@@ -36,7 +50,12 @@ class BookingModel extends Model
 
     public static function get_bookingDetail($id)
     {
-        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag, d.loaded_type FROM t_booking a LEFT JOIN t_quote b ON a.t_quote_id = b.id LEFT JOIN t_mcompany c ON a.shipper_id = c.id LEFT JOIN t_mloaded_type d ON b.t_mloaded_type_id = d.id  WHERE a.id='".$id."'");
+        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag, d.loaded_type 
+            FROM t_booking a
+            LEFT JOIN t_quote b ON a.t_quote_id = b.id 
+            LEFT JOIN t_mcompany c ON a.shipper_id = c.id 
+            LEFT JOIN t_mloaded_type d ON b.t_mloaded_type_id = d.id  
+            WHERE a.id='".$id."'");
     }
 
     public static function get_commodity($id)
@@ -81,12 +100,13 @@ class BookingModel extends Model
 
     public static function getChargesDetail($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.invoice_no from t_bcharges_dtl a
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.invoice_no, ii.invoice_no as invoice_no_cost from t_bcharges_dtl a
             LEFT JOIN t_booking b ON a.t_booking_id = b.id
             LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id
             LEFT JOIN t_mcurrency d ON a.currency = d.id
             LEFT JOIN t_invoice i ON i.id = a.t_invoice_id
             LEFT JOIN t_proforma_invoice i2 ON i2.id = a.t_invoice_cost_id
+            Left JOIN t_invoice ii ON ii.id = a.t_invoice_cost_id
         WHERE a.t_booking_id='".$id."'");
     }
 

@@ -32,8 +32,9 @@ class PembayaranModel extends Model
     public static function get_list_hutang($id,$idp)
     {
         return DB::select("
-            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and id_pmb =".$idp.")as count from t_invoice as i
-            where flag_bayar in (0,2) and i.client_id = ".$id);
+            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and id_pmb =".$idp.")as count 
+            from t_invoice as i
+            where tipe_inv = 1 and flag_bayar in (0,2) and i.client_id = ".$id);
     }
 
     public static function get_detail($id){
@@ -45,7 +46,8 @@ class PembayaranModel extends Model
     public static function get_list_piutang($id,$idp)
     {
         return DB::select("
-            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 0 and id_pmb =".$idp.")as count from t_external_invoice as i
+            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 0 and id_pmb =".$idp.")as count 
+            from t_external_invoice as i
             where flag_bayar in (0,2) and i.client_id = ".$id);
     }
 

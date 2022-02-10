@@ -132,6 +132,11 @@ class MasterModel extends Model
         return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id ORDER BY a.port_name");
     }
 
+    public static function port_filter()
+    {
+        return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id ORDER BY a.port_name");
+    }
+
     public static function check_port_code($code)
     {
         return DB::select("Select * from t_mport where port_code ='".$code."'");
@@ -294,7 +299,7 @@ class MasterModel extends Model
 
     public static function get_address($id)
     {
-        return DB::select("SELECT * from t_maddress where t_mcompany_id ='".$id."'");
+        return DB::select("SELECT * from t_maddress where t_mcompany_id ='".$id."' order by address_type <> 'UTAMA' ASC, address_type ASC");
     }
 
     public static function get_doc()
@@ -334,4 +339,13 @@ class MasterModel extends Model
         return DB::table('t_mresponsibility')->where('active_flag',1)->get();
     }
 
+    public static function acc_type()
+    {
+        return DB::table('t_macc_type')->get();
+    }
+
+    public static function acc_type_get($id)
+    {
+        return DB::table('t_macc_type')->where('id', $id)->first();
+    }
 }
