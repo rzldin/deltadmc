@@ -56,12 +56,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if ($journal->flag_post == 0 && $journal->invoice_id_deposit == 0 && $journal->external_invoice_id_deposit == 0)
+                                            @if ($journal->flag_post == 0)
                                             <a class="btn btn-info btn-sm" href="{{ route('journal.edit', ['id' => $journal->id]) }}" >
-                                                <i class="fa fa-edit"></i> Edit
-                                            </a>
-                                            @elseif ($journal->flag_post == 0 && ($journal->invoice_id_deposit != 0 || $journal->external_invoice_id_deposit != 0))
-                                            <a class="btn btn-info btn-sm" href="{{ route('journal_deposit.edit', ['id' => $journal->id]) }}" >
                                                 <i class="fa fa-edit"></i> Edit
                                             </a>
                                             @endif

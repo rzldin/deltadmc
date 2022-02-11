@@ -4,12 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Deposit;
 use App\DepositDetail;
-use App\GeneralLedger;
-use App\InvoiceModel;
 use App\Journal;
 use App\JournalDetail;
 use App\MasterModel;
-use App\PembayaranModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +14,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
-class JournalController extends Controller
+class JournalDepositController extends Controller
 {
-    public function indexJournal()
-    {
-        $journals = Journal::findAllJournals()->get();
-
-        return view('journal.list_journal', compact('journals'));
-    }
-
     public function addJournal(Request $request)
     {
         $data['companies'] = MasterModel::company_data();
@@ -38,9 +28,9 @@ class JournalController extends Controller
 
         Session::forget('journal_details');
         // $journals = Session::get('journal_details');
-        if ($request->has('source')) $this->saveDefaultDetailJournal($request);
+        // if ($request->has('source')) $this->saveDefaultDetailJournal($request);
 
-        return view('journal.add_journal')->with($data);
+        return view('journal_deposit.add_journal')->with($data);
     }
 
     public function loadDetailJournal(Request $request)
@@ -171,109 +161,6 @@ class JournalController extends Controller
         return $html;
     }
 
-    public function clearSessionJournal(Request $request)
-    {
-        Session::forget('journal_details');
-    }
-
-    public function saveDefaultDetailJournal(Request $request)
-    {
-        if ($request->source == 'invoice') $this->saveDetailJournalInvoice($request);
-        if ($request->source == 'pembayaran') $this->saveDetailJournalPembayaran($request);
-    }
-
-    public function saveDetailJournalInvoice(Request $request)
-    {
-        $company = MasterModel::company_detail_get($request->client_id);
-        $invoice = InvoiceModel::find($request->reference_id);
-
-        if ($company != []) {
-            // account ar di debit
-            $newItem = [
-                'account_id' => $company[0]->account_receivable_id,
-                'account_number' => $company[0]->account_receivable_number,
-                'account_name' => $company[0]->account_receivable_name,
-                'transaction_type' => 'D',
-                'debit' => $invoice->total_invoice,
-                'credit' => 0,
-                'memo' => 'AR ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
-            ];
-
-            $request->session()->push('journal_details', $newItem);
-
-            // account tax di credit
-            $account_pajak = MasterModel::findAccountByAccountNumber('2-1200')->first();
-            $newItem = [
-                'account_id' => $account_pajak->id,
-                'account_number' => $account_pajak->account_number,
-                'account_name' => $account_pajak->account_name,
-                'transaction_type' => 'C',
-                'debit' => 0,
-                'credit' => $invoice->total_vat,
-                'memo' => 'VAT 10%',
-            ];
-
-            $request->session()->push('journal_details', $newItem);
-
-            // account pendapatan di credit
-            $account_number = 0;
-            if ($invoice->activity == 'export') $account_number = '4-1001';
-            else if ($invoice->activity == 'import') $account_number = '4-1002';
-            else if ($invoice->activity == 'logistic') $account_number = '4-1003';
-            else if ($invoice->activity == 'domestic') $account_number = '4-1004';
-            else $account_number = '4-1005';
-            $account_pendapatan = MasterModel::findAccountByAccountNumber($account_number)->first();
-            $newItem = [
-                'account_id' => $account_pendapatan->id,
-                'account_number' => $account_pendapatan->account_number,
-                'account_name' => $account_pendapatan->account_name,
-                'transaction_type' => 'C',
-                'debit' => 0,
-                'credit' => $invoice->total_before_vat,
-                'memo' => 'Sales ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
-            ];
-
-            $request->session()->push('journal_details', $newItem);
-        }
-    }
-
-    public function saveDetailJournalPembayaran(Request $request)
-    {
-        $company = MasterModel::company_detail_get($request->client_id);
-        $pembayaran = PembayaranModel::find($request->reference_id);
-
-        if ($company != []) {
-            // account bank di debit
-            $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
-            $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
-            $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
-            $newItem = [
-                'account_id' => $account->id,
-                'account_number' => $account->account_number,
-                'account_name' => $account->account_name,
-                'transaction_type' => 'D',
-                'debit' => $pembayaran->nilai_pmb,
-                'credit' => 0,
-                'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
-            ];
-
-            $request->session()->push('journal_details', $newItem);
-
-            // account ar di credit
-            $newItem = [
-                'account_id' => $company[0]->account_receivable_id,
-                'account_number' => $company[0]->account_receivable_number,
-                'account_name' => $company[0]->account_receivable_name,
-                'transaction_type' => 'C',
-                'debit' => 0,
-                'credit' => $pembayaran->nilai_pmb,
-                'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
-            ];
-
-            $request->session()->push('journal_details', $newItem);
-        }
-    }
-
     public function saveDetailJournal(Request $request)
     {
         $transaction_type = 'D';
@@ -321,6 +208,11 @@ class JournalController extends Controller
         $request->session()->put('journal_details', $details);
     }
 
+    public function clearSessionJournal(Request $request)
+    {
+        Session::forget('journal_details');
+    }
+
     public function saveJournal(Request $request)
     {
         $rules = [
@@ -347,22 +239,40 @@ class JournalController extends Controller
             $param['journal_no'] = $request->journal_no;
             $param['journal_date'] = date('Y-m-d', strtotime($request->journal_date));
             $param['currency_id'] = $request->currency_id;
+            if ($request->has('journal_type') && $request->journal_type != 'general_journal') {
+                $param['company_id'] = $request->company_id;
+                $param['invoice_id_deposit'] = $request->invoice_id_deposit;
+                $param['external_invoice_id_deposit'] = 0;
+                if ($request->journal_type == 'deposit_client') {
+                    $param['invoice_id_deposit'] = 0;
+                    $param['external_invoice_id_deposit'] = $request->invoice_id_deposit;
+                }
+            }
             $param['amount'] = $request->amount;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
 
-            if ($request->has('source')) {
-                if ($request->source == 'invoice') {
-                    $param['invoice_id'] = $request->reference_id;
-                } else if ($request->source == 'pembayaran') {
-                    $param['pembayaran_id'] = $request->reference_id;
-                }
-            }
+            // if ($request->has('source')) {
+            //     if ($request->source == 'invoice') {
+            //         $param['invoice_id'] = $request->reference_id;
+            //     } else if ($request->source == 'pembayaran') {
+            //         $param['pembayaran_id'] = $request->reference_id;
+            //     }
+            // }
 
             $journal = Journal::saveJournal($param);
 
+            $amount = 0;
             if ($request->id != 0) JournalDetail::deleteJournalDetailByJournalId($request->id);
             foreach ($details as $key => $detail) {
+                $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
+                if ($detail['account_id'] == $account_deposit->id && $detail['debit'] > 0) {
+                    #jika detail account adalah account deposit, dan posisi nya ada di debit, maka kurangi saldo deposit
+                    $amount += ($detail['debit'] * -1);
+                } else if ($detail['account_id'] == $account_deposit->id && $detail['credit'] > 0) {
+                    #jika account deposit ada di kredit, maka tambah saldo deposit
+                    $amount += $detail['credit'];
+                }
                 unset($detail['account_number']);
                 unset($detail['account_name']);
                 $detail['id'] = 0;
@@ -372,7 +282,36 @@ class JournalController extends Controller
 
                 JournalDetail::saveJournalDetail($detail);
             }
+            $deposit_detail = DepositDetail::where('journal_id', $journal->id)->first();
+            $deposit = Deposit::where('company_id', $request->company_id)->first();
+            if ($deposit_detail != [] && $deposit != []) {
+                # kalau edit jurnal, nilai balance deposit di reset ke posisi awal dulu
+                # balance di deposit kurangi dulu dengan amount di deposit detail, agar dapet nilai balance awal, kemudian baru ditambah dengan amount yang baru diedit di jurnal
+                $paramDepositH['balance'] = $deposit->balance - $deposit_detail->amount + $amount;
+            } else if ($deposit_detail == [] && $deposit != []) {
+                # kalau jurnal baru, tapi sudah pernah deposit
+                $paramDepositH['balance'] = $deposit->balance + $amount;
+            } else {
+                # jurnal baru, dan belum pernah deposit sama sekali
+                $paramDepositH['balance'] = $amount;
+            }
 
+            $paramDepositH['id'] = $deposit == [] ? 0 : $deposit->id;
+            $paramDepositH['company_id'] = $request->company_id;
+            $paramDepositH['created_by'] = Auth::user()->name;
+            $paramDepositH['created_on'] = date('Y-m-d h:i:s');
+            $deposit = Deposit::saveDeposit($paramDepositH);
+
+            $paramDepositD['id'] = $deposit_detail == [] ? 0 : $deposit_detail->id;
+            $paramDepositD['deposit_id'] = $deposit->id;
+            $paramDepositD['deposit_date'] = date('Y-m-d', strtotime($request->journal_date));
+            $paramDepositD['amount'] = $amount;
+            $paramDepositD['invoice_id'] = ($request->has('invoice_id') ? $request->invoice_id : 0);
+            $paramDepositD['journal_id'] = $journal->id;
+            $paramDepositD['remark'] = ($request->has('remark') ? $request->remark : null);
+            $paramDepositD['created_by'] = Auth::user()->name;
+            $paramDepositD['created_on'] = date('Y-m-d h:i:s');
+            $depositDetail = DepositDetail::saveDepositDetail($paramDepositD);
             DB::commit();
 
             Session::forget('journal_details');
@@ -397,59 +336,6 @@ class JournalController extends Controller
         $details = JournalDetail::findAllJournalDetails($journalId)->get();
         if (Session::get('journal_details') == []) Session::put('journal_details', $details->toArray());
 
-        return view('journal.edit_journal')->with($data);
-    }
-
-    public function viewJournal($journalId)
-    {
-        $data['accounts'] = MasterModel::account_get();
-        $data['currency'] = MasterModel::currency();
-        $data['header'] = Journal::findJournal($journalId)->first();
-        $data['header']->journal_type = 'General Journal';
-        if ($data['header']->invoice_id_deposit != 0) $data['header']->journal_type = 'Deposit Vendor';
-        else if ($data['header']->external_invoice_id_deposit != 0) $data['header']->journal_type = 'Deposit Client';
-        $data['details'] = JournalDetail::findAllJournalDetails($journalId)->get();
-
-        return view('journal.view_journal')->with($data);
-    }
-
-    public function postJournal(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-
-            $journal_details = JournalDetail::where('journal_id', $request->id)->get();
-            foreach ($journal_details as $key => $detail) {
-                $param['id'] = 0;
-                $param['gl_date'] = date('Y-m-d');
-                $param['journal_id'] = $request->id;
-                $param['account_id'] = $detail->account_id;
-                $param['debit'] = $detail->debit;
-                $param['credit'] = $detail->credit;
-                $param['balance'] = ($detail->debit - $detail->credit);
-                $param['created_by'] = Auth::user()->name;
-                $param['created_on'] = date('Y-m-d h:i:s');
-
-                GeneralLedger::saveGL($param);
-
-                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, date('Y-m-d'));
-                if ($refresh['status'] == 'failed') {
-                    return redirect()->back()->with('error', $refresh['message']);
-                }
-            }
-
-            $paramJournal['id'] = $request->id;
-            $paramJournal['flag_post'] = 1;
-            $paramJournal['created_by'] = Auth::user()->name;
-            $paramJournal['created_on'] = date('Y-m-d h:i:s');
-            Journal::saveJournal($paramJournal);
-
-            DB::commit();
-            return redirect()->route('journal.index')->with('success', 'Journal posted!');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            Log::error("postJournal Error " . $th->getMessage());
-            return redirect()->back()->with('error', $th->getMessage());
-        }
+        return view('journal_deposit.edit_journal')->with($data);
     }
 }

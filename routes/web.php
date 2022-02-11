@@ -470,6 +470,16 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
     Route::post('/accounting/journal/clearSession', 'JournalController@clearSessionJournal')->name('journal.clearSession');
 
+    /** Journal Deposit */
+    Route::get('/accounting/journal_deposit/add', 'JournalDepositController@addJournal')->name('journal_deposit.add');
+    Route::get('/accounting/journal_deposit/edit/{id}', 'JournalDepositController@editJournal')->name('journal_deposit.edit');
+    Route::post('/accounting/journal_deposit/save', 'JournalDepositController@saveJournal')->name('journal_deposit.save');
+    Route::post('/accounting/journal_deposit/loadDetail', 'JournalDepositController@loadDetailJournal')->name('journal_deposit.loadDetail');
+    Route::post('/accounting/journal_deposit/saveDetail', 'JournalDepositController@saveDetailJournal')->name('journal_deposit.saveDetail');
+    Route::post('/accounting/journal_deposit/updateDetail', 'JournalDepositController@updateDetailJournal')->name('journal_deposit.updateDetail');
+    Route::post('/accounting/journal_deposit/deleteDetail', 'JournalDepositController@deleteDetailJournal')->name('journal_deposit.deleteDetail');
+    Route::post('/accounting/journal_deposit/clearSession', 'JournalDepositController@clearSessionJournal')->name('journal_deposit.clearSession');
+
     /** General Ledgers */
     Route::get('/accounting/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
     Route::post('/accounting/general_ledger/loadDetail', 'GeneralLedgerController@loadDetail')->name('general_ledger.loadDetail');

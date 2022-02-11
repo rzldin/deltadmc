@@ -28,7 +28,7 @@
                                 <strong></strong>
                             </h3>
                         </div>
-                        <form method="post" action="{{ route('journal.save') }}" id="formJournal">
+                        <form method="post" action="{{ route('journal_deposit.save') }}" id="formJournal">
                             <div class="card-body">
                                 @csrf
                                 <input type="hidden" name="id" value="0">
@@ -53,18 +53,18 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- <div class="row mb-3">
+                                                <div class="row mb-3">
                                                     <div class="col-md-4">
                                                         <label>Journal Type</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                         <select name="journal_type" id="journal_type" class="form-control" onchange="changeJournalType()">
-                                                            <option value="general_journal">General Journal</option>
+                                                            {{-- <option value="general_journal">General Journal</option> --}}
                                                             <option value="deposit_vendor">Deposit Vendor</option>
                                                             <option value="deposit_client">Deposit Client</option>
                                                         </select>
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                                 <div class="row mb-3 display-none" id="row_company_id">
                                                     <div class="col-md-4">
                                                         <label>Company</label>
@@ -228,7 +228,7 @@
                 $.ajax({
                     type: 'post',
                     async: false,
-                    url: `{{ route('journal.clearSession') }}`,
+                    url: `{{ route('journal_deposit.clearSession') }}`,
                     success: function() {
 
                     }
@@ -286,7 +286,7 @@
                 $('.spinner_load').show();
                 $.ajax({
                     type: 'post',
-                    url: `{{ route('journal.loadDetail') }}`,
+                    url: `{{ route('journal_deposit.loadDetail') }}`,
                     data: {
                         journal_type: $('#journal_type').val(),
                     },
@@ -314,7 +314,7 @@
                 } else {
                     $.ajax({
                         type: 'post',
-                        url: `{{ route('journal.saveDetail') }}`,
+                        url: `{{ route('journal_deposit.saveDetail') }}`,
                         data: {
                             account_id: account_id.val(),
                             account_number: account_number.val(),
@@ -385,7 +385,7 @@
                 } else {
                     $.ajax({
                         type: 'post',
-                        url: `{{ route('journal.updateDetail') }}`,
+                        url: `{{ route('journal_deposit.updateDetail') }}`,
                         data: {
                             key: key,
                             account_id: account_id.val(),
@@ -433,7 +433,7 @@
             function deleteDetailJournal(key) {
                 $.ajax({
                     type: 'post',
-                    url: `{{ route('journal.deleteDetail') }}`,
+                    url: `{{ route('journal_deposit.deleteDetail') }}`,
                     data: {
                         key: key,
                     },
@@ -452,6 +452,7 @@
             }
 
             $(function() {
+                changeJournalType();
                 loadDetailJournal();
                 $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({

@@ -28,10 +28,10 @@
                                 <strong></strong>
                             </h3>
                         </div>
-                        <form method="post" action="{{ route('journal.save') }}" id="formJournal">
+                        <form method="post" action="{{ route('journal_deposit.save') }}" id="formJournal">
                             <div class="card-body">
                                 @csrf
-                                <input type="hidden" name="id" value="0">
+                                <input type="hidden" name="id" value="{{ $header->id }}">
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h3 class="card-title">Journal</h3>
@@ -45,7 +45,8 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="journal_date_picker" data-target-input="nearest">
-                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker" value="{{ date('d/m/Y') }}" />
+                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker"
+                                                                value="{{ date('d/m/Y', strtotime($header->journal_date)) }}" />
                                                             <div class="input-group-append" data-target="#journal_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -53,27 +54,28 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- <div class="row mb-3">
+                                                <div class="row mb-3">
                                                     <div class="col-md-4">
                                                         <label>Journal Type</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="journal_type" id="journal_type" class="form-control" onchange="changeJournalType()">
-                                                            <option value="general_journal">General Journal</option>
-                                                            <option value="deposit_vendor">Deposit Vendor</option>
-                                                            <option value="deposit_client">Deposit Client</option>
+                                                        <select id="journal_type" class="form-control" onchange="changeJournalType()" disabled>
+                                                            <option value="general_journal" {{ $header->journal_type == 'general_journal' ? 'selected' : '' }}>General Journal</option>
+                                                            <option value="deposit_vendor" {{ $header->journal_type == 'deposit_vendor' ? 'selected' : '' }}>Deposit Vendor</option>
+                                                            <option value="deposit_client" {{ $header->journal_type == 'deposit_client' ? 'selected' : '' }}>Deposit Client</option>
                                                         </select>
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                                 <div class="row mb-3 display-none" id="row_company_id">
                                                     <div class="col-md-4">
                                                         <label>Company</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="company_id" id="company_id" class="form-control select2" onchange="getListInvoice(this.value)">
+                                                        <input type="hidden" name="company_id" value="{{ $header->company_id }}">
+                                                        <select id="company_id" class="form-control select2" onchange="getListInvoice(this.value)" disabled>
                                                             <option value="">Select Company</option>
                                                             @foreach ($companies as $company)
-                                                                <option value="{{ $company->id }}">{{ $company->client_code . ' | ' . $company->client_name }}</option>
+                                                                <option value="{{ $company->id }}" {{ $company->id == $header->company_id ? 'selected' : '' }}>{{ $company->client_code . ' | ' . $company->client_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -83,7 +85,8 @@
                                                         <label>Invoice</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="invoice_id_deposit" id="invoice_id_deposit" class="form-control select2">
+                                                        <select id="invoice_id_deposit" class="form-control select2" disabled>
+                                                            <option value="">{{ $header->invoice_no_deposit }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -95,7 +98,7 @@
                                                         <label>Journal No.</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="text" class="form-control" name="journal_no" id="journal_no">
+                                                        <input type="text" class="form-control" name="journal_no" id="journal_no" value="{{ $header->journal_no }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -104,25 +107,13 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <select class="form-control" name="currency_id" id="currency_id">
-                                                            <option value="" selected>Select Currency</option>
+                                                            <option value="">Select Currency</option>
                                                             @foreach ($currency as $curr)
-                                                                <option value="{{ $curr->id }}">{{ $curr->code }}</option>
+                                                                <option value="{{ $curr->id }}" <?= $curr->id == $header->currency_id ? 'selected' : '' ?>>{{ $curr->code }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
-                                                @if ($source != '')
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-4">
-                                                            <label>Reference</label>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <input class="form-control" type="hidden" name="source" id="source" value="{{ $source }}" readonly>
-                                                            <input class="form-control" type="hidden" name="reference_id" id="reference_id" value="{{ $reference_id }}" readonly>
-                                                            <input class="form-control" type="text" name="reference_no" id="reference_no" value="{{ $reference_no }}" readonly>
-                                                        </div>
-                                                    </div>
-                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -164,7 +155,7 @@
                                                                     <option value="" selected>Select Account</option>
                                                                     @foreach ($accounts as $account)
                                                                         <option value="{{ $account->id }}">
-                                                                            {{ $account->account_number . '- ' . $account->account_name }}
+                                                                            {{ $account->account_number .' - ' . $account->account_name }}
                                                                         </option>
                                                                     @endforeach
                                                                 </select>
@@ -220,19 +211,7 @@
                     $('#row_company_id').removeClass('display-none');
                     $('#row_invoice_id_deposit').removeClass('display-none');
                 }
-                clearSession();
                 loadDetailJournal();
-            }
-
-            function clearSession() {
-                $.ajax({
-                    type: 'post',
-                    async: false,
-                    url: `{{ route('journal.clearSession') }}`,
-                    success: function() {
-
-                    }
-                });
             }
 
             function getListInvoice(company_id) {
@@ -286,7 +265,7 @@
                 $('.spinner_load').show();
                 $.ajax({
                     type: 'post',
-                    url: `{{ route('journal.loadDetail') }}`,
+                    url: `{{ route('journal_deposit.loadDetail') }}`,
                     data: {
                         journal_type: $('#journal_type').val(),
                     },
@@ -314,12 +293,14 @@
                 } else {
                     $.ajax({
                         type: 'post',
-                        url: `{{ route('journal.saveDetail') }}`,
+                        url: `{{ route('journal_deposit.saveDetail') }}`,
                         data: {
                             account_id: account_id.val(),
                             account_number: account_number.val(),
                             account_name: account_name.val(),
                             debit: debit.val(),
+                            debit: debit.val(),
+                            credit: credit.val(),
                             credit: credit.val(),
                             memo: memo.val(),
                         },
@@ -385,7 +366,7 @@
                 } else {
                     $.ajax({
                         type: 'post',
-                        url: `{{ route('journal.updateDetail') }}`,
+                        url: `{{ route('journal_deposit.updateDetail') }}`,
                         data: {
                             key: key,
                             account_id: account_id.val(),
@@ -433,7 +414,7 @@
             function deleteDetailJournal(key) {
                 $.ajax({
                     type: 'post',
-                    url: `{{ route('journal.deleteDetail') }}`,
+                    url: `{{ route('journal_deposit.deleteDetail') }}`,
                     data: {
                         key: key,
                     },
@@ -452,6 +433,7 @@
             }
 
             $(function() {
+                changeJournalType();
                 loadDetailJournal();
                 $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({
