@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\PembayaranModel;
 use App\InvoiceModel;
+use App\Journal;
+use App\JournalDetail;
 use App\MasterModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -417,13 +419,14 @@ class PembayaranController extends Controller
                 'modified_at' => Carbon::now()
             ]);
 
-            // kalau ada deposit
+            /**
+             * kalau ada deposit
+             */
             // if ($data->deposit_detail_id != 0) {
             //     $param['deposit_detail_id'] = $data->deposit_detail_id;
             //     DepositController::deleteDepositPembayaran($param);
             // }
             $deposits = DepositDetail::where('pembayaran_id', $data->id_pmb)->get();
-            // dd($deposits);
             if ($deposits != []) {
                 $amount = 0;
                 foreach ($deposits as $dtl) {
@@ -435,6 +438,17 @@ class PembayaranController extends Controller
                 $deposit->balance = $deposit->balance + $amount;
                 $deposit->save();
             }
+            /** end */
+
+            /**
+             * kalau udah diposting jurnalnya
+             */
+            $journal = Journal::where('pembayaran_id', $data->id_pmb)->first();
+            if ($journal != []) {
+                JournalDetail::deleteJournalDetailByJournalId($journal->id);
+                $journal->delete();
+            }
+            /** end */
 
             DB::table('t_pembayaran_detail')->where('id', $request->id)->delete();
 

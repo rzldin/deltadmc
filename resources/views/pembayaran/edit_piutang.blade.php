@@ -519,7 +519,7 @@ function updateDepositBalance(pembayaran_id = 0) {
             company_id: @json($header->id_company),
             amount: deposit_amount,
             journal_id: deposit_journal_id,
-            deposit_date: $('#tanggal_dt').val(),
+            deposit_date: $('#tanggal').val(),
             invoice_id: $('#id_modal_inv').val(),
         },
         success: function(response) {
