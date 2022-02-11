@@ -189,7 +189,7 @@
           <div class="card-footer">
               <a href="{{ route('pembayaran.piutang') }}" class="btn btn-default float-left mr-2">
                 <i class="fa fa-angle-left"></i> Kembali
-              </a>                
+              </a>
               <button type="submit" class="btn btn-primary float-sm-right"><i class="fa fa-save"></i> Simpan</button>
           </div>
           <!-- /.card-body -->
@@ -391,8 +391,8 @@ function useDepositBalance() {
     let balance_val = balance.val().toString().replace(/\,/g, "");
 
     let sisa_bayar = total_invoice_val - invoice_bayar_val;
-    console.log(balance.val().toString().replace(/\,/g, ""));
-    console.log(balance.val().toString().replace(/\,/g, ""));
+    // console.log(balance.val().toString().replace(/\,/g, ""));
+    // console.log(balance.val().toString().replace(/\,/g, ""));
 
     if (balance_val >= sisa_bayar) {
         nilai_bayar_val = sisa_bayar;
@@ -504,11 +504,11 @@ function updateDepositBalance(pembayaran_id = 0) {
     let deposit_journal_id = $('input[name="deposit[journal_id]"]').map(function(){
         return $(this).val();
     }).get();
-    console.log(deposit_journal_id);
+    // console.log(deposit_journal_id);
     let deposit_amount = $('input[name="deposit[amount]"]').map(function(){
         return Number($(this).val().toString().replace(/\,/g, "")) * Number(-1);
     }).get();
-    console.log(deposit_amount);
+    // console.log(deposit_amount);
 
     $.ajax({
         type: 'post',
@@ -524,8 +524,6 @@ function updateDepositBalance(pembayaran_id = 0) {
         },
         success: function(response) {
             let obj = JSON.parse(response);
-            console.log(response);
-            console.log(obj);
             // let result = JSON.parse(response);
             if (obj.status == 'success') {
                 // console.log(response['data']['deposit_detail']['id']);
@@ -645,7 +643,8 @@ function delete_detail(id){
     url: "{{ route('pembayaran.deleteDetailPembayaranPiutang') }}",
     type: "POST",
     data: {
-        id:id
+        id:id,
+        company_id: @json($header->id_company),
     },
     dataType: "json",
     success: function(result){
