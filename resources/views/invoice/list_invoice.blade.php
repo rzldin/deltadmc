@@ -57,9 +57,9 @@
                                 @if($invoice->tipe_inv == 1)<!-- Hutang -->
                                     @if ($invoice->flag_bayar == 0)
                                         <td class="bg-secondary text-center">Draft</td>
-                                    @elseif($invoice->flag_bayar == 2) 
+                                    @elseif($invoice->flag_bayar == 2)
                                         <td class="bg-success text-center">Partially Paid</td>
-                                    @else 
+                                    @else
                                         <td class="bg-success text-center">Paid</td>
                                     @endif
                                 @else<!-- Piutang -->
@@ -81,8 +81,8 @@
                                                     <i class="fa fa-book"></i> Journal
                                             </a>
                                         @endif
-                                        @if($invoice->proforma_invoice_id==0)
-                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
+                                        @if($invoice->proforma_invoice_id==0 && $invoice->journal_id == 0)
+                                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                         @endif
                                     @else
                                         @if($invoice->flag_bayar==0)
@@ -103,5 +103,23 @@
 
 @push('after-scripts')
 <script>
+    function deleteInvoice(id) {
+            let url = `{{ route('invoice.delete', ':id') }}`;
+            url = url.replace(':id', id);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            })
+        }
 </script>
 @endpush

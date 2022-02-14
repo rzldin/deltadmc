@@ -11,10 +11,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tipe = \Request::segment(4);
         if($tipe=='piutang'){
@@ -697,49 +698,86 @@ class InvoiceController extends Controller
         return $html;
     }
 
-    public function delete(Request $request)
+    // public function delete(Request $request)
+    // {
+    //     $rules = [
+    //         'id' => 'required',
+    //         'tipe_inv' => 'required',
+    //         't_booking_id' => 'required',
+    //     ];
+
+    //     $validator = Validator::make($request->all(), $rules);
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->with('errorForm', $validator->errors()->messages());
+    //     }
+
+    //     DB::beginTransaction();
+    //     try {
+    //         $param = $request->all();
+
+    //         DB::table('t_invoice')->where('id',$request->id)->delete();
+
+    //         if (isset($request->cek_cost_chrg)) {
+    //             foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
+    //                 $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
+    //                 $sub_total = ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat;
+    //                 DB::table('t_invoice_detail')->where('id', $chrg_dtl->t_invoice_cost_id)->delete();
+
+    //                 DB::table('t_bcharges_dtl')->where('id',$chrg_dtl_id)->update([
+    //                     't_invoice_cost_id' => null
+    //                 ]);
+    //             }
+    //         }
+
+    //         $jumlah_inv = DB::table('t_invoice')->where('t_booking_id',$request->t_booking_id)->count();
+    //         if($jumlah_inv==0){
+    //             DB::table('t_booking')->where('id',$request->t_booking_id)->update([
+    //                 'flag_invoice' => 0,
+    //                 'updated_by' => Auth::user()->name,
+    //                 'updated_at' => date('Y-m-d h:i:s')
+    //             ]);
+    //         }
+    //         DB::commit();
+    //         return redirect()->route('invoice.index', ['tipe'=>'hutang'])->with('success', 'Invoice have been deleted!');
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
+    //         return redirect()->back()->with('error', $th->getMessage());
+    //     }
+    // }
+
+    public function delete($invoiceId)
     {
-        $rules = [
-            'id' => 'required',
-            'tipe_inv' => 'required',
-            't_booking_id' => 'required',
-        ];
-
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return redirect()->back()->with('errorForm', $validator->errors()->messages());
-        }
-
         DB::beginTransaction();
         try {
-            $param = $request->all();
+            $invoice = InvoiceModel::find($invoiceId);
 
-            DB::table('t_invoice')->where('id',$request->id)->delete();
+            DB::table('t_booking')->where('id', $invoice->t_booking_id)->update([
+                'flag_invoice' => 0,
+                'updated_by' => Auth::user()->name,
+                'updated_at' => date('Y-m-d h:i:s')
+            ]);
 
-            if (isset($request->cek_cost_chrg)) {
-                foreach ($request->cek_cost_chrg as $key => $chrg_dtl_id) {
-                    $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
-                    $sub_total = ($chrg_dtl->qty * $chrg_dtl->sell_val)+$chrg_dtl->vat;
-                    DB::table('t_invoice_detail')->where('id', $chrg_dtl->t_invoice_cost_id)->delete();
-
-                    DB::table('t_bcharges_dtl')->where('id',$chrg_dtl_id)->update([
-                        't_invoice_cost_id' => null
-                    ]);
-                }
+            $field = 't_invoice_id';
+            if ($invoice->tipe_env == 1) {
+                $field = 't_invoice_cost_id';
             }
+            DB::table('t_bcharges_dtl')->where($field, $invoiceId)->update([
+                $field => null,
+                'invoice_type' => null
+            ]);
 
-            $jumlah_inv = DB::table('t_invoice')->where('t_booking_id',$request->t_booking_id)->count();
-            if($jumlah_inv==0){
-                DB::table('t_booking')->where('id',$request->t_booking_id)->update([
-                    'flag_invoice' => 0,
-                    'updated_by' => Auth::user()->name,
-                    'updated_at' => date('Y-m-d h:i:s')
-                ]);
-            }
+            InvoiceDetailModel::where('invoice_id', $invoiceId)->delete();
+
+            $invoice->delete();
+
             DB::commit();
-            return redirect()->route('invoice.index', ['tipe'=>'hutang'])->with('success', 'Invoice have been deleted!');
+
+            return redirect()->back()->with('succes', 'Deleted!');
         } catch (\Throwable $th) {
             DB::rollBack();
+
+            Log::error("delete Invoice Error {$th->getMessage()}");
+
             return redirect()->back()->with('error', $th->getMessage());
         }
     }

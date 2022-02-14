@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+
 // use App\User;
 
 /*
@@ -366,6 +368,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proforma_invoice.index');
     Route::get('/invoice/proformainvoice/view/{id}', 'ProformaInvoiceController@view')->name('proforma_invoice.view');
+    Route::get('/invoice/proformainvoice/delete/{proformaInvoiceId}', 'ProformaInvoiceController@delete')->name('proforma_invoice.delete');
     Route::get('/invoice/proformainvoice/create/{invoiceId}', 'ProformaInvoiceController@create')->name('proforma_invoice.create');
     Route::get('/invoice/proformainvoice/edit/{proformaInvoiceId}', 'ProformaInvoiceController@edit')->name('proforma_invoice.edit');
     Route::post('/invoice/proformainvoice/create/', 'ProformaInvoiceController@save')->name('proforma_invoice.save');
@@ -384,15 +387,17 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/index/{tipe?}', 'InvoiceController@index')->name('invoice.index');
     Route::get('/invoice/internal/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
     Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
+    Route::get('/invoice/internal/delete/{id}', 'InvoiceController@delete')->name('invoice.delete');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
-    Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
+    // Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
     Route::post('/invoice/internal/loadSellCost', 'InvoiceController@loadSellCost')->name('invoice.loadSellCost');
     Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
     Route::post('/invoice/internal/openINV', 'InvoiceController@openINV')->name('invoice.openINV');
 
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
+    Route::get('/invoice/external/delete/{id}', 'ExternalInvoiceController@delete')->name('external_invoice.delete');
     Route::get('/invoice/external/create/{proformaInvoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
     Route::post('/invoice/external/create/', 'ExternalInvoiceController@save')->name('external_invoice.save');
     Route::post('/invoice/external/create/loadDetail', 'ExternalInvoiceController@loadDetail')->name('external_invoice.loadDetail');
@@ -467,6 +472,17 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/accounting/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
     Route::post('/accounting/journal/updateDetail', 'JournalController@updateDetailJournal')->name('journal.updateDetail');
     Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
+    Route::post('/accounting/journal/clearSession', 'JournalController@clearSessionJournal')->name('journal.clearSession');
+
+    /** Journal Deposit */
+    Route::get('/accounting/journal_deposit/add', 'JournalDepositController@addJournal')->name('journal_deposit.add');
+    Route::get('/accounting/journal_deposit/edit/{id}', 'JournalDepositController@editJournal')->name('journal_deposit.edit');
+    Route::post('/accounting/journal_deposit/save', 'JournalDepositController@saveJournal')->name('journal_deposit.save');
+    Route::post('/accounting/journal_deposit/loadDetail', 'JournalDepositController@loadDetailJournal')->name('journal_deposit.loadDetail');
+    Route::post('/accounting/journal_deposit/saveDetail', 'JournalDepositController@saveDetailJournal')->name('journal_deposit.saveDetail');
+    Route::post('/accounting/journal_deposit/updateDetail', 'JournalDepositController@updateDetailJournal')->name('journal_deposit.updateDetail');
+    Route::post('/accounting/journal_deposit/deleteDetail', 'JournalDepositController@deleteDetailJournal')->name('journal_deposit.deleteDetail');
+    Route::post('/accounting/journal_deposit/clearSession', 'JournalDepositController@clearSessionJournal')->name('journal_deposit.clearSession');
 
     /** General Ledgers */
     Route::get('/accounting/general_ledger', 'GeneralLedgerController@index')->name('general_ledger.index');
@@ -480,8 +496,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/deposit/deleteDetail', 'DepositController@deleteDetail')->name('deposit.deleteDetail');
     Route::post('/deposit', 'DepositController@save')->name('deposit.save');
     Route::post('/deposit/processSave', 'DepositController@processSave')->name('deposit.processSave');
+    Route::post('/deposit/processSavePembayaranDeposit', 'DepositController@processSavePembayaranDeposit')->name('deposit.processSavePembayaranDeposit');
     Route::get('/deposit/view/{id}', 'DepositController@view')->name('deposit.view');
     Route::post('/deposit/getDepositCompany', 'DepositController@getDepositCompany')->name('deposit.getDepositCompany');
+    Route::post('/deposit/getListDeposit', 'DepositController@getListDeposit')->name('deposit.getListDeposit');
 
     /** Role Access **/
     Route::get('/user/access', 'ManagementController@user_access')->name('user.access');

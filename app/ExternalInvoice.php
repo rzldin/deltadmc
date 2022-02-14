@@ -13,11 +13,12 @@ class ExternalInvoice extends Model
 
     public static function getAllExternalInvoice()
     {
-        return ExternalInvoice::join('t_booking AS a', 'a.id', '=', 't_external_invoice.t_booking_id')
-            ->leftJoin('t_mcompany AS b', 't_external_invoice.client_id', '=', 'b.id')
+        return DB::table('t_external_invoice AS ei')
+            ->join('t_booking AS a', 'a.id', '=', 'ei.t_booking_id')
+            ->leftJoin('t_mcompany AS b', 'ei.client_id', '=', 'b.id')
             ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
-            ->select('t_external_invoice.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+            ->select('ei.*', 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
     public static function getExternalInvoice($id)

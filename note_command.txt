@@ -74,6 +74,21 @@ ALTER TABLE t_proforma_invoice CHANGE total_vat total_vat decimal(14,2) DEFAULT 
 ----- Jan 2022
 
 ALTER TABLE `users` ADD `roles_id` TINYINT(2) NOT NULL AFTER `address`;
+--
+--ALTER TABLE t_deposits ADD account_id INT UNSIGNED NULL;
+--ALTER TABLE t_deposits CHANGE account_id account_id INT UNSIGNED NULL AFTER id;
+--
+ALTER TABLE t_journals ADD company_id INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE company_id company_id INT UNSIGNED DEFAULT 0 NULL AFTER pembayaran_id;
+ALTER TABLE t_journals ADD invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE invoice_id_deposit invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER company_id;
+ALTER TABLE t_journals ADD external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_journals CHANGE external_invoice_id_deposit external_invoice_id_deposit INT UNSIGNED DEFAULT 0 NULL AFTER invoice_id_deposit;
+ALTER TABLE t_journal_details MODIFY COLUMN memo text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL;
+--
+ALTER TABLE t_deposit_details ADD pembayaran_id INT UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_deposit_details CHANGE pembayaran_id pembayaran_id INT UNSIGNED DEFAULT 0 NULL AFTER invoice_id;
+
 ALTER TABLE `t_booking` CHANGE `t_quote_id` `t_quote_id` INT(11) NULL DEFAULT '0';
 
 ALTER TABLE `t_booking` ADD `flag_invoice` TINYINT(1) NOT NULL DEFAULT '0' AFTER `final_flag`;
