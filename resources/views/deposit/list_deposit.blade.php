@@ -23,7 +23,9 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between bd-highlight mb-3">
-                                <div class="p-2 bd-highlight"><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addDeposit()"><i class="fa fa-plus"></i> Add Transaction</a></div>
+                                <div class="p-2 bd-highlight">
+                                    {{-- <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addDeposit()"><i class="fa fa-plus"></i> Add Transaction</a> --}}
+                                </div>
                                 <div class="p-2 bd-highlight">
                                     <h3>Saldo : {{ number_format($saldo, 2, ',', '.') }}</h3>
                                 </div>

@@ -413,6 +413,45 @@ class JournalController extends Controller
         return view('journal.view_journal')->with($data);
     }
 
+    public function deleteJournal($journalId)
+    {
+        DB::beginTransaction();
+        try {
+            $journal = Journal::find($journalId);
+            $amount = 0;
+            $deposit_dtl = DepositDetail::where('journal_id', $journalId);
+            // dd($deposit_dtl->count());
+            if ($deposit_dtl->count() > 0) {
+                foreach ($deposit_dtl->get() as $key => $dtl) {
+                    if ($dtl->pembayaran_id != 0) {
+                        DB::rollBack();
+
+                        return redirect()->back()->with('error', 'Hapus jurnal gagal, karena deposit sudah dilakukan pembayaran');
+                    }
+                    $amount += $dtl->amount;
+                }
+                $amount *= -1;
+                DepositDetail::where('journal_id', $journalId)->delete();
+                $deposit = Deposit::where('company_id', $journal->company_id)->first();
+                // dd($amount, $deposit->balance);
+                $deposit->balance += $amount;
+                $deposit->save();
+            }
+
+            JournalDetail::where('journal_id', $journalId)->delete();
+            $journal->delete();
+
+            DB::commit();
+            return redirect()->route('journal.index')->with('success', 'Deleted!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error("deleteJournal Error {$th->getTraceAsString()}");
+
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
     public function postJournal(Request $request)
     {
         try {
