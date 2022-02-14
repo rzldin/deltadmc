@@ -193,7 +193,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $booking->mbl_no }}">
+                                                        id="mbl_shipper" value="{{ $booking->mbl_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -202,7 +202,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="hbl_shipper"
-                                                        id="hbl_shipper" value="{{ $booking->hbl_shipper }}">
+                                                        id="hbl_shipper" value="{{ $booking->hbl_shipper }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -210,7 +210,7 @@
                                                     <label>VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="vessel" id="vessel">
+                                                    <input class="form-control" type="text" name="vessel" id="vessel" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -219,7 +219,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input class="form-control" type="text" name="m_vessel"
-                                                        id="m_vessel">
+                                                        id="m_vessel" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
