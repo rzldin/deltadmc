@@ -367,6 +367,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proforma_invoice.index');
     Route::get('/invoice/proformainvoice/view/{id}', 'ProformaInvoiceController@view')->name('proforma_invoice.view');
+    Route::get('/invoice/proformainvoice/delete/{proformaInvoiceId}', 'ProformaInvoiceController@delete')->name('proforma_invoice.delete');
     Route::get('/invoice/proformainvoice/create/{invoiceId}', 'ProformaInvoiceController@create')->name('proforma_invoice.create');
     Route::get('/invoice/proformainvoice/edit/{proformaInvoiceId}', 'ProformaInvoiceController@edit')->name('proforma_invoice.edit');
     Route::post('/invoice/proformainvoice/create/', 'ProformaInvoiceController@save')->name('proforma_invoice.save');
@@ -385,15 +386,17 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/index/{tipe?}', 'InvoiceController@index')->name('invoice.index');
     Route::get('/invoice/internal/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
     Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
+    Route::get('/invoice/internal/delete/{id}', 'InvoiceController@delete')->name('invoice.delete');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
-    Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
+    // Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
     Route::post('/invoice/internal/loadSellCost', 'InvoiceController@loadSellCost')->name('invoice.loadSellCost');
     Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
     Route::post('/invoice/internal/openINV', 'InvoiceController@openINV')->name('invoice.openINV');
 
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
+    Route::get('/invoice/external/delete/{id}', 'ExternalInvoiceController@delete')->name('external_invoice.delete');
     Route::get('/invoice/external/create/{proformaInvoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
     Route::post('/invoice/external/create/', 'ExternalInvoiceController@save')->name('external_invoice.save');
     Route::post('/invoice/external/create/loadDetail', 'ExternalInvoiceController@loadDetail')->name('external_invoice.loadDetail');

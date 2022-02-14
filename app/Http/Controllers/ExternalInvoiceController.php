@@ -11,6 +11,7 @@ use App\ProformaInvoiceModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ExternalInvoiceController extends Controller
@@ -126,6 +127,24 @@ class ExternalInvoiceController extends Controller
         $data['goods'] = BookingModel::get_commodity($data['header']['t_booking_id']);
 
         return view('external_invoice.view_external_invoice')->with($data);
+    }
+
+    public function delete($externalInvoiceId)
+    {
+        DB::beginTransaction();
+        try {
+            ExternalInvoiceDetail::where('external_invoice_id', $externalInvoiceId)->delete();
+            ExternalInvoice::find($externalInvoiceId)->delete();
+
+            DB::commit();
+
+            return redirect()->route('external_invoice.index')->with('success', 'Deleted');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error("delete ExternalInvoice Error {$th->getMessage()}");
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 
     public static function getListExternalInvoiceByCompanyId(Request $request)

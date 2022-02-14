@@ -370,4 +370,22 @@ class ProformaInvoiceController extends Controller
 
         return view('proforma_invoice.view_proforma_invoice')->with($data);
     }
+
+    public function delete($proformaInvoiceId)
+    {
+        DB::beginTransaction();
+        try {
+            ProformaInvoiceDetailModel::where('proforma_invoice_id', $proformaInvoiceId)->delete();
+            ProformaInvoiceModel::find($proformaInvoiceId)->delete();
+
+            DB::commit();
+
+            return redirect()->route('proforma_invoice.index')->with('success', 'Deleted!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error("delete ProformaInvoice Error {$th->getMessage()}");
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
 }
