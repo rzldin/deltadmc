@@ -657,6 +657,7 @@ class InvoiceController extends Controller
     {
         $data['header'] = InvoiceModel::getInvoice($id)->first();
         $data['details'] = InvoiceDetailModel::getInvoiceDetails($id)->get();
+        $data['list_bank'] = MasterModel::bank_basedon_currency($data['header']->currency);
         $data['companies'] = MasterModel::company_data();
         $data['addresses'] = MasterModel::get_address($data['header']->client_id);
         $data['pics'] = MasterModel::get_pic($data['header']->client_id);
@@ -750,15 +751,21 @@ class InvoiceController extends Controller
         DB::beginTransaction();
         try {
             $invoice = InvoiceModel::find($invoiceId);
+            $count = InvoiceModel::count_inv($invoice->t_booking_id);
+
+            $flag_invoice = 0;
+            if($count>0){
+                $flag_invoice = 1;
+            }
 
             DB::table('t_booking')->where('id', $invoice->t_booking_id)->update([
-                'flag_invoice' => 0,
+                'flag_invoice' => $flag_invoice,
                 'updated_by' => Auth::user()->name,
                 'updated_at' => date('Y-m-d h:i:s')
             ]);
 
             $field = 't_invoice_id';
-            if ($invoice->tipe_env == 1) {
+            if ($invoice->tipe_inv == 1) {
                 $field = 't_invoice_cost_id';
             }
             DB::table('t_bcharges_dtl')->where($field, $invoiceId)->update([
@@ -772,7 +779,7 @@ class InvoiceController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('succes', 'Deleted!');
+            return redirect()->back()->with('succes', 'Invoice Deleted!');
         } catch (\Throwable $th) {
             DB::rollBack();
 

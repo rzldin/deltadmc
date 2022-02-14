@@ -118,3 +118,4 @@ ALTER TABLE `t_booking` ADD `shipment_by` VARCHAR(50) NOT NULL AFTER `activity`;
 copy table t_booking_profit dari dmctest
 ALTER TABLE `t_bcharges_dtl` ADD `t_mcarrier_id` INT(4) NOT NULL DEFAULT '0' AFTER `flag_shp`;
 ALTER TABLE `t_bcharges_dtl` ADD `notes` VARCHAR(200) NULL AFTER `invoice_type`;
+ALTER TABLE `t_maccount` ADD `t_mcurrency_id` INT(5) NULL AFTER `parent_account`;

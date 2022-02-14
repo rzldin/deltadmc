@@ -115,4 +115,8 @@ class InvoiceModel extends Model
 
         return $ars;
     }
+
+    public static function count_inv($id){
+        InvoiceModel::where('t_booking_id', $id)->count();
+    }
 }

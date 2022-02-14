@@ -43,6 +43,7 @@
                                 <th>Account Number</th>
                                 <th>Account Name</th>
                                 <th>Account Type</th>
+                                <th>Currency</th>
                                 <th>Balance</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -55,6 +56,7 @@
                                 <td>{{ $list->account_number }}</td>
                                 <td>{{ $list->account_name }}</td>
                                 <td>{{ $list->account_type }}</td>
+                                <td>{{ $list->code }}</td>
                                 <td>{{ number_format($list->beginning_ballance,2) }}</td>
                                 <td align="center">
                                     @if ($list->active_flag == 1)
@@ -69,6 +71,7 @@
                                 </td>
                             </tr>
                             @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -148,6 +151,19 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
+                            Currency <font color="#f00">*</font>
+                        </div>                                
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs4" style="width: 100%;margin-bottom:5px;" name="t_mcurrency_id" id="t_mcurrency_id">
+                                <option value="" disabled selected>-- Select Account Type --</option>
+                                @foreach ($list_currency as $lc)
+                                <option value="{{ $lc->id }}">{{ '('.$lc->code.') '.$lc->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4 col-xs-4">
                             Beginning Balance<font color="#f00">*</font>
                         </div>                                
                         <div class="col-md-8 col-xs-8">
@@ -205,6 +221,7 @@
             $('#account_type').val('').trigger("change");
             $('#segment').val('').trigger("change");
             $('#parent_account').val('').trigger("change");
+            $('#t_mcurrency_id').val('').trigger("change");
             $('#beginning_balance').val('');
             $('#start_date').val('');
             dsState = "Input";
@@ -258,6 +275,7 @@
                     $('#account_type').val(result.account_type).trigger("change");
                     $('#segment').val(result.segment_no).trigger("change");
                     $('#parent_account').val(result.parent_account).trigger("change");
+                    $('#t_mcurrency_id').val(result.t_mcurrency_id).trigger("change");
                     $('#beginning_balance').val(result.beginning_ballance);
                     $('#start_date').val(result.start_date);
                     $('#status').val(result.active_flag);

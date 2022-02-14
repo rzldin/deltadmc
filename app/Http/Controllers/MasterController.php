@@ -1109,6 +1109,7 @@ class MasterController extends Controller
         $data['list_acc_type'] = MasterModel::acc_type();
         $data['list_segment'] = MasterModel::segment_get();
         $data['list_parent'] = MasterModel::parent_account_get();
+        $data['list_currency'] = MasterModel::currency();
         return view('master.account')->with($data);
     }
 
@@ -1128,6 +1129,7 @@ class MasterController extends Controller
                 'account_type'          => $request->account_type,
                 'segment_no'            => $request->segment,
                 'parent_account'        => $request->parent_account,
+                't_mcurrency_id'        => $request->t_mcurrency_id,
                 'beginning_ballance'    => $request->beginning_ballance,
                 'start_date'            => $request->start_date,
                 'active_flag'           => $status,
@@ -1165,6 +1167,7 @@ class MasterController extends Controller
                 'account_type'          => $request->account_type,
                 'segment_no'            => $request->segment,
                 'parent_account'        => $request->parent_account,
+                't_mcurrency_id'        => $request->t_mcurrency_id,
                 'beginning_ballance'    => $request->beginning_ballance,
                 'start_date'            => $request->start_date,
                 'active_flag'           => $status,

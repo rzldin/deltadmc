@@ -169,7 +169,9 @@ class MasterModel extends Model
 
     public static function account_get()
     {
-        return DB::table('t_maccount')->orderBy('account_number')->get();
+        return DB::table('t_maccount')->select('t_maccount.*', 't_mcurrency.code')
+                ->leftJoin('t_mcurrency','t_mcurrency.id','=','t_maccount.t_mcurrency_id')
+                ->orderBy('account_number')->get();
     }
 
     public static function loaded_get()
@@ -260,6 +262,10 @@ class MasterModel extends Model
     public static function bank_account()
     {
         return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100'])->orderBy('account_name')->get();
+    }
+
+    public static function bank_basedon_currency($id){
+        return DB::table('t_maccount')->whereBetween('parent_account', ['1-1000', '1-1100'])->where('t_mcurrency_id',$id)->orderBy('account_name')->get();
     }
 
     public static function charge_group()

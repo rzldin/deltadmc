@@ -270,13 +270,38 @@
                             </div>
                             <div class="card card-primary">
                                 <div class="card-header">
+                                    <h5 class="card-title">List Bank</h5>
+                                </div>
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Account Number</th>
+                                                <th>Account Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($list_bank as $list)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $list->account_number }}</td>
+                                                <td>{{ $list->account_name }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card card-primary">
+                                <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
                                     {{-- <a href="{{ route('proformainvoice.create') }}"
                                     class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
                                     Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="" style="width: 150%">
+                                    <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>

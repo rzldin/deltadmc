@@ -292,10 +292,7 @@
                                 <div class="col-md-12">
                                   <a href="{{ url()->previous() }}" class="btn btn-default float-left mr-2">
                                     <i class="fa fa-angle-left"></i> Kembali
-                                  </a>        
-                                  <a href="#" class="btn btn-danger float-right mr-2" id="delete_inv">
-                                    <i class="fa fa-trash"></i> Delete
-                                  </a>        
+                                  </a>    
                                 </div>       
                             </div>
 
@@ -306,17 +303,4 @@
         </div>
     </div>
 </section>
-@push('after-scripts')
-<script>
-$('#delete_inv').click(function(event) {
-    event.preventDefault(); /*  Stops default form submit on click */
-
-    if (confirm('Anda yakin ingin menghapus invoice ini ?')) {
-        $(this).prop('disabled', true);
-        $('#formInvoice').attr("action", "{{ route('invoice.delete') }}");  
-        $('#formInvoice').submit();
-    }
-});
-</script>
-@endpush
 @endsection
