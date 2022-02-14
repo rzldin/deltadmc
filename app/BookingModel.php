@@ -58,6 +58,17 @@ class BookingModel extends Model
             WHERE a.id='".$id."'");
     }
 
+    public static function get_quoteProfit($id)
+    {
+        return DB::table('t_bcharges_dtl')
+                ->leftJoin('t_mcarrier', 't_mcarrier.id', '=', 't_bcharges_dtl.t_mcarrier_id')
+                ->leftJoin('t_booking', 't_booking.id', '=', 't_bcharges_dtl.t_booking_id')
+                ->leftJoin('t_mcurrency', 't_mcurrency.id', '=', 't_bcharges_dtl.currency')
+                ->leftJoin('t_invoice', 't_invoice.id', '=', 't_bcharges_dtl.t_invoice_id')
+                ->select('t_bcharges_dtl.*', 't_mcarrier.name as name_carrier', 't_mcurrency.code as code_currency', 't_mcarrier.code as carrier_code', 't_invoice.invoice_no', 't_booking.shipment_by')
+                ->where('t_bcharges_dtl.t_booking_id', $id)->get();
+    }
+
     public static function get_commodity($id)
     {
         return DB::select("SELECT a.*, b.uom_code as code_b, c.uom_code as code_c, d.uom_code as code_d, e.uom_code as code_e FROM t_bcommodity a LEFT JOIN t_muom b ON a.uom_comm = b.id LEFT JOIN t_muom c ON a.uom_packages = c.id LEFT JOIN t_muom d ON a.weight_uom = d.id LEFT JOIN t_muom e ON a.volume_uom = e.id WHERE a.t_booking_id='".$id."'");

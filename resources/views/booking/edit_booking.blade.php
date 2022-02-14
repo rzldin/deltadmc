@@ -988,6 +988,21 @@
                         <div class="col-md-8 col-xs-8">
                             <input type="checkbox" name="reimburs" id="reimburs">
                             <input type="hidden" name="reimbursx" id="reimbursx" value="">
+                            <small>Nilai cost dan sell akan otomatis sama saat disimpan. *Mengikuti nilai cost</small>
+                        </div>
+                    </div>
+                    <div class="row mb-2" id="show_name_to">
+                        <div class="col-md-4 col-xs-4">
+                           <span id="name_to_text">asddasa</span>
+                           <input type="hidden" id="jenis_edit">
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs44" name="name_to" id="name_to">
+                                <option value="">--Select Company--</option>
+                                @foreach ($company as $item)
+                                <option value="{{ $item->id }}">{{ '('.$item->client_code.') '.$item->client_name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </form>
@@ -1814,6 +1829,8 @@
             $('#vatx').val('');
             $('#totalx').val('');
             $('#notex').val('');
+            $('#show_name_to').hide();
+            $('#jenis_edit').val('');
 
             dsState = "Input";
 
@@ -1822,7 +1839,7 @@
         }
 
         /*** Edit Detail Quote **/
-         function editDetailCF(id){
+         function editDetailCF(id,tipe){
             $.ajax({
                 url: "{{ route('booking.booking_getDetailCharges') }}",
                 type: "POST",
@@ -1859,6 +1876,18 @@
                     $('#vatx').val(Number(data.vat));
                     $('#totalx').val(subtotal);
                     $('#notex').val(data.notes);
+                    $('#jenis_edit').val(tipe);
+                    if(tipe=='cost' && data.paid_to_id!= null){
+                        $('#show_name_to').show();
+                        $('#name_to_text').text('Paid To');
+                        $('#name_to').val(data.paid_to_id).trigger('change');
+                    }else if(tipe=='sell' && data.bill_to_id!= null){
+                        $('#show_name_to').show();
+                        $('#name_to_text').text('Bill To');
+                        $('#name_to').val(data.bill_to_id).trigger('change');
+                    }else{
+                        $('#show_name_to').hide();
+                    }
 
                     dsState = "Edit";
 
@@ -1913,7 +1942,7 @@
                 {
                     $.ajax({
                         type:"POST",
-                        url:"{{ route('booking.quote_addDetail') }}",
+                        url:"{{ route('booking.bcharges_addDetail') }}",
                         data:{
                             booking_id:{{ $booking->id }},
                             quote:{{ ($booking->t_quote_id)? $booking->t_quote_id:0 }},
@@ -1949,9 +1978,11 @@
                 }else{
                     $.ajax({
                         type:"POST",
-                        url:"{{ route('quotation.quote_updateDetail') }}",
+                        url:"{{ route('booking.bcharges_updateDetail') }}",
                         data:{
                             id:$('#id_dtl_quote').val(),
+                            jenis_edit:$('#jenis_edit').val(),
+                            id_booking:{{$booking->id}},
                             charge:$('#charge').val(),
                             desc:$('#descx').val(),
                             reimburs:$('#reimbursx').val(),
@@ -1965,6 +1996,7 @@
                             vat:$('#vatx').val(),
                             total:$('#totalx').val(),
                             note:$('#notex').val(),
+                            name_to:$('#name_to').val(),
                             quote:{{ ($booking->t_quote_id)? $booking->t_quote_id:0 }}
                         },
                         success:function(result){

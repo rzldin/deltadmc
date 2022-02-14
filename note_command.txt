@@ -98,3 +98,8 @@ ALTER TABLE t_journal_details MODIFY COLUMN memo text CHARACTER SET utf8mb4 COLL
 ALTER TABLE `t_pembayaran` ADD `modified_at` DATETIME NULL AFTER `created_at`, ADD `modified_by` INT(4) NULL AFTER `modified_at`;
 ALTER TABLE `t_mapps_menu` ADD `ordered` INT(2) NOT NULL DEFAULT '1' AFTER `apps_menu_url`;
 ALTER TABLE `t_booking` ADD `shipment_by` VARCHAR(50) NOT NULL AFTER `activity`;
+
+---- ghozi
+copy table t_booking_profit dari dmctest
+ALTER TABLE `t_bcharges_dtl` ADD `t_mcarrier_id` INT(4) NOT NULL DEFAULT '0' AFTER `flag_shp`;
+ALTER TABLE `t_bcharges_dtl` ADD `notes` VARCHAR(200) NULL AFTER `invoice_type`;

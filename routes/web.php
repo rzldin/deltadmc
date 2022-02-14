@@ -314,7 +314,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/update_request', 'BookingController@update_request')->name('booking.update_request');
     Route::post('/booking/approve_request', 'BookingController@approve_request')->name('booking.approve_request');
 
-    Route::post('/booking/quote_addDetail', 'BookingController@quote_addDetail')->name('booking.quote_addDetail');
+    Route::post('/booking/bcharges_addDetail', 'BookingController@bcharges_addDetail')->name('booking.bcharges_addDetail');
+    Route::post('/booking/bcharges_updateDetail', 'BookingController@bcharges_updateDetail')->name('booking.bcharges_updateDetail');
     Route::post('booking/cancel', 'BookingController@booking_cancel')->name('booking.cancel');
     Route::post('/booking/getPort/','BookingController@getPort')->name('booking.getPort');
     Route::post('/booking/getExistingPort/','BookingController@getExistingPort')->name('booking.getExistingPort');

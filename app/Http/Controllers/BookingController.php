@@ -390,11 +390,12 @@ class BookingController extends Controller
                         }
 
                         #Insert Charges Detail
-                        DB::table('t_bcharges_dtl')
-                            ->insert([
+                        $ship = DB::table('t_bcharges_dtl')
+                            ->insertGetId([
                                 't_booking_id'          => $id,
                                 'position_no'           => $no++,
                                 't_mcharge_code_id'     => $t_mcharge_code_id,
+                                't_mcarrier_id'         => $shp->t_mcarrier_id,
                                 // 'desc'                  => $shp->name_carrier,
                                 'desc'                  => $shp->notes.' | Routing: '.$shp->routing.' | Transit time : '.$shp->transit_time,
                                 'reimburse_flag'        => 0,
@@ -413,6 +414,14 @@ class BookingController extends Controller
                                 'created_by'            => $user,
                                 'created_on'            => $tanggal
                             ]);
+
+
+                        $total = ($shp->qty * $shp->cost);
+                        $total2 = ($shp->qty * $shp->sell);
+                        $amount = ($total * $shp->rate) + $shp->vat;
+                        $amount2 = ($total2 * $shp->rate) + $shp->vat;
+                        $totalCost = $amount + (($shp->qty * $shp->cost) * $shp->rate) + $shp->vat;
+                        $totalSell = $amount2 + (($shp->qty * $shp->sell) * $shp->rate) + $shp->vat;
 
                         foreach($dtlQuote as $row)
                         {
@@ -438,9 +447,31 @@ class BookingController extends Controller
                                 'created_by'            => $user,
                                 'created_on'            => $tanggal
                             ]);
+
+                            $total = ($row->qty * $row->cost);
+                            $total2 = ($row->qty * $row->sell);
+                            $amount = ($total * $row->rate) + $row->vat;
+                            $amount2 = ($total2 * $row->rate) + $row->vat;
+                            $totalCost += $amount + (($row->qty * $row->cost) * $row->rate) + $row->vat;
+                            $totalSell += $amount2 + (($row->qty * $row->sell) * $row->rate) + $shp->vat;
+
                         }
                     }
 
+                $profitAll = $totalSell - $totalCost;
+                $profitPct = ($profitAll*100)/$totalSell;
+
+            DB::table('t_booking_profit')->insert([
+                't_booking_id' => $id,
+                't_bcharges_id' => $ship,
+                't_mcurrency_id' => $shp->t_mcurrency_id,
+                'total_cost' => $totalCost,
+                'total_sell' => $totalSell,
+                'total_profit' => $profitAll,
+                'profit_pct' => $profitPct,
+                'created_by' => $user,
+                'created_on' => $tanggal
+            ]);
             DB::commit();
             return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
@@ -1627,6 +1658,7 @@ class BookingController extends Controller
         $booking    = DB::table('t_booking')->where('id', $request->id)->first();
         // $booking    = BookingModel::getDetailBooking($request->id);
         $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
+        // $shipping   = BookingModel::get_quoteProfit($booking->id);
         $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
         $total      = 0;
         $total2     = 0;
@@ -1695,7 +1727,7 @@ class BookingController extends Controller
                     . '<i class="fa fa-save"></i></a>';
             if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
-                    . '" onclick="editDetailCF('.$row->id.');"> '
+                    . '" onclick="editDetailCF('.$row->id.',\'cost\');"> '
                     . '<i class="fa fa-edit"></i></a>';
             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
                     . '" onclick="hapusDetailCF('.$row->id.');"> '
@@ -1756,6 +1788,9 @@ class BookingController extends Controller
             }
 
             if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
+                $tabel1 .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
+                        . '" onclick="editDetailCF('.$row->id.',\'sell\');"> '
+                        . '<i class="fa fa-edit"></i></a>';
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                 . '" onclick="hapusDetailCF('.$row->id.');" style="margin-left:2px;"> '
                 . '<i class="fa fa-trash"></i></a>';
@@ -2318,7 +2353,7 @@ class BookingController extends Controller
     }
 
 
-    public function quote_addDetail(Request $request)
+    public function bcharges_addDetail(Request $request)
     {
         $cek = DB::table('t_bcharges_dtl')->where('t_booking_id', $request->booking_id)->orderBy('created_on', 'desc')->first();
 
@@ -2339,6 +2374,9 @@ class BookingController extends Controller
 
         if($request->reimburs == 1){
             $r = 1;
+            $request->sell = $request->cost;
+            $request->sell_val = $request->cost_val;
+            $request->total = str_replace(',','', $request->sell_val) * str_replace(',','', $request->qty);
         }else{
             $r = 0;
         }
@@ -2367,7 +2405,7 @@ class BookingController extends Controller
             'created_on'        => $tanggal
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+        $data[] = DB::select("SELECT a.* FROM t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id WHERE b.id = '".$request->booking_id."'");
 
         $result = array();
         foreach ($data as $key)
@@ -2389,7 +2427,7 @@ class BookingController extends Controller
         $sellV = $totalSell;
 
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+        $data = DB::select("SELECT a.* FROM t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id WHERE flag_shp = 1 and b.id = '".$request->booking_id."'");
         if(count($detail) > 1){
             foreach($data as $shipping){
                 $totalCost  = $shipping->cost_val + $costV;
@@ -2398,7 +2436,7 @@ class BookingController extends Controller
                 $user = Auth::user()->name;
                 $tanggal = Carbon::now();
                     try {
-                        DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
+                        DB::table('t_boking_profit')->where('t_bcharges_id', $shipping->id)
                         ->update([
                             't_mcurrency_id'        => $shipping->t_mcurrency_id,
                             'total_cost'            => $totalCost,
@@ -2422,9 +2460,9 @@ class BookingController extends Controller
                 $user = Auth::user()->name;
                 $tanggal = Carbon::now();
                     try {
-                        DB::table('t_quote_profit')->insert([
-                            't_quote_id'            => $shipping->t_quote_id,
-                            't_quote_ship_dtl_id'   => $shipping->id,
+                        DB::table('t_booking_profit')->insert([
+                            't_booking_id'          => $request->t_booking_id,
+                            't_bcharges_id'         => $shipping->id,
                             't_mcurrency_id'        => $shipping->t_mcurrency_id,
                             'total_cost'            => $totalCost,
                             'total_sell'            => $totalSell,
@@ -2440,6 +2478,135 @@ class BookingController extends Controller
                 }
             $return_data = 'sukses';
         }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    public function bcharges_updateDetail(Request $request)
+    {
+
+        DB::beginTransaction();
+        if($request->reimburs == 1){
+            $r = 1;
+            $request->sell = $request->cost;
+            $request->sell_val = $request->cost_val;
+            $request->total = str_replace(',','', $request->sell_val) * str_replace(',','', $request->qty);
+        }else{
+            $r = 0;
+        }
+
+        if($request->jenis_edit=='cost'){
+            $company = MasterModel::company_get($request->name_to);
+            DB::table('t_bcharges_dtl')
+            ->where('id', $request->id)
+            ->update([
+                't_mcharge_code_id' => $request->charge,
+                'desc'              => $request->desc,
+                'reimburse_flag'    => $r,
+                'currency'    => $request->currency,
+                'rate'              => $request->rate,
+                'cost'              => $request->cost,
+                'sell'              => $request->sell,
+                'qty'               => $request->qty,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
+                'vat'               => $request->vat,
+                'paid_to'           => $company->client_name,
+                'paid_to_id'        => $request->name_to,
+                'subtotal'          => str_replace(',','', $request->total),
+                'notes'             => $request->note,
+            ]);
+
+        }else if($request->jenis_edit=='sell'){
+            $company = MasterModel::company_get($request->name_to);
+            DB::table('t_bcharges_dtl')
+            ->where('id', $request->id)
+            ->update([
+                't_mcharge_code_id' => $request->charge,
+                'desc'              => $request->desc,
+                'reimburse_flag'    => $r,
+                'currency'    => $request->currency,
+                'rate'              => $request->rate,
+                'cost'              => $request->cost,
+                'sell'              => $request->sell,
+                'qty'               => $request->qty,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
+                'vat'               => $request->vat,
+                'bill_to'           => $company->client_name,
+                'bill_to_id'        => $request->name_to,
+                'subtotal'          => str_replace(',','', $request->total),
+                'notes'             => $request->note,
+            ]);
+        }else{
+            DB::table('t_bcharges_dtl')
+            ->where('id', $request->id)
+            ->update([
+                't_mcharge_code_id' => $request->charge,
+                'desc'              => $request->desc,
+                'reimburse_flag'    => $r,
+                'currency'    => $request->currency,
+                'rate'              => $request->rate,
+                'cost'              => $request->cost,
+                'sell'              => $request->sell,
+                'qty'               => $request->qty,
+                'cost_val'          => str_replace(',','', $request->cost_val),
+                'sell_val'          => str_replace(',','', $request->sell_val),
+                'vat'               => $request->vat,
+                'subtotal'          => str_replace(',','', $request->total),
+                'notes'             => $request->note,
+            ]);
+        }
+
+        $data[] = DB::select("SELECT a.* FROM t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id WHERE b.id = '".$request->id_booking."'");
+
+        $result = array();
+        foreach ($data as $key)
+        {
+            $result = array_merge($result, $key);
+        }
+
+        $detail = $result;
+
+        $totalCost = 0;
+        $totalSell = 0;
+        foreach($detail as $row)
+        {   
+            $totalCost += $row->cost_val;
+            $totalSell += $row->sell_val;
+        }
+
+        $costV = $totalCost;
+        $sellV = $totalSell;
+        
+        #Insert Tabel t_quote_profit
+        $data = DB::select("SELECT a.* FROM t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id WHERE b.id = '".$request->booking_id."'");
+        
+        foreach($data as $shipping){
+            $totalCost  = $shipping->cost_val + $costV;
+            $totalSell  = $shipping->sell_val + $sellV;
+            $profit     = $totalSell - $totalCost;
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+                try {
+                    DB::table('t_booking_profit')->where('t_bcharges_dtl', $shipping->id)
+                    ->update([
+                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
+                        'total_cost'            => $totalCost,
+                        'total_sell'            => $totalSell,
+                        'total_profit'          => $profit,
+                        'profit_pct'            => ($profit*100)/$totalSell,
+                        'created_by'            => $user,
+                        'created_on'            => $tanggal
+                    ]);
+                    $return_data = 'sukses';
+                } catch (\Exception $e) {
+                    $return_data = $e->getMessage();
+                }
+        }
+        DB::commit();
+        $return_data = 'sukses';
 
         header('Content-Type: application/json');
         echo json_encode($return_data);

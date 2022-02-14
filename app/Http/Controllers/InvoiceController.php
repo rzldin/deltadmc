@@ -16,7 +16,7 @@ class InvoiceController extends Controller
 {
     public function index()
     {
-        $tipe = \Request::segment(3);
+        $tipe = \Request::segment(4);
         if($tipe=='piutang'){
             $invoices = InvoiceModel::getInvoiceByType(0)->get();
         }else if($tipe=='hutang'){
