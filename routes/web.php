@@ -468,6 +468,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/accounting/journal/post', 'JournalController@postJournal')->name('journal.post');
     Route::get('/accounting/journal/edit/{id}', 'JournalController@editJournal')->name('journal.edit');
     Route::get('/accounting/journal/view/{id}', 'JournalController@viewJournal')->name('journal.view');
+    Route::get('/accounting/journal/delete/{id}', 'JournalController@deleteJournal')->name('journal.delete');
     Route::post('/accounting/journal/loadDetail', 'JournalController@loadDetailJournal')->name('journal.loadDetail');
     Route::post('/accounting/journal/saveDetail', 'JournalController@saveDetailJournal')->name('journal.saveDetail');
     Route::post('/accounting/journal/updateDetail', 'JournalController@updateDetailJournal')->name('journal.updateDetail');

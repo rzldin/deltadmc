@@ -32,6 +32,7 @@
                             <div class="card-body">
                                 @csrf
                                 <input type="hidden" name="id" value="0">
+                                <input type="hidden" name="company_id" value="{{ $client_id }}">
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h3 class="card-title">Journal</h3>
@@ -65,7 +66,7 @@
                                                         </select>
                                                     </div>
                                                 </div> --}}
-                                                <div class="row mb-3 display-none" id="row_company_id">
+                                                {{-- <div class="row mb-3 display-none" id="row_company_id">
                                                     <div class="col-md-4">
                                                         <label>Company</label>
                                                     </div>
@@ -77,7 +78,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <div class="row mb-3 display-none" id="row_invoice_id_deposit">
                                                     <div class="col-md-4">
                                                         <label>Invoice</label>

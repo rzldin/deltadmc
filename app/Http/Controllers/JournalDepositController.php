@@ -330,9 +330,26 @@ class JournalDepositController extends Controller
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
         $data['header'] = Journal::findJournal($journalId)->first();
+
+        /**
+         * kalau journal deposit, cek dulu depositnya sudah dipakai pembayaran atau belum
+         */
+        if ($data['header']->external_invoice_id_deposit != 0 || $data['header']->invoice_id_deposit != 0) {
+            $deposit_dtl = DepositDetail::where('journal_id', $journalId);
+            if ($deposit_dtl->count() > 0) {
+                foreach ($deposit_dtl->get() as $key => $dtl) {
+                    if ($dtl->pembayaran_id != 0) {
+                        return redirect()->back()->with('error', 'Journal deposit sudah digunakan pembayaran, tidak dapat edit');
+                    }
+                }
+            }
+        }
+
         $data['header']->journal_type = 'general_journal';
+
         if ($data['header']->invoice_id_deposit != 0) $data['header']->journal_type = 'deposit_vendor';
         else if ($data['header']->external_invoice_id_deposit != 0) $data['header']->journal_type = 'deposit_client';
+
         $details = JournalDetail::findAllJournalDetails($journalId)->get();
         if (Session::get('journal_details') == []) Session::put('journal_details', $details->toArray());
 
