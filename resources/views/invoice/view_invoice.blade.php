@@ -311,9 +311,10 @@
                                                 <th>Unit</th>
                                                 <th>Currency</th>
                                                 <th>rate/unit</th>
-                                                <th>Total</th>
                                                 <th>ROE</th>
-                                                <th>Vat</th>
+                                                <th>Total</th>
+                                                <th>PPN</th>
+                                                <th>PPH 23</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
                                                 {{-- <th>Action</th> --}}
@@ -329,13 +330,21 @@
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
                                                     <td align="right">{{ number_format($detail->sell, 2, ',', '.') }}</td>
-                                                    <td align="right">{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->rate, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->pph23, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                                                     {{-- <td></td> --}}
                                                 </tr>
                                             @endforeach
+                                            <tr>
+                                                <td colspan="8" class="text-right">Total</td>
+                                                <td class="text-right">{{ number_format($header->total_before_vat, 2, ',', '.') }}</td>
+                                                <td class="text-right">{{ number_format($header->total_vat, 2, ',', '.') }}</td>
+                                                <td class="text-right">{{ number_format($header->pph23, 2, ',', '.') }}</td>
+                                                <td class="text-right">{{ number_format($header->total_invoice, 2, ',', '.') }}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

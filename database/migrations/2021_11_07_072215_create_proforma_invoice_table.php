@@ -27,6 +27,7 @@ class CreateProformaInvoiceTable extends Migration
             $table->integer('currency');
             $table->decimal('total_before_vat', 14, 2)->default(0);
             $table->decimal('total_vat', 14, 2)->default(0);
+            $table->decimal('pph23', 14, 2)->default(0);
             $table->decimal('total_invoice', 14, 2)->default(0);
             $table->decimal('rate', 14, 2)->default(0);
             $table->integer('reimburse_flag')->nullable();
