@@ -28,6 +28,7 @@ class CreateInvoiceTable extends Migration
             $table->decimal('rate', 14, 2)->default(0);
             $table->decimal('total_before_vat', 14, 2)->default(0);
             $table->decimal('total_vat', 14, 2)->default(0);
+            $table->decimal('pph23', 14, 2)->default(0);
             $table->decimal('total_invoice', 14, 2)->default(0);
             $table->decimal('invoice_bayar', 14, 2)->default(0);
             $table->tinyInteger('flag_bayar')->default(0);

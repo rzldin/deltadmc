@@ -58,6 +58,10 @@ class ExternalInvoice extends Model
                 'pod_id' => $request['pod_id'],
                 'onboard_date' => $request['onboard_date'],
                 'rate' => $request['rate'],
+                'total_before_vat' => $request['total_before_vat'],
+                'total_vat' => $request['total_vat'],
+                'pph23' => $request['pph23'],
+                'total_invoice' => $request['total_invoice'],
                 'created_by' => $request['created_by'],
                 'created_on' => $request['created_on'],
             ]

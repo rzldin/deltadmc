@@ -218,6 +218,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/vehicleType_get', 'MasterController@vehicleType_get')->name('master.vehicleType_get');
     Route::get('/master/vehicleType_delete/{id}', 'MasterController@vehicleType_delete')->name('master.vehicleType_delete');
 
+    /** Tax */
+    Route::get('/master/tax', 'TaxController@index')->name('master.tax.index');
+    Route::post('/master/tax', 'TaxController@save')->name('master.tax.save');
 
     /** Quotation */
     Route::get('quotation/list', 'QuotationController@index')->name('quotation.list');

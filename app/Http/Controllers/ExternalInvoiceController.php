@@ -39,7 +39,6 @@ class ExternalInvoiceController extends Controller
 
     public function save(Request $request)
     {
-        // dd($request->all());
         $rules = [
             'client_id' => 'required',
             'external_invoice_no' => 'required|unique:t_external_invoice',
@@ -63,10 +62,18 @@ class ExternalInvoiceController extends Controller
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
+            $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);
+            $param['total_vat'] = str_replace(',', '', $request->total_vat);
+            $param['pph23'] = str_replace(',', '', $request->pph23);
+            $param['total_invoice'] = str_replace(',', '', $request->total_invoice);
             // $param['rate'] = 1;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
+            unset($param['invoice_type']);
+            unset($param['pol_name']);
+            unset($param['pod_name']);
 
+            // dd($request->all(), $param);
             $invoice = ExternalInvoice::saveExternalInvoice($param);
 
             $details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->t_proforma_invoice_id)->get();
@@ -89,6 +96,7 @@ class ExternalInvoiceController extends Controller
                 $paramDetail['cost_val'] = $detail['cost_val'];
                 $paramDetail['sell_val'] = $detail['sell_val'];
                 $paramDetail['vat'] = $detail['vat'];
+                $paramDetail['pph23'] = $detail['pph23'];
                 $paramDetail['subtotal'] = $detail['subtotal'];
                 $paramDetail['routing'] = $detail['routing'];
                 $paramDetail['transit_time'] = $detail['transit_time'];
@@ -101,11 +109,11 @@ class ExternalInvoiceController extends Controller
                 ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
             }
 
-            DB::table('t_external_invoice')->where('id', $invoice->id)->update([
-                'total_before_vat' => $total_before_vat,
-                'total_vat' => $total_vat,
-                'total_invoice' => $total_invoice,
-            ]);
+            // DB::table('t_external_invoice')->where('id', $invoice->id)->update([
+            //     'total_before_vat' => $total_before_vat,
+            //     'total_vat' => $total_vat,
+            //     'total_invoice' => $total_invoice,
+            // ]);
             DB::commit();
 
             return redirect()->route('external_invoice.index')->with('success', 'Saved!');

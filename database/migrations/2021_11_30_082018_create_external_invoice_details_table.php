@@ -28,6 +28,7 @@ class CreateExternalInvoiceDetailsTable extends Migration
             $table->decimal('cost_val', 14, 2);
             $table->decimal('sell_val', 14, 2);
             $table->decimal('vat', 14, 2)->nullable();
+            $table->decimal('pph23', 14, 2)->nullable()->default(0);
             $table->decimal('subtotal', 14, 2);
             $table->string('routing', 100)->nullable();
             $table->string('transit_time', 50)->nullable();

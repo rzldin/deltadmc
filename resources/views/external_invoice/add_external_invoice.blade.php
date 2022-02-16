@@ -279,9 +279,10 @@
                                                     <th>Unit</th>
                                                     <th>Currency</th>
                                                     <th>rate/unit</th>
-                                                    <th>Total</th>
                                                     <th>ROE</th>
-                                                    <th>Vat</th>
+                                                    <th>Total</th>
+                                                    <th>PPN</th>
+                                                    <th>PPH 23</th>
                                                     <th>Amount</th>
                                                     {{-- <th>Note</th> --}}
                                                     {{-- <th>Action</th> --}}
@@ -297,14 +298,30 @@
                                                         </td>
                                                         <td>{{ $proforma_invoice_detail->qty }}</td>
                                                         <td>{{ $proforma_invoice_detail->currency_code }}</td>
-                                                        <td>{{ number_format($proforma_invoice_detail->sell, 2, ',', '.') }}</td>
-                                                        <td>{{ number_format($proforma_invoice_detail->sell_val, 2, ',', '.') }}</td>
-                                                        <td>{{ number_format($proforma_invoice_detail->rate, 2, ',', '.') }}</td>
-                                                        <td>{{ number_format($proforma_invoice_detail->vat, 2, ',', '.') }}</td>
-                                                        <td>{{ number_format($proforma_invoice_detail->subtotal, 2, ',', '.') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->sell, 2, '.', ',') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->rate, 2, '.', ',') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->sell_val, 2, '.', ',') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->vat, 2, '.', ',') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->pph23, 2, '.', ',') }}</td>
+                                                        <td>{{ number_format($proforma_invoice_detail->subtotal, 2, '.', ',') }}</td>
                                                         {{-- <td></td> --}}
                                                     </tr>
                                                 @endforeach
+                                                <tr>
+                                                    <td colspan="8" class="text-right">Total</td>
+                                                    <td class="text-right">
+                                                        <input type="text" name="total_before_vat" id="total_before_vat" class="form-control" value="{{ number_format($proforma_invoice_header->total_before_vat, 2, '.', ',') }}" readonly>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input type="text" name="total_vat" id="total_vat" class="form-control" value="{{ number_format($proforma_invoice_header->total_vat, 2, '.', ',') }}" readonly>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input type="text" name="pph23" id="pph23" class="form-control" value="{{ number_format($proforma_invoice_header->pph23, 2, '.', ',') }}" readonly>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <input type="text" name="total_invoice" id="total_invoice" class="form-control" value="{{ number_format($proforma_invoice_header->total_invoice, 2, '.', ',') }}" readonly>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>

@@ -284,9 +284,10 @@
                                                     <th>Unit</th>
                                                     <th>Currency</th>
                                                     <th>rate/unit</th>
-                                                    <th>Total</th>
                                                     <th>ROE</th>
-                                                    <th>Vat</th>
+                                                    <th>Total</th>
+                                                    <th>PPN</th>
+                                                    <th>PPH 23</th>
                                                     <th>Amount</th>
                                                     {{-- <th>Note</th> --}}
                                                     {{-- <th>Action</th> --}}
@@ -340,7 +341,8 @@
                                             <th>rate/unit</th>
                                             <th>Total</th>
                                             <th>ROE</th>
-                                            <th>Vat</th>
+                                            <th>PPN</th>
+                                            <th>PPH 23</th>
                                             <th>Amount</th>
                                             {{-- <th>Note</th> --}}
                                             {{-- <th>Action</th> --}}
@@ -393,6 +395,9 @@
                                             </td>
                                             <td>
                                                 <input type="text" name="total_vat" id="total_vat" class="form-control" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="total_pph23" id="total_pph23" class="form-control" readonly>
                                             </td>
                                             <td>
                                                 <input type="text" name="subtotal" id="subtotal" class="form-control" readonly>
@@ -518,6 +523,7 @@
                         $('#total_sell_val').val($('#total_sell_val_before').val());
                         $('#rate').val($('#rate_before').val());
                         $('#total_vat').val($('#total_vat_before').val());
+                        $('#total_pph23').val($('#total_pph23_before').val());
                         $('#subtotal').val($('#subtotal_before').val());
                         $('#routing').val($('#routing_before').val());
                         $('#transit_time').val($('#transit_time_before').val());
@@ -542,6 +548,7 @@
                 var sell_val = $('#total_sell_val');
                 var rate = $('#rate');
                 var vat = $('#total_vat');
+                var pph23 = $('#total_pph23');
                 var subtotal = $('#subtotal');
                 var routing = $('#routing');
                 var transit_time = $('#transit_time');
@@ -565,6 +572,7 @@
                         sell_val: sell_val.val(),
                         rate: rate.val(),
                         vat: vat.val(),
+                        pph23: pph23.val(),
                         subtotal: subtotal.val(),
                         routing: routing.val(),
                         transit_time: transit_time.val(),
@@ -592,6 +600,7 @@
                 $('#total_sell_val').val('');
                 $('#rate').val('');
                 $('#total_vat').val('');
+                $('#total_pph23').val('');
                 $('#subtotal').val('');
                 $('#routing').val('');
                 $('#transit_time').val('');

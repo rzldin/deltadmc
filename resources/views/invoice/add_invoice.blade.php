@@ -123,6 +123,19 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
+                                                        <label>Tax</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @foreach ($taxes as $tax)
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox" id="{{ $tax->code }}" value="{{ $tax->value }}" onchange="checkedTax(`{{ $tax->code }}`, `{{ $tax->name }}`, {{ $tax->value }})">
+                                                                <label class="form-check-label" for="{{ $tax->code }}">{{ "$tax->name ($tax->value %)" }}</label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
                                                         <label>MB/L</label>
                                                     </div>
                                                     <div class="col-md-8">
@@ -287,7 +300,7 @@
                                                     <th>rate/unit</th>
                                                     <th>Total</th>
                                                     <th>ROE</th>
-                                                    <th>Vat</th>
+                                                    {{-- <th>Vat</th> --}}
                                                     <th>Amount</th>
                                                     <th>Note</th>
                                                     {{-- <th>Action</th> --}}
@@ -355,6 +368,41 @@
                 }
             }
 
+            function checkedTax(code, name, value) {
+                if ($('#'+code).is(':checked')) {
+                    $('#row_'+code).show();
+                    $('#lbl_'+code).text(name + ' (' + value + ' %)');
+                    $('#value_'+code).val(value);
+                } else {
+                    $('#row_'+code).hide();
+                    $('#value_'+code).val(0);
+                }
+
+                calculateTotal();
+            }
+
+            function calculateTotal() {
+                let total_before_vat = $('#total_before_vat');
+                let total_invoice = $('#total_invoice');
+                let ppn = $('#value_ppn');
+                let pph23 = $('#value_pph23');
+                let total_ppn = $('#input_ppn');
+                let total_pph23 = $('#input_pph23');
+
+                let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
+                let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
+                let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
+                let total_ppn_val = total_before_vat_val * (ppn_val / 100);
+                let total_pph23_val = total_before_vat_val * (pph23_val / 100);
+
+                let result;
+                result = total_before_vat_val + total_ppn_val - total_pph23_val;
+
+                total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            }
+
             /** Load Schedule **/
             function loadSellCost(id) {
                 if (id != null) {
@@ -368,6 +416,7 @@
                             invoice_type: $('input[name="invoice_type"]:checked').val(),
                             tipe_inv: '{{ $tipe_inv }}'
                         },
+                        async: false,
                         dataType: "html",
                         success: function(result) {
                             var tabel = JSON.parse(result);

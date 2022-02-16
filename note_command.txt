@@ -120,3 +120,17 @@ ALTER TABLE `t_bcharges_dtl` ADD `t_mcarrier_id` INT(4) NOT NULL DEFAULT '0' AFT
 ALTER TABLE `t_bcharges_dtl` ADD `notes` VARCHAR(200) NULL AFTER `invoice_type`;
 ALTER TABLE `t_maccount` ADD `t_mcurrency_id` INT(5) NULL AFTER `parent_account`;
 ALTER TABLE `t_invoice` ADD `status` TINYINT(1) NOT NULL DEFAULT '0' AFTER `t_booking_id`;
+
+---- hendry
+ALTER TABLE t_invoice ADD pph23 decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_invoice CHANGE pph23 pph23 decimal(14,2) DEFAULT 0 NULL AFTER total_vat;
+ALTER TABLE t_invoice_detail ADD pph23 DECIMAL(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_invoice_detail CHANGE pph23 pph23 DECIMAL(14,2) DEFAULT 0 NULL AFTER vat;
+ALTER TABLE t_proforma_invoice ADD pph23 decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_proforma_invoice CHANGE pph23 pph23 decimal(14,2) DEFAULT 0 NULL AFTER total_vat;
+ALTER TABLE t_proforma_invoice_detail ADD pph23 DECIMAL(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_proforma_invoice_detail CHANGE pph23 pph23 DECIMAL(14,2) DEFAULT 0 NULL AFTER vat;
+ALTER TABLE t_external_invoice ADD pph23 decimal(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_external_invoice CHANGE pph23 pph23 decimal(14,2) DEFAULT 0 NULL AFTER total_vat;
+ALTER TABLE t_external_invoice_detail ADD pph23 DECIMAL(14,2) DEFAULT 0 NULL;
+ALTER TABLE t_external_invoice_detail CHANGE pph23 pph23 DECIMAL(14,2) DEFAULT 0 NULL AFTER vat;
