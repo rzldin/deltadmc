@@ -134,6 +134,4 @@ ALTER TABLE t_external_invoice ADD pph23 decimal(14,2) DEFAULT 0 NULL;
 ALTER TABLE t_external_invoice CHANGE pph23 pph23 decimal(14,2) DEFAULT 0 NULL AFTER total_vat;
 ALTER TABLE t_external_invoice_detail ADD pph23 DECIMAL(14,2) DEFAULT 0 NULL;
 ALTER TABLE t_external_invoice_detail CHANGE pph23 pph23 DECIMAL(14,2) DEFAULT 0 NULL AFTER vat;
-
----- hendry 16022022
-RENAME TABLE funed713_dmctest.taxes TO funed713_dmctest.m_taxes;
+RENAME TABLE taxes TO m_taxes;

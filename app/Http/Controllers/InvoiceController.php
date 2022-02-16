@@ -534,6 +534,21 @@ class InvoiceController extends Controller
             try {
                 DB::beginTransaction();
                 $invoice = InvoiceModel::find($request->create_type);
+                $total_before_vat = $invoice->total_before_vat + str_replace(',', '', $request->total_before_vat);
+                $total_vat = $invoice->total_vat + str_replace(',', '', $request->input_ppn);
+                $pph23 = $invoice->pph23 + str_replace(',', '', $request->input_pph23);
+                $total_invoice = $invoice->total_invoice + str_replace(',', '', $request->total_invoice);
+                $created_by = Auth::user()->name;
+                $created_on = date('Y-m-d h:i:s');
+                InvoiceModel::where('id', $invoice->id)->update([
+                    'total_before_vat'=>$total_before_vat,
+                    'total_vat'=>$total_vat,
+                    'pph23'=>$pph23,
+                    'total_invoice'=>$total_invoice,
+                    'created_by'=>$created_by,
+                    'created_on'=>$created_on
+                ]);
+
                 $invoice_detail = DB::table('t_bcharges_dtl')->where('t_invoice_id', $invoice->id)->first();
                 $paramDetail['id'] = '';
                 $paramDetail['invoice_id'] = $invoice->id;
@@ -544,12 +559,12 @@ class InvoiceController extends Controller
                         $vat_dtl = 0;
                         $pph23_dtl = 0;
                         $subtotal = 0;
-                        if ($invoice->value_ppn > 0) {
-                            $vat_dtl = $chrg_dtl->sell_val * ($invoice->value_ppn / 100);
+                        if ($request->value_ppn > 0) {
+                            $vat_dtl = $chrg_dtl->sell_val * ($request->value_ppn / 100);
                         }
 
-                        if ($invoice->value_pph23 > 0) {
-                            $pph23_dtl = $chrg_dtl->sell_val * ($invoice->value_pph23 / 100);
+                        if ($request->value_pph23 > 0) {
+                            $pph23_dtl = $chrg_dtl->sell_val * ($request->value_pph23 / 100);
                         }
                         $subtotal = $chrg_dtl->sell_val + $vat_dtl - $pph23_dtl;
                         $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
@@ -937,9 +952,6 @@ class InvoiceController extends Controller
     {
         try {
             $data = DB::table('t_invoice')->where('id', $request['id'])->first();
-            // if($data->total_vat>0){
-            //     $checked_ppn = 
-            // }
 
             $return_data['data'] = $data;
             $return_data['status'] = 'sukses';

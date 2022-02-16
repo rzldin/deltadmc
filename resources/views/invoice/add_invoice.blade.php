@@ -329,24 +329,25 @@
     @push('after-scripts')
         <script>
             $('#create_type').on('change', function() {
-                if(this.value == 0){
+                if($('#create_type').val() == 0){
                     $('.show_new').show('slow');
                 }else{
                     $.ajax({
                         url: "{{ route('invoice.getInvoiceHeader') }}",
                         type: "POST",
                         data: {
-                            id: this.val,
+                            id: $('#create_type').val(),
                         },
-                        dataType: "json",
+                        dataType:'json',
                         success: function(result) {
+                            console.log(result.status);
                             if(result.status == 'sukses'){
                                 if(result.data.total_vat>0){
                                     $('#ppn').prop('checked',true).trigger('change');
                                 }else{
                                     $('#ppn').prop('checked',false).trigger('change');
                                 }
-                                if(result.pph23>0){
+                                if(result.data.pph23>0){
                                     $('#pph23').prop('checked',true).trigger('change');
                                 }else{
                                     $('#pph23').prop('checked',false).trigger('change');
