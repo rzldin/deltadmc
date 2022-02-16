@@ -128,7 +128,7 @@
                                                     <div class="col-md-8">
                                                         @foreach ($taxes as $tax)
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="checkbox" id="{{ $tax->code }}" value="{{ $tax->value }}" onchange="checkedTax(`{{ $tax->code }}`, `{{ $tax->name }}`, {{ $tax->value }})">
+                                                                <input class="form-check-input taxcheck" type="checkbox" id="{{ $tax->code }}" value="{{ $tax->value }}" onchange="checkedTax(`{{ $tax->code }}`, `{{ $tax->name }}`, {{ $tax->value }})">
                                                                 <label class="form-check-label" for="{{ $tax->code }}">{{ "$tax->name ($tax->value %)" }}</label>
                                                             </div>
                                                         @endforeach
@@ -332,7 +332,31 @@
                 if(this.value == 0){
                     $('.show_new').show('slow');
                 }else{
-                    $('.show_new').hide('slow');
+                    $.ajax({
+                        url: "{{ route('invoice.getInvoiceHeader') }}",
+                        type: "POST",
+                        data: {
+                            id: this.val,
+                        },
+                        dataType: "json",
+                        success: function(result) {
+                            if(result.status == 'sukses'){
+                                if(result.data.total_vat>0){
+                                    $('#ppn').prop('checked',true).trigger('change');
+                                }else{
+                                    $('#ppn').prop('checked',false).trigger('change');
+                                }
+                                if(result.pph23>0){
+                                    $('#pph23').prop('checked',true).trigger('change');
+                                }else{
+                                    $('#pph23').prop('checked',false).trigger('change');
+                                }
+                                $('.show_new').hide('slow');
+                            }else{
+                                alert(result.message);
+                            }
+                        }
+                    });
                 }
             });
 
@@ -421,6 +445,7 @@
                         success: function(result) {
                             var tabel = JSON.parse(result);
                             $('#tblSell').html(tabel[0]);
+                            $(".taxcheck").prop('checked', false);//reset biar nge checkbox ulang tax nya
                             // $('#tblProfit').html(tabel[2]);
                         }
                     })

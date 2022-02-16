@@ -401,133 +401,201 @@ class InvoiceController extends Controller
 
     public function save(Request $request)
     {
-        $rules = [
-            'client_id' => 'required',
-            'invoice_no' => 'required|unique:t_invoice',
-            'invoice_date' => 'required',
-            'currency' => 'required',
-            // 'pol_id' => 'required',
-            // 'pod_id' => 'required',
-        ];
+        if($request->create_type==0){
+            $rules = [
+                'client_id' => 'required',
+                'invoice_no' => 'required|unique:t_invoice',
+                'invoice_date' => 'required',
+                'currency' => 'required',
+                // 'pol_id' => 'required',
+                // 'pod_id' => 'required',
+            ];
 
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return redirect()->back()->with('errorForm', $validator->errors()->messages());
-        }
-
-        try {
-            DB::beginTransaction();
-
-            DB::table('t_booking')->where('id', $request->t_booking_id)->update([
-                'flag_invoice' => 1
-            ]);
-
-            $total_before_vat = 0;
-            $total_vat = 0;
-            $total_invoice = 0;
-
-            $param = $request->all();
-            $param['invoice_date'] = date('Y-m-d', strtotime($request->invoice_date));
-            $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
-            $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-            $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
-            $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
-            $param['rate'] = 1;
-            $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);
-            $param['total_vat'] = str_replace(',', '', $request->input_ppn);
-            $param['pph23'] = str_replace(',', '', $request->input_pph23);
-            $param['total_invoice'] = str_replace(',', '', $request->total_invoice);
-            $param['created_by'] = Auth::user()->name;
-            $param['created_on'] = date('Y-m-d h:i:s');
-            // dd($request->all(), $param);
-            $invoice = InvoiceModel::saveInvoice($param);
-            // dd($invoice);
-            $paramDetail['id'] = '';
-            $paramDetail['invoice_id'] = $invoice->id;
-            // if (isset($request->cek_sell_shp)) {
-            //     foreach ($request->cek_sell_shp as $key => $shp_dtl_id) {
-            //         $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
-            //         $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
-            //         $paramDetail['currency'] = $request->currency;
-            //         $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-            //         $paramDetail['rate'] = 1;
-            //         $paramDetail['cost'] = $shp_dtl->cost;
-            //         $paramDetail['sell'] = $shp_dtl->sell;
-            //         $paramDetail['qty'] = $shp_dtl->qty;
-            //         $paramDetail['cost_val'] = $shp_dtl->cost_val;
-            //         $paramDetail['sell_val'] = $shp_dtl->sell_val;
-            //         $paramDetail['subtotal'] = $shp_dtl->subtotal;
-            //         $paramDetail['created_by'] = Auth::user()->name;
-            //         $paramDetail['created_on'] = date('Y-m-d h:i:s');
-
-            //         InvoiceDetailModel::saveInvoiceDetail($paramDetail);
-
-            //         $shpDtlParam['id'] = $shp_dtl_id;
-            //         $shpDtlParam['t_invoice_id'] = $invoice->id;
-            //         $shpDtlParam['invoice_type'] = $request->invoice_type;
-            //         $shpDtlParam['created_by'] = Auth::user()->name;
-            //         $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
-            //         QuotationModel::saveShipDetail($shpDtlParam);
-            //     }
-            // }
-
-            if (isset($request->cek_sell_chrg)) {
-                foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
-                    $chrg_dtl       = BookingModel::getChargesDetailById($chrg_dtl_id);
-                    $vat_dtl = 0;
-                    $pph23_dtl = 0;
-                    $subtotal = 0;
-                    if ($request->value_ppn > 0) {
-                        $vat_dtl = $chrg_dtl->sell_val * ($request->value_ppn / 100);
-                    }
-
-                    if ($request->value_pph23 > 0) {
-                        $pph23_dtl = $chrg_dtl->sell_val * ($request->value_pph23 / 100);
-                    }
-                    $subtotal = $chrg_dtl->sell_val + $vat_dtl - $pph23_dtl;
-                    $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
-                    $paramDetail['desc'] = $chrg_dtl->desc;
-                    $paramDetail['currency'] = $request->currency;
-                    $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-                    $paramDetail['rate'] = 1;
-                    $paramDetail['cost'] = $chrg_dtl->cost;
-                    $paramDetail['sell'] = $chrg_dtl->sell;
-                    $paramDetail['qty'] = $chrg_dtl->qty;
-                    $paramDetail['cost_val'] = $chrg_dtl->cost_val;
-                    $paramDetail['sell_val'] = $chrg_dtl->sell_val;
-                    $paramDetail['vat'] = $vat_dtl;
-                    $paramDetail['pph23'] = $pph23_dtl;
-                    $paramDetail['subtotal'] = $subtotal;
-                    $paramDetail['routing'] = $chrg_dtl->routing;
-                    $paramDetail['transit_time'] = $chrg_dtl->transit_time;
-                    $paramDetail['created_by'] = Auth::user()->name;
-                    $paramDetail['created_on'] = date('Y-m-d h:i:s');
-
-                    InvoiceDetailModel::saveInvoiceDetail($paramDetail);
-
-                    $chrgDtlParam['id'] = $chrg_dtl_id;
-                    $chrgDtlParam['t_invoice_id'] = $invoice->id;
-                    $chrgDtlParam['invoice_type'] = $request->invoice_type;
-                    $chrgDtlParam['created_by'] = Auth::user()->name;
-                    $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
-                    QuotationModel::saveChargeDetail($chrgDtlParam);
-
-                    // $total_before_vat += $chrg_dtl->sell_val;
-                    // $total_vat += $chrg_dtl->vat;
-                    // $total_invoice += $chrg_dtl->subtotal;
-                }
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return redirect()->back()->with('errorForm', $validator->errors()->messages());
             }
 
-            // DB::table('t_invoice')->where('id', $invoice->id)->update([
-            //     'total_before_vat' => $total_before_vat,
-            //     'total_vat' => $total_vat,
-            //     'total_invoice' => $total_invoice,
-            // ]);
-            DB::commit();
-            return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Invoice Created!');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return redirect()->back()->with('error', $th->getMessage());
+            try {
+                DB::beginTransaction();
+
+                DB::table('t_booking')->where('id', $request->t_booking_id)->update([
+                    'flag_invoice' => 1
+                ]);
+
+                $total_before_vat = 0;
+                $total_vat = 0;
+                $total_invoice = 0;
+
+                $param = $request->all();
+                $param['invoice_date'] = date('Y-m-d', strtotime($request->invoice_date));
+                $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
+                $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
+                $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
+                $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
+                $param['rate'] = 1;
+                $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);
+                $param['total_vat'] = str_replace(',', '', $request->input_ppn);
+                $param['pph23'] = str_replace(',', '', $request->input_pph23);
+                $param['total_invoice'] = str_replace(',', '', $request->total_invoice);
+                $param['created_by'] = Auth::user()->name;
+                $param['created_on'] = date('Y-m-d h:i:s');
+                // dd($request->all(), $param);
+                $invoice = InvoiceModel::saveInvoice($param);
+                // dd($invoice);
+                $paramDetail['id'] = '';
+                $paramDetail['invoice_id'] = $invoice->id;
+                // if (isset($request->cek_sell_shp)) {
+                //     foreach ($request->cek_sell_shp as $key => $shp_dtl_id) {
+                //         $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
+                //         $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
+                //         $paramDetail['currency'] = $request->currency;
+                //         $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
+                //         $paramDetail['rate'] = 1;
+                //         $paramDetail['cost'] = $shp_dtl->cost;
+                //         $paramDetail['sell'] = $shp_dtl->sell;
+                //         $paramDetail['qty'] = $shp_dtl->qty;
+                //         $paramDetail['cost_val'] = $shp_dtl->cost_val;
+                //         $paramDetail['sell_val'] = $shp_dtl->sell_val;
+                //         $paramDetail['subtotal'] = $shp_dtl->subtotal;
+                //         $paramDetail['created_by'] = Auth::user()->name;
+                //         $paramDetail['created_on'] = date('Y-m-d h:i:s');
+
+                //         InvoiceDetailModel::saveInvoiceDetail($paramDetail);
+
+                //         $shpDtlParam['id'] = $shp_dtl_id;
+                //         $shpDtlParam['t_invoice_id'] = $invoice->id;
+                //         $shpDtlParam['invoice_type'] = $request->invoice_type;
+                //         $shpDtlParam['created_by'] = Auth::user()->name;
+                //         $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
+                //         QuotationModel::saveShipDetail($shpDtlParam);
+                //     }
+                // }
+
+                if (isset($request->cek_sell_chrg)) {
+                    foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
+                        $chrg_dtl       = BookingModel::getChargesDetailById($chrg_dtl_id);
+                        $vat_dtl = 0;
+                        $pph23_dtl = 0;
+                        $subtotal = 0;
+                        if ($request->value_ppn > 0) {
+                            $vat_dtl = $chrg_dtl->sell_val * ($request->value_ppn / 100);
+                        }
+
+                        if ($request->value_pph23 > 0) {
+                            $pph23_dtl = $chrg_dtl->sell_val * ($request->value_pph23 / 100);
+                        }
+                        $subtotal = $chrg_dtl->sell_val + $vat_dtl - $pph23_dtl;
+                        $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
+                        $paramDetail['desc'] = $chrg_dtl->desc;
+                        $paramDetail['currency'] = $request->currency;
+                        $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
+                        $paramDetail['rate'] = 1;
+                        $paramDetail['cost'] = $chrg_dtl->cost;
+                        $paramDetail['sell'] = $chrg_dtl->sell;
+                        $paramDetail['qty'] = $chrg_dtl->qty;
+                        $paramDetail['cost_val'] = $chrg_dtl->cost_val;
+                        $paramDetail['sell_val'] = $chrg_dtl->sell_val;
+                        $paramDetail['vat'] = $vat_dtl;
+                        $paramDetail['pph23'] = $pph23_dtl;
+                        $paramDetail['subtotal'] = $subtotal;
+                        $paramDetail['routing'] = $chrg_dtl->routing;
+                        $paramDetail['transit_time'] = $chrg_dtl->transit_time;
+                        $paramDetail['created_by'] = Auth::user()->name;
+                        $paramDetail['created_on'] = date('Y-m-d h:i:s');
+
+                        InvoiceDetailModel::saveInvoiceDetail($paramDetail);
+
+                        $chrgDtlParam['id'] = $chrg_dtl_id;
+                        $chrgDtlParam['t_invoice_id'] = $invoice->id;
+                        $chrgDtlParam['invoice_type'] = $request->invoice_type;
+                        $chrgDtlParam['created_by'] = Auth::user()->name;
+                        $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
+                        QuotationModel::saveChargeDetail($chrgDtlParam);
+
+                        // $total_before_vat += $chrg_dtl->sell_val;
+                        // $total_vat += $chrg_dtl->vat;
+                        // $total_invoice += $chrg_dtl->subtotal;
+                    }
+                }
+
+                // DB::table('t_invoice')->where('id', $invoice->id)->update([
+                //     'total_before_vat' => $total_before_vat,
+                //     'total_vat' => $total_vat,
+                //     'total_invoice' => $total_invoice,
+                // ]);
+                DB::commit();
+                return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Invoice Created!');
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return redirect()->back()->with('error', $th->getMessage());
+            }
+        }else{
+            try {
+                DB::beginTransaction();
+                $invoice = InvoiceModel::find($request->create_type);
+                $invoice_detail = DB::table('t_bcharges_dtl')->where('t_invoice_id', $invoice->id)->first();
+                $paramDetail['id'] = '';
+                $paramDetail['invoice_id'] = $invoice->id;
+
+                if (isset($request->cek_sell_chrg)) {
+                    foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
+                        $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
+                        $vat_dtl = 0;
+                        $pph23_dtl = 0;
+                        $subtotal = 0;
+                        if ($invoice->value_ppn > 0) {
+                            $vat_dtl = $chrg_dtl->sell_val * ($invoice->value_ppn / 100);
+                        }
+
+                        if ($invoice->value_pph23 > 0) {
+                            $pph23_dtl = $chrg_dtl->sell_val * ($invoice->value_pph23 / 100);
+                        }
+                        $subtotal = $chrg_dtl->sell_val + $vat_dtl - $pph23_dtl;
+                        $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
+                        $paramDetail['desc'] = $chrg_dtl->desc;
+                        $paramDetail['currency'] = $invoice->currency;
+                        $paramDetail['reimburse_flag'] = (($invoice_detail->invoice_type == 'REM') ? 1 : 0);
+                        $paramDetail['rate'] = 1;
+                        $paramDetail['cost'] = $chrg_dtl->cost;
+                        $paramDetail['sell'] = $chrg_dtl->sell;
+                        $paramDetail['qty'] = $chrg_dtl->qty;
+                        $paramDetail['cost_val'] = $chrg_dtl->cost_val;
+                        $paramDetail['sell_val'] = $chrg_dtl->sell_val;
+                        $paramDetail['vat'] = $vat_dtl;
+                        $paramDetail['pph23'] = $pph23_dtl;
+                        $paramDetail['subtotal'] = $subtotal;
+                        $paramDetail['routing'] = $chrg_dtl->routing;
+                        $paramDetail['transit_time'] = $chrg_dtl->transit_time;
+                        $paramDetail['created_by'] = Auth::user()->name;
+                        $paramDetail['created_on'] = date('Y-m-d h:i:s');
+
+                        InvoiceDetailModel::saveInvoiceDetail($paramDetail);
+
+                        $chrgDtlParam['id'] = $chrg_dtl_id;
+                        $chrgDtlParam['t_invoice_id'] = $invoice->id;
+                        $chrgDtlParam['invoice_type'] = $invoice_detail->invoice_type;
+                        $chrgDtlParam['created_by'] = Auth::user()->name;
+                        $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
+                        QuotationModel::saveChargeDetail($chrgDtlParam);
+
+                        // $total_before_vat += $chrg_dtl->sell_val;
+                        // $total_vat += $chrg_dtl->vat;
+                        // $total_invoice += $chrg_dtl->subtotal;
+                    }
+                }
+
+                // DB::table('t_invoice')->where('id', $invoice->id)->update([
+                //     'total_before_vat' => $total_before_vat,
+                //     'total_vat' => $total_vat,
+                //     'total_invoice' => $total_invoice,
+                // ]);
+                DB::commit();
+                return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Invoice Merged!');
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                return redirect()->back()->with('error', $th->getMessage());
+            }
         }
     }
 
@@ -863,5 +931,24 @@ class InvoiceController extends Controller
 
             return redirect()->back()->with('error', $th->getMessage());
         }
+    }
+
+    public function getInvoiceHeader(Request $request)
+    {
+        try {
+            $data = DB::table('t_invoice')->where('id', $request['id'])->first();
+            // if($data->total_vat>0){
+            //     $checked_ppn = 
+            // }
+
+            $return_data['data'] = $data;
+            $return_data['status'] = 'sukses';
+        } catch (\Exception $e) {
+            $return_data['status'] = 'error';
+            $return_data['message'] = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
     }
 }

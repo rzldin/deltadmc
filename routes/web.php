@@ -360,6 +360,7 @@ Route::group(['middleware' => 'auth'], function(){
     #Approved Booking
     Route::post('/booking/approved', 'BookingController@approved')->name('booking.Approve');
 
+
     /** Proforma Invoice */
     // Route::get('/invoice/proformainvoice', 'ProformaInvoiceController@index')->name('proformainvoice.index');
     // Route::get('/invoice/proformainvoice/create', 'ProformaInvoiceController@create')->name('proformainvoice.create');
@@ -409,6 +410,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/external/create/loadDetailAfter', 'ExternalInvoiceController@loadDetailAfter')->name('external_invoice.loadDetailAfter');
     Route::post('/invoice/external/create/saveDetailMerge', 'ExternalInvoiceController@saveMergeDetail')->name('external_invoice.saveMergeDetail');
     Route::post('/invoice/external/getListExternalInvoiceByCompanyId', 'ExternalInvoiceController@getListExternalInvoiceByCompanyId')->name('external_invoice.getListExternalInvoiceByCompanyId');
+
+    Route::post('/invoice/getInvoiceHeader', 'InvoiceController@getInvoiceHeader')->name('invoice.getInvoiceHeader');
 
     /** Pembayaran **/
     Route::get('/pembayaran/cancel/{id}', 'PembayaranController@cancelPembayaran')->name('pembayaran.cancel');
