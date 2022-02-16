@@ -13,7 +13,7 @@ class CreateTaxesTable extends Migration
      */
     public function up()
     {
-        Schema::create('taxes', function (Blueprint $table) {
+        Schema::create('m_taxes', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
             $table->string('name');
