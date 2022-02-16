@@ -1,0 +1,19 @@
+Naik versi booking, invoice ubah id_booking ke yang baru semua
+Naik versi invoice, invoice 3 deret naik semua
+
+Kalau belom ada pembayaran, bisa edit dan tambah charges and fee.
+
+ngecek pmb cost dan sell sudah ada apa belum pas edit charges and fee.
+
+Edit invoice, delete detail.
+Saat buat invoice, bisa pilih create baru atau masuk invoice existing.
+
+Sync internal, ngecek insert kalau gaada, update kalau ada.
+Sync proforma, ngecek insert kalau gaada, update kalau ada. kalau insert baru, otomatis status external berubah jadi harus di sync
+Sync external.
+
+id external di simpen di proforma detail yang di merge.
+
+external harus di hapus kalau mau nambah detail proforma ke external.
+
+naikin versi ngecek ada pembayaran apa ngga

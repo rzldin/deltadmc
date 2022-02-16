@@ -1708,7 +1708,7 @@ class BookingController extends Controller
                 $tabel .= '<select onchange="fillPaidToName('.$no.')" id="paid_to_'.$no.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
                 $tabel .= '<option value="" selected>-- Select Company --</option>';
                 foreach($company as $item){
-                    $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+                    $tabel .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.' | '.$item->client_name.'</option>';
                 }
                 $tabel .= '</select>';
                 $tabel .= '</td>';
@@ -1764,7 +1764,7 @@ class BookingController extends Controller
                 $tabel1 .= 'data-placeholder="Pilih..." style="margin-bottom:5px;">';
                 $tabel1 .= '<option value="" selected>-- Select Company --</option>';
                 foreach($company as $item){
-                    $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.'</option>';
+                    $tabel1 .= '<option value="'.$item->id.'-'.$item->client_name.'">'.$item->client_code.' | '.$item->client_name.'</option>';
                 }
                 $tabel1 .= '</select>';
                 $tabel1 .= '<input type="hidden" id="bill_to_name_'.$no.'"/>';
@@ -2628,7 +2628,24 @@ class BookingController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
+    }
 
+    public function booking_cancel_inv(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+            DB::table('t_booking')->where('id', $request->booking)->update([
+                'status'            => 2,//cancel with invoice
+                'updated_by'        => $user,
+                'updated_at'        => $tanggal
+            ]);
+
+            $return_data = 'sukses';
+            return redirect('booking/list')->with('status', 'Successfully Cancelled');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
     }
 
     public function getPort(Request $request){

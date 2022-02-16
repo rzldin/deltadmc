@@ -70,6 +70,8 @@
                                 <td class="bg-secondary text-center">NEW</td>
                                 @elseif($row->status == 1) 
                                 <td class="bg-success text-center">Approve</td>
+                                @elseif($row->status == 2) 
+                                <td class="bg-danger text-center">Cancel with Invoice</td>
                                 @elseif($row->status == 8) 
                                 <td class="bg-warning text-center">On Request</td>
                                 @elseif($row->status == 9) 
@@ -77,9 +79,9 @@
                                 @endif
 
                                 @if ($row->flag_invoice == 0)
-                                <td class="bg-secondary text-center">No Invoice</td>
+                                    <td class="bg-secondary text-center">No Invoice</td>
                                 @elseif($row->flag_invoice == 1) 
-                                <td class="bg-success text-center">Invoice Created</td>
+                                    <td class="bg-success text-center">Invoice Created</td>
                                 @endif
                                 <td>
                                     <a class="btn btn-primary btn-sm" onclick="viewVersion('{{ $row->booking_no }}','{{ $row->version_no }}', 'view', '{{ $row->id }}')"><i class="fa fa-file-alt"></i> View </a>

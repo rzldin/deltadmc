@@ -286,14 +286,14 @@
       $(function(){
         $('.select2bs4').select2({
           theme: 'bootstrap4',
-          tags: true,
+          tags: false,
           dropdownParent: $("#myModal")
         })
       })
       $(function(){
         $('.select2bs4k').select2({
           theme: 'bootstrap4',
-          tags: true,
+          tags: false,
           dropdownParent: $("#myModalx")
         })
       })
@@ -314,7 +314,7 @@
       $(function(){
         $('.select2bs44').select2({
           theme: 'bootstrap4',
-          tags: true,
+          tags: false,
         })
       })
 

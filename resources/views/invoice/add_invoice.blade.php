@@ -39,7 +39,22 @@
                                         <h3 class="card-title">Invoice Information</h3>
                                     </div>
                                     <div class="card-body">
-                                        <div class="row">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label>Create or Merge exisiting Invoice</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <select class="form-control select2bs44" name="create_type" id="create_type">
+                                                    <option value="0">New Invoice</option>
+                                                    <option disabled="disabled">----</option>
+                                                    @foreach ($list_invoice as $inv)
+                                                        <option value="{{ $inv->id }}">{{ $inv->invoice_no }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row show_new">
                                             <div class="col-md-6">
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
@@ -300,6 +315,14 @@
     </section>
     @push('after-scripts')
         <script>
+            $('#create_type').on('change', function() {
+                if(this.value == 0){
+                    $('.show_new').show('slow');
+                }else{
+                    $('.show_new').hide('slow');
+                }
+            });
+
             function client_detail(val) {
                 if (val != '') {
 

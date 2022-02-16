@@ -319,6 +319,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/bcharges_addDetail', 'BookingController@bcharges_addDetail')->name('booking.bcharges_addDetail');
     Route::post('/booking/bcharges_updateDetail', 'BookingController@bcharges_updateDetail')->name('booking.bcharges_updateDetail');
     Route::post('booking/cancel', 'BookingController@booking_cancel')->name('booking.cancel');
+    Route::post('booking/cancel_inv', 'BookingController@booking_cancel_inv')->name('booking.cancel_inv');
     Route::post('/booking/getPort/','BookingController@getPort')->name('booking.getPort');
     Route::post('/booking/getExistingPort/','BookingController@getExistingPort')->name('booking.getExistingPort');
 

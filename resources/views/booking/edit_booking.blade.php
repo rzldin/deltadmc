@@ -423,6 +423,15 @@
                                                     <i class="fa fa-times"></i> Cancel
                                                 </button>
                                             </form>
+                                            @if($booking->status != 2)
+                                                <form action="{{ route('booking.cancel_inv') }}" method="post" target="_self" name="form_cancel_inv" id="form_cancel_inv">
+                                                    <input type="hidden" name="booking" value="{{ $booking->id }}">
+                                                    {{ csrf_field() }}
+                                                    <button type="button" class="btn btn-danger float-left mr-2" id="cancel_inv_confirm">
+                                                        <i class="fa fa-times"></i> Cancel with Invoice
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
                                             <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="updateData(0)">
                                                 <i class="fa fa-save"></i> Save
@@ -1514,6 +1523,13 @@
         var result = confirm("Anda yakin ingin meng-cancel booking ini ?");
         if (result) {
             $('#form_cancel').submit();
+        }
+    });
+
+    $("#cancel_inv_confirm").click(function(){
+        var result = confirm("Anda yakin ingin meng-cancel booking ini ?");
+        if (result) {
+            $('#form_cancel_inv').submit();
         }
     });
 

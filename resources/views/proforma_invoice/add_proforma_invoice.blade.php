@@ -49,11 +49,11 @@
                                                         <label>Bill To</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="client_id" id="client_id" onchange="client_detail(this.value)">
+                                                        <select class="form-control select2bs44" name="client_id" id="client_id" onchange="client_detail(this.value)">
                                                             <option value="">Select Company</option>
                                                             @foreach ($companies as $company)
                                                                 <option value="{{ $company->id }}" <?= $company->id == $invoice_header['client_id'] ? 'selected' : '' ?>>
-                                                                    {{ $company->client_code }}</option>
+                                                                    {{ '('.$company->client_code.') '.$company->client_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>

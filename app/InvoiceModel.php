@@ -116,7 +116,11 @@ class InvoiceModel extends Model
         return $ars;
     }
 
+    public static function list_invoice_booking($id){
+        return InvoiceModel::where('t_booking_id', $id)->where('tipe_inv',0)->where('status',0)->get();
+    }
+
     public static function count_inv($id){
-        InvoiceModel::where('t_booking_id', $id)->count();
+        return InvoiceModel::where('t_booking_id', $id)->count();
     }
 }
