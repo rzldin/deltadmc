@@ -137,5 +137,6 @@ ALTER TABLE t_external_invoice_detail CHANGE pph23 pph23 DECIMAL(14,2) DEFAULT 0
 
 ---- hendry 16022022
 RENAME TABLE taxes TO m_taxes;
+CREATE TABLE m_config_report_income_statements
 CREATE SP_getParentAccountIncomeStatement()
 CREATE SP_getChildAccountIncomeStatement()
