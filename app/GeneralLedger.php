@@ -41,7 +41,7 @@ class GeneralLedger extends Model
 
     public static function findALlGLsForRefreshBalance($account_id, $startDate)
     {
-        return GeneralLedger::where('account_id', $account_id)->where('gl_date', '>=', $startDate);
+        return GeneralLedger::where('account_id', $account_id)->where('gl_date', '>=', $startDate)->orderBy('gl_date');
     }
 
     public static function saveGL($request)

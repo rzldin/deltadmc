@@ -525,6 +525,11 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/user/{id}', 'UserController@index')->name('profile');
     Route::post('/user/user_doAdd', 'UserController@user_doAdd')->name('user.doAdd');
     Route::post('/user/change_password', 'UserController@doChangePassword')->name('user.change_password');
+
+    Route::get('/report', 'ReportController@index')->name('report.index');
+    Route::get('/report/print', 'ReportController@print')->name('report.print');
+    Route::get('/report/print/income_statement', 'ReportController@print_income_statement')->name('report.print.income_statement');
+    Route::get('/report/test', 'ReportController@test');
 });
 
 

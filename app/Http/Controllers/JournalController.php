@@ -457,10 +457,11 @@ class JournalController extends Controller
         try {
             DB::beginTransaction();
 
+            $journal = Journal::find($request->id);
             $journal_details = JournalDetail::where('journal_id', $request->id)->get();
             foreach ($journal_details as $key => $detail) {
                 $param['id'] = 0;
-                $param['gl_date'] = date('Y-m-d');
+                $param['gl_date'] = date('Y-m-d', strtotime($journal->journal_date));
                 $param['journal_id'] = $request->id;
                 $param['account_id'] = $detail->account_id;
                 $param['debit'] = $detail->debit;
@@ -471,7 +472,7 @@ class JournalController extends Controller
 
                 GeneralLedger::saveGL($param);
 
-                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, date('Y-m-d'));
+                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, date('Y-m-d', strtotime($journal->journal_date)));
                 if ($refresh['status'] == 'failed') {
                     return redirect()->back()->with('error', $refresh['message']);
                 }
