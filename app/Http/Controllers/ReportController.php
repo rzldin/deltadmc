@@ -2,21 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\MasterModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
 
     public function index()
     {
-        return view('report.index');
+        $currency = MasterModel::currency();
+
+        return view('report.index', compact('currency'));
     }
 
     public function print(Request $request)
     {
+        $rules = [
+            'currency_id' => 'required',
+            'start_date' => 'required|date|before_or_equal:end_date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->with('errorForm', $validator->errors()->messages())->withInput();
+        }
+
         if ($request->report_code == 'income_statement') {
             return redirect()->route('report.print.income_statement', $request->all());
         }
@@ -34,7 +49,7 @@ class ReportController extends Controller
         $data['parent_account'] = $parent_account;
         if ($parent_account != []) {
             foreach ($parent_account as $key => $parent) {
-                $child_account = DB::select("CALL getChildAccountIncomeStatement('{$start_date}', '{$end_date}', '{$parent->account_number}')");
+                $child_account = DB::select("CALL getChildAccountIncomeStatement('{$start_date}', '{$end_date}', '{$parent->account_number}', {$request->currency_id})");
                 $data['parent_account'][$key]->child_account = $child_account;
             }
         }

@@ -140,3 +140,16 @@ RENAME TABLE taxes TO m_taxes;
 CREATE TABLE m_config_report_income_statements
 CREATE SP_getParentAccountIncomeStatement()
 CREATE SP_getChildAccountIncomeStatement()
+
+-- hendry 18022022
+ALTER TABLE t_deposits ADD currency_id INT(10) UNSIGNED NOT NULL;
+ALTER TABLE t_deposits CHANGE currency_id currency_id INT(10) UNSIGNED NOT NULL AFTER id;
+ALTER TABLE t_pembayaran_detail ADD currency_id INTEGER(11) UNSIGNED DEFAULT 0 NULL;
+ALTER TABLE t_pembayaran_detail CHANGE currency_id currency_id INTEGER(11) UNSIGNED DEFAULT 0 NULL AFTER id_invoice;
+ALTER TABLE t_pembayaran ADD currency_id INT(11) UNSIGNED DEFAULT 0 NOT NULL;
+ALTER TABLE t_pembayaran CHANGE currency_id currency_id INT(11) UNSIGNED DEFAULT 0 NOT NULL AFTER id_company;
+ALTER TABLE t_general_ledgers ADD currency_id INTEGER(10) UNSIGNED DEFAULT 0 NOT NULL;
+ALTER TABLE t_general_ledgers CHANGE currency_id currency_id INTEGER(10) UNSIGNED DEFAULT 0 NOT NULL AFTER account_id;
+
+-- hendry 21022022
+UPDATE SP_getChildAccountIncomeStatement()

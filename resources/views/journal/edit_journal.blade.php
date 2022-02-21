@@ -186,7 +186,7 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-md-12" style="text-align: right">
-                                                <a href="{{ url()->previous() }}" class="btn btn-danger">Back</a>
+                                                <a href="{{ route('journal.index') }}" class="btn btn-danger">Back</a>
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </div>
                                         </div>

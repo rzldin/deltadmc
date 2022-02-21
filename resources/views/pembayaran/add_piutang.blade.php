@@ -33,13 +33,13 @@
                     @foreach($errors->all() as $error)
                     <div class="alert alert-danger" role="alert">
                         {{ $error }}
-                    </div>  		
+                    </div>
                     @endforeach
                 @endif
             <!-- /.card-header -->
             <!-- form start -->
-                <form action="{{ route('pembayaran.save') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
-                {{ csrf_field() }}   
+                <form action="{{ route('pembayaran.save') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action="">
+                {{ csrf_field() }}
                 <input type="hidden" name="jenis_pmb" value="0">
                 <div class="card-body">
                     <div class="row">
@@ -64,11 +64,24 @@
                                 <div class="col-md-8">
                                     <select class="form-control select2bs44" style="width: 100%;" name="akun_kas" id="akun_kas">
                                         <option value="">Silahkan Pilih Bank ...</option>
-                                        <?php 
+                                        <?php
                                             foreach($bank as $v){
                                                 echo '<option value="'.$v->id.'">'.$v->account_name.'</option>';
                                             }
                                         ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <label>Currency <font color="red">*</font></label>
+                                </div>
+                                <div class="col-md-8">
+                                    <select class="form-control select2bs44" name="currency_id" id="currency_id">
+                                        <option value="" selected>-- Select Valuta --</option>
+                                        @foreach ($currency as $item)
+                                            <option value="{{ $item->id }}">{{ $item->code }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -79,7 +92,7 @@
                                 <div class="col-md-8">
                                     <select class="form-control select2bs44" style="width: 100%;" name="customer" id="customer">
                                         <option value="">Silahkan Pilih Customer ...</option>
-                                        <?php 
+                                        <?php
                                             foreach($company as $item){
                                                 echo '<option value="'.$item->id.'">('.$item->client_code.') '.$item->client_name.'</option>';
                                             }
@@ -155,7 +168,7 @@
                         </div>
                     </div>
                 </div>
-                
+
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
@@ -215,10 +228,10 @@
             $('#formku').submit();
         }
     });
-    
+
   </script>
-      
-  @endpush    
+
+  @endpush
 @endsection
 
 

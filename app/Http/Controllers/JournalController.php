@@ -122,7 +122,7 @@ class JournalController extends Controller
                 $html .= '<td align="center">' . ($key + 1) . '</td>';
                 $html .= '<td>';
                 $html .= '<label class="" id="label_account_number_' . $key . '">' . $detail['account_number'] . '</label>';
-                $html .= '<select id="account_id_' . $key . '" class="form-control select2 display-none" onchange="getDetailAccountForEdit(this.value, ' . $key . ')">';
+                $html .= '<select id="account_id_' . $key . '" class="form-control select2bs44 display-none" onchange="getDetailAccountForEdit(this.value, ' . $key . ')">';
                 foreach ($accounts as $idx => $acc) {
                     $html .= '<option value="' . $acc->id . '" ' . ($acc->id == $detail['account_id'] ? 'selected' : '') . '>' . $acc->account_number . ' - ' . $acc->account_name . '</option>';
                 }
@@ -134,11 +134,11 @@ class JournalController extends Controller
                 $html .= '<input type="text" id="account_name_' . $key . '" class="form-control display-none" value="' . $detail['account_name'] . '" readonly/>';
                 $html .= '</td>';
                 $html .= '<td align="right">';
-                $html .= '<label class="" id="label_debit_' . $key . '">' . number_format($detail['debit'], 2, ',', '.') . '</label>';
+                $html .= '<label class="" id="label_debit_' . $key . '">' . number_format($detail['debit'], 2, '.', ',') . '</label>';
                 $html .= '<input type="number" id="debit_' . $key . '" class="form-control display-none" value="' . $detail['debit'] . '"/>';
                 $html .= '</td>';
                 $html .= '<td align="right">';
-                $html .= '<label class="" id="label_credit_' . $key . '">' . number_format($detail['credit'], 2, ',', '.') . '</label>';
+                $html .= '<label class="" id="label_credit_' . $key . '">' . number_format($detail['credit'], 2, '.', ',') . '</label>';
                 $html .= '<input type="number" id="credit_' . $key . '" class="form-control display-none" value="' . $detail['credit'] . '"/>';
                 $html .= '</td>';
                 $html .= '<td>';
@@ -464,6 +464,7 @@ class JournalController extends Controller
                 $param['gl_date'] = date('Y-m-d', strtotime($journal->journal_date));
                 $param['journal_id'] = $request->id;
                 $param['account_id'] = $detail->account_id;
+                $param['currency_id'] = $journal->currency_id;
                 $param['debit'] = $detail->debit;
                 $param['credit'] = $detail->credit;
                 $param['balance'] = ($detail->debit - $detail->credit);
@@ -472,7 +473,7 @@ class JournalController extends Controller
 
                 GeneralLedger::saveGL($param);
 
-                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, date('Y-m-d', strtotime($journal->journal_date)));
+                $refresh = GeneralLedgerController::refreshBalance($detail->account_id, $journal->currency_id, date('Y-m-d', strtotime($journal->journal_date)));
                 if ($refresh['status'] == 'failed') {
                     return redirect()->back()->with('error', $refresh['message']);
                 }

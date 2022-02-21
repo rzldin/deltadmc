@@ -104,7 +104,7 @@
                                                         <label>Currency</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="currency_id" id="currency_id">
+                                                        <select class="form-control select2bs44" name="currency_id" id="currency_id">
                                                             <option value="" selected>Select Currency</option>
                                                             @foreach ($currency as $curr)
                                                                 <option value="{{ $curr->id }}">{{ $curr->code }}</option>
@@ -161,7 +161,7 @@
                                                         <tr>
                                                             <td>#</td>
                                                             <td>
-                                                                <select class="form-control select2" name="account_id" id="account_id" onchange="getDetailAccount(this.value)">
+                                                                <select class="form-control select2bs44" name="account_id" id="account_id" onchange="getDetailAccount(this.value)">
                                                                     <option value="" selected>Select Account</option>
                                                                     @foreach ($accounts as $account)
                                                                         <option value="{{ $account->id }}">
@@ -454,7 +454,7 @@
 
             $(function() {
                 loadDetailJournal();
-                $('.select2').select2();
+                // $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({
                     format: 'L'
                 });

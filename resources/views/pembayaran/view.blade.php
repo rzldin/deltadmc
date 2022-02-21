@@ -27,7 +27,7 @@
             @foreach($errors->all() as $error)
             <div class="alert alert-danger" role="alert">
                 {{ $error }}
-            </div>      
+            </div>
             @endforeach
         @endif
       </div>
@@ -148,6 +148,7 @@
                   <td>Nomor</td>
                   <td>Tanggal</td>
                   <td>Nilai</td>
+                  <td>Currency</td>
                 </tr>
               </thead>
               <tbody>
@@ -163,6 +164,7 @@
                     echo '<td class="text-left">'.$v->invoice_no.'</td>';
                     echo '<td class="text-left">'.$v->invoice_date.'</td>';
                     echo '<td class="text-right">'.number_format($v->nilai,2,',','.').'</td>';
+                    echo '<td class="text-left">'.$v->code.'</td>';
                     echo '</tr>';
                 }
                 @endphp

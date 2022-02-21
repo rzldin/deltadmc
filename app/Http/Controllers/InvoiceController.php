@@ -621,8 +621,8 @@ class InvoiceController extends Controller
             'invoice_no' => 'required|unique:t_invoice',
             'invoice_date' => 'required',
             'currency' => 'required',
-            'pol_id' => 'required',
-            'pod_id' => 'required',
+            // 'pol_id' => 'required',
+            // 'pod_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -846,9 +846,9 @@ class InvoiceController extends Controller
 
     public static function getListInvoiceByCompanyId(Request $request)
     {
-        $html = "";
+        $html = "<option value=''>Silahkan Pilih</option>";
 
-        $invoices = InvoiceModel::getInvoicesByCompanyId($request->company_id)->orderBy('invoice_no')->get();
+        $invoices = InvoiceModel::getInvoicesByCompanyId($request->company_id)->where('tipe_inv', 1)->orderBy('invoice_no')->get();
         if ($invoices != []) {
             foreach ($invoices as $key => $inv) {
                 $html .= "<option value='{$inv->id}'>{$inv->invoice_no}</option>";
@@ -962,5 +962,12 @@ class InvoiceController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
+    }
+
+    public static function getInvoice($id)
+    {
+        $invoice = InvoiceModel::find($id);
+
+        return $invoice;
     }
 }

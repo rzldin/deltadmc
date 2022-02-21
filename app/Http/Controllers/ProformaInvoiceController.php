@@ -324,6 +324,7 @@ class ProformaInvoiceController extends Controller
             // $param['rate'] = 1;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
+            unset($param['reimburs']);
             unset($param['invoice_type']);
             unset($param['pol_name']);
             unset($param['pod_name']);

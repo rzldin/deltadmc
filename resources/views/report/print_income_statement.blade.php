@@ -19,12 +19,12 @@
 @section('content')
     @php
     header('Content-Type:   application/vnd.ms-excel;');
-    header('Content-Disposition: attachment; filename=laporan laba rugi.xls');
+    header('Content-Disposition: attachment; filename=laporan laba rugi '.tanggalIndo($start_date).' s.d '.tanggalIndo($end_date).'.xls');
     @endphp
     <table width="100%">
         <thead>
             <tr>
-                <th>BLABLAAA</th>
+                <th>PT. DELTA MARINE CONTINENTS</th>
             </tr>
             <tr>
                 <th>LAPORAN LABA RUGI</th>

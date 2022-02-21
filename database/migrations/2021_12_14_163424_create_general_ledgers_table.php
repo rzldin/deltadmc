@@ -17,6 +17,7 @@ class CreateGeneralLedgersTable extends Migration
             $table->id();
             $table->integer('journal_id')->unsigned()->default(0);
             $table->integer('account_id')->unsigned()->default(0);
+            $table->integer('currency_id')->unsigned()->default(0);
             $table->string('transaction_type', 1);
             $table->decimal('debit', 14, 2)->default(0);
             $table->decimal('credit', 14, 2)->default(0);

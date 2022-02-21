@@ -70,7 +70,7 @@
                                                         <label>Company</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="company_id" id="company_id" class="form-control select2" onchange="getListInvoice(this.value)">
+                                                        <select name="company_id" id="company_id" class="form-control select2bs44" onchange="getListInvoice(this.value)">
                                                             <option value="">Select Company</option>
                                                             @foreach ($companies as $company)
                                                                 <option value="{{ $company->id }}">{{ $company->client_code . ' | ' . $company->client_name }}</option>
@@ -83,7 +83,7 @@
                                                         <label>Invoice</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select name="invoice_id_deposit" id="invoice_id_deposit" class="form-control select2">
+                                                        <select name="invoice_id_deposit" id="invoice_id_deposit" class="form-control select2bs44" onchange="getInvoice(this.value)">
                                                         </select>
                                                     </div>
                                                 </div>
@@ -103,12 +103,13 @@
                                                         <label>Currency</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="currency_id" id="currency_id">
+                                                        <select class="form-control select2bs44" id="currency" disabled>
                                                             <option value="" selected>Select Currency</option>
                                                             @foreach ($currency as $curr)
                                                                 <option value="{{ $curr->id }}">{{ $curr->code }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <input type="hidden" name="currency_id" id="currency_id">
                                                     </div>
                                                 </div>
                                                 @if ($source != '')
@@ -160,7 +161,7 @@
                                                         <tr>
                                                             <td>#</td>
                                                             <td>
-                                                                <select class="form-control select2" name="account_id" id="account_id" onchange="getDetailAccount(this.value)">
+                                                                <select class="form-control select2bs44" name="account_id" id="account_id" onchange="getDetailAccount(this.value)">
                                                                     <option value="" selected>Select Account</option>
                                                                     @foreach ($accounts as $account)
                                                                         <option value="{{ $account->id }}">
@@ -248,6 +249,23 @@
                     },
                     success: function(result) {
                         $('#invoice_id_deposit').html(result);
+                    }
+                });
+            }
+
+            function getInvoice(invoice_id) {
+                let url = `{{ route('invoice.getInvoice', ':id') }}`;
+                if ($('#journal_type').val() == 'deposit_client') {
+                    url = `{{ route('external_invoice.getExternalInvoice', ':id') }}`;
+                }
+                url = url.replace(':id', invoice_id);
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    success: function(result) {
+                        $('#currency_id').val(result.currency);
+                        $('#currency').val(result.currency);
+                        $('#currency').select2();
                     }
                 });
             }
@@ -454,7 +472,7 @@
             $(function() {
                 changeJournalType();
                 loadDetailJournal();
-                $('.select2').select2();
+                // $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({
                     format: 'L'
                 });

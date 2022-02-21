@@ -37,15 +37,28 @@
                                 <form method="get" action="{{ route('report.print') }}" target="_blank">
                                     <div class="form-group row">
                                         <label for="report_code" class="col-sm-2 col-form-label">Report</label>
-                                        <select name="report_code" id="report_code" class="col-sm-10 form-control">
-                                            <option value="income_statement">Income Statement</option>
-                                        </select>
+                                        <div class="col-sm-10">
+                                            <select name="report_code" id="report_code" class="form-control">
+                                                <option value="income_statement" {{ old('report_code') == 'income_statement' ? 'selected' : '' }} >Income Statement</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="currency_id" class="col-sm-2 col-form-label">Currency</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control select2bs44" name="currency_id" id="currency_id">
+                                                <option value="" selected>-- Select Valuta --</option>
+                                                @foreach ($currency as $item)
+                                                    <option value="{{ $item->id }}" {{ old('currency_id') == $item->id ? 'selected' : '' }} >{{ $item->code }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="form-group row">
                                         <label class="col-sm-2 col-form-label">Date</label>
                                         <div class="col-sm-5">
                                             <div class="input-group date" id="start_date_picker" data-target-input="nearest">
-                                                <input type="text" name="start_date" id="start_date" class="form-control datetimepicker-input" data-target="#start_date_picker" placeholder="From" />
+                                                <input type="text" name="start_date" id="start_date" class="form-control datetimepicker-input" data-target="#start_date_picker" placeholder="From" value="{{ old('start_date') }}" />
                                                 <div class="input-group-append" data-target="#start_date_picker" data-toggle="datetimepicker">
                                                     <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                     </div>
@@ -54,7 +67,7 @@
                                         </div>
                                         <div class="col-sm-5">
                                             <div class="input-group date" id="end_date_picker" data-target-input="nearest">
-                                                <input type="text" name="end_date" id="end_date" class="form-control datetimepicker-input" data-target="#end_date_picker" placeholder="To" />
+                                                <input type="text" name="end_date" id="end_date" class="form-control datetimepicker-input" data-target="#end_date_picker" placeholder="To" value="{{ old('end_date') }}" />
                                                 <div class="input-group-append" data-target="#end_date_picker" data-toggle="datetimepicker">
                                                     <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                     </div>

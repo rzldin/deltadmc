@@ -15,7 +15,7 @@ class CreateDepositsTable extends Migration
     {
         Schema::create('t_deposits', function (Blueprint $table) {
             $table->id();
-            $table->integer('account_id')->unsigned();
+            $table->integer('currency_id')->unsigned();
             $table->decimal('balance', 14, 2)->default(0);
             $table->string('created_by', 100)->nullable();
             $table->dateTime('created_on')->nullable();

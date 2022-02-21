@@ -153,14 +153,14 @@ class DepositController extends Controller
 
     public function getDepositCompany(Request $request)
     {
-        $deposit = Deposit::where('company_id', $request->company_id)->first();
+        $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
 
         return $deposit;
     }
 
     public function getListDeposit(Request $request)
     {
-        $deposits = DepositDetail::getListDeposit($request->company_id)->get();
+        $deposits = DepositDetail::getListDeposit($request->company_id, $request->currency_id)->get();
 
         $html = "";
         if ($deposits != []) {
@@ -177,7 +177,8 @@ class DepositController extends Controller
                 $html .= "</div>";
                 $html .= "<div class='col-md-10'>";
                 $html .= "<label class='form-check-label' for='{$deposit->journal_id}'>";
-                $html .= "<input type='text' class='form-control' value='{$amount}' id='amount_{$deposit->journal_id}' name='deposit[amount]' onkeyup='getComa(this.value, this.id)'/>";
+                $html .= "<input type='text' class='form-control' value='{$amount}' id='amount_{$deposit->journal_id}' name='deposit[amount]' onkeyup='getComa(this.value, this.id)' onchange='checkAmountDeposit({$deposit->journal_id})'/>";
+                $html .= "<input type='hidden' id='max_amount_{$deposit->journal_id}' value='{$deposit->amount}'/>";
                 $html .= "</label>";
                 $html .= "</div>";
                 $html .= "</div>";
