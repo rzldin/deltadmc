@@ -6,7 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Internal Invoice
+                    Internal Invoice (Piutang)
                 </h1>
             </div>
             <div class="col-sm-6">
@@ -22,6 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
@@ -29,10 +30,10 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{ route('invoice.save') }}"
-                            id="formInvoice">
+                        <form method="post" id="formInvoice">
                             @csrf
                             <input type="hidden" name="id" id="id" value="{{ $header->id }}" />
+                            <input type="hidden" name="tipe_inv" value="{{ $header->tipe_inv }}">
                             <input type="hidden" name="activity" value="{{ $header->activity }}">
                             <input type="hidden" name="t_booking_id" value="{{ $header->t_booking_id }}">
                             <input type="hidden" name="rate" value="{{ $header->rate }}">
@@ -48,8 +49,8 @@
                                                     <label>Bill To</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="client_name"
-                                                    id="client_name" value="{{ '('.$header->client_code.') '.$header->client_name }}" readonly>
+                                                    <input readonly class="form-control" type="text" name="client_name"
+                                                    id="client_name" value="{{ $header->client_name }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -57,8 +58,8 @@
                                                     <label>Address</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="address"
-                                                    id="address" value="{{ $header->address }}" readonly>
+                                                    <input readonly class="form-control" type="text" name="address"
+                                                    id="address" value="{{ $header->address }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -66,8 +67,8 @@
                                                     <label>PIC</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pic_name"
-                                                    id="pic_name" value="{{ $header->pic_name }}" readonly>
+                                                    <input readonly class="form-control" type="text" name="pic_name"
+                                                    id="pic_name" value="{{ $header->pic_name }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -93,14 +94,39 @@
                                                     <label>Invoice Type</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" <?= (($header->invoice_type == 'REG') ? 'checked' : '') ?>> Reguler<br>
-                                                    <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->invoice_type == 'REM') ? 'checked' : '') ?>> Reimbursment<br>
-                                                    <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" <?= (($header->invoice_type == 'DN') ? 'checked' : '') ?>> Debit Note<br>
-                                                    <input disabled type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" <?= (($header->invoice_type == 'CN') ? 'checked' : '') ?>> Credit Note<br>
+                                                    <input type="radio" disabled name="invoice_type"
+                                                        id="invoice_type_reg" value="REG" <?= (($header->reimburse_flag == 0 && $header->debit_note_flag == 0 && $header->credit_note_flag == 0) ? 'checked' : '') ?>> Reguler<br>
+                                                    <input type="radio" disabled name="invoice_type"
+                                                        id="invoice_type_reimbursment" value="REM" <?= (($header->reimburse_flag == 1) ? 'checked' : '') ?>> Reimbursment<br>
+                                                    <input type="radio" disabled name="invoice_type"
+                                                        id="invoice_type_debit_note" value="DN" <?= (($header->debit_note_flag == 1) ? 'checked' : '') ?>> Debit Note<br>
+                                                    <input type="radio" disabled name="invoice_type"
+                                                        id="invoice_type_credit_note" value="CN" <?= (($header->credit_note_flag == 1) ? 'checked' : '') ?>> Credit Note<br>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>Tax</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    @foreach ($taxes as $tax)
+                                                        @php
+                                                            $checked = '';
+                                                            if($tax->code=='ppn'){
+                                                                if($header->total_vat>0){
+                                                                    $checked = 'checked';
+                                                                }
+                                                            }elseif($tax->code=='pph23'){
+                                                                if($header->pph23>0){
+                                                                    $checked = 'checked';
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input taxcheck" type="checkbox" {{ $checked }} disabled>
+                                                            <label class="form-check-label" for="{{ $tax->code }}">{{ "$tax->name ($tax->value %)" }}</label>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -167,8 +193,8 @@
                                                     <label>Currency</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="currency"
-                                                    id="currency" value="{{ '('.$header->currency_code.') '.$header->currency_name }}" readonly>
+                                                    <input readonly class="form-control" type="text" name="currency_name"
+                                                    id="currency_name" value="{{ '('.$header->currency_code.') '.$header->currency_name }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -243,38 +269,10 @@
                             </div>
                             <div class="card card-primary">
                                 <div class="card-header">
-                                    <h5 class="card-title">List Bank</h5>
-                                </div>
-                                <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Account Number</th>
-                                                <th>Account Name</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($list_bank as $list)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $list->account_number }}</td>
-                                                <td>{{ $list->account_name }}</td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="card card-primary">
-                                <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
-                                    {{-- <a href="{{ route('proformainvoice.create') }}"
-                                    class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
-                                    Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped">
+                                    <table class="table table-bordered table-striped" id="" style="width: 150%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -284,17 +282,28 @@
                                                 <th>Unit</th>
                                                 <th>Currency</th>
                                                 <th>rate/unit</th>
-                                                <th>ROE</th>
                                                 <th>Total</th>
-                                                <th>PPN</th>
-                                                <th>PPH 23</th>
+                                                <th>ROE</th>
+                                                <th>Vat</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
-                                                {{-- <th>Action</th> --}}
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tblSell">
+                                            @php
+                                                $total_ppn = 0;
+                                                $total_pph23 = 0;
+                                                $total_before_vat = 0;
+                                                $total_invoice = 0;
+                                            @endphp
                                             @foreach ($details as $key => $detail)
+                                                @php
+                                                    $total_ppn += $detail->vat;
+                                                    $total_pph23 += $detail->pph23;
+                                                    $total_before_vat += $detail->sell_val;
+                                                    $total_invoice += $detail->subtotal;
+                                                @endphp
                                                 <tr>
                                                     <td align="center">{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
@@ -308,24 +317,42 @@
                                                     <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->pph23, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
-                                                    {{-- <td></td> --}}
+                                                    <td>
+                                                        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
-                                            <tr>
-                                                <td colspan="8" class="text-right">Total</td>
-                                                <td class="text-right">{{ number_format($header->total_before_vat, 2, ',', '.') }}</td>
-                                                <td class="text-right">{{ number_format($header->total_vat, 2, ',', '.') }}</td>
-                                                <td class="text-right">{{ number_format($header->pph23, 2, ',', '.') }}</td>
-                                                <td class="text-right">{{ number_format($header->total_invoice, 2, ',', '.') }}</td>
+                                            @php
+                                            $total_ppn = number_format($total_ppn, 2, '.', ',');
+                                            $total_pph23 = number_format($total_pph23, 2, '.', ',');
+                                            $total_before_vat = number_format($total_before_vat, 2, '.', ',');
+                                            $total_invoice = number_format($total_invoice, 2, '.', ',');
+                                            @endphp
+                                            <tr id='row_total_before_vat'>
+                                                <td colspan='8' class='text-right'><span id='lbl_total_before_vat'>Total</span></td>
+                                                <td class='text-right'>
+                                                    <input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value="{{ $total_before_vat }}" readonly/>
+                                                </td>
+                                                <td class='text-right'>
+                                                    <input type='text' class='form-control' name='input_ppn' id='input_ppn' value="{{ $total_ppn }}" readonly/>
+                                                </td>
+                                                <td class='text-right'>
+                                                    <input type='text' class='form-control' name='input_pph23' id='input_pph23' value="{{ $total_pph23 }}" readonly/>
+                                                </td>
+                                                <td class='text-right'>
+                                                    <input type='text' class='form-control' name='total_invoice' id='total_invoice' value="{{ $total_invoice }}" readonly/>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-12" style="text-align: right">
-                                    <a href="{{ url()->previous() }}" class="btn btn-info" >Back</a>
-                                </div>
+                                <div class="col-md-12">
+                                  <a href="{{ url()->previous() }}" class="btn btn-default float-left mr-2">
+                                    <i class="fa fa-angle-left"></i> Kembali
+                                  </a>    
+                                </div>       
                             </div>
 
                         </form>
@@ -335,8 +362,27 @@
         </div>
     </div>
 </section>
-@push('after-scripts')
-    <script>
-    </script>
-@endpush
 @endsection
+
+@push('after-scripts')
+<script>
+    function deleteInvoice(id) {
+            let url = `{{ route('invoice.delete_detail', ':id') }}`;
+            url = url.replace(':id', id);
+
+            Swal.fire({
+                title: 'Anda yakin ingin menghapus detail invoice ini ?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            })
+        }
+</script>
+@endpush

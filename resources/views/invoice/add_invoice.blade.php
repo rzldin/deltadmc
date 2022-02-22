@@ -315,7 +315,7 @@
                                 <div class="row">
                                     <div class="col-md-12" style="text-align: right">
                                         {{-- <button class="btn btn-info">Confirm</button> --}}
-                                        <button class="btn btn-primary" onclick="$('#formInvoice').submit()">Save</button>
+                                        <button class="btn btn-primary" id="saveData">Save</button>
                                     </div>
                                 </div>
 
@@ -360,6 +360,57 @@
                     });
                 }
             });
+            
+        $("#saveData").click(function(){
+            if($('#create_type').val() == 0){
+                const rbs = document.querySelectorAll('input[name="loaded"]');
+                let selectedLoaded;
+                for (const rb of rbs) {
+                    if (rb.checked) {
+                        selectedLoaded = rb.value;
+                        break;
+                    }
+                }
+
+                if($.trim($("#invoice_no").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Nomor Invoice',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#invoice_date").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Issue Date',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#top").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Top',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#currency").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Currency',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#onboard_date").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input On Board Date',
+                        icon: 'error'
+                    })
+                }else{
+                    $(this).prop('disabled', true).text('Please Wait ...');
+                    $('#formInvoice').submit();
+                }
+            }else{
+                $(this).prop('disabled', true).text('Please Wait ...');
+                $('#formInvoice').submit();
+            }
+        });
 
             function client_detail(val) {
                 if (val != '') {

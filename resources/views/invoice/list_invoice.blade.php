@@ -82,6 +82,7 @@
                                             </a>
                                         @endif
                                         @if($invoice->proforma_invoice_id==0 && $invoice->journal_id == 0)
+                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
                                             <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                         @endif
                                     @else

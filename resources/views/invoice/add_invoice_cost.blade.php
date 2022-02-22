@@ -40,7 +40,22 @@
                                     <h3 class="card-title">Invoice Information</h3>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label>Create or Merge exisiting Invoice</label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select class="form-control select2bs44" name="create_type" id="create_type">
+                                                <option value="0">New Invoice</option>
+                                                <option disabled="disabled">----</option>
+                                                @foreach ($list_invoice as $inv)
+                                                    <option value="{{ $inv->id }}">{{ $inv->invoice_no }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row show_new">
                                         <div class="col-md-6">
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
@@ -326,49 +341,87 @@
 </section>
 @push('after-scripts')
     <script>
-        $("#saveData").click(function(){
-            const rbs = document.querySelectorAll('input[name="loaded"]');
-            let selectedLoaded;
-            for (const rb of rbs) {
-                if (rb.checked) {
-                    selectedLoaded = rb.value;
-                    break;
-                }
+        $('#create_type').on('change', function() {
+            if($('#create_type').val() == 0){
+                $('.show_new').show('slow');
+            }else{
+                $.ajax({
+                    url: "{{ route('invoice.getInvoiceHeader') }}",
+                    type: "POST",
+                    data: {
+                        id: $('#create_type').val(),
+                    },
+                    dataType:'json',
+                    success: function(result) {
+                        console.log(result.status);
+                        if(result.status == 'sukses'){
+                            if(result.data.total_vat>0){
+                                $('#ppn').prop('checked',true).trigger('change');
+                            }else{
+                                $('#ppn').prop('checked',false).trigger('change');
+                            }
+                            if(result.data.pph23>0){
+                                $('#pph23').prop('checked',true).trigger('change');
+                            }else{
+                                $('#pph23').prop('checked',false).trigger('change');
+                            }
+                            $('.show_new').hide('slow');
+                        }else{
+                            alert(result.message);
+                        }
+                    }
+                });
             }
+        });
 
-            if($.trim($("#invoice_no").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Nomor Invoice',
-                    icon: 'error'
-                })
-            }else if($.trim($("#invoice_date").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Issue Date',
-                    icon: 'error'
-                })
-            }else if($.trim($("#top").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Top',
-                    icon: 'error'
-                })
-            }else if($.trim($("#currency").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please Select Currency',
-                    icon: 'error'
-                })
-            }else if($.trim($("#onboard_date").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input On Board Date',
-                    icon: 'error'
-                })
+        $("#saveData").click(function(){
+            if($('#create_type').val() == 0){
+                const rbs = document.querySelectorAll('input[name="loaded"]');
+                let selectedLoaded;
+                for (const rb of rbs) {
+                    if (rb.checked) {
+                        selectedLoaded = rb.value;
+                        break;
+                    }
+                }
+
+                if($.trim($("#invoice_no").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Nomor Invoice',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#invoice_date").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Issue Date',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#top").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input Top',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#currency").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Select Currency',
+                        icon: 'error'
+                    })
+                }else if($.trim($("#onboard_date").val()) == ""){
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input On Board Date',
+                        icon: 'error'
+                    })
+                }else{
+                    $(this).prop('disabled', true).text('Please Wait ...');
+                    $('#formInvoice').submit();
+                }
             }else{
                 $(this).prop('disabled', true).text('Please Wait ...');
-                $('#formInvoice').submit()
+                $('#formInvoice').submit();
             }
         });
 
@@ -404,7 +457,7 @@
             }
         }
 
-        function checkedTax(code, name, value) {
+            function checkedTax(code, name, value) {
                 if ($('#'+code).is(':checked')) {
                     $('#row_'+code).show();
                     $('#lbl_'+code).text(name + ' (' + value + ' %)');

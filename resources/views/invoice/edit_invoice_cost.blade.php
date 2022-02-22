@@ -6,7 +6,7 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1><i class="fas fa-plus"></i>
-                    Internal Invoice
+                    Internal Invoice (Hutang)
                 </h1>
             </div>
             <div class="col-sm-6">
@@ -22,6 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
@@ -264,7 +265,7 @@
                                                 <th>Vat</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
-                                                {{-- <th>Action</th> --}}
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tblSell">
@@ -281,7 +282,9 @@
                                                     <td align="right">{{ number_format($detail->rate, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
-                                                    {{-- <td></td> --}}
+                                                    <td>
+                                                        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -304,3 +307,26 @@
     </div>
 </section>
 @endsection
+
+@push('after-scripts')
+<script>
+    function deleteInvoice(id) {
+            let url = `{{ route('invoice.delete_detail', ':id') }}`;
+            url = url.replace(':id', id);
+
+            Swal.fire({
+                title: 'Anda yakin ingin menghapus detail invoice ini ?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            })
+        }
+</script>
+@endpush

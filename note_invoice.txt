@@ -5,8 +5,8 @@ Kalau belom ada pembayaran, bisa edit dan tambah charges and fee.
 
 ngecek pmb cost dan sell sudah ada apa belum pas edit charges and fee.
 
-Edit invoice, delete detail.
-Saat buat invoice, bisa pilih create baru atau masuk invoice existing.
+Edit invoice, delete detail. (done)
+Saat buat invoice, bisa pilih create baru atau masuk invoice existing. (done)
 
 Sync internal, ngecek insert kalau gaada, update kalau ada.
 Sync proforma, ngecek insert kalau gaada, update kalau ada. kalau insert baru, otomatis status external berubah jadi harus di sync
