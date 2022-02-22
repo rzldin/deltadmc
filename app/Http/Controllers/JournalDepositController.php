@@ -112,7 +112,7 @@ class JournalDepositController extends Controller
                 $html .= '<td align="center">' . ($key + 1) . '</td>';
                 $html .= '<td>';
                 $html .= '<label class="" id="label_account_number_' . $key . '">' . $detail['account_number'] . '</label>';
-                $html .= '<select id="account_id_' . $key . '" class="form-control select2 display-none" onchange="getDetailAccountForEdit(this.value, ' . $key . ')">';
+                $html .= '<select id="account_id_' . $key . '" class="form-control select2bs44 display-none" onchange="getDetailAccountForEdit(this.value, ' . $key . ')">';
                 foreach ($accounts as $idx => $acc) {
                     $html .= '<option value="' . $acc->id . '" ' . ($acc->id == $detail['account_id'] ? 'selected' : '') . '>' . $acc->account_number . ' - ' . $acc->account_name . '</option>';
                 }
@@ -124,11 +124,11 @@ class JournalDepositController extends Controller
                 $html .= '<input type="text" id="account_name_' . $key . '" class="form-control display-none" value="' . $detail['account_name'] . '" readonly/>';
                 $html .= '</td>';
                 $html .= '<td align="right">';
-                $html .= '<label class="" id="label_debit_' . $key . '">' . number_format($detail['debit'], 2, ',', '.') . '</label>';
+                $html .= '<label class="" id="label_debit_' . $key . '">' . number_format($detail['debit'], 2, '.', ',') . '</label>';
                 $html .= '<input type="number" id="debit_' . $key . '" class="form-control display-none" value="' . $detail['debit'] . '"/>';
                 $html .= '</td>';
                 $html .= '<td align="right">';
-                $html .= '<label class="" id="label_credit_' . $key . '">' . number_format($detail['credit'], 2, ',', '.') . '</label>';
+                $html .= '<label class="" id="label_credit_' . $key . '">' . number_format($detail['credit'], 2, '.', ',') . '</label>';
                 $html .= '<input type="number" id="credit_' . $key . '" class="form-control display-none" value="' . $detail['credit'] . '"/>';
                 $html .= '</td>';
                 $html .= '<td>';
@@ -252,14 +252,6 @@ class JournalDepositController extends Controller
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
 
-            // if ($request->has('source')) {
-            //     if ($request->source == 'invoice') {
-            //         $param['invoice_id'] = $request->reference_id;
-            //     } else if ($request->source == 'pembayaran') {
-            //         $param['pembayaran_id'] = $request->reference_id;
-            //     }
-            // }
-
             $journal = Journal::saveJournal($param);
 
             $amount = 0;
@@ -267,11 +259,21 @@ class JournalDepositController extends Controller
             foreach ($details as $key => $detail) {
                 $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
                 if ($detail['account_id'] == $account_deposit->id && $detail['debit'] > 0) {
-                    #jika detail account adalah account deposit, dan posisi nya ada di debit, maka kurangi saldo deposit
-                    $amount += ($detail['debit'] * -1);
+                    if ($request->journal_type == 'deposit_vendor') {
+                        #jika journal type = deposit vendor dan detail account adalah account deposit, dan posisi nya ada di debit, maka tambah saldo deposit
+                        $amount += $detail['debit'];
+                    } else {
+                        #jika journal type = deposit client dan detail account adalah account deposit, dan posisi nya ada di debit, maka kurangi saldo deposit
+                        $amount += ($detail['debit'] * -1);
+                    }
                 } else if ($detail['account_id'] == $account_deposit->id && $detail['credit'] > 0) {
-                    #jika account deposit ada di kredit, maka tambah saldo deposit
-                    $amount += $detail['credit'];
+                    if ($request->journal_type == 'deposit_vendor') {
+                        #jika journal type = deposit_client dan account deposit ada di kredit, maka kurangi saldo deposit
+                        $amount += $detail['credit'];
+                    } else {
+                        #jika journal type = deposit_client dan account deposit ada di kredit, maka tambah saldo deposit
+                        $amount += $detail['credit'];
+                    }
                 }
                 unset($detail['account_number']);
                 unset($detail['account_name']);
@@ -283,7 +285,7 @@ class JournalDepositController extends Controller
                 JournalDetail::saveJournalDetail($detail);
             }
             $deposit_detail = DepositDetail::where('journal_id', $journal->id)->first();
-            $deposit = Deposit::where('company_id', $request->company_id)->first();
+            $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
             if ($deposit_detail != [] && $deposit != []) {
                 # kalau edit jurnal, nilai balance deposit di reset ke posisi awal dulu
                 # balance di deposit kurangi dulu dengan amount di deposit detail, agar dapet nilai balance awal, kemudian baru ditambah dengan amount yang baru diedit di jurnal
@@ -297,6 +299,7 @@ class JournalDepositController extends Controller
             }
 
             $paramDepositH['id'] = $deposit == [] ? 0 : $deposit->id;
+            $paramDepositH['currency_id'] = $request->currency_id;
             $paramDepositH['company_id'] = $request->company_id;
             $paramDepositH['created_by'] = Auth::user()->name;
             $paramDepositH['created_on'] = date('Y-m-d h:i:s');

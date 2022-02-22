@@ -69,6 +69,7 @@ class ExternalInvoiceController extends Controller
             // $param['rate'] = 1;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
+            unset($param['reimburs']);
             unset($param['invoice_type']);
             unset($param['pol_name']);
             unset($param['pod_name']);
@@ -157,9 +158,9 @@ class ExternalInvoiceController extends Controller
 
     public static function getListExternalInvoiceByCompanyId(Request $request)
     {
-        $html = "";
+        $html = "<option value=''>Silahkan Pilih</option>";
 
-        $invoices = ExternalInvoice::getExternalInvoicesByCompanyId($request->company_id)->orderBy('external_invoice_no')->get();
+        $invoices = ExternalInvoice::getExternalInvoicesByCompanyId($request->company_id)->where('tipe_inv', 0)->orderBy('external_invoice_no')->get();
         if ($invoices != []) {
             foreach ($invoices as $key => $inv) {
                 $html .= "<option value='{$inv->id}'>{$inv->external_invoice_no}</option>";
@@ -167,5 +168,12 @@ class ExternalInvoiceController extends Controller
         }
 
         return $html;
+    }
+
+    public static function getExternalInvoice($id)
+    {
+        $ext_invoice = ExternalInvoice::find($id);
+
+        return $ext_invoice;
     }
 }

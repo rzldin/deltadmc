@@ -3,14 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\GeneralLedger;
+use App\MasterModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GeneralLedgerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data['accounts'] = GeneralLedger::getAllAccountHasGL();
+        $data['currency_id'] = MasterModel::get_currency_by_code('IDR')->first()->id;
+        if ($request->has('currency_id')) {
+            $data['currency_id'] = $request->currency_id;
+        }
+
+        $data['accounts'] = GeneralLedger::getAllAccountHasGL($data['currency_id']);
+        $data['currency'] = MasterModel::currency();
 
         return view('general_ledger.list_general_ledger')->with($data);
     }
@@ -19,7 +26,7 @@ class GeneralLedgerController extends Controller
     {
         $html = '';
 
-        $details = GeneralLedger::getAllGLByAccountId($request->account_id)->get();
+        $details = GeneralLedger::getAllGLByAccountId($request->account_id, $request->currency_id)->get();
         foreach ($details as $key => $detail) {
             $html .= '<tr>';
             $html .= '<td>' . ($key + 1) . '</td>';
@@ -34,14 +41,14 @@ class GeneralLedgerController extends Controller
         return $html;
     }
 
-    public static function refreshBalance($accountId, $date)
+    public static function refreshBalance($accountId, $currencyId, $date)
     {
         try {
             $balance[] = 0;
             $startDate = date('Y-m-d', strtotime($date. '-1 days'));
             // start date dibuat -1 day dari param $date karena untuk mengambil nilai balance 1 hari sebelumnya (date yang akan diupdate)
             // mis : mau refresh mulai dari tgl 14-12-2021, maka ambil balance -1 days yaitu 13-12-2021
-            $gls = GeneralLedger::findALlGLsForRefreshBalance($accountId, $startDate)->get();
+            $gls = GeneralLedger::findALlGLsForRefreshBalance($accountId, $currencyId, $startDate)->get();
             foreach ($gls as $key => $gl) {
                 // kalau key 0, balance ke 0 langsung ambil dari table
                 if ($key == 0) $balance[$key] = $gl['balance'];

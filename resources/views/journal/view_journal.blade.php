@@ -153,7 +153,7 @@
                                                         <i class="fa fa-paper-plane"></i> Post
                                                     </a>
                                                 @endif
-                                                <a href="{{ url()->previous() }}" class="btn btn-danger">Back</a>
+                                                <a href="{{ route('journal.index') }}" class="btn btn-danger">Back</a>
                                             </div>
                                         </div>
                                     </div>

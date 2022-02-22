@@ -66,7 +66,7 @@
                             <label>Akun Kas<font color="red">*</font></label>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control select2bs44" style="width: 100%;" name="akun_kas" id="akun_kas">
+                            <select class="form-control select2bs44" style="width: 100%;" id="akun_kas" disabled>
                                 <option value="">Silahkan Pilih Bank ...</option>
                                 <?php
                                     foreach($bank as $v){
@@ -74,6 +74,16 @@
                                     }
                                 ?>
                             </select>
+                            <input type="hidden" name="akun_kas" value="{{ $header->id_kas }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label>Currency <font color="red">*</font></label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" value="{{ $header->code }}" disabled>
+                            <input type="hidden" id="currency_id_header" value="{{ $header->currency_id }}">
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -173,6 +183,7 @@
                   <td>#</td>
                   <td>Nomor</td>
                   <td>Tanggal</td>
+                  <td>Currency</td>
                   <td>Nilai</td>
                   <td>Action</td>
                 </tr>
@@ -228,6 +239,15 @@
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="invoice_no" name="invoice_no" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            Currency
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" id="currency" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
+                            <input type="hidden" name="currency_id" id="currency_id">
                         </div>
                     </div>
                     <div class="row">
@@ -340,6 +360,7 @@ function loadInvoice(){
         url:"{{ route('pembayaran.list_piutang') }}",
         data:{
             id : {{ $header->id_company }},
+            currency_id: {{ $header->currency_id }},
             id_pmb : {{ $header->id }},
         },
         dataType:"html",
@@ -349,6 +370,18 @@ function loadInvoice(){
             $('#tblInvoice').html(tabel);
         }
     });
+}
+
+function checkAmountDeposit(journal_id) {
+    let amount = $('#amount_'+journal_id);
+    let max_amount = $('#max_amount_'+journal_id);
+
+    let amount_val = amount.val().toString().replace(/\,/g, "");
+
+    if (Number(amount_val) > Number(max_amount.val())) {
+        alert('Nilai deposit yang dimasukkan melebihi nilai deposit pada system');
+        amount.val(numberWithCommas(max_amount.val()));
+    }
 }
 
 function useDeposit(journal_id) {
@@ -434,7 +467,7 @@ function hitungSubTotalSJ(){
 }
 
 function input_bayar(id){
-    console.log($('#akun_kas').val());
+    // console.log($('#akun_kas').val());
   $.ajax({
     url: "{{ route('pembayaran.getDataInvExt') }}",
     type: "POST",
@@ -449,8 +482,8 @@ function input_bayar(id){
         $("#tambah_inv").show();
         $("#alert-danger").hide();
         if ($('#akun_kas').val() == 263) {
-            getDepositBalance();
-            getListDeposit();
+            getDepositBalance(result['currency']);
+            getListDeposit(result['currency']);
             $('#nilai_bayar').attr('readonly', true);
             $('#deposit_blok').show();
             $('#is_deposit').val(1);
@@ -467,17 +500,21 @@ function input_bayar(id){
       $("#total_invoice").val(numberWithCommas(result['total_invoice']));
       // $("#nominal_sdh_bayar").val(numberWithCommas(result['nilai_total_bayar']));
       $('#nilai_bayar').val(0);
+      $('#currency').val(result['code']);
+      $('#currency_id').val(result['currency']);
       $("#invoice_bayar").val(numberWithCommas(result['invoice_bayar']));
+      hitungSubTotalSJ();
     }
   });
 }
 
-function getDepositBalance() {
+function getDepositBalance(currency) {
     $.ajax({
         type: 'post',
         url: `{{ route('deposit.getDepositCompany') }}`,
         data: {
             company_id: @json($header->id_company),
+            currency_id: currency,
         },
         success: function(result) {
             $('#deposit_id').val(result['id']);
@@ -486,12 +523,13 @@ function getDepositBalance() {
     });
 }
 
-function getListDeposit() {
+function getListDeposit(currency) {
     $.ajax({
         type: 'post',
         url: `{{ route('deposit.getListDeposit') }}`,
         data: {
             company_id: @json($header->id_company),
+            currency_id: currency,
         },
         success: function(result) {
             // console.log(result);
@@ -518,6 +556,7 @@ function updateDepositBalance(pembayaran_id = 0) {
             pembayaran_id: pembayaran_id,
             company_id: @json($header->id_company),
             amount: deposit_amount,
+            currency_id: $('#currency_id').val(),
             journal_id: deposit_journal_id,
             deposit_date: $('#tanggal').val(),
             invoice_id: $('#id_modal_inv').val(),
@@ -603,10 +642,11 @@ function proceed_bayar(){
         //  deposit_detail_id: deposit_detail_id,
          jenis_pmb:'{{ $header->jenis_pmb }}',
          id_invoice:$('#id_modal_inv').val(),
+         currency_id: $('#currency_id').val(),
          total_invoice:$('#total_invoice').val(),
          nilai_bayar:$('#nilai_bayar').val(),
          nilai_sisa:$('#nilai_sisa').val(),
-         tanggal_bayar:$('#tanggal_dt').val()
+         tanggal_bayar:$('#tanggal').val()
       },
       type: "POST",
       dataType: "json",
@@ -633,6 +673,8 @@ function proceed_bayar(){
         $("#total_invoice").val('');
         $("#invoice_bayar").val('');
         $("#nilai_sisa").val('');
+        $('#currency').val('');
+        $('#currency_id').val('');
         $('#is_deposit').val(0);
       }
   });
@@ -645,6 +687,7 @@ function delete_detail(id){
     data: {
         id:id,
         company_id: @json($header->id_company),
+        currency_id: $('#currency_id_header').val(),
     },
     dataType: "json",
     success: function(result){

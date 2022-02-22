@@ -167,6 +167,11 @@ class MasterModel extends Model
         return DB::table('t_mcurrency')->where('id', $id)->first();
     }
 
+    public static function get_currency_by_code($code)
+    {
+        return DB::table('t_mcurrency')->where('code', $code);
+    }
+
     public static function account_get()
     {
         return DB::table('t_maccount')->select('t_maccount.*', 't_mcurrency.code')

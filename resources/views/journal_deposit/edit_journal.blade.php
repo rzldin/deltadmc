@@ -106,12 +106,13 @@
                                                         <label>Currency</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="currency_id" id="currency_id">
+                                                        <select class="form-control" id="currency_id" disabled>
                                                             <option value="">Select Currency</option>
                                                             @foreach ($currency as $curr)
                                                                 <option value="{{ $curr->id }}" <?= $curr->id == $header->currency_id ? 'selected' : '' ?>>{{ $curr->code }}</option>
                                                             @endforeach
                                                         </select>
+                                                        <input type="hidden" name="currency_id" value="{{ $header->currency_id }}">
                                                     </div>
                                                 </div>
                                             </div>

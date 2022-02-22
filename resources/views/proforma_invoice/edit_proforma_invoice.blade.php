@@ -200,7 +200,7 @@
                                                     <label>Currency</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="currency" id="currency">
+                                                    <select class="form-control" id="currency" disabled>
                                                         <option value="" selected>-- Select Valuta --</option>
                                                         @foreach($currency as $item)
                                                             <option value="{{ $item->id }}" @if ($proforma_invoice_header->
@@ -208,6 +208,7 @@
                                                                 {{ $item->code }}</option>
                                                         @endforeach
                                                     </select>
+                                                    <input type="hidden" name="currency" value="{{ $proforma_invoice_header->currency }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">

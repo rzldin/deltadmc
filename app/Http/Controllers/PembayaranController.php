@@ -15,6 +15,7 @@ use App\MasterModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PembayaranController extends Controller
 {
@@ -29,6 +30,7 @@ class PembayaranController extends Controller
     {
         $data['company'] = MasterModel::company_data();
         $data['bank'] = MasterModel::bank_account();
+        $data['currency'] = MasterModel::currency();
         return view('pembayaran.add')->with($data);
     }
 
@@ -37,6 +39,7 @@ class PembayaranController extends Controller
         $rules = [
             'tanggal' => 'required',
             'jenis_pmb' => 'required',
+            'currency_id' => 'required',
             'no_pembayaran' => 'required|unique:t_pembayaran',
             'customer' => 'required',
         ];
@@ -68,6 +71,7 @@ class PembayaranController extends Controller
                 'tanggal' => date('Y-m-d', strtotime($request->tanggal)),
                 'id_company' => $request->customer,
                 'id_kas' => $id_kas,
+                'currency_id' => $request->currency_id,
                 'flag_giro' => $flag_giro,
                 'no_giro' => $no_giro,
                 'tgl_jatuh_tempo' => $tgl_jatuh_tempo,
@@ -87,7 +91,11 @@ class PembayaranController extends Controller
 
     public function edit($id)
     {
-        $data['header'] = PembayaranModel::leftJoin('t_mcompany AS b', 't_pembayaran.id_company', '=', 'b.id')->where('t_pembayaran.id', $id)->select('t_pembayaran.*', 'b.client_name')->first();
+        $data['header'] = PembayaranModel::leftJoin('t_mcompany AS b', 't_pembayaran.id_company', '=', 'b.id')
+            ->join('t_mcurrency AS c', 'c.id', 't_pembayaran.currency_id')
+            ->where('t_pembayaran.id', $id)
+            ->select('t_pembayaran.*', 'b.client_name', 'c.code')
+            ->first();
         $data['company'] = MasterModel::company_data();
         $data['bank'] = MasterModel::bank_account();
         // $data['deposit'] = Deposit::findDepositByCompanyId($data['header']->id_company)->first();
@@ -168,7 +176,11 @@ class PembayaranController extends Controller
     public function getDataInv(Request $request)
     {
 
-        $result = DB::table('t_invoice')->where('id', $request->id)->first();
+        $result = DB::table('t_invoice AS i')
+            ->join('t_mcurrency AS c', 'c.id', 'i.currency')
+            ->select('i.*', 'c.code')
+            ->where('i.id', $request->id)
+            ->first();
         $data['nilai_sisa'] = $result->total_invoice - $result->invoice_bayar;
         $data = $result;
 
@@ -207,6 +219,7 @@ class PembayaranController extends Controller
             'id_pmb' => $request->id_pmb,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
+            // 'currency_id' => $request->currency_id,
             'nilai' => $nilai_bayar
         ]);
 
@@ -220,30 +233,74 @@ class PembayaranController extends Controller
     public function deleteDetailPembayaran(Request $request)
     {
         $return_data = array();
-        $tanggal   = date('Y-m-d H:i:s');
+        DB::beginTransaction();
+        try {
+            $tanggal   = date('Y-m-d H:i:s');
 
-        $data = PembayaranModel::get_detail($request->id)->first();
-        $invoice_bayar = $data->invoice_bayar - $data->nilai;
-        $tanggal_lunas = null;
-        $flag = 2;
-        if ($invoice_bayar == 0) {
-            $flag = 0;
+            $data = PembayaranModel::get_detail($request->id)->first();
+            $invoice_bayar = $data->invoice_bayar - $data->nilai;
+            $tanggal_lunas = null;
+            $flag = 2;
+            if ($invoice_bayar == 0) {
+                $flag = 0;
+            }
+            DB::table('t_invoice')->where('id', $data->id_invoice)->update([
+                'invoice_bayar' => $data->invoice_bayar - $data->nilai,
+                'flag_bayar' => $flag,
+                'tanggal_lunas' => $tanggal_lunas,
+                'modified_by' => Auth::user()->id,
+                'modified_at' => Carbon::now()
+            ]);
+
+            /**
+             * kalau ada deposit
+             */
+            // if ($data->deposit_detail_id != 0) {
+            //     $param['deposit_detail_id'] = $data->deposit_detail_id;
+            //     DepositController::deleteDepositPembayaran($param);
+            // }
+            $deposits = DepositDetail::where('pembayaran_id', $data->id_pmb)->get();
+            if ($deposits != []) {
+                $amount = 0;
+                foreach ($deposits as $dtl) {
+                    $amount += $dtl->amount;
+                    DepositDetail::find($dtl->id)->delete();
+                }
+                $amount = $amount * -1;
+                $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
+                $deposit->balance = $deposit->balance + $amount;
+                $deposit->save();
+            }
+            /** end */
+
+            /**
+             * kalau udah ada jurnalnya
+             */
+            $journal = Journal::where('pembayaran_id', $data->id_pmb)->first();
+            if ($journal != []) {
+                JournalDetail::deleteJournalDetailByJournalId($journal->id);
+                $journal->delete();
+            }
+            /** end */
+
+            DB::table('t_pembayaran_detail')->where('id', $request->id)->delete();
+
+            $return_data['status'] = "sukses";
+            $return_data['message'] = "Berhasil menyimpan detail pembayaran!";
+
+            DB::commit();
+            header('Content-Type: application/json');
+            echo json_encode($return_data);
+        } catch (\Throwable $th) {
+            Log::error("deleteDetailPembayaran Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
+            $return_data['status'] = "failed";
+            $return_data['message'] = $th->getMessage();
+
+            DB::rollBack();
+            header('Content-Type: application/json');
+            echo json_encode($return_data);
         }
-        DB::table('t_invoice')->where('id', $data->id_invoice)->update([
-            'invoice_bayar' => $data->invoice_bayar - $data->nilai,
-            'flag_bayar' => $flag,
-            'tanggal_lunas' => $tanggal_lunas,
-            'modified_by' => Auth::user()->id,
-            'modified_at' => Carbon::now()
-        ]);
-
-        DB::table('t_pembayaran_detail')->where('id', $request->id)->delete();
-
-        $return_data['status'] = "sukses";
-        $return_data['message'] = "Berhasil menyimpan detail pembayaran!";
-
-        header('Content-Type: application/json');
-        echo json_encode($return_data);
     }
 
     public function update(Request $request)
@@ -322,6 +379,7 @@ class PembayaranController extends Controller
     {
         $data['company'] = MasterModel::company_data();
         $data['bank'] = MasterModel::bank_account();
+        $data['currency'] = MasterModel::currency();
         return view('pembayaran.add_piutang')->with($data);
     }
 
@@ -329,7 +387,7 @@ class PembayaranController extends Controller
     {
         $tabel      = "";
         $no         = 1;
-        $data       = PembayaranModel::get_list_piutang($request->id, $request->id_pmb);
+        $data       = PembayaranModel::get_list_piutang($request->id, $request->id_pmb, $request->currency_id);
 
         foreach ($data as $v) {
 
@@ -339,6 +397,7 @@ class PembayaranController extends Controller
             $tabel .= '<td>' . $no . '</td>';
             $tabel .= '<td class="text-left">' . $v->external_invoice_no . '</td>';
             $tabel .= '<td class="text-left">' . $v->external_invoice_date . '</td>';
+            $tabel .= '<td class="text-left">' . $v->code . '</td>';
             $tabel .= '<td class="text-right">' . number_format($v->total_invoice - $v->invoice_bayar, 2, ',', '.') . '</td>';
             $tabel .= '<td>';
             if ($v->count == 0) {
@@ -385,6 +444,7 @@ class PembayaranController extends Controller
         DB::table('t_pembayaran_detail')->insert([
             'id_pmb' => $request->id_pmb,
             // 'deposit_detail_id' => $request->deposit_detail_id,
+            'currency_id' => $request->currency_id,
             'jenis_pmb' => $request->jenis_pmb,
             'id_invoice' => $request->id_invoice,
             'nilai' => $nilai_bayar
@@ -434,14 +494,14 @@ class PembayaranController extends Controller
                     DepositDetail::find($dtl->id)->delete();
                 }
                 $amount = $amount * -1;
-                $deposit = Deposit::where('company_id', $request->company_id)->first();
+                $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
                 $deposit->balance = $deposit->balance + $amount;
                 $deposit->save();
             }
             /** end */
 
             /**
-             * kalau udah diposting jurnalnya
+             * kalau udah ada jurnalnya
              */
             $journal = Journal::where('pembayaran_id', $data->id_pmb)->first();
             if ($journal != []) {
@@ -459,6 +519,8 @@ class PembayaranController extends Controller
             header('Content-Type: application/json');
             echo json_encode($return_data);
         } catch (\Throwable $th) {
+            Log::error("deleteDetailPembayaranPiutang Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
             $return_data['status'] = "failed";
             $return_data['message'] = $th->getMessage();
 
@@ -470,7 +532,11 @@ class PembayaranController extends Controller
 
     public function getDataInvExt(Request $request)
     {
-        $result = DB::table('t_external_invoice')->where('id', $request->id)->first();
+        $result = DB::table('t_external_invoice AS i')
+            ->join('t_mcurrency AS c', 'c.id', 'i.currency')
+            ->select('i.*', 'c.code')
+            ->where('i.id', $request->id)
+            ->first();
         $data['nilai_sisa'] = $result->total_invoice - $result->invoice_bayar;
         $data = $result;
 
