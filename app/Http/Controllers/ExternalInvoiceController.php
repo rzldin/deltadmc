@@ -107,7 +107,10 @@ class ExternalInvoiceController extends Controller
                 $total_before_vat += $detail['sell_val'];
                 $total_vat += $detail['vat'];
                 $total_invoice += $detail['subtotal'];
-                ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
+                $exid = ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
+                ProformaInvoiceDetailModel::where('id', $detail->id)->update([
+                    'exi_detail_id' => $exid->id
+                ]);
             }
 
             // DB::table('t_external_invoice')->where('id', $invoice->id)->update([
@@ -142,6 +145,12 @@ class ExternalInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            $loop = ExternalInvoiceDetail::where('external_invoice_id', $externalInvoiceId)->get();
+            foreach ($loop as $key => $v) {
+                ProformaInvoiceDetailModel::where('exi_detail_id', $v->id)->update([
+                    'exi_detail_id' => 0
+                ]);
+            }
             ExternalInvoiceDetail::where('external_invoice_id', $externalInvoiceId)->delete();
             ExternalInvoice::find($externalInvoiceId)->delete();
 

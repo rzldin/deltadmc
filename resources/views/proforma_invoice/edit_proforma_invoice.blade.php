@@ -56,7 +56,7 @@
                                                         @foreach($companies as $company)
                                                             <option value="{{ $company->id }}"
                                                                 <?= $company->id == $proforma_invoice_header['client_id'] ? 'selected' : '' ?>>
-                                                                    {{ '('.$company->client_code.') '.$company->client_name }}<</option>
+                                                                    {{ '('.$company->client_code.') '.$company->client_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>

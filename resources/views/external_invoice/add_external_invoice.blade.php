@@ -49,11 +49,11 @@
                                                         <label>Bill To</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="client_id" id="client_id" onchange="client_detail(this.value)">
+                                                        <select class="form-control select2bs44" name="client_id" id="client_id" onchange="client_detail(this.value)">
                                                             <option value="">Select Company</option>
                                                             @foreach ($companies as $company)
                                                                 <option value="{{ $company->id }}" <?= $company->id == $proforma_invoice_header['client_id'] ? 'selected' : '' ?>>
-                                                                    {{ $company->client_code }}</option>
+                                                                    {{ '('.$company->client_code.') '.$company->client_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -63,7 +63,7 @@
                                                         <label>Address</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="client_addr_id" id="client_addr_id">
+                                                        <select class="form-control select2bs44" name="client_addr_id" id="client_addr_id">
                                                             <option value="">Select Address</option>
                                                             @foreach ($addresses as $address)
                                                                 <option value="{{ $address->id }}" <?= $company->id == $proforma_invoice_header['client_addr_id'] ? 'selected' : '' ?>>
@@ -77,7 +77,7 @@
                                                         <label>PIC</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control" name="client_pic_id" id="client_pic_id">
+                                                        <select class="form-control select2bs44" name="client_pic_id" id="client_pic_id">
                                                             <option value="">Select PIC</option>
                                                             @foreach ($pics as $pic)
                                                                 <option value="{{ $pic->id }}" <?= $company->id == $proforma_invoice_header['client_pic_id'] ? 'selected' : '' ?>>
