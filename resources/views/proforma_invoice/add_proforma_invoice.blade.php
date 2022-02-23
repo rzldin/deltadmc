@@ -270,8 +270,7 @@
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h5 class="card-title">Detail</h5>
-                                        <a href="javascript:void(0);" onclick="showModalMerge()" class="btn btn-success float-right"><i class="fas fa-check"></i> Merge Detail
-                                            Selected</a>
+                                        <a href="javascript:void(0);" onclick="showModalMerge()" class="btn btn-success float-right"><i class="fas fa-check"></i> Merge Detail Selected</a>
                                     </div>
                                     <div class="card-body table-responsive p-0">
                                         <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
@@ -303,7 +302,7 @@
                                 <div class="row">
                                     <div class="col-md-12" style="text-align: right">
 
-                                        <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Save</button>
+                                        <button type="button" class="btn btn-primary" id="saveInvoice">Save</button>
                                     </div>
                                 </div>
 
@@ -356,6 +355,7 @@
                                         <tr>
                                             <td>Merge to</td>
                                             <td>
+                                                <input type="hidden" id="id_invoicenya" name="id_invoicenya">
                                                 <select class="form-control select2bs44" name="charge" id="charge">
                                                     <option value="">--Select Charge Code--</option>
                                                     @foreach ($charges as $charge)
@@ -488,8 +488,15 @@
                         title: 'Oops...',
                         text: 'Please select data!',
                     })
+                } else if(id.length == 1) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Please select more than 1 data!',
+                    })
                 } else {
                     currency = $('#currency_dtl option:selected');
+                    $('#charge').val('').trigger("change");
                     $('#currency_id').val(currency.val());
                     $('#currency_code').val(currency.text());
                     $('#modalMerge').modal('show');
@@ -501,7 +508,6 @@
                     return c.value;
                 });
                 var invoice_type = $('input[name="invoice_type"]:checked').val();
-                console.log('id', id);
                 url = `{{ route('proforma_invoice.loadDetailBefore') }}`;
                 $.ajax({
                     type: 'post',
@@ -517,6 +523,7 @@
                         } else {
                             $('#reimburse_flag').prop('checked', false);
                         }
+                        $('#id_invoicenya').val($('#id_invoicenya_before').val());
                         $('#qty').val($('#qty_before').val());
                         $('#total_cost').val($('#total_cost_before').val());
                         $('#total_sell').val($('#total_sell_before').val());
@@ -533,58 +540,68 @@
             }
 
             function saveMergeDetail() {
-                var id_to_delete = $.map($('input[name="id_to_delete[]"]'), function(c) {
-                    return c.value;
-                });
-                var t_mcharge_code_id = $('#charge option:selected');
-                var desc = $('#desc');
-                var reimburse_flag = ($('#reimburse_flag').is(':checked') ? 1 : 0);
-                var qty = $('#qty');
-                var currency = $('#currency_dtl option:selected');
-                var currency_id = $('#currency_id');
-                var currency_code = $('#currency_code');
-                var cost = $('#total_cost');
-                var sell = $('#total_sell');
-                var cost_val = $('#total_cost_val');
-                var sell_val = $('#total_sell_val');
-                var rate = $('#rate');
-                var vat = $('#total_vat');
-                var pph23 = $('#total_pph23');
-                var subtotal = $('#subtotal');
-                var routing = $('#routing');
-                var transit_time = $('#transit_time');
-                // var note = $('#note');
+                if($('#charge').val() == ''){
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Please select Service/Fee before merge!',
+                    });
+                }else{
+                    var id_to_delete = $.map($('input[name="id_to_delete[]"]'), function(c) {
+                        return c.value;
+                    });
+                    var id_invoicenya = $('#id_invoicenya');
+                    var t_mcharge_code_id = $('#charge option:selected');
+                    var desc = $('#desc');
+                    var reimburse_flag = ($('#reimburse_flag').is(':checked') ? 1 : 0);
+                    var qty = $('#qty');
+                    var currency = $('#currency_dtl option:selected');
+                    var currency_id = $('#currency_id');
+                    var currency_code = $('#currency_code');
+                    var cost = $('#total_cost');
+                    var sell = $('#total_sell');
+                    var cost_val = $('#total_cost_val');
+                    var sell_val = $('#total_sell_val');
+                    var rate = $('#rate');
+                    var vat = $('#total_vat');
+                    var pph23 = $('#total_pph23');
+                    var subtotal = $('#subtotal');
+                    var routing = $('#routing');
+                    var transit_time = $('#transit_time');
+                    // var note = $('#note');
 
-                $.ajax({
-                    type: 'post',
-                    url: `{{ route('proforma_invoice.saveMergeDetail') }}`,
-                    data: {
-                        id_to_delete: id_to_delete,
-                        t_mcharge_code_id: t_mcharge_code_id.val(),
-                        t_mcharge_code_name: t_mcharge_code_id.text(),
-                        desc: desc.val(),
-                        reimburse_flag: reimburse_flag,
-                        qty: qty.val(),
-                        currency_id: currency_id.val(),
-                        currency_code: currency_code.val(),
-                        cost: cost.val(),
-                        sell: sell.val(),
-                        cost_val: cost_val.val(),
-                        sell_val: sell_val.val(),
-                        rate: rate.val(),
-                        vat: vat.val(),
-                        pph23: pph23.val(),
-                        subtotal: subtotal.val(),
-                        routing: routing.val(),
-                        transit_time: transit_time.val(),
-                        // note : note.val(),
-                    },
-                    success: function(result) {
-                        loadDetail(0, `{{ $invoice_header['id'] }}`);
-                        clearFields();
-                        $('#modalMerge').modal('hide');
-                    }
-                });
+                    $.ajax({
+                        type: 'post',
+                        url: `{{ route('proforma_invoice.saveMergeDetail') }}`,
+                        data: {
+                            id_to_delete: id_to_delete,
+                            id_invoicenya: id_invoicenya.val(),
+                            t_mcharge_code_id: t_mcharge_code_id.val(),
+                            t_mcharge_code_name: t_mcharge_code_id.text(),
+                            desc: desc.val(),
+                            reimburse_flag: reimburse_flag,
+                            qty: qty.val(),
+                            currency_id: currency_id.val(),
+                            currency_code: currency_code.val(),
+                            cost: cost.val(),
+                            sell: sell.val(),
+                            cost_val: cost_val.val(),
+                            sell_val: sell_val.val(),
+                            rate: rate.val(),
+                            vat: vat.val(),
+                            pph23: pph23.val(),
+                            subtotal: subtotal.val(),
+                            routing: routing.val(),
+                            transit_time: transit_time.val(),
+                            // note : note.val(),
+                        },
+                        success: function(result) {
+                            loadDetail(0, `{{ $invoice_header['id'] }}`);
+                            clearFields();
+                            $('#modalMerge').modal('hide');
+                        }
+                    });
+                }
             }
 
             function clearFields() {
@@ -607,6 +624,25 @@
                 $('#transit_time').val('');
                 // $('#note').val('');
             }
+
+            $('#saveInvoice').on('click', function(event) {
+                if ($('#proforma_invoice_no').val() == '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Please input Proforma Invoice Number!',
+                    });
+                } else if($('#proforma_invoice_date').val() == '') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Oops...',
+                        text: 'Please input Proforma Invoice Date !',
+                    });
+                } else {
+                    $(this).prop('disabled',true).text('Please Wait ...');
+                    $('#formInvoice').submit();
+                }
+            });
 
             $(function() {
                 loadDetail(0, `{{ $invoice_header['id'] }}`);

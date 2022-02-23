@@ -62,6 +62,8 @@ class ProformaInvoiceController extends Controller
             foreach ($data as $key => $detail) {
                 $newItem = [
                     // 'key' => $key,
+                    'id' => $detail['id'],
+                    'id_invoicenya' => ((isset($detail['id_invoice_detail']))? $detail['id_invoice_detail']:null),
                     't_mcharge_code_id' => $detail['t_mcharge_code_id'],
                     'charge_name' => $detail['charge_name'],
                     'desc' => $detail['desc'],
@@ -102,7 +104,11 @@ class ProformaInvoiceController extends Controller
                     $style = '';
                 }
                 $html .= '<tr>';
-                $html .= '<td><input type="checkbox" name="detail_id" id="detail_id_' . $key . '" value="' . $key . '"/></td>';
+                $html .= '<td>';
+                if(!isset($detail['id_invoicenya'])){
+                    $html .= '<input type="checkbox" name="detail_id" id="detail_id_' . $key . '" value="' . $key . '"/>';
+                }
+                $html .= '</td>';
                 $html .= '<td class="text-center">';
                 $html .= ($key + 1);
                 $html .= '</td>';
@@ -165,7 +171,9 @@ class ProformaInvoiceController extends Controller
         if ($details != []) {
             // loop array key untuk mendapatkan data details yang index / key nya sesuai dengan var key
             // ex : hanya mengambil data details yang index nya 0 dan 3 // $details[3][field_name]
+            $id_invoicenya = [];
             foreach ($key as $index => $id) {
+                $id_invoicenya[$id] = $details[$id]['id'];
                 $total_cost += $details[$id]['cost'];
                 $total_sell += $details[$id]['sell'];
                 $total_cost_val += $details[$id]['cost_val'];
@@ -206,6 +214,7 @@ class ProformaInvoiceController extends Controller
             $html .= '<tr>';
             $html .= '<td colspan="12">';
             $html .= '<input type="hidden" name="qty_before" id="qty_before" value="1"/>';
+            $html .= '<input type="hidden" name="id_invoicenya_before" id="id_invoicenya_before" value="'.implode(",", $id_invoicenya).'"/>';
             $html .= '<input type="hidden" name="total_cost_before" id="total_cost_before" value="' . $total_cost . '"/>';
             $html .= '<input type="hidden" name="total_sell_before" id="total_sell_before" value="' . $total_sell . '"/>';
             $html .= '<input type="hidden" name="total_cost_val_before" id="total_cost_val_before" value="' . $total_cost_val . '"/>';
@@ -236,6 +245,7 @@ class ProformaInvoiceController extends Controller
 
         $newItem = [
             // 'key' => (sizeof($details) + 1),
+            'id_invoicenya' => $request->id_invoicenya,
             't_mcharge_code_id' => $request->t_mcharge_code_id,
             'charge_name' => $request->t_mcharge_code_name,
             'desc' => $request->desc,
@@ -273,6 +283,7 @@ class ProformaInvoiceController extends Controller
     {
         $rules = [
             'client_id' => 'required',
+            // 'proforma_invoice_no' => 'required',
             'proforma_invoice_date' => 'required',
             'currency' => 'required',
             // 'pol_id' => 'required',
@@ -286,7 +297,6 @@ class ProformaInvoiceController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->with('errorForm', $validator->errors()->messages());
         }
-
 
         try {
             DB::beginTransaction();
@@ -366,11 +376,22 @@ class ProformaInvoiceController extends Controller
                 $paramDetail['transit_time'] = $detail['transit_time'];
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                $paramDetail['id_invoice_detail'] = ((isset($detail['id_invoicenya']))? $detail['id_invoicenya']:NULL);
                 // dd($details, $paramDetail);
                 $total_before_vat += $detail['sell_val'];
                 $total_vat += $detail['vat'];
                 $total_invoice += $detail['subtotal'];
-                ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
+                $pid = ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
+                if(isset($detail['id'])){
+                    InvoiceDetailModel::where('id', $detail['id'])->update([
+                        'pfi_detail_id' => $pid->id
+                    ]);
+                }elseif(isset($detail['id_invoicenya'])){
+                    InvoiceDetailModel::whereIn('id', explode(',',$detail['id_invoicenya']))->update([
+                        'pfi_detail_id' => $pid->id
+                    ]);
+                }
+
             }
 
             // DB::table('t_proforma_invoice')->where('id', $proforma_invoice->id)->update([
@@ -423,6 +444,12 @@ class ProformaInvoiceController extends Controller
     {
         DB::beginTransaction();
         try {
+            $loop = ProformaInvoiceDetailModel::where('proforma_invoice_id', $proformaInvoiceId)->get();
+            foreach ($loop as $key => $v) {
+                InvoiceDetailModel::where('pfi_detail_id', $v->id)->update([
+                    'pfi_detail_id' => 0
+                ]);
+            }
             ProformaInvoiceDetailModel::where('proforma_invoice_id', $proformaInvoiceId)->delete();
             ProformaInvoiceModel::find($proformaInvoiceId)->delete();
 
