@@ -12,7 +12,7 @@ Sync internal, ngecek insert kalau gaada, update kalau ada.
 Sync proforma, ngecek insert kalau gaada, update kalau ada. kalau insert baru, otomatis status external berubah jadi harus di sync
 Sync external.
 
-id external di simpen di proforma detail yang di merge.
+id external di simpen di proforma detail yang di merge. (done)
 
 external harus di hapus kalau mau nambah detail proforma ke external.
 

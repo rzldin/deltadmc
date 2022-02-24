@@ -410,11 +410,9 @@
                                             <button type="button" class="btn btn-primary mb-4 float-left mr-2" onclick="updateData(1)">
                                                 <i class="fa fa-save"></i> Save as Final
                                             </button>
-                                        @if($booking->flag_invoice == 0)
                                             <a href="{{ url('booking/booking_new/'.$booking->id) }}" onclick="return confirm('build a new version?')"class="btn btn-info float-left mr-2">
                                                 <i class="fa fa-plus"></i> New Version
                                             </a>
-                                        @endif
                                         @if($booking->status != 9)
                                             <form action="{{ route('booking.cancel') }}" method="post" target="_self" name="form_cancel" id="form_cancel">
                                                 <input type="hidden" name="booking" value="{{ $booking->id }}">

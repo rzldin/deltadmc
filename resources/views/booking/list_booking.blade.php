@@ -67,15 +67,15 @@
                                 <td>{{ $row->company_b }}</td>
                                 <td>{{ $row->activity }}</td>
                                 @if ($row->status == 0)
-                                <td class="bg-secondary text-center">NEW</td>
+                                    <td class="bg-secondary text-center">NEW</td>
                                 @elseif($row->status == 1) 
-                                <td class="bg-success text-center">Approve</td>
+                                    <td class="bg-success text-center">Approve</td>
                                 @elseif($row->status == 2) 
-                                <td class="bg-danger text-center">Cancel with Invoice</td>
+                                    <td class="bg-danger text-center">Cancel with Invoice</td>
                                 @elseif($row->status == 8) 
-                                <td class="bg-warning text-center">On Request</td>
+                                    <td class="bg-warning text-center">On Request</td>
                                 @elseif($row->status == 9) 
-                                <td class="bg-danger text-center">Canceled</td>
+                                    <td class="bg-danger text-center">Canceled</td>
                                 @endif
 
                                 @if ($row->flag_invoice == 0)
@@ -121,7 +121,7 @@
                             </select>
                             <input type="hidden" name="booking_no" id="booking_no" value="">
                             <input type="hidden" name="id_booking" id="id_bx" value="">
-                            <input type="hidden" id="status" value="">
+                            <input type="hidden" id="status_version" value="">
                         </div>
                     </div>
                 </form>
@@ -181,7 +181,7 @@
                         $('#selectVersion').html(tabel[1]);
                     }
                     $('#booking_no').val(booking_no);
-                    $('#status').val(status);
+                    $('#status_version').val(status);
                     $("#myModal").find('.modal-title').text('Select Version');
                     $("#myModal").modal('show',{backdrop: 'true'}); 
                 }
@@ -191,7 +191,7 @@
         function simpandata()
         {
             let id = $('#selectVersion').val();
-            if($('#status').val() == 'view'){
+            if($('#status_version').val() == 'view'){
                 $('#formku').attr("action", "{{ route('booking.getView') }}");
             }else{
                 $('#formku').attr("action", `{{ url('booking/edit_booking/${id}') }}`);

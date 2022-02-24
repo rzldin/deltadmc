@@ -15,6 +15,7 @@ class BookingModel extends Model
                 ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
                 ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
                 ->where('a.status', '!=', 9)
+                ->whereRaw('a.id in (SELECT MAX(id) FROM t_booking GROUP BY booking_no)')
                 ->groupBy('a.booking_no')->get();
     }
 
@@ -26,6 +27,7 @@ class BookingModel extends Model
                 ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
                 ->select('a.*', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d')
                 ->where('a.status', $status)
+                ->whereRaw('a.id in (SELECT MAX(id) FROM t_booking GROUP BY booking_no)')
                 ->groupBy('a.booking_no')->get();
     }
 

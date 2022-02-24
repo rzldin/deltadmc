@@ -326,7 +326,6 @@
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                                         <thead>
                                                             <tr>
-                                                                <th>#</th>
                                                                 <th width="3%">No.</th>
                                                                 <th width="10%">Service/Fee</th>
                                                                 <th width="10%">Description</th>
@@ -386,7 +385,6 @@
                                                     <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
                                                         <thead>
                                                             <tr>
-                                                                <th>#</th>
                                                                 <th>No.</th>
                                                                 <th>Service/Fee</th>
                                                                 <th>Description</th>
@@ -400,7 +398,6 @@
                                                                 <th>Amount</th>
                                                                 <th style="width:10%;">Bill To</th>
                                                                 <th>Note</th>
-                                                                <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -495,7 +492,7 @@
 @push('after-scripts')
     <script>
     
-    function get_customer(val)
+        function get_customer(val)
         {
             $.ajax({
                 url: "{{ route('get.customer') }}",
@@ -903,6 +900,69 @@
     });
 
     $(function() {
+
+        $('.select-ajax-port').select2({
+          theme: "bootstrap4",
+          ajax: {
+            url: "{{route('booking.getPort')}}",
+            type: "post",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+              var query = {
+                search: params.term,
+              }
+
+              // Query parameters will be ?search=[term]&type=public
+              return query;
+            },
+            processResults: function(data, params) {
+                console.log(data);
+                return {results: data};
+            },
+            cache: true
+          },
+        });
+
+        var pol = $('#pol');
+        var pot = $('#pot');
+        var podisc = $('#podisc');
+        $.ajax({
+            type: 'POST',
+            url: "{{route('booking.getExistingPort')}}",
+            data : {
+                booking_id:$('#booking_id').val(),
+            },
+        }).then(function (data) {
+            // create the option and append to Select2
+            var pol_option = new Option(data.pol.text, data.pol.id, true, true);
+            pol.append(pol_option).trigger('change');
+            pol.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var pot_option = new Option(data.pot.text, data.pot.id, true, true);
+            pot.append(pot_option).trigger('change');
+            pot.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+
+            var podisc_option = new Option(data.pod.text, data.pod.id, true, true);
+            podisc.append(podisc_option).trigger('change');
+            podisc.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+        });
+
             get_customer({{ $quote->client_id }});
             client_detail({{ $quote->client_id }});
 

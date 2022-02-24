@@ -483,7 +483,7 @@ class BookingController extends Controller
     public function booking_doAddVersion(Request $request)
     {
         $shipping   = QuotationModel::get_quoteShipping($request->id_quote);
-        $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
+        // $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
         $shp = $shipping[0];
         $no = 1;
 
@@ -635,7 +635,6 @@ class BookingController extends Controller
                         ]);
                     }
 
-
                     #Insert Packages
                     $packages   = BookingModel::get_packages($request->booking_idx);
 
@@ -736,9 +735,13 @@ class BookingController extends Controller
 
                     foreach($sellCost as $row)
                     {
+                        //Detail yg lama diganti id booking baru, tapi insert data lama ke id booking lama. Biar detail nya gaberubah di invoice.
+                        DB::table('t_bcharges_dtl')->where('id', $row->id)->update([
+                            't_booking_id' => $id
+                        ]);
                         DB::table('t_bcharges_dtl')
                         ->insert([
-                            't_booking_id'          => $id,
+                            't_booking_id'          => $request->booking_idx,
                             'position_no'           => $row->position_no,
                             't_mcharge_code_id'     => $row->t_mcharge_code_id,
                             'desc'                  => $row->desc,
@@ -754,11 +757,35 @@ class BookingController extends Controller
                             'subtotal'              => $row->subtotal,
                             'routing'               => $row->routing,
                             'transit_time'          => $row->transit_time,
+                            't_mcarrier_id'         => $row->t_mcarrier_id,
+                            'notes'                 => $row->notes,
+                            'paid_to'               => $row->paid_to,
+                            'paid_to_id'            => $row->paid_to_id,
+                            'bill_to'               => $row->bill_to,
+                            'bill_to_id'            => $row->bill_to_id,
                             'created_by'            => $user,
                             'created_on'            => $tanggal
                         ]);
                     }
 
+                    //update invoice ke id booking baru. booking lama hanya untuk cek history aja
+                    DB::table('t_invoice')->where('t_booking_id', $request->booking_idx)->update([
+                        't_booking_id' => $id
+                    ]);
+
+                    DB::table('t_proforma_invoice')->where('t_booking_id', $request->booking_idx)->update([
+                        't_booking_id' => $id
+                    ]);
+
+                    DB::table('t_external_invoice')->where('t_booking_id', $request->booking_idx)->update([
+                        't_booking_id' => $id
+                    ]);
+
+                    DB::table('t_booking')->where('t_booking_id', $request->booking_idx)->update([
+                        'status' => 9,//Status sudah ada versi diatasnya,jadi gaboleh di edit lagi versi sebelumnya, hanya buat histori
+                        'updated_by'            => $user,
+                        'updated_on'            => $tanggal
+                    ]);
             return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
