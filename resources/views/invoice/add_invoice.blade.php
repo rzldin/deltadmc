@@ -41,7 +41,7 @@
                                     <div class="card-body">
                                         <div class="row mb-3">
                                             <div class="col-md-4">
-                                                <label>Create or Merge exisiting Invoice</label>
+                                                <label>Create or Merge existing Invoice</label>
                                             </div>
                                             <div class="col-md-8">
                                                 <select class="form-control select2bs44" name="create_type" id="create_type">
@@ -315,7 +315,7 @@
                                 <div class="row">
                                     <div class="col-md-12" style="text-align: right">
                                         {{-- <button class="btn btn-info">Confirm</button> --}}
-                                        <button class="btn btn-primary" id="saveData">Save</button>
+                                        <button type="button" class="btn btn-primary" id="saveData">Save</button>
                                     </div>
                                 </div>
 

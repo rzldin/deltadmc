@@ -42,7 +42,7 @@
                                 <div class="card-body">
                                     <div class="row mb-3">
                                         <div class="col-md-4">
-                                            <label>Create or Merge exisiting Invoice</label>
+                                            <label>Create or Merge existing Invoice</label>
                                         </div>
                                         <div class="col-md-8">
                                             <select class="form-control select2bs44" name="create_type" id="create_type">
