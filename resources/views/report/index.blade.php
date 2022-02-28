@@ -38,7 +38,7 @@
                                     <div class="form-group row">
                                         <label for="report_code" class="col-sm-2 col-form-label">Report</label>
                                         <div class="col-sm-10">
-                                            <select name="report_code" id="report_code" class="form-control">
+                                            <select name="report_code" id="report_code" class="form-control select2bs44">
                                                 <option value="income_statement" {{ old('report_code') == 'income_statement' ? 'selected' : '' }} >Income Statement</option>
                                                 <option value="balance_sheet" {{ old('report_code') == 'balance_sheet' ? 'selected' : '' }} >Balance Sheet</option>
                                             </select>
