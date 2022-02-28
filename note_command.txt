@@ -157,3 +157,9 @@ ALTER TABLE `t_invoice_detail` ADD `t_bcharges_id` INT NOT NULL AFTER `invoice_i
 ALTER TABLE `t_invoice_detail` ADD `pfi_detail_id` INT NOT NULL DEFAULT '0' AFTER `transit_time`;
 ALTER TABLE `t_proforma_invoice_detail` ADD `id_invoice_detail` TEXT NULL AFTER `transit_time`;
 ALTER TABLE `t_proforma_invoice_detail` ADD `exi_detail_id` INT NOT NULL DEFAULT '0' AFTER `id_invoice_detail`;
+
+-- hendry 28022022
+UPDATE SP_getChildAccountIncomeStatement()
+create table m_config_report_balance_sheet
+CREATE SP_getParentAccountBalanceSheet()
+CREATE SP_getChildAccountBalanceSheet()

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\IncomeStatementBalance;
 use App\MasterModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,27 +35,150 @@ class ReportController extends Controller
 
         if ($request->report_code == 'income_statement') {
             return redirect()->route('report.print.income_statement', $request->all());
+        } else if ($request->report_code == 'balance_sheet') {
+            return redirect()->route('report.print.balance_sheet', $request->all());
         }
     }
 
     public function print_income_statement(Request $request)
     {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+
+        $data = $this->generateDataIncomeStatement($start_date, $end_date, $request->currency_id);
+
         $data['title'] = "Laporan Laba Rugi";
         $data['start_date'] = $request->start_date;
         $data['end_date'] = $request->end_date;
 
-        $start_date = date('Y-m-d', strtotime($request->start_date));
-        $end_date = date('Y-m-d', strtotime($request->end_date));
+        return view('report.print_income_statement')->with($data);
+    }
+
+    public function generateDataIncomeStatement($start_date, $end_date, $currency_id)
+    {
         $parent_account = DB::select("CALL getParentAccountIncomeStatement()");
         $data['parent_account'] = $parent_account;
+
         if ($parent_account != []) {
             foreach ($parent_account as $key => $parent) {
-                $child_account = DB::select("CALL getChildAccountIncomeStatement('{$start_date}', '{$end_date}', '{$parent->account_number}', {$request->currency_id})");
+                $child_account = DB::select("CALL getChildAccountIncomeStatement('{$start_date}', '{$end_date}', '{$parent->account_number}', {$currency_id})");
                 $data['parent_account'][$key]->child_account = $child_account;
+            }
+
+            // $this->insertIncomeStatementBalance($start_date, $end_date, $data, $currency_id);
+        }
+
+        return $data;
+    }
+
+    public function insertIncomeStatementBalance($start_date, $end_date, $data, $currency_id)
+    {
+        if ($data['parent_account'] != []) {
+            $total_pendapatan = 0;
+            $total_hpp = 0;
+            $total_biaya_adm = 0;
+            $total_biaya_umum = 0;
+            $total_biaya_susut = 0;
+            $total_pendapatan_luar = 0;
+            $total_biaya_luar = 0;
+
+            $total_laba_kotor = 0;
+            $total_beban_operasional = 0;
+            $total_pendapatan_operasional = 0;
+            $total_laba_luar = 0;
+
+            foreach ($data['parent_account'] as $key => $parent) {
+                $parent_balance = 0;
+
+                foreach ($parent->child_account as $idx => $child) {
+                    $child_balance = $child->credit;
+                    if ($child->flag_pengeluaran == 1) {
+                        $child_balance = $child->debit;
+                    }
+
+                    $parent_balance += $child_balance;
+                }
+
+                if (substr($parent->account_number, 0, 3) == '4-1') {
+                    $total_pendapatan += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '5-1') {
+                    $total_hpp += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '6-1') {
+                    $total_biaya_adm += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '6-2') {
+                    $total_biaya_umum += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '6-3') {
+                    $total_biaya_susut += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '7-1') {
+                    $total_pendapatan_luar += $parent_balance;
+                } elseif (substr($parent->account_number, 0, 3) == '7-2') {
+                    $total_biaya_luar += $parent_balance;
+                }
+
+                if ($parent->account_number == '5-1000') {
+                    $total_laba_kotor = $total_pendapatan - $total_hpp;
+                }
+
+                if ($parent->account_number == '6-3000') {
+                    $total_beban_operasional = $total_biaya_adm + $total_biaya_umum + $total_biaya_susut;
+                    $total_pendapatan_operasional = $total_laba_kotor - $total_beban_operasional;
+                }
+
+                if ($parent->account_number == '7-2000') {
+                    $total_laba_luar = $total_pendapatan_luar - $total_biaya_luar;
+                }
+            }
+
+            $total_laba_bersih = $total_pendapatan_operasional + $total_laba_luar;
+
+            /**
+             * insert ke tabel income statement balance berdasarkan start date, end date, dan currency
+             */
+            // IncomeStatementBalance::
+        }
+    }
+
+    public function print_balance_sheet(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+
+        $parent_account_aset_lancar = DB::select("CALL getParentAccountBalanceSheetAsetLancar()");
+        $data['parent_account_aset_lancar'] = $parent_account_aset_lancar;
+
+        if ($parent_account_aset_lancar != []) {
+            foreach ($parent_account_aset_lancar as $key => $parent) {
+                $child_account = DB::select("CALL getChildAccountBalanceSheet('{$start_date}', '{$end_date}', '{$parent->account_id}', {$request->currency_id})");
+                $data['parent_account_aset_lancar'][$key]->child_account = $child_account;
             }
         }
 
-        return view('report.print_income_statement')->with($data);
+        $parent_account_aset_tetap = DB::select("CALL getParentAccountBalanceSheetAsetTetap()");
+        $data['parent_account_aset_tetap'] = $parent_account_aset_tetap;
+
+        if ($parent_account_aset_tetap != []) {
+            foreach ($parent_account_aset_tetap as $key => $parent) {
+                $child_account = DB::select("CALL getChildAccountBalanceSheet('{$start_date}', '{$end_date}', '{$parent->account_id}', {$request->currency_id})");
+                $data['parent_account_aset_tetap'][$key]->child_account = $child_account;
+            }
+        }
+
+        $parent_account_passiva = DB::select("CALL getParentAccountBalanceSheetPassiva()");
+        $data['parent_account_passiva'] = $parent_account_passiva;
+
+        if ($parent_account_passiva != []) {
+            foreach ($parent_account_passiva as $key => $parent) {
+                $child_account = DB::select("CALL getChildAccountBalanceSheet('{$start_date}', '{$end_date}', '{$parent->account_id}', {$request->currency_id})");
+                $data['parent_account_passiva'][$key]->child_account = $child_account;
+            }
+        }
+
+        $data['title'] = "Laporan Neraca";
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+        // dd($data);
+
+        return view('report.print_balance_sheet')->with($data);
     }
 
     public function test()

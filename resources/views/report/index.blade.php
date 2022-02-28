@@ -40,6 +40,7 @@
                                         <div class="col-sm-10">
                                             <select name="report_code" id="report_code" class="form-control">
                                                 <option value="income_statement" {{ old('report_code') == 'income_statement' ? 'selected' : '' }} >Income Statement</option>
+                                                <option value="balance_sheet" {{ old('report_code') == 'balance_sheet' ? 'selected' : '' }} >Balance Sheet</option>
                                             </select>
                                         </div>
                                     </div>

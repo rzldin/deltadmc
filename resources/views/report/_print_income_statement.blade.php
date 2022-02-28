@@ -194,3 +194,11 @@
         </tbody>
     </table>
 @endsection
+
+@section('script')
+    <script>
+        function loadChild() {
+
+        }
+    </script>
+@endsection
