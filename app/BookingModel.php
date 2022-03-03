@@ -31,7 +31,7 @@ class BookingModel extends Model
                 ->groupBy('a.booking_no')->get();
     }
 
-    public static function get_booking_header($id){    
+    public static function get_booking_header($id){
         return DB::table('t_booking AS a')
                 ->leftJoin('t_quote AS q', 'a.t_quote_id', '=', 'q.id')
                 ->leftJoin('t_mcompany AS b', 'a.client_id', '=', 'b.id')
@@ -52,11 +52,11 @@ class BookingModel extends Model
 
     public static function get_bookingDetail($id)
     {
-        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag, d.loaded_type 
+        return DB::select("SELECT a.*, b.quote_no, b.quote_date, b.shipment_by, c.legal_doc_flag, d.loaded_type
             FROM t_booking a
-            LEFT JOIN t_quote b ON a.t_quote_id = b.id 
-            LEFT JOIN t_mcompany c ON a.shipper_id = c.id 
-            LEFT JOIN t_mloaded_type d ON b.t_mloaded_type_id = d.id  
+            LEFT JOIN t_quote b ON a.t_quote_id = b.id
+            LEFT JOIN t_mcompany c ON a.shipper_id = c.id
+            LEFT JOIN t_mloaded_type d ON b.t_mloaded_type_id = d.id
             WHERE a.id='".$id."'");
     }
 
@@ -113,12 +113,13 @@ class BookingModel extends Model
 
     public static function getChargesDetail($id)
     {
-        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.invoice_no, ii.invoice_no as invoice_no_cost from t_bcharges_dtl a
+        return DB::select("SELECT a.*, c.name as charge_name, d.code as code_cur, i.invoice_no, ii.invoice_no as invoice_no_cost, i3.flag_bayar, ii.flag_bayar AS flag_bayar_cost  from t_bcharges_dtl a
             LEFT JOIN t_booking b ON a.t_booking_id = b.id
             LEFT JOIN t_mcharge_code c ON a.t_mcharge_code_id = c.id
             LEFT JOIN t_mcurrency d ON a.currency = d.id
             LEFT JOIN t_invoice i ON i.id = a.t_invoice_id
-            LEFT JOIN t_proforma_invoice i2 ON i2.id = a.t_invoice_cost_id
+            LEFT JOIN t_proforma_invoice i2 ON i.id = i2.t_invoice_id
+            LEFT JOIN t_external_invoice i3 ON i2.id = i3.t_proforma_invoice_id
             Left JOIN t_invoice ii ON ii.id = a.t_invoice_cost_id
         WHERE a.t_booking_id='".$id."'");
     }

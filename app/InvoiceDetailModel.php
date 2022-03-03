@@ -26,6 +26,11 @@ class InvoiceDetailModel extends Model
             ->whereIn('t_invoice_detail.id', $id);
     }
 
+    public static function findInvoiceDetailByChargeId($chargeId)
+    {
+        return InvoiceDetailModel::where('t_bcharges_id', $chargeId);
+    }
+
     public static function saveInvoiceDetail($request)
     {
         return InvoiceDetailModel::updateOrCreate(

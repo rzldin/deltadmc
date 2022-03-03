@@ -100,7 +100,7 @@ class InvoiceController extends Controller
         $data['currency'] = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($request->t_booking_id);
         $data['goods'] = BookingModel::get_commodity($request->t_booking_id);
-        $data['list_invoice'] = InvoiceModel::list_invoice_booking($request->t_booking_id,0,$request->cek_bill_to[0]);
+        $data['list_invoice'] = InvoiceModel::list_invoice_booking($request->t_booking_id, 0, $request->cek_bill_to[0]);
         $data['tipe_inv'] = 'sell';
         $data['taxes'] = Tax::all();
 
@@ -188,7 +188,7 @@ class InvoiceController extends Controller
         $data['currency'] = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($request->t_booking_id);
         $data['goods'] = BookingModel::get_commodity($request->t_booking_id);
-        $data['list_invoice'] = InvoiceModel::list_invoice_booking($request->t_booking_id,1,$request->cek_paid_to[0]);
+        $data['list_invoice'] = InvoiceModel::list_invoice_booking($request->t_booking_id, 1, $request->cek_paid_to[0]);
         $data['tipe_inv'] = 'cost';
         $data['taxes'] = Tax::all();
         return view('invoice.add_invoice_cost')->with($data);
@@ -317,7 +317,7 @@ class InvoiceController extends Controller
             $tabel1 .= "<tr id='row_subtotal'>";
             $tabel1 .= "<td colspan='9' class='text-right'><span id='lbl_subtotal'>Subtotal</span></td>";
             $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value='".number_format($totalAmount2, 2, '.', ',')."' readonly/>";
+            $tabel1 .= "<input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value='" . number_format($totalAmount2, 2, '.', ',') . "' readonly/>";
             $tabel1 .= "</td>";
             $tabel1 .= "<td colspan='1'></td>";
             $tabel1 .= "</tr>";
@@ -340,7 +340,7 @@ class InvoiceController extends Controller
             $tabel1 .= '<tr>';
             $tabel1 .= '<td colspan="9" class="text-right">Total</td>';
             $tabel1 .= '<td class="text-right">';
-            $tabel1 .= '<input type="text" class="form-control" name="total_invoice" id="total_invoice" value="'.number_format($totalAmount2, 2, '.', ',').'" readonly/>';
+            $tabel1 .= '<input type="text" class="form-control" name="total_invoice" id="total_invoice" value="' . number_format($totalAmount2, 2, '.', ',') . '" readonly/>';
             $tabel1 .= '</td>';
             $tabel1 .= '<td colspan="1"></td>';
             $tabel1 .= '</tr>';
@@ -395,7 +395,7 @@ class InvoiceController extends Controller
             $tabel1 .= "<tr id='row_subtotal'>";
             $tabel1 .= "<td colspan='9' class='text-right'><span id='lbl_subtotal'>Subtotal</span></td>";
             $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value='".number_format($totalAmount2, 2, '.', ',')."' readonly/>";
+            $tabel1 .= "<input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value='" . number_format($totalAmount2, 2, '.', ',') . "' readonly/>";
             $tabel1 .= "</td>";
             $tabel1 .= "<td colspan='1'></td>";
             $tabel1 .= "</tr>";
@@ -418,7 +418,7 @@ class InvoiceController extends Controller
             $tabel1 .= '<tr>';
             $tabel1 .= '<td colspan="9" class="text-right">Total</td>';
             $tabel1 .= '<td class="text-right">';
-            $tabel1 .= '<input type="text" class="form-control" name="total_invoice" id="total_invoice" value="'.number_format($totalAmount2, 2, '.', ',').'" readonly/>';
+            $tabel1 .= '<input type="text" class="form-control" name="total_invoice" id="total_invoice" value="' . number_format($totalAmount2, 2, '.', ',') . '" readonly/>';
             $tabel1 .= '</td>';
             $tabel1 .= '<td colspan="1"></td>';
             $tabel1 .= '</tr>';
@@ -431,7 +431,7 @@ class InvoiceController extends Controller
 
     public function save(Request $request)
     {
-        if($request->create_type==0){
+        if ($request->create_type == 0) {
             $rules = [
                 'client_id' => 'required',
                 'invoice_no' => 'required|unique:t_invoice',
@@ -561,7 +561,7 @@ class InvoiceController extends Controller
                 DB::rollBack();
                 return redirect()->back()->with('error', $th->getMessage());
             }
-        }else{
+        } else {
             try {
                 DB::beginTransaction();
                 $invoice = InvoiceModel::find($request->create_type);
@@ -572,12 +572,12 @@ class InvoiceController extends Controller
                 $created_by = Auth::user()->name;
                 $created_on = date('Y-m-d h:i:s');
                 InvoiceModel::where('id', $invoice->id)->update([
-                    'total_before_vat'=>$total_before_vat,
-                    'total_vat'=>$total_vat,
-                    'pph23'=>$pph23,
-                    'total_invoice'=>$total_invoice,
-                    'created_by'=>$created_by,
-                    'created_on'=>$created_on
+                    'total_before_vat' => $total_before_vat,
+                    'total_vat' => $total_vat,
+                    'pph23' => $pph23,
+                    'total_invoice' => $total_invoice,
+                    'created_by' => $created_by,
+                    'created_on' => $created_on
                 ]);
 
                 $invoice_detail = DB::table('t_bcharges_dtl')->where('t_invoice_id', $invoice->id)->first();
@@ -648,7 +648,7 @@ class InvoiceController extends Controller
 
     public function save_cost(Request $request)
     {
-        if($request->create_type==0){
+        if ($request->create_type == 0) {
             $rules = [
                 'client_id' => 'required',
                 'invoice_no' => 'required|unique:t_invoice',
@@ -818,7 +818,7 @@ class InvoiceController extends Controller
                 DB::rollBack();
                 return redirect()->back()->with('error', $th->getMessage());
             }
-        }else{
+        } else {
             try {
                 DB::beginTransaction();
                 $invoice = InvoiceModel::find($request->create_type);
@@ -829,12 +829,12 @@ class InvoiceController extends Controller
                 $created_by = Auth::user()->name;
                 $created_on = date('Y-m-d h:i:s');
                 InvoiceModel::where('id', $invoice->id)->update([
-                    'total_before_vat'=>$total_before_vat,
-                    'total_vat'=>$total_vat,
-                    'pph23'=>$pph23,
-                    'total_invoice'=>$total_invoice,
-                    'created_by'=>$created_by,
-                    'created_on'=>$created_on
+                    'total_before_vat' => $total_before_vat,
+                    'total_vat' => $total_vat,
+                    'pph23' => $pph23,
+                    'total_invoice' => $total_invoice,
+                    'created_by' => $created_by,
+                    'created_on' => $created_on
                 ]);
 
                 $invoice_detail = DB::table('t_bcharges_dtl')->where('t_invoice_cost_id', $invoice->id)->first();
@@ -992,7 +992,7 @@ class InvoiceController extends Controller
             $count = InvoiceModel::count_inv($invoice->t_booking_id);
 
             $flag_invoice = 0;
-            if($count>0){
+            if ($count > 0) {
                 $flag_invoice = 1;
             }
 
@@ -1038,7 +1038,7 @@ class InvoiceController extends Controller
                 DB::table('t_bcharges_dtl')->where('id', $invoice->t_bcharges_id)->update([
                     $field => null
                 ]);
-            }else{
+            } else {
                 DB::table('t_bcharges_dtl')->where('id', $invoice->t_bcharges_id)->update([
                     $field => null,
                     'invoice_type' => null
@@ -1048,7 +1048,7 @@ class InvoiceController extends Controller
             $count = InvoiceModel::count_inv($invoice->t_booking_id);
 
             $flag_invoice = 0;
-            if($count>0){
+            if ($count > 0) {
                 $flag_invoice = 1;
             }
 
@@ -1106,5 +1106,120 @@ class InvoiceController extends Controller
         $invoice = InvoiceModel::find($id);
 
         return $invoice;
+    }
+
+    public function syncInvoiceDetail(Request $request)
+    {
+        $result = [];
+        DB::beginTransaction();
+        try {
+            $chrg_dtl = BookingModel::getChargesDetail($request->t_booking_id);
+            if ($chrg_dtl != []) {
+                $total_before_vat = 0;
+                $total_vat = 0;
+                $pph23 = 0;
+                $total_invoice = 0;
+
+                foreach ($chrg_dtl as $key => $chrg) {
+                    $query = InvoiceDetailModel::findInvoiceDetailByChargeId($chrg->id);
+
+                    $vat_dtl = 0;
+                    $pph23_dtl = 0;
+                    $subtotal = 0;
+
+                    $value_ppn = Tax::where('code', 'ppn')->value('value');
+                    $value_ppn = ($value_ppn == null ? 0 : $value_ppn);
+                    $value_pph23 = Tax::where('code', 'pph23')->value('value');
+                    $value_pph23 = ($value_pph23 == null ? 0 : $value_pph23);
+
+                    if ($request->is_ppn = 1) {
+                        $vat_dtl = $chrg->sell_val * ($value_ppn / 100);
+                    }
+
+                    if ($request->is_pph23 = 1) {
+                        $pph23_dtl = $chrg->sell_val * ($value_pph23 / 100);
+                    }
+
+                    $subtotal = $chrg->sell_val + $vat_dtl - $pph23_dtl;
+
+                    $total_before_vat += $chrg->sell_val;
+                    $total_vat += $vat_dtl;
+                    $pph23 += $pph23_dtl;
+                    $total_invoice += $subtotal;
+
+                    if ($query->count() == 0) {
+                        /** kalau data diinvoice tidak ada, diinsert */
+
+                        $param['id'] = 0;
+                        $param['invoice_id'] = $request->invoice_id;
+                        $param['t_bcharges_id'] = $chrg->id;
+                        $param['t_mcharge_code_id'] = $chrg->t_mcharge_code_id;
+                        $param['desc'] = $chrg->desc;
+                        $param['currency'] = $chrg->currency;
+                        $param['reimburse_flag'] = (($chrg->invoice_type == 'REM') ? 1 : 0);
+                        $param['rate'] = 1;
+                        $param['cost'] = $chrg->cost;
+                        $param['sell'] = $chrg->sell;
+                        $param['qty'] = $chrg->qty;
+                        $param['cost_val'] = $chrg->cost_val;
+                        $param['sell_val'] = $chrg->sell_val;
+                        $param['vat'] = $vat_dtl;
+                        $param['pph23'] = $pph23_dtl;
+                        $param['subtotal'] = $subtotal;
+                        $param['routing'] = $chrg->routing;
+                        $param['transit_time'] = $chrg->transit_time;
+                        $param['created_by'] = Auth::user()->name;
+                        $param['created_on'] = date('Y-m-d h:i:s');
+                        $invoice_detail = InvoiceDetailModel::saveInvoiceDetail($param);
+                    } else {
+                        $invoice_detail = $query->first();
+
+                        /** sync invoice detail dengan charge dtl */
+                        $invoice_detail->t_mcharge_code_id = $chrg->t_mcharge_code_id;
+                        $invoice_detail->desc = $chrg->desc;
+                        $invoice_detail->currency = $chrg->currency;
+                        $invoice_detail->t_mcharge_code_id = $chrg->t_mcharge_code_id;
+                        $invoice_detail->rate = 1;
+                        $invoice_detail->cost = $chrg->cost;
+                        $invoice_detail->sell = $chrg->sell;
+                        $invoice_detail->qty = $chrg->qty;
+                        $invoice_detail->cost_val = $chrg->cost_val;
+                        $invoice_detail->sell_val = $chrg->sell_val;
+                        $invoice_detail->vat = $vat_dtl;
+                        $invoice_detail->pph23 = $pph23_dtl;
+                        $invoice_detail->subtotal = $subtotal;
+                        $invoice_detail->routing = $chrg->routing;
+                        $invoice_detail->transit_time = $chrg->transit_time;
+                        $invoice_detail->created_by = Auth::user()->name;
+                        $invoice_detail->created_on = date('Y-m-d h:i:s');
+                        $invoice_detail->save();
+                    }
+                }
+
+                DB::table('t_invoice')->where('id', $request->invoice_id)->update([
+                    'total_before_vat' => $total_before_vat,
+                    'total_vat' => $total_vat,
+                    'pph23' => $pph23,
+                    'total_invoice' => $total_invoice,
+                    'modified_by' => Auth::user()->id,
+                    'modified_at' => date('Y-m-d h:i:s')
+                ]);
+            }
+
+            DB::commit();
+            $result['status'] = 'success';
+            $result['message'] = 'Sync success, please refresh this page!';
+
+            return $result;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $result['status'] = 'failed';
+            $result['message'] = $th->getMessage();
+
+            Log::error("Sync Invoice Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
+
+            return $result;
+        }
     }
 }

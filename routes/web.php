@@ -394,6 +394,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
     Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
     Route::get('/invoice/internal/delete/{id}', 'InvoiceController@delete')->name('invoice.delete');
+    Route::get('/invoice/internal/sync', 'InvoiceController@syncInvoiceDetail')->name('invoice.syncInvoiceDetail');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
 

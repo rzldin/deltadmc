@@ -166,6 +166,33 @@
     <!-- Datatble spesifics script -->
     <script>
 
+    const Toasta = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    function toast(icon, message) {
+        Toasta.fire({
+            icon: icon,
+            title: message,
+        })
+    }
+
+    function fire(icon, title, message = '') {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: message,
+        })
+    }
+
     //Date picker
     $('#reservationdate').datetimepicker({
         format: 'L'

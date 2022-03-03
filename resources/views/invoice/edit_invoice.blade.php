@@ -268,8 +268,18 @@
                                 </div>
                             </div>
                             <div class="card card-primary">
-                                <div class="card-header">
-                                    <h5 class="card-title">Detail</h5>
+                                <div class="row card-header">
+                                    <div class="col-6">
+                                        <h5 class="card-title">Detail</h5>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row" style="padding-bottom: 5px;">
+                                            <div class="col" style="text-align: right">
+                                                <button type="button" onclick="syncInvoice()"
+                                                class="btn btn-success" {{ $header->flag_bayar_real > 0 ? 'disabled' : '' }}><i class="fas fa-redo"></i> Sync Detail</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body table-responsive p-0">
                                     <table class="table table-bordered table-striped" id="" style="width: 150%">
@@ -282,9 +292,10 @@
                                                 <th>Unit</th>
                                                 <th>Currency</th>
                                                 <th>rate/unit</th>
-                                                <th>Total</th>
                                                 <th>ROE</th>
-                                                <th>Vat</th>
+                                                <th>Total</th>
+                                                <th>PPN</th>
+                                                <th>PPH23</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
                                                 <th>Action</th>
@@ -342,6 +353,7 @@
                                                 <td class='text-right'>
                                                     <input type='text' class='form-control' name='total_invoice' id='total_invoice' value="{{ $total_invoice }}" readonly/>
                                                 </td>
+                                                <td></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -351,8 +363,8 @@
                                 <div class="col-md-12">
                                   <a href="{{ url()->previous() }}" class="btn btn-default float-left mr-2">
                                     <i class="fa fa-angle-left"></i> Kembali
-                                  </a>    
-                                </div>       
+                                  </a>
+                                </div>
                             </div>
 
                         </form>
@@ -384,5 +396,35 @@
                 }
             })
         }
+
+    function syncInvoice() {
+        let is_ppn = 0;
+        let is_pph23 = 0;
+
+        if (@json($header->total_vat) > 0) {
+            is_ppn = 1;
+        }
+        if (@json($header->pph23) > 0) {
+            is_pph23 = 1;
+        }
+        $.ajax({
+            type: 'get',
+            url: `{{ route('invoice.syncInvoiceDetail') }}`,
+            data: {
+                t_booking_id : @json($header->t_booking_id),
+                invoice_id : @json($header->id),
+                is_ppn : is_ppn,
+                is_pph23 : is_pph23,
+            },
+            success: function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    toast('success', result.message);
+                } else {
+                    fire('error', 'Oppss..', result.message);
+                }
+            }
+        });
+    }
 </script>
 @endpush

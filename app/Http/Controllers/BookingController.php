@@ -1808,16 +1808,19 @@ class BookingController extends Controller
             $tabel1 .= '<td class="text-left">'.$row->invoice_type.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->invoice_no.'</td>';
             $tabel1 .= '<td>';
-            if ($row->t_invoice_id == null) {
+            // if ($row->t_invoice_id == null) {
+            if ($row->flag_bayar == null || $row->flag_bayar == '' || $row->flag_bayar == 0) {
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                 . '" onclick="updateDetailSell('.$row->id.', '.$no.', '.$b.');" style="'.$display.'"> '
                 . '<i class="fa fa-save"></i></a>';
             }
 
-            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
+            if ($row->flag_bayar == null || $row->flag_bayar == '' || $row->flag_bayar == 0) {
                 $tabel1 .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
                         . '" onclick="editDetailCF('.$row->id.',\'sell\');"> '
                         . '<i class="fa fa-edit"></i></a>';
+            }
+            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
                 $tabel1 .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
                 . '" onclick="hapusDetailCF('.$row->id.');" style="margin-left:2px;"> '
                 . '<i class="fa fa-trash"></i></a>';
@@ -2599,17 +2602,17 @@ class BookingController extends Controller
         $totalCost = 0;
         $totalSell = 0;
         foreach($detail as $row)
-        {   
+        {
             $totalCost += $row->cost_val;
             $totalSell += $row->sell_val;
         }
 
         $costV = $totalCost;
         $sellV = $totalSell;
-        
+
         #Insert Tabel t_quote_profit
         $data = DB::select("SELECT a.* FROM t_bcharges_dtl a LEFT JOIN t_booking b ON a.t_booking_id = b.id WHERE b.id = '".$request->booking_id."'");
-        
+
         foreach($data as $shipping){
             $totalCost  = $shipping->cost_val + $costV;
             $totalSell  = $shipping->sell_val + $sellV;
@@ -2702,7 +2705,7 @@ class BookingController extends Controller
       $booking_id = $request->booking_id;
       $response = [];
 
-      $data = collect(DB::select('SELECT b.pol_id, b.pot_id, b.pod_id, pol.port_name as pol, pot.port_name as pot, pod.port_name as pod 
+      $data = collect(DB::select('SELECT b.pol_id, b.pot_id, b.pod_id, pol.port_name as pol, pot.port_name as pot, pod.port_name as pod
             FROM t_booking b
                 left join t_mport pol on b.pol_id = pol.id
                 left join t_mport pot on b.pot_id = pot.id
@@ -2779,7 +2782,7 @@ class BookingController extends Controller
     }
 
     public function booking_getDetailCharges(Request $request)
-    { 
+    {
         $data = BookingModel::getChargesDetailById($request->id);
         header('Content-Type: application/json');
         echo json_encode($data);

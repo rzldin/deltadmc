@@ -37,6 +37,7 @@ class InvoiceModel extends Model
     public static function getInvoice($id)
     {
         return InvoiceModel::from('t_invoice AS i')
+            ->leftJoin('t_external_invoice AS ei', 'ei.t_booking_id', '=', 'i.t_booking_id')
             ->leftJoin('t_mport as pol', 'pol.id', '=', 'i.pol_id')
             ->leftJoin('t_mport as pod', 'pod.id', '=', 'i.pod_id')
             ->leftJoin('t_booking as b', 'b.id', '=', 'i.t_booking_id')
@@ -46,7 +47,7 @@ class InvoiceModel extends Model
             ->leftJoin('t_maddress as addr', 'i.client_addr_id', '=', 'addr.id')
             ->leftJoin('t_mpic as mp', 'i.client_pic_id', '=', 'mp.id')
             ->leftJoin('t_mcurrency as mc', 'i.currency', '=', 'mc.id')
-            ->select('i.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', 'c.client_code', 'c.client_name', 'addr.address', 'mp.name as pic_name', 'mc.code as currency_code', 'mc.name as currency_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
+            ->select('i.*', 'ei.flag_bayar AS flag_bayar_real', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', 'c.client_code', 'c.client_name', 'addr.address', 'mp.name as pic_name', 'mc.code as currency_code', 'mc.name as currency_name', DB::raw('COALESCE(chrg.invoice_type, shp.invoice_type) AS invoice_type'))
             ->where('i.id', $id);
     }
 
