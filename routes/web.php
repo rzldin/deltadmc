@@ -376,6 +376,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/proformainvoice/delete/{proformaInvoiceId}', 'ProformaInvoiceController@delete')->name('proforma_invoice.delete');
     Route::get('/invoice/proformainvoice/create/{invoiceId}', 'ProformaInvoiceController@create')->name('proforma_invoice.create');
     Route::get('/invoice/proformainvoice/edit/{proformaInvoiceId}', 'ProformaInvoiceController@edit')->name('proforma_invoice.edit');
+    Route::get('/invoice/proformainvoice/sync', 'ProformaInvoiceController@syncProformaInvoiceDetail')->name('proforma_invoice.syncProformaInvoiceDetail');
     Route::post('/invoice/proformainvoice/create/', 'ProformaInvoiceController@save')->name('proforma_invoice.save');
     Route::post('/invoice/proformainvoice/create/deleteSession', 'ProformaInvoiceController@deleteSession')->name('proforma_invoice.deleteSession');
     Route::post('/invoice/proformainvoice/create/loadDetail', 'ProformaInvoiceController@loadDetail')->name('proforma_invoice.loadDetail');

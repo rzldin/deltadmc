@@ -417,7 +417,6 @@
                 is_pph23 : is_pph23,
             },
             success: function(result) {
-                console.log(result);
                 if (result.status == 'success') {
                     toast('success', result.message);
                 } else {

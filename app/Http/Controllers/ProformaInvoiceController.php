@@ -62,8 +62,9 @@ class ProformaInvoiceController extends Controller
             foreach ($data as $key => $detail) {
                 $newItem = [
                     // 'key' => $key,
+                    'is_merge' => $detail['is_merge'],
                     'id' => $detail['id'],
-                    'id_invoicenya' => ((isset($detail['id_invoice_detail']))? $detail['id_invoice_detail']:null),
+                    'id_invoicenya' => (($request->proforma_invoice_id != 0)? $detail['id_invoice_detail']:$detail['id']),
                     't_mcharge_code_id' => $detail['t_mcharge_code_id'],
                     'charge_name' => $detail['charge_name'],
                     'desc' => $detail['desc'],
@@ -105,7 +106,8 @@ class ProformaInvoiceController extends Controller
                 }
                 $html .= '<tr>';
                 $html .= '<td>';
-                if(!isset($detail['id_invoicenya'])){
+                // if(!isset($detail['id_invoicenya'])){
+                if ($detail['is_merge'] == 0) {
                     $html .= '<input type="checkbox" name="detail_id" id="detail_id_' . $key . '" value="' . $key . '"/>';
                 }
                 $html .= '</td>';
@@ -245,6 +247,7 @@ class ProformaInvoiceController extends Controller
 
         $newItem = [
             // 'key' => (sizeof($details) + 1),
+            'is_merge' => 1,
             'id_invoicenya' => $request->id_invoicenya,
             't_mcharge_code_id' => $request->t_mcharge_code_id,
             'charge_name' => $request->t_mcharge_code_name,
@@ -461,6 +464,80 @@ class ProformaInvoiceController extends Controller
 
             Log::error("delete ProformaInvoice Error {$th->getMessage()}");
             return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+
+    public function syncProformaInvoiceDetail(Request $request)
+    {
+        $result = [];
+        // DB::beginTransaction();
+        try {
+            $proforma_details = ProformaInvoiceDetailModel::where('proforma_invoice_id', $request->proforma_invoice_id)->get();
+            // dd($request->all(), $proforma_details);
+            $total_before_vat = 0;
+            $total_vat = 0;
+            $total_pph23 = 0;
+            $total_invoice = 0;
+            foreach ($proforma_details as $key => $proforma_detail) {
+                if ($proforma_detail->id_invoice_detail != null || $proforma_detail->id_invoice_detail != '') {
+                    $id_invoice_dtl_arr = explode(',', $proforma_detail->id_invoice_detail);
+                    // dd($id_invoice_dtl_arr, $proforma_detail->id_invoice_detail, $proforma_detail->id);
+
+                    $cost = 0;
+                    $sell = 0;
+                    $cost_val = 0;
+                    $sell_val = 0;
+                    $vat = 0;
+                    $pph23 = 0;
+                    $subtotal = 0;
+                    foreach ($id_invoice_dtl_arr as $id_invoice_dtl) {
+                        $invoice_dtl = InvoiceDetailModel::find($id_invoice_dtl);
+                        $cost += $invoice_dtl->cost;
+                        $sell += $invoice_dtl->sell;
+                        $cost_val += $invoice_dtl->cost_val;
+                        $sell_val += $invoice_dtl->sell_val;
+                        $vat += $invoice_dtl->vat;
+                        $pph23 += $invoice_dtl->pph23;
+                        $subtotal += $invoice_dtl->subtotal;
+                    }
+
+                }
+                $proforma_detail->cost = $cost;
+                $proforma_detail->sell = $sell;
+                $proforma_detail->cost_val = $cost_val;
+                $proforma_detail->sell_val = $sell_val;
+                $proforma_detail->vat = $vat;
+                $proforma_detail->pph23 = $pph23;
+                $proforma_detail->subtotal = $subtotal;
+                $proforma_detail->created_by = Auth::user()->name;
+                $proforma_detail->created_on = date('Y-m-d h:i:s');
+                $proforma_detail->save();
+
+                $total_before_vat += $sell_val;
+                $total_vat += $vat;
+                $total_pph23 += $pph23;
+                $total_invoice += $subtotal;
+
+            }
+            DB::table('t_proforma_invoice')->where('id', $request->proforma_invoice_id)->update([
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
+                'pph23' => $total_pph23,
+                'total_invoice' => $total_invoice,
+            ]);
+
+            DB::commit();
+            $result['status'] = 'success';
+            $result['message'] = 'Sync success, please refresh this page!';
+
+            return $result;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $result['status'] = 'failed';
+            $result['message'] = $th->getMessage();
+
+            Log::error("Sync Proforma Invoice Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
         }
     }
 }

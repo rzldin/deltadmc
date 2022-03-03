@@ -163,3 +163,7 @@ UPDATE SP_getChildAccountIncomeStatement()
 create table m_config_report_balance_sheet
 CREATE SP_getParentAccountBalanceSheet()
 CREATE SP_getChildAccountBalanceSheet()
+
+-- hendry 03032022
+ALTER TABLE t_proforma_invoice_detail ADD is_merge TINYINT(1) DEFAULT 0 NOT NULL;
+ALTER TABLE t_proforma_invoice_detail CHANGE is_merge is_merge TINYINT(1) DEFAULT 0 NOT NULL AFTER transit_time;

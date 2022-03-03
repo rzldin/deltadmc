@@ -303,10 +303,16 @@
                                                 Selected</a>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row" style="padding-bottom: 5px;">
                                             <div class="col" style="text-align: right">
                                                 <a href="javascript:void(0);" onclick="resetBasedOnInvoice({{ $proforma_invoice_header->t_invoice_id }})"
                                                 class="btn btn-warning"><i class="fas fa-undo-alt"></i> Reset Based On Invoice</a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col" style="text-align: right">
+                                                <button type="button" onclick="syncInvoice()"
+                                                class="btn btn-secondary" {{ $proforma_invoice_header->flag_bayar_external > 0 ? 'disabled' : '' }}><i class="fas fa-redo"></i> Sync Detail</button>
                                             </div>
                                         </div>
                                     </div>
@@ -696,6 +702,24 @@
                     $('#formProforma').submit();
                 }
             })
+        }
+
+        function syncInvoice() {
+            $.ajax({
+                type: 'get',
+                url: `{{ route('proforma_invoice.syncProformaInvoiceDetail') }}`,
+                data: {
+                    proforma_invoice_id : @json($proforma_invoice_header->id),
+                },
+                success: function(result) {
+                    console.log(result);
+                    if (result.status == 'success') {
+                        toast('success', result.message);
+                    } else {
+                        fire('error', 'Oppss..', result.message);
+                    }
+                }
+            });
         }
 
         $(function() {

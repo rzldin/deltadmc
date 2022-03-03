@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceDetailModel extends Model
 {
@@ -14,7 +15,7 @@ class InvoiceDetailModel extends Model
     {
         return InvoiceDetailModel::leftJoin('t_mcharge_code AS c', 'c.id', '=', 't_invoice_detail.t_mcharge_code_id')
             ->leftJoin('t_mcurrency AS curr', 'curr.id', '=', 't_invoice_detail.currency')
-            ->select('t_invoice_detail.*', 'c.name AS charge_name', 'curr.code AS currency_code')
+            ->select('t_invoice_detail.*', 'c.name AS charge_name', 'curr.code AS currency_code', DB::raw('0 is_merge'))
             ->where('t_invoice_detail.invoice_id', $invoice_id);
     }
 
