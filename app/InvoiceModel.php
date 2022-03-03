@@ -18,8 +18,9 @@ class InvoiceModel extends Model
             ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
             ->leftJoin('t_proforma_invoice AS p', 'p.t_invoice_id', '=', 't_invoice.id')
+            ->leftJoin('t_external_invoice AS e', 'e.t_proforma_invoice_id', '=', 'p.id')
             ->leftJoin('t_journals AS j', 'j.invoice_id', '=', 't_invoice.id')
-            ->select('t_invoice.*', DB::raw('COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+            ->select('t_invoice.*', DB::raw('COALESCE(e.flag_bayar, 0) flag_bayar_external, COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
     public static function getInvoiceByType($tipe)
@@ -29,9 +30,10 @@ class InvoiceModel extends Model
             ->leftJoin('t_mcompany AS c', 'a.consignee_id', '=', 'c.id')
             ->leftJoin('t_mcompany AS d', 'a.shipper_id', '=', 'd.id')
             ->leftJoin('t_proforma_invoice AS p', 'p.t_invoice_id', '=', 't_invoice.id')
+            ->leftJoin('t_external_invoice AS e', 'e.t_proforma_invoice_id', '=', 'p.id')
             ->leftJoin('t_journals AS j', 'j.invoice_id', '=', 't_invoice.id')
             ->where('tipe_inv', $tipe)
-            ->select('t_invoice.*', DB::raw('COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
+            ->select('t_invoice.*', DB::raw('COALESCE(e.flag_bayar, 0) flag_bayar_external, COALESCE(p.id, 0) proforma_invoice_id, COALESCE(j.id, 0) journal_id'), 'a.booking_no', 'a.booking_date', 'a.activity', 'b.client_name as company_b', 'c.client_name as company_c', 'd.client_name as company_d');
     }
 
     public static function getInvoice($id)
