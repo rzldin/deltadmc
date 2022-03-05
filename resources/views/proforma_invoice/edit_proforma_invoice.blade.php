@@ -346,7 +346,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" style="text-align: right">
-                                    @if ($responsibility->t_mresponsibility_id == 1 || $responsibility->t_mresponsibility_id == 3)
+                                    @if (($responsibility->t_mresponsibility_id == 1 || $responsibility->t_mresponsibility_id == 3) && $proforma_invoice_header->external_invoice_id == 0)
                                         <button type="button" class="btn btn-info" onclick="confirmInvoice()">Confirm</button>
                                     @endif
                                     <button type="submit" class="btn btn-primary" onclick="saveInvoice()">Save</button>

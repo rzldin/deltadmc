@@ -127,6 +127,20 @@ class ExternalInvoiceController extends Controller
         }
     }
 
+    public function edit($externalInvoiceId)
+    {
+        $data['header'] = ExternalInvoice::getExternalInvoice($externalInvoiceId)->first();
+        $data['details'] = ExternalInvoiceDetail::getExternalInvoiceDetails($externalInvoiceId)->get();
+        $data['companies'] = MasterModel::company_data();
+        $data['addresses'] = MasterModel::get_address($data['header']['client_id']);
+        $data['pics'] = MasterModel::get_pic($data['header']['client_id']);
+        $data['currency']       = MasterModel::currency();
+        $data['containers'] = BookingModel::get_container($data['header']['t_booking_id']);
+        $data['goods'] = BookingModel::get_commodity($data['header']['t_booking_id']);
+
+        return view('external_invoice.edit_external_invoice')->with($data);
+    }
+
     public function view($externalInvoiceId)
     {
         $data['header'] = ExternalInvoice::getExternalInvoice($externalInvoiceId)->first();
@@ -184,5 +198,72 @@ class ExternalInvoiceController extends Controller
         $ext_invoice = ExternalInvoice::find($id);
 
         return $ext_invoice;
+    }
+
+    public function syncExternalInvoiceDetail(Request $request)
+    {
+        $result = [];
+        DB::beginTransaction();
+        try {
+            $proforma_details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->proforma_invoice_id)->get();
+
+            $total_before_vat = 0;
+            $total_vat = 0;
+            $total_pph23 = 0;
+            $total_invoice = 0;
+
+            foreach ($proforma_details as $key => $proforma_detail) {
+                $param = $proforma_detail;
+                $param['id'] = 0;
+                $param['external_invoice_id'] = $request->external_invoice_id;
+                $param['created_by'] = Auth::user()->name;
+                $param['created_on'] = date('Y-m-d h:i:s');
+                unset($param['proforma_invoice_id']);
+                unset($param['id_invoice_detail']);
+                unset($param['exi_detail_id']);
+                dd($param);
+                /** save dulu detail terbaru nya berdasarkan detail proforma */
+                $ext_invoice_detail = ExternalInvoiceDetail::saveExternalInvoiceDetail((array) $param);
+
+                /** model baru dari proforma detail, update exi invoice detail berdasarkan id yang baru disimpan di atas */
+                $line = ProformaInvoiceDetailModel::find($proforma_detail->id);
+                $line->exi_detail_id = $ext_invoice_detail->id;
+
+                /** delete external detail yang lama, berdasarkan key dari model proforma detail sebelum diedit */
+                ExternalInvoiceDetail::find($proforma_detail->exi_detail_id)->delete();
+
+                /** proses save proforma detail */
+                $line->save();
+
+                $total_before_vat += $proforma_detail->sell_val;
+                $total_vat += $proforma_detail->vat;
+                $total_pph23 += $proforma_detail->pph23;
+                $total_invoice += $proforma_detail->subtotal;
+            }
+
+            DB::table('t_external_invoice')->where('id', $request->external_invoice_id)->update([
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
+                'pph23' => $total_pph23,
+                'total_invoice' => $total_invoice,
+                'modified_by' => Auth::user()->id,
+                'modified_at' => date('Y-m-d h:i:s')
+            ]);
+
+            DB::commit();
+            $result['status'] = 'success';
+            $result['message'] = 'Sync success, please refresh this page!';
+
+            return $result;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $result['status'] = 'failed';
+            $result['message'] = $th->getMessage();
+
+            Log::error("Sync Invoice Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
+
+            return $result;
+        }
     }
 }

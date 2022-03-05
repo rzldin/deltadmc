@@ -64,7 +64,8 @@
                                                 </td>
                                                 <td>
                                                     @if ($invoice->flag_bayar == 0)
-                                                        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})"><i class="fa fa-trash"></i> Delete</a>
+                                                    <a class="btn btn-info btn-sm" href="{{ route('external_invoice.edit', ['id' => $invoice->id]) }}"><i class="fa fa-edit"></i> Edit </a>
+                                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})"><i class="fa fa-trash"></i> Delete</a>
                                                     @endif
                                                     &nbsp;
                                                     <a class="btn btn-primary btn-sm" href="{{ route('external_invoice.view', ['id' => $invoice->id]) }}"><i class="fa fa-file-alt"></i> View</a>

@@ -470,7 +470,7 @@ class ProformaInvoiceController extends Controller
     public function syncProformaInvoiceDetail(Request $request)
     {
         $result = [];
-        // DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $proforma_details = ProformaInvoiceDetailModel::where('proforma_invoice_id', $request->proforma_invoice_id)->get();
             // dd($request->all(), $proforma_details);

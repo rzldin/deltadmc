@@ -24,9 +24,10 @@ class ProformaInvoiceModel extends Model
     public static function getProformaInvoice($id)
     {
         return ProformaInvoiceModel::leftJoin('t_mport as pol', 'pol.id', '=', 't_proforma_invoice.pol_id')
+            ->leftJoin('t_external_invoice as ei', 'ei.t_proforma_invoice_id', '=', 't_proforma_invoice.id')
             ->leftJoin('t_mport as pod', 'pod.id', '=', 't_proforma_invoice.pod_id')
             ->leftJoin('t_booking as b', 'b.id', '=', 't_proforma_invoice.t_booking_id')
-            ->select('t_proforma_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name')
+            ->select('t_proforma_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name', DB::raw('COALESCE(ei.id, 0) external_invoice_id'))
             ->where('t_proforma_invoice.id', $id);
     }
 

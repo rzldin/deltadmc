@@ -408,7 +408,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/find/{id}', 'ExternalInvoiceController@getExternalInvoice')->name('external_invoice.getExternalInvoice');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
+    Route::get('/invoice/external/edit/{id}', 'ExternalInvoiceController@edit')->name('external_invoice.edit');
     Route::get('/invoice/external/delete/{id}', 'ExternalInvoiceController@delete')->name('external_invoice.delete');
+    Route::get('/invoice/external/sync', 'ExternalInvoiceController@syncExternalInvoiceDetail')->name('external_invoice.syncExternalInvoiceDetail');
     Route::get('/invoice/external/create/{proformaInvoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
     Route::post('/invoice/external/create/', 'ExternalInvoiceController@save')->name('external_invoice.save');
     Route::post('/invoice/external/create/loadDetail', 'ExternalInvoiceController@loadDetail')->name('external_invoice.loadDetail');
