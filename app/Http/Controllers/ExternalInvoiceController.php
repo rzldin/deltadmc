@@ -205,7 +205,7 @@ class ExternalInvoiceController extends Controller
         $result = [];
         DB::beginTransaction();
         try {
-            $proforma_details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->proforma_invoice_id)->get();
+            $proforma_details = DB::select("SELECT * FROM t_proforma_invoice_detail WHERE proforma_invoice_id = {$request->proforma_invoice_id}");
 
             $total_before_vat = 0;
             $total_vat = 0;
@@ -213,7 +213,7 @@ class ExternalInvoiceController extends Controller
             $total_invoice = 0;
 
             foreach ($proforma_details as $key => $proforma_detail) {
-                $param = $proforma_detail;
+                $param = (array) $proforma_detail;
                 $param['id'] = 0;
                 $param['external_invoice_id'] = $request->external_invoice_id;
                 $param['created_by'] = Auth::user()->name;
@@ -221,9 +221,10 @@ class ExternalInvoiceController extends Controller
                 unset($param['proforma_invoice_id']);
                 unset($param['id_invoice_detail']);
                 unset($param['exi_detail_id']);
-                dd($param);
+                unset($param['is_merge']);
+
                 /** save dulu detail terbaru nya berdasarkan detail proforma */
-                $ext_invoice_detail = ExternalInvoiceDetail::saveExternalInvoiceDetail((array) $param);
+                $ext_invoice_detail = ExternalInvoiceDetail::saveExternalInvoiceDetail($param);
 
                 /** model baru dari proforma detail, update exi invoice detail berdasarkan id yang baru disimpan di atas */
                 $line = ProformaInvoiceDetailModel::find($proforma_detail->id);
