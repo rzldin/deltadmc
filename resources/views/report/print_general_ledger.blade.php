@@ -4,6 +4,12 @@
     @php
     header('Content-Type:   application/vnd.ms-excel;');
     header('Content-Disposition: attachment; filename=general ledger ' . tanggalIndo($start_date) . ' s.d ' . tanggalIndo($end_date) . '.xls');
+
+    function textnumber($value)
+    {
+        $result = number_format($value, 2, '.', ',');
+        return $value < 0 ? "($result)" : "$result";
+    }
     @endphp
 
     @foreach ($header as $row)
@@ -50,12 +56,16 @@
                                     <th>Keterangan</th>
                                     <th>Acc No</th>
                                     <th>Nama Akun</th>
+                                    <th>Currency</th>
                                     <th>Debit</th>
                                     <th>Kredit</th>
                                     <th>Saldo</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $total_end_balance = 0;
+                                @endphp
                                 @foreach ($row->details as $value)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
@@ -63,13 +73,21 @@
                                         <td>{{ $value->journal_no }}</td>
                                         <td></td>
                                         <td>{{ $value->memo }}</td>
-                                        <td>{{ $value->account_number }}</td>
+                                        <td>&nbsp;{{ $value->account_number }}</td>
                                         <td>{{ $value->account_name }}</td>
-                                        <td>{{ number_format($value->debit, 2, ',', '.') }}</td>
-                                        <td>{{ number_format($value->credit, 2, ',', '.') }}</td>
-                                        <td>{{ number_format($value->balance, 2, ',', '.') }}</td>
+                                        <td style="text-align: center;">{{ $value->currency_code }}</td>
+                                        <td style="text-align: right;">{{ textnumber($value->debit) }}</td>
+                                        <td style="text-align: right;">{{ textnumber($value->credit) }}</td>
+                                        <td style="text-align: right;">{{ textnumber($value->balance) }}</td>
                                     </tr>
+                                    @php
+                                        $total_end_balance += $value->balance;
+                                    @endphp
                                 @endforeach
+                                <tr>
+                                    <td colspan="10"></td>
+                                    <td style="text-align: right; font-weight: bold;">{{ textnumber($total_end_balance) }}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </td>
