@@ -40,6 +40,8 @@ class ReportController extends Controller
             return redirect()->route('report.print.balance_sheet', $request->all());
         } else if ($request->report_code == 'general_ledger') {
             return redirect()->route('report.print.general_ledger', $request->all());
+        } else if ($request->report_code == 'trial_balance') {
+            return redirect()->route('report.print.trial_balance', $request->all());
         }
     }
 
@@ -196,13 +198,32 @@ class ReportController extends Controller
             $data['header'][$key]->details = $details;
         }
 
-        $data['title'] = "Laporan Neraca";
+        $data['title'] = "Laporan Buku Besar";
         $data['currency_id'] = $request->currency_id;
         $data['start_date'] = $request->start_date;
         $data['end_date'] = $request->end_date;
-        // dd($data);
 
         return view('report.print_general_ledger')->with($data);
+    }
+    public function print_trial_balance(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $parent_acc = GeneralLedger::getParentAccountTrialBalance($currency_id, $start_date, $end_date);
+        $data['parent_acc'] = $parent_acc;
+        foreach ($parent_acc as $key => $parent) {
+            $child_acc = GeneralLedger::getChildAccountTrialBalance($currency_id, $start_date, $end_date, $parent->account_number);
+            $data['parent_acc'][$key]->child_acc = $child_acc;
+        }
+
+        $data['title'] = "Laporan Trial Balance";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        return view('report.print_trial_balance')->with($data);
     }
 
     public function test()

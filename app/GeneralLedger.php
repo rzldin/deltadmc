@@ -18,6 +18,7 @@ class GeneralLedger extends Model
                     A.id,
                     A.account_number,
                     A.account_name,
+                    (SELECT code FROM t_mcurrency tm WHERE tm.id = {$currency_id}) currency_code,
                     (SELECT SUM(DEBIT) FROM t_general_ledgers TGL2 WHERE A.ID = TGL2.ACCOUNT_ID AND TGL2.currency_id = {$currency_id} GROUP BY TGL2.ACCOUNT_ID) total_debit,
                     (SELECT SUM(CREDIT) FROM t_general_ledgers TGL3 WHERE A.ID = TGL3.ACCOUNT_ID AND TGL3.currency_id = {$currency_id} GROUP BY TGL3.ACCOUNT_ID) total_credit,
                     (SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL4 WHERE A.ID = TGL4.ACCOUNT_ID AND TGL4.currency_id = {$currency_id} GROUP BY TGL4.ACCOUNT_ID) total_balance
@@ -38,14 +39,64 @@ class GeneralLedger extends Model
                     A.id,
                     A.account_number,
                     A.account_name,
+                    (SELECT code FROM t_mcurrency tm WHERE tm.id = {$currency_id}) currency_code,
                     (SELECT SUM(DEBIT) FROM t_general_ledgers TGL2 WHERE A.ID = TGL2.ACCOUNT_ID AND TGL2.currency_id = {$currency_id} AND TGL2.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL2.ACCOUNT_ID) total_debit,
                     (SELECT SUM(CREDIT) FROM t_general_ledgers TGL3 WHERE A.ID = TGL3.ACCOUNT_ID AND TGL3.currency_id = {$currency_id} AND TGL3.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL3.ACCOUNT_ID) total_credit,
                     (SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL4 WHERE A.ID = TGL4.ACCOUNT_ID AND TGL4.currency_id = {$currency_id} AND TGL4.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL4.ACCOUNT_ID) total_balance,
-    COALESCE((SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL5 WHERE A.ID = TGL5.ACCOUNT_ID AND TGL5.currency_id = {$currency_id} AND TGL5.gl_date < '{$start_date}' GROUP BY TGL5.ACCOUNT_ID), 0) start_balance
+                    COALESCE((SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL5 WHERE A.ID = TGL5.ACCOUNT_ID AND TGL5.currency_id = {$currency_id} AND TGL5.gl_date < '{$start_date}' GROUP BY TGL5.ACCOUNT_ID), 0) start_balance
                 FROM
                     t_maccount AS A
                 WHERE
                     A.ID IN (SELECT DISTINCT ACCOUNT_ID FROM t_general_ledgers TGL WHERE TGL.currency_id = {$currency_id} )
+                ORDER BY
+                    A.account_number";
+
+        return DB::select($query);
+    }
+
+    public static function getParentAccount()
+    {
+        $query = "SELECT * FROM t_maccount tm WHERE isnull(tm.parent_account)";
+
+        return DB::select($query);
+    }
+
+    public static function getParentAccountTrialBalance($currency_id, $start_date, $end_date)
+    {
+        $query = "SELECT
+                    A.id,
+                    A.account_number,
+                    A.account_name,
+                    (SELECT code FROM t_mcurrency tm WHERE tm.id = {$currency_id}) currency_code,
+                    (SELECT SUM(DEBIT) FROM t_general_ledgers TGL2 WHERE A.ID = TGL2.ACCOUNT_ID AND TGL2.currency_id = {$currency_id} AND TGL2.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL2.ACCOUNT_ID) total_debit,
+                    (SELECT SUM(CREDIT) FROM t_general_ledgers TGL3 WHERE A.ID = TGL3.ACCOUNT_ID AND TGL3.currency_id = {$currency_id} AND TGL3.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL3.ACCOUNT_ID) total_credit,
+                    (SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL4 WHERE A.ID = TGL4.ACCOUNT_ID AND TGL4.currency_id = {$currency_id} AND TGL4.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL4.ACCOUNT_ID) total_balance,
+                    COALESCE((SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL5 WHERE A.ID = TGL5.ACCOUNT_ID AND TGL5.currency_id = {$currency_id} AND TGL5.gl_date < '{$start_date}' GROUP BY TGL5.ACCOUNT_ID), 0) start_balance
+                FROM
+                    t_maccount AS A
+                WHERE
+                    ISNULL(A.parent_account)
+                ORDER BY
+                    A.account_number";
+
+        return DB::select($query);
+    }
+
+    public static function getChildAccountTrialBalance($currency_id, $start_date, $end_date, $account_number)
+    {
+        $query = "SELECT
+                    A.id,
+                    A.account_number,
+                    A.account_name,
+                    (SELECT code FROM t_mcurrency tm WHERE tm.id = {$currency_id}) currency_code,
+                    (SELECT SUM(DEBIT) FROM t_general_ledgers TGL2 WHERE A.ID = TGL2.ACCOUNT_ID AND TGL2.currency_id = {$currency_id} AND TGL2.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL2.ACCOUNT_ID) total_debit,
+                    (SELECT SUM(CREDIT) FROM t_general_ledgers TGL3 WHERE A.ID = TGL3.ACCOUNT_ID AND TGL3.currency_id = {$currency_id} AND TGL3.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL3.ACCOUNT_ID) total_credit,
+                    (SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL4 WHERE A.ID = TGL4.ACCOUNT_ID AND TGL4.currency_id = {$currency_id} AND TGL4.gl_date BETWEEN '{$start_date}' AND '{$end_date}' GROUP BY TGL4.ACCOUNT_ID) total_balance,
+                    COALESCE((SELECT SUM(DEBIT) - SUM(CREDIT) FROM t_general_ledgers TGL5 WHERE A.ID = TGL5.ACCOUNT_ID AND TGL5.currency_id = {$currency_id} AND TGL5.gl_date < '{$start_date}' GROUP BY TGL5.ACCOUNT_ID), 0) start_balance
+                FROM
+                    t_maccount AS A
+                WHERE
+                    A.parent_account = '{$account_number}'
                 ORDER BY
                     A.account_number";
 
@@ -68,7 +119,7 @@ class GeneralLedger extends Model
         return GeneralLedger::from('t_general_ledgers AS gl')
             ->leftJoin('t_journals AS j', 'j.id', '=', 'gl.journal_id')
             ->join('t_maccount AS a', 'a.id', '=', 'gl.account_id')
-            ->select('gl.*', 'j.journal_no', 'j.journal_date', 'a.account_number', 'a.account_name')
+            ->select('gl.*', 'j.journal_no', 'j.journal_date', 'a.account_number', 'a.account_name', DB::raw("(SELECT tm.code FROM t_mcurrency tm WHERE tm.id = {$currencyId}) currency_code"))
             ->where('gl.account_id', $accountId)
             ->where('gl.currency_id', $currencyId)
             ->whereRaw("gl.gl_date BETWEEN '{$startDate}' AND '{$endDate}'")
