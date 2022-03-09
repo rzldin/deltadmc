@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GeneralLedger;
 use App\IncomeStatementBalance;
 use App\MasterModel;
 use Illuminate\Http\Request;
@@ -37,6 +38,8 @@ class ReportController extends Controller
             return redirect()->route('report.print.income_statement', $request->all());
         } else if ($request->report_code == 'balance_sheet') {
             return redirect()->route('report.print.balance_sheet', $request->all());
+        } else if ($request->report_code == 'general_ledger') {
+            return redirect()->route('report.print.general_ledger', $request->all());
         }
     }
 
@@ -176,9 +179,30 @@ class ReportController extends Controller
         $data['title'] = "Laporan Neraca";
         $data['start_date'] = $request->start_date;
         $data['end_date'] = $request->end_date;
-        // dd($data);
 
         return view('report.print_balance_sheet')->with($data);
+    }
+
+    public function print_general_ledger(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $accounts = GeneralLedger::getAllAccountHasGLWithPeriod($currency_id, $start_date, $end_date);
+        $data['header'] = $accounts;
+        foreach ($accounts as $key => $account) {
+            $details = GeneralLedger::getAllGLByAccountIdWithPeriod($account->id, $request->currency_id, $start_date, $end_date)->get();
+            $data['header'][$key]->details = $details;
+        }
+
+        $data['title'] = "Laporan Neraca";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+        // dd($data);
+
+        return view('report.print_general_ledger')->with($data);
     }
 
     public function test()

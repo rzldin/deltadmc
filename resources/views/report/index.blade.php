@@ -24,7 +24,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between bd-highlight mb-3">
                                 <div class="p-2 bd-highlight">
-                                    {{-- <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addTax()"><i class="fa fa-plus"></i> Add Tax</a> --}}
+
                                 </div>
                                 <div class="p-2 bd-highlight">
 

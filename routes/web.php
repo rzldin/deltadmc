@@ -538,6 +538,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/report/print', 'ReportController@print')->name('report.print');
     Route::get('/report/print/income_statement', 'ReportController@print_income_statement')->name('report.print.income_statement');
     Route::get('/report/print/balance_sheet', 'ReportController@print_balance_sheet')->name('report.print.balance_sheet');
+    Route::get('/report/print/general_ledger', 'ReportController@print_general_ledger')->name('report.print.general_ledger');
     Route::get('/report/test', 'ReportController@test');
 });
 

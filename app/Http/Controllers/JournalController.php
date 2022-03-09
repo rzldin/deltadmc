@@ -37,7 +37,6 @@ class JournalController extends Controller
         $data['source'] = $request->source;
 
         Session::forget('journal_details');
-        // $journals = Session::get('journal_details');
         if ($request->has('source')) $this->saveDefaultDetailJournal($request);
 
         return view('journal.add_journal')->with($data);
@@ -54,7 +53,6 @@ class JournalController extends Controller
         if ($details == [] && $request->journal_type == "deposit_client") {
             # deposit client (customer terjadi lebih bayar ke deltadmc)
             $account_bank = MasterModel::findAccountByAccountNumber('1-1100')->first();
-            // $request = new Request();
             $request->account_id = $account_bank->id;
             $request->account_number = $account_bank->account_number;
             $request->account_name = $account_bank->account_name;
@@ -64,7 +62,6 @@ class JournalController extends Controller
             $this->saveDetailJournal($request);
 
             $account_piutang = MasterModel::findAccountByAccountNumber('1-1200')->first();
-            // $request = new Request();
             $request->account_id = $account_piutang->id;
             $request->account_number = $account_piutang->account_number;
             $request->account_name = $account_piutang->account_name;
@@ -74,7 +71,6 @@ class JournalController extends Controller
             $this->saveDetailJournal($request);
 
             $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
-            // $param = new Request();
             $request->account_id = $account_deposit->id;
             $request->account_number = $account_deposit->account_number;
             $request->account_name = $account_deposit->account_name;
@@ -85,7 +81,6 @@ class JournalController extends Controller
         } else if ($details == [] && $request->journal_type == "deposit_vendor") {
             # deposit vendor (deltadmc terjadi lebih bayar ke vendor)
             $account_hutang = MasterModel::findAccountByAccountNumber('2-1000')->first();
-            // $request = new Request();
             $request->account_id = $account_hutang->id;
             $request->account_number = $account_hutang->account_number;
             $request->account_name = $account_hutang->account_name;
@@ -95,7 +90,6 @@ class JournalController extends Controller
             $this->saveDetailJournal($request);
 
             $account_deposit = MasterModel::findAccountByAccountNumber('1-1220')->first();
-            // $param = new Request();
             $request->account_id = $account_deposit->id;
             $request->account_number = $account_deposit->account_number;
             $request->account_name = $account_deposit->account_name;
@@ -105,7 +99,6 @@ class JournalController extends Controller
             $this->saveDetailJournal($request);
 
             $account_bank = MasterModel::findAccountByAccountNumber('1-1100')->first();
-            // $request = new Request();
             $request->account_id = $account_bank->id;
             $request->account_number = $account_bank->account_number;
             $request->account_name = $account_bank->account_name;
@@ -294,7 +287,6 @@ class JournalController extends Controller
 
     public function updateDetailJournal(Request $request)
     {
-        // dd($request->session()->get('journal_details'));
         $transaction_type = 'D';
         if ($request->credit != 0) $transaction_type = 'C';
 
@@ -420,7 +412,6 @@ class JournalController extends Controller
             $journal = Journal::find($journalId);
             $amount = 0;
             $deposit_dtl = DepositDetail::where('journal_id', $journalId);
-            // dd($deposit_dtl->count());
             if ($deposit_dtl->count() > 0) {
                 foreach ($deposit_dtl->get() as $key => $dtl) {
                     if ($dtl->pembayaran_id != 0) {
@@ -433,7 +424,6 @@ class JournalController extends Controller
                 $amount *= -1;
                 DepositDetail::where('journal_id', $journalId)->delete();
                 $deposit = Deposit::where('company_id', $journal->company_id)->first();
-                // dd($amount, $deposit->balance);
                 $deposit->balance += $amount;
                 $deposit->save();
             }
@@ -468,6 +458,7 @@ class JournalController extends Controller
                 $param['debit'] = $detail->debit;
                 $param['credit'] = $detail->credit;
                 $param['balance'] = ($detail->debit - $detail->credit);
+                $param['memo'] = $detail->memo;
                 $param['created_by'] = Auth::user()->name;
                 $param['created_on'] = date('Y-m-d h:i:s');
 
