@@ -37,6 +37,7 @@
                                 <th>Client</th>
                                 <th>Transaction No.</th>
                                 <th>Transaction Date</th>
+                                <th>Currency</th>
                                 <th>Amount</th>
                                 <th>Action</th>
                             </tr>
@@ -51,6 +52,7 @@
                                     <td>{{ $kk->client_name }}</td>
                                     <td>{{ $kk->transaction_no }}</td>
                                     <td>{{ date('d/m/Y', strtotime($kk->transaction_date)) }}</td>
+                                    <td align="center">{{ $kk->currency_code }}</td>
                                     <td align="right">{{ number_format($kk->total, 2, ',', '.') }}</td>
                                     <td>
                                         <a class="btn btn-primary btn-sm" href="{{ route('kas.keluar.view', ['id' => $kk->id]) }}" >

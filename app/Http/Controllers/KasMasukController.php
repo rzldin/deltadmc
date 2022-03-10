@@ -27,6 +27,7 @@ class KasMasukController extends Controller
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
+        $data['currency'] = MasterModel::currency();
 
         return view('kas.masuk.add_kas_masuk')->with($data);
     }
@@ -88,6 +89,7 @@ class KasMasukController extends Controller
             'kas_masuk_date' => 'required',
             'account_id' => 'required',
             'client_id' => 'required',
+            'currency_id' => 'required',
             'memo' => 'required',
             'transaction_no' => 'required',
             'transaction_date' => 'required',
@@ -148,6 +150,7 @@ class KasMasukController extends Controller
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
+        $data['currency'] = MasterModel::currency();
 
         return view('kas.masuk.view_kas_masuk')->with($data);
     }

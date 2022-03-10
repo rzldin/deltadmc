@@ -39,6 +39,7 @@
                                         <label for="report_code" class="col-sm-2 col-form-label">Report</label>
                                         <div class="col-sm-10">
                                             <select name="report_code" id="report_code" class="form-control select2bs44">
+                                                <option value="cash" {{ old('report_code') == 'cash' ? 'selected' : '' }} >Cash</option>
                                                 <option value="general_ledger" {{ old('report_code') == 'general_ledger' ? 'selected' : '' }} >General Ledger</option>
                                                 <option value="trial_balance" {{ old('report_code') == 'trial_balance' ? 'selected' : '' }} >Trial Balance</option>
                                                 <option value="income_statement" {{ old('report_code') == 'income_statement' ? 'selected' : '' }} >Income Statement</option>

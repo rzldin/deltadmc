@@ -14,8 +14,9 @@ class KasMasuk extends Model
     {
         return KasMasuk::from('t_kas_masuk AS km')
             ->join('t_maccount AS a', 'a.id', '=', 'km.account_id')
+            ->join('t_mcurrency AS curr', 'curr.id', '=', 'km.currency_id')
             ->leftJoin('t_mcompany AS c', 'c.id', '=', 'km.client_id')
-            ->select('km.*', 'a.account_number', 'a.account_name', 'c.client_code', 'c.client_name');
+            ->select('km.*', 'a.account_number', 'a.account_name', 'c.client_code', 'c.client_name', 'curr.code as currency_code', 'curr.name as currency_name');
     }
 
     public static function findKasMasuk($id)

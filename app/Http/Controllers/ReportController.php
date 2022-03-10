@@ -42,6 +42,8 @@ class ReportController extends Controller
             return redirect()->route('report.print.general_ledger', $request->all());
         } else if ($request->report_code == 'trial_balance') {
             return redirect()->route('report.print.trial_balance', $request->all());
+        } else if ($request->report_code == 'cash') {
+            return redirect()->route('report.print.cash', $request->all());
         }
     }
 
@@ -205,6 +207,7 @@ class ReportController extends Controller
 
         return view('report.print_general_ledger')->with($data);
     }
+
     public function print_trial_balance(Request $request)
     {
         $start_date = date('Y-m-d', strtotime($request->start_date));
@@ -224,6 +227,22 @@ class ReportController extends Controller
         $data['end_date'] = $request->end_date;
 
         return view('report.print_trial_balance')->with($data);
+    }
+
+    public function print_cash(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $data['cash'] = DB::select("CALL getCashReport('{$start_date}', '{$end_date}', {$currency_id})");
+
+        $data['title'] = "Laporan Jurnal Umum";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        return view('report.print_cash')->with($data);
     }
 
     public function test()

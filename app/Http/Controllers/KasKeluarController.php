@@ -27,6 +27,7 @@ class KasKeluarController extends Controller
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
+        $data['currency'] = MasterModel::currency();
 
         return view('kas.keluar.add_kas_keluar')->with($data);
     }
@@ -88,6 +89,7 @@ class KasKeluarController extends Controller
             'kas_keluar_date' => 'required',
             'account_id' => 'required',
             'client_id' => 'required',
+            'currency_id' => 'required',
             'memo' => 'required',
             'transaction_no' => 'required',
             'transaction_date' => 'required',
@@ -148,6 +150,7 @@ class KasKeluarController extends Controller
         $data['kas_accounts'] = MasterModel::getKasAccount()->get();
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
+        $data['currency'] = MasterModel::currency();
 
         return view('kas.keluar.view_kas_keluar')->with($data);
     }
