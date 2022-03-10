@@ -61,7 +61,7 @@
                                     <td>{{ date('d/m/Y', strtotime($row->trx_date)) }}</td>
                                     <td>{{ $row->transaction_no }}</td>
                                     <td>{{ $row->memo }}</td>
-                                    <td>{{ $row->account_number }}</td>
+                                    <td>&nbsp;{{ $row->account_number }}</td>
                                     <td>{{ $row->account_name }}</td>
                                     <td align="center">{{ $row->currency_code }}</td>
                                     <td align="right">{{ textnumber($row->debit) }}</td>
