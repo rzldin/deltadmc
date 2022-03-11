@@ -8,7 +8,12 @@
     function textnumber($value)
     {
         $result = number_format($value, 2, '.', ',');
-        return $value < 0 ? "($result)" : "$result";
+        if ($value < 0) {
+            $value *= -1;
+            $result = number_format($value, 2, '.', ',');
+            $result = "($result)";
+        }
+        return $result;
     }
     @endphp
 

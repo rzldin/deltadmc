@@ -86,6 +86,11 @@
                                             <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                         @endif
                                     @else
+                                        @if ($invoice->journal_id == 0)
+                                            <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
+                                                    <i class="fa fa-book"></i> Journal
+                                            </a>
+                                        @endif
                                         @if($invoice->flag_bayar==0 && $invoice->journal_id == 0)
                                             <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
                                             <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>

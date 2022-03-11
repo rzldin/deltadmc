@@ -44,6 +44,8 @@ class ReportController extends Controller
             return redirect()->route('report.print.trial_balance', $request->all());
         } else if ($request->report_code == 'cash') {
             return redirect()->route('report.print.cash', $request->all());
+        } else if ($request->report_code == 'ar' || $request->report_code == 'ap') {
+            return redirect()->route('report.print.ar_ap', $request->all());
         }
     }
 
@@ -243,6 +245,31 @@ class ReportController extends Controller
         $data['end_date'] = $request->end_date;
 
         return view('report.print_cash')->with($data);
+    }
+
+    public function print_ar_ap(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $parent_account = '1-1200';
+        $parent_account = $request->report_code == 'ap' ? '2-1000' : $parent_account;
+
+        $data['trx'] = DB::select("CALL getChildHutangPiutangAccount('{$start_date}', '{$end_date}', {$currency_id}, '{$parent_account}')");
+        foreach ($data['trx'] as $key => $row) {
+            // $starting_balance = DB::select("SELECT COALESCE(SUM(balance),0) start_balance FROM t_general_ledgers tgl WHERE account_id = {$row->account_id} AND gl_date < '{$start_date}' GROUP BY account_id");
+            $starting_balance = GeneralLedger::getStartingBalance($row->account_id, $start_date);
+            $data['trx'][$key]->starting_balance = $starting_balance;
+        }
+
+        $data['title'] = $request->report_code == 'ap' ? 'Hutang' : 'Piutang';
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+        // dd($data);
+
+        return view('report.print_ar_ap')->with($data);
     }
 
     public function test()

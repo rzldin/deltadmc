@@ -541,6 +541,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/report/print/general_ledger', 'ReportController@print_general_ledger')->name('report.print.general_ledger');
     Route::get('/report/print/trial_balance', 'ReportController@print_trial_balance')->name('report.print.trial_balance');
     Route::get('/report/print/cash', 'ReportController@print_cash')->name('report.print.cash');
+    Route::get('/report/print/ar_ap', 'ReportController@print_ar_ap')->name('report.print.ar_ap');
     Route::get('/report/test', 'ReportController@test');
 });
 

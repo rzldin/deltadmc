@@ -103,6 +103,11 @@ class GeneralLedger extends Model
         return DB::select($query);
     }
 
+    public static function getStartingBalance($account_id, $date)
+    {
+        return DB::table('t_general_ledgers')->whereRaw("account_id = {$account_id} AND gl_date < '{$date}'")->groupBy('account_id')->sum('balance');
+    }
+
     public static function getAllGLByAccountId($accountId, $currencyId)
     {
         return GeneralLedger::from('t_general_ledgers AS gl')
