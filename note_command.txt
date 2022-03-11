@@ -175,6 +175,8 @@ ALTER TABLE t_kas_masuk CHANGE currency_id currency_id int(10) unsigned DEFAULT 
 ALTER TABLE t_kas_keluar ADD currency_id int(10) unsigned DEFAULT 0 NOT NULL;
 ALTER TABLE t_kas_keluar CHANGE currency_id currency_id int(10) unsigned DEFAULT 0 NOT NULL AFTER client_id;
 
+-- hendry 11032022
+CREATE SP_getChildHutangPiutangAccount()
 
 -- clear table
 TRUNCATE TABLE t_general_ledgers;
