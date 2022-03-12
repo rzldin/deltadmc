@@ -181,52 +181,142 @@ class JournalController extends Controller
         $invoice = InvoiceModel::find($request->reference_id);
 
         if ($company != []) {
-            // account ar di debit
-            $newItem = [
-                'account_id' => $company[0]->account_receivable_id,
-                'account_number' => $company[0]->account_receivable_number,
-                'account_name' => $company[0]->account_receivable_name,
-                'transaction_type' => 'D',
-                'debit' => $invoice->total_invoice,
-                'credit' => 0,
-                'memo' => 'AR ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
-            ];
+            if ($invoice->tipe_inv == 0) {
+                /** invoice piutang */
+                // account ar di debit
+                $newItem = [
+                    'account_id' => $company[0]->account_receivable_id,
+                    'account_number' => $company[0]->account_receivable_number,
+                    'account_name' => $company[0]->account_receivable_name,
+                    'transaction_type' => 'D',
+                    'debit' => $invoice->total_invoice,
+                    'credit' => 0,
+                    'memo' => 'AR ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
+                ];
 
-            $request->session()->push('journal_details', $newItem);
+                $request->session()->push('journal_details', $newItem);
 
-            // account tax di credit
-            $account_pajak = MasterModel::findAccountByAccountNumber('2-1200')->first();
-            $newItem = [
-                'account_id' => $account_pajak->id,
-                'account_number' => $account_pajak->account_number,
-                'account_name' => $account_pajak->account_name,
-                'transaction_type' => 'C',
-                'debit' => 0,
-                'credit' => $invoice->total_vat,
-                'memo' => 'VAT 10%',
-            ];
+                if ($invoice->pph23 > 0) {
+                    // account pph23 di debit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
+                    $newItem = [
+                        'account_id' => $account_pajak->id,
+                        'account_number' => $account_pajak->account_number,
+                        'account_name' => $account_pajak->account_name,
+                        'transaction_type' => 'D',
+                        'debit' => $invoice->pph23,
+                        'credit' => 0,
+                        'memo' => 'PPh 23 DIBAYAR DIMUKA',
+                    ];
 
-            $request->session()->push('journal_details', $newItem);
+                    $request->session()->push('journal_details', $newItem);
+                }
 
-            // account pendapatan di credit
-            $account_number = 0;
-            if ($invoice->activity == 'export') $account_number = '4-1001';
-            else if ($invoice->activity == 'import') $account_number = '4-1002';
-            else if ($invoice->activity == 'logistic') $account_number = '4-1003';
-            else if ($invoice->activity == 'domestic') $account_number = '4-1004';
-            else $account_number = '4-1005';
-            $account_pendapatan = MasterModel::findAccountByAccountNumber($account_number)->first();
-            $newItem = [
-                'account_id' => $account_pendapatan->id,
-                'account_number' => $account_pendapatan->account_number,
-                'account_name' => $account_pendapatan->account_name,
-                'transaction_type' => 'C',
-                'debit' => 0,
-                'credit' => $invoice->total_before_vat,
-                'memo' => 'Sales ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
-            ];
+                if ($invoice->total_vat > 0) {
+                    // account tax di credit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('2-1205')->first();
+                    $newItem = [
+                        'account_id' => $account_pajak->id,
+                        'account_number' => $account_pajak->account_number,
+                        'account_name' => $account_pajak->account_name,
+                        'transaction_type' => 'C',
+                        'debit' => 0,
+                        'credit' => $invoice->total_vat,
+                        'memo' => 'PPN',
+                    ];
 
-            $request->session()->push('journal_details', $newItem);
+                    $request->session()->push('journal_details', $newItem);
+                }
+
+                // account pendapatan di credit
+                $account_number = 0;
+                if ($invoice->activity == 'export') $account_number = '4-1001';
+                else if ($invoice->activity == 'import') $account_number = '4-1002';
+                else if ($invoice->activity == 'logistic') $account_number = '4-1003';
+                else if ($invoice->activity == 'domestic') $account_number = '4-1004';
+                else $account_number = '4-1005';
+                $account_pendapatan = MasterModel::findAccountByAccountNumber($account_number)->first();
+                $newItem = [
+                    'account_id' => $account_pendapatan->id,
+                    'account_number' => $account_pendapatan->account_number,
+                    'account_name' => $account_pendapatan->account_name,
+                    'transaction_type' => 'C',
+                    'debit' => 0,
+                    'credit' => $invoice->total_before_vat,
+                    'memo' => 'Sales ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
+                ];
+
+                $request->session()->push('journal_details', $newItem);
+                /** end invoice piutang */
+            } else {
+                /** invoice hutang */
+
+                // account pembelian di debit
+                $account_number = 0;
+                if ($invoice->activity == 'export') $account_number = '5-1001';
+                else if ($invoice->activity == 'import') $account_number = '5-1002';
+                else if ($invoice->activity == 'logistic') $account_number = '5-1003';
+                else if ($invoice->activity == 'domestic') $account_number = '5-1004';
+                else $account_number = '5-1005';
+                $account_pembelian = MasterModel::findAccountByAccountNumber($account_number)->first();
+                $newItem = [
+                    'account_id' => $account_pembelian->id,
+                    'account_number' => $account_pembelian->account_number,
+                    'account_name' => $account_pembelian->account_name,
+                    'transaction_type' => 'C',
+                    'debit' => $invoice->total_before_vat,
+                    'credit' => 0,
+                    'memo' => 'HPP ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
+                ];
+
+                $request->session()->push('journal_details', $newItem);
+
+                if ($invoice->total_vat > 0) {
+                    // account tax di credit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1403')->first();
+                    $newItem = [
+                        'account_id' => $account_pajak->id,
+                        'account_number' => $account_pajak->account_number,
+                        'account_name' => $account_pajak->account_name,
+                        'transaction_type' => 'D',
+                        'debit' => $invoice->total_vat,
+                        'credit' => 0,
+                        'memo' => 'PPN',
+                    ];
+
+                    $request->session()->push('journal_details', $newItem);
+                }
+
+                if ($invoice->pph23 > 0) {
+                    // account pph23 di credit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('2-1203')->first();
+                    $newItem = [
+                        'account_id' => $account_pajak->id,
+                        'account_number' => $account_pajak->account_number,
+                        'account_name' => $account_pajak->account_name,
+                        'transaction_type' => 'C',
+                        'debit' => 0,
+                        'credit' => $invoice->pph23,
+                        'memo' => 'HUTANG PAJAK - PPH PASAL 23',
+                    ];
+
+                    $request->session()->push('journal_details', $newItem);
+                }
+
+                // account ap di credit
+                $newItem = [
+                    'account_id' => $company[0]->account_payable_id,
+                    'account_number' => $company[0]->account_payable_number,
+                    'account_name' => $company[0]->account_payable_name,
+                    'transaction_type' => 'D',
+                    'debit' => 0,
+                    'credit' => $invoice->total_invoice,
+                    'memo' => 'AP ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
+                ];
+
+                $request->session()->push('journal_details', $newItem);
+                /** end invoice hutang */
+            }
         }
     }
 
