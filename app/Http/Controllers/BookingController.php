@@ -1752,10 +1752,10 @@ class BookingController extends Controller
             $tabel .= '<a href="javascript:;" class="btn btn-xs btn-success'
                     . '" onclick="updateDetailSell('.$row->id.', '.$no.','.$a.');" style="'.$displayx.'"> '
                     . '<i class="fa fa-save"></i></a>';
-            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-info'
                     . '" onclick="editDetailCF('.$row->id.',\'cost\');"> '
                     . '<i class="fa fa-edit"></i></a>';
+            if ($row->t_invoice_cost_id == null && $row->t_invoice_id == null) {
             $tabel .= '<a href="javascript:;" style="margin-left:2px;" class="btn btn-xs btn-danger'
                     . '" onclick="hapusDetailCF('.$row->id.');"> '
                     . '<i class="fa fa-trash"></i></a>';
@@ -2425,6 +2425,7 @@ class BookingController extends Controller
             'cost'              => $request->cost,
             'sell'              => $request->sell,
             'qty'               => $request->qty,
+            'cost_adjustment'   => str_replace(',', '', $request->cost_adjustment),
             'cost_val'          => str_replace(',', '', $request->cost_val),
             'sell_val'          => str_replace(',','', $request->sell_val),
             'vat'               => $request->vat,
@@ -2522,12 +2523,20 @@ class BookingController extends Controller
             $request->sell = $request->cost;
             $request->sell_val = $request->cost_val;
             $request->total = str_replace(',','', $request->sell_val) * str_replace(',','', $request->qty);
+            $request->cost_adjustment = 0;
         }else{
             $r = 0;
         }
 
         if($request->jenis_edit=='cost'){
-            $company = MasterModel::company_get($request->name_to);
+            $client_name = null;
+            $client_id = null;
+            if(isset($request->name_to)){
+                $company = MasterModel::company_get($request->name_to);
+                $client_name = $company->client_name;
+                $client_id = $request->name_to;
+            }
+
             DB::table('t_bcharges_dtl')
             ->where('id', $request->id)
             ->update([
@@ -2539,17 +2548,24 @@ class BookingController extends Controller
                 'cost'              => $request->cost,
                 'sell'              => $request->sell,
                 'qty'               => $request->qty,
+                'cost_adjustment'   => str_replace(',', '', $request->cost_adjustment),
                 'cost_val'          => str_replace(',','', $request->cost_val),
                 'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
-                'paid_to'           => $company->client_name,
-                'paid_to_id'        => $request->name_to,
+                'paid_to'           => $client_name,
+                'paid_to_id'        => $client_id,
                 'subtotal'          => str_replace(',','', $request->total),
                 'notes'             => $request->note,
             ]);
 
         }else if($request->jenis_edit=='sell'){
-            $company = MasterModel::company_get($request->name_to);
+            $client_name = null;
+            $client_id = null;
+            if(isset($request->name_to)){
+                $company = MasterModel::company_get($request->name_to);
+                $client_name = $company->client_name;
+                $client_id = $request->name_to;
+            }
             DB::table('t_bcharges_dtl')
             ->where('id', $request->id)
             ->update([
@@ -2564,8 +2580,8 @@ class BookingController extends Controller
                 'cost_val'          => str_replace(',','', $request->cost_val),
                 'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
-                'bill_to'           => $company->client_name,
-                'bill_to_id'        => $request->name_to,
+                'bill_to'           => $client_name,
+                'bill_to_id'        => $client_id,
                 'subtotal'          => str_replace(',','', $request->total),
                 'notes'             => $request->note,
             ]);

@@ -315,6 +315,7 @@
                                                 <th>Total</th>
                                                 <th>ROE</th>
                                                 {{-- <th>Vat</th> --}}
+                                                <th>Cost Adjustment</th>
                                                 <th>Amount</th>
                                                 <th>Note</th>
                                                 {{-- <th>Action</th> --}}

@@ -92,3 +92,8 @@ flag_bayar = 2 -> sudah dibayar sebagian
 tipe_inv dan jenis_pmb
 0 = Piutang
 1 = Hutang
+
+----
+
+tambah adjustment seperti dibawah ini, hanya untuk nilai cost value
+cost * rate * quantity = cost total     --> nah dari cost total itu kasih kolom inputan baru, adjustment, jadi nanti  cost total + adjustment = cost total final

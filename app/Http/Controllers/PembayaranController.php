@@ -260,7 +260,7 @@ class PembayaranController extends Controller
             //     DepositController::deleteDepositPembayaran($param);
             // }
             $deposits = DepositDetail::where('pembayaran_id', $data->id_pmb)->get();
-            if ($deposits != []) {
+            if (empty($deposits)) {
                 $amount = 0;
                 foreach ($deposits as $dtl) {
                     $amount += $dtl->amount;

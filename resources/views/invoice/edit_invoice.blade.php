@@ -413,12 +413,14 @@
             data: {
                 t_booking_id : @json($header->t_booking_id),
                 invoice_id : @json($header->id),
+                type_invoice : 'sell',
                 is_ppn : is_ppn,
                 is_pph23 : is_pph23,
             },
             success: function(result) {
                 if (result.status == 'success') {
-                    toast('success', result.message);
+                    toast('success');
+                    location.reload();
                 } else {
                     fire('error', 'Oppss..', result.message);
                 }

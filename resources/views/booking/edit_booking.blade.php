@@ -948,6 +948,14 @@
                             <input type="text" class="form-control" name="qty" id="qtyx" placeholder="Qty ..." onkeyup="hitungx()">
                         </div>
                     </div>
+                    <div class="row mb-2 show_adjustment" style="display: hidden;">
+                        <div class="col-md-4 col-xs-4">
+                            Cost Adjustment <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <input type="text" class="form-control" name="cost_adjustment" id="cost_adjustmentx" placeholder="Cost Adjustment ...">
+                        </div>
+                    </div>
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
                             Cost Value <font color="#f00">*</font>
@@ -964,22 +972,22 @@
                             <input type="text" class="form-control" name="sell_val" id="sell_valx" placeholder="Sell Value ..." readonly>
                         </div>
                     </div>
-                    <div class="row mb-2">
+                    {{-- <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
                             Vat
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
                         </div>
-                    </div>
-                    <div class="row mb-2">
+                    </div> --}}
+                    {{-- <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
                             Total <font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" class="form-control" name="total" id="totalx" placeholder="Total ..." readonly>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
                            Note
@@ -1838,13 +1846,15 @@
             $('#costx').val('');
             $('#sellx').val('');
             $('#qtyx').val('');
+            $('#cost_adjustmentx').val('');
             $('#cost_valx').val('');
             $('#sell_valx').val('');
-            $('#vatx').val('');
-            $('#totalx').val('');
+            // $('#vatx').val('');
+            // $('#totalx').val('');
             $('#notex').val('');
             $('#show_name_to').hide();
             $('#jenis_edit').val('');
+            $('.show_adjustment').show();
 
             dsState = "Input";
 
@@ -1865,10 +1875,10 @@
                     let data = JSON.parse(result);
                     let cost_val = data.cost_val
                     let sell_val = data.sell_val
-                    let subtotal = data.subtotal
+                    // let subtotal = data.subtotal
                     cost_val = numberWithCommas(Number(cost_val));
                     sell_val = numberWithCommas(Number(sell_val));
-                    subtotal = numberWithCommas(Number(subtotal));
+                    // subtotal = numberWithCommas(Number(subtotal));
 
                     $('#charge').val(data.t_mcharge_code_id).trigger('change');
                     $('#descx').val(data.desc);
@@ -1887,16 +1897,26 @@
                     $('#qtyx').val(data.qty);
                     $('#cost_valx').val(cost_val);
                     $('#sell_valx').val(sell_val);
-                    $('#vatx').val(Number(data.vat));
-                    $('#totalx').val(subtotal);
+                    // $('#vatx').val(Number(data.vat));
+                    // $('#totalx').val(subtotal);
                     $('#notex').val(data.notes);
                     $('#jenis_edit').val(tipe);
+                    if(tipe=='cost'){
+                        $('.show_adjustment').show();
+                        $('#cost_adjustmentx').val(numberWithCommas(Number(data.cost_adjustment)));
+                    }else if(tipe=='sell'){
+                        $('.show_adjustment').hide();
+                    }
                     if(tipe=='cost' && data.paid_to_id!= null){
-                        $('#show_name_to').show();
+                        if(data.t_invoice_cost_id!=null){
+                            $('#show_name_to').hide();
+                        }
                         $('#name_to_text').text('Paid To');
                         $('#name_to').val(data.paid_to_id).trigger('change');
                     }else if(tipe=='sell' && data.bill_to_id!= null){
-                        $('#show_name_to').show();
+                        if(data.t_invoice_id!=null){
+                            $('#show_name_to').hide();
+                        }
                         $('#name_to_text').text('Bill To');
                         $('#name_to').val(data.bill_to_id).trigger('change');
                     }else{
@@ -1969,10 +1989,11 @@
                             cost:$('#costx').val(),
                             sell:$('#sellx').val(),
                             qty:$('#qtyx').val(),
+                            cost_adjustment:$('#cost_adjustmentx').val(),
                             cost_val:$('#cost_valx').val(),
                             sell_val:$('#sell_valx').val(),
-                            vat:$('#vatx').val(),
-                            total:$('#totalx').val(),
+                            // vat:$('#vatx').val(),
+                            // total:$('#totalx').val(),
                             note:$('#notex').val()
                         },
                         success:function(result){
@@ -2005,10 +2026,11 @@
                             cost:$('#costx').val(),
                             sell:$('#sellx').val(),
                             qty:$('#qtyx').val(),
+                            cost_adjustment:$('#cost_adjustmentx').val(),
                             cost_val:$('#cost_valx').val(),
                             sell_val:$('#sell_valx').val(),
-                            vat:$('#vatx').val(),
-                            total:$('#totalx').val(),
+                            // vat:$('#vatx').val(),
+                            // total:$('#totalx').val(),
                             note:$('#notex').val(),
                             name_to:$('#name_to').val(),
                             quote:{{ ($booking->t_quote_id)? $booking->t_quote_id:0 }}
@@ -2066,7 +2088,7 @@
 
             $('#cost_valx').val(cost_val);
             $('#sell_valx').val(sell_val);
-            hitungTotalx();
+            // hitungTotalx();
 
         }
 

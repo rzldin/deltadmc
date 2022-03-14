@@ -245,12 +245,15 @@
                             <div class="card card-primary">
                                 <div class="card-header">
                                     <h5 class="card-title">Detail</h5>
-                                    {{-- <a href="{{ route('proformainvoice.create') }}"
-                                    class="btn btn-success float-right"><i class="fas fa-check"></i> Create Invoice
-                                    Selected</a> --}}
+                                    <div class="row" style="padding-bottom: 5px;">
+                                        <div class="col" style="text-align: right">
+                                            <button type="button" onclick="syncInvoice()"
+                                            class="btn btn-success" {{ $header->flag_bayar > 0 ? 'disabled' : '' }}><i class="fas fa-redo"></i> Sync Detail</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="" style="width: 150%">
+                                    <table class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -260,15 +263,23 @@
                                                 <th>Unit</th>
                                                 <th>Currency</th>
                                                 <th>rate/unit</th>
-                                                <th>Total</th>
                                                 <th>ROE</th>
-                                                <th>Vat</th>
+                                                <th>Total</th>
+                                                <th>Cost Adjustment</th>
+                                                <th>PPN</th>
+                                                <th>PPH23 (-)</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tblSell">
+                                        <tbody>
+                                            @php 
+                                                $total = 0;
+                                                $ppn = 0;
+                                                $pph23 = 0;
+                                                $subtotal = 0;
+                                            @endphp
                                             @foreach ($details as $key => $detail)
                                                 <tr>
                                                     <td align="center">{{ $key + 1 }}</td>
@@ -277,16 +288,32 @@
                                                     <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
                                                     <td>{{ $detail->qty }}</td>
                                                     <td>{{ $detail->currency_code }}</td>
-                                                    <td align="right">{{ number_format($detail->sell, 2, ',', '.') }}</td>
-                                                    <td align="right">{{ number_format($detail->sell_val, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->cost, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->rate, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->cost_val, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->cost_adjustment, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->pph23, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                                                     <td>
                                                         <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                                     </td>
                                                 </tr>
+                                                @php
+                                                    $total += $detail->cost_val;
+                                                    $ppn += $detail->vat;
+                                                    $pph23 += $detail->pph23;
+                                                    $subtotal += $detail->subtotal;
+                                                @endphp
                                             @endforeach
+                                            <tr>
+                                                <td colspan="8" class="text-right">Total</td>
+                                                <td>{{ number_format($total,2,',','.') }}</td>
+                                                <td></td>
+                                                <td>{{ number_format($ppn,2,',','.') }}</td>
+                                                <td>{{ number_format($pph23,2,',','.') }}</td>
+                                                <td>{{ number_format($subtotal,2,',','.') }}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -311,22 +338,53 @@
 @push('after-scripts')
 <script>
     function deleteInvoice(id) {
-            let url = `{{ route('invoice.delete_detail', ':id') }}`;
-            url = url.replace(':id', id);
+        let url = `{{ route('invoice.delete_detail', ':id') }}`;
+        url = url.replace(':id', id);
 
-            Swal.fire({
-                title: 'Anda yakin ingin menghapus detail invoice ini ?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
-            })
+        Swal.fire({
+            title: 'Anda yakin ingin menghapus detail invoice ini ?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        })
+    }
+
+    function syncInvoice() {
+        let is_ppn = 0;
+        let is_pph23 = 0;
+
+        if (@json($header->total_vat) > 0) {
+            is_ppn = 1;
         }
+        if (@json($header->pph23) > 0) {
+            is_pph23 = 1;
+        }
+        $.ajax({
+            type: 'get',
+            url: `{{ route('invoice.syncInvoiceDetail') }}`,
+            data: {
+                t_booking_id : @json($header->t_booking_id),
+                invoice_id : @json($header->id),
+                type_invoice : 'cost',
+                is_ppn : is_ppn,
+                is_pph23 : is_pph23,
+            },
+            success: function(result) {
+                if (result.status == 'success') {
+                    toast('success');
+                    location.reload();
+                } else {
+                    fire('error', 'Oppss..', result.message);
+                }
+            }
+        });
+    }
 </script>
 @endpush
