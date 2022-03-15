@@ -207,40 +207,79 @@ class ExternalInvoiceController extends Controller
         try {
             $proforma_details = DB::select("SELECT * FROM t_proforma_invoice_detail WHERE proforma_invoice_id = {$request->proforma_invoice_id}");
 
+            ExternalInvoiceDetail::where('external_invoice_id',$request->external_invoice_id)->delete();
+
+            $details = ProformaInvoiceDetailModel::getProformaInvoiceDetails($request->proforma_invoice_id)->get();
+            // dd($details);
             $total_before_vat = 0;
             $total_vat = 0;
             $total_pph23 = 0;
             $total_invoice = 0;
+            foreach ($details as $key => $detail) {
+                // dd($invoice->id);
+                $paramDetail['id'] = 0;
+                $paramDetail['external_invoice_id'] = $request->external_invoice_id;
+                $paramDetail['t_mcharge_code_id'] = $detail['t_mcharge_code_id'];
+                $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
+                $paramDetail['desc'] = $detail['desc'];
+                $paramDetail['currency'] = $request['currency'];
+                $paramDetail['rate'] = $detail['rate'];
+                $paramDetail['cost'] = $detail['cost'];
+                $paramDetail['sell'] = $detail['sell'];
+                $paramDetail['qty'] = $detail['qty'];
+                $paramDetail['cost_val'] = $detail['cost_val'];
+                $paramDetail['sell_val'] = $detail['sell_val'];
+                $paramDetail['vat'] = $detail['vat'];
+                $paramDetail['pph23'] = $detail['pph23'];
+                $paramDetail['subtotal'] = $detail['subtotal'];
+                $paramDetail['routing'] = $detail['routing'];
+                $paramDetail['transit_time'] = $detail['transit_time'];
+                $paramDetail['created_by'] = Auth::user()->name;
+                $paramDetail['created_on'] = date('Y-m-d h:i:s');
 
-            foreach ($proforma_details as $key => $proforma_detail) {
-                $param = (array) $proforma_detail;
-                $param['id'] = 0;
-                $param['external_invoice_id'] = $request->external_invoice_id;
-                $param['created_by'] = Auth::user()->name;
-                $param['created_on'] = date('Y-m-d h:i:s');
-                unset($param['proforma_invoice_id']);
-                unset($param['id_invoice_detail']);
-                unset($param['exi_detail_id']);
-                unset($param['is_merge']);
-
-                /** save dulu detail terbaru nya berdasarkan detail proforma */
-                $ext_invoice_detail = ExternalInvoiceDetail::saveExternalInvoiceDetail($param);
-
-                /** model baru dari proforma detail, update exi invoice detail berdasarkan id yang baru disimpan di atas */
-                $line = ProformaInvoiceDetailModel::find($proforma_detail->id);
-                $line->exi_detail_id = $ext_invoice_detail->id;
-
-                /** delete external detail yang lama, berdasarkan key dari model proforma detail sebelum diedit */
-                ExternalInvoiceDetail::find($proforma_detail->exi_detail_id)->delete();
-
-                /** proses save proforma detail */
-                $line->save();
-
-                $total_before_vat += $proforma_detail->sell_val;
-                $total_vat += $proforma_detail->vat;
-                $total_pph23 += $proforma_detail->pph23;
-                $total_invoice += $proforma_detail->subtotal;
+                $total_before_vat += $detail['sell_val'];
+                $total_pph23 += $detail['pph23'];
+                $total_vat += $detail['vat'];
+                $total_invoice += $detail['subtotal'];
+                $exid = ExternalInvoiceDetail::saveExternalInvoiceDetail($paramDetail);
+                ProformaInvoiceDetailModel::where('id', $detail->id)->update([
+                    'exi_detail_id' => $exid->id
+                ]);
             }
+
+            // $total_before_vat = 0;
+            // $total_vat = 0;
+            // $total_pph23 = 0;
+            // $total_invoice = 0;
+
+            // foreach ($proforma_details as $key => $proforma_detail) {
+            //     $param = (array) $proforma_detail;
+            //     $param['id'] = 0;
+            //     $param['external_invoice_id'] = $request->external_invoice_id;
+            //     $param['created_by'] = Auth::user()->name;
+            //     $param['created_on'] = date('Y-m-d h:i:s');
+            //     unset($param['proforma_invoice_id']);
+            //     unset($param['id_invoice_detail']);
+            //     unset($param['exi_detail_id']);
+            //     unset($param['is_merge']);
+
+            //     /** save dulu detail terbaru nya berdasarkan detail proforma */
+            //     $ext_invoice_detail = ExternalInvoiceDetail::saveExternalInvoiceDetail($param);
+
+            //     /** model baru dari proforma detail, update exi invoice detail berdasarkan id yang baru disimpan di atas */
+            //     $line = ProformaInvoiceDetailModel::find($proforma_detail->id);
+            //     $line->exi_detail_id = $ext_invoice_detail->id;
+
+            //     /** delete external detail yang lama, berdasarkan key dari model proforma detail sebelum diedit */
+
+            //     /** proses save proforma detail */
+            //     $line->save();
+
+            //     $total_before_vat += $proforma_detail->sell_val;
+            //     $total_vat += $proforma_detail->vat;
+            //     $total_pph23 += $proforma_detail->pph23;
+            //     $total_invoice += $proforma_detail->subtotal;
+            // }
 
             DB::table('t_external_invoice')->where('id', $request->external_invoice_id)->update([
                 'total_before_vat' => $total_before_vat,

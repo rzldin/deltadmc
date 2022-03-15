@@ -54,9 +54,11 @@
                                                 <td>{{ $proforma_invoice->activity }}</td>
                                                 <td>
                                                     <a class="btn btn-primary btn-sm" href="{{ route('proforma_invoice.view', ['id' => $proforma_invoice->id]) }}"><i class="fa fa-file-alt"></i> View </a>
-                                                    @if ($proforma_invoice->t_external_invoice_id == 0 || $proforma_invoice->flag_bayar_external == 0)
+                                                    @if ($proforma_invoice->flag_bayar_external == 0)
                                                         <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.edit', ['proformaInvoiceId' => $proforma_invoice->id]) }}"><i class="fa fa-edit"></i> Edit </a>
-                                                        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteProforma({{ $proforma_invoice->id }})"><i class="fa fa-trash"></i> Delete </a>
+                                                        @if($proforma_invoice->t_external_invoice_id == 0)
+                                                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteProforma({{ $proforma_invoice->id }})"><i class="fa fa-trash"></i> Delete </a>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>

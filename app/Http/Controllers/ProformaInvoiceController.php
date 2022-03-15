@@ -379,6 +379,7 @@ class ProformaInvoiceController extends Controller
                 $paramDetail['transit_time'] = $detail['transit_time'];
                 $paramDetail['created_by'] = Auth::user()->name;
                 $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                $paramDetail['is_merge'] = $detail['is_merge'];
                 $paramDetail['id_invoice_detail'] = ((isset($detail['id_invoicenya']))? $detail['id_invoicenya']:NULL);
                 // dd($details, $paramDetail);
                 $total_before_vat += $detail['sell_val'];
