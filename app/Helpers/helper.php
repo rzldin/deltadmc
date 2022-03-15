@@ -23,6 +23,6 @@ function tanggalIndo($date) {
         'Desember',
     ];
 
-    $result = "{$day} {$bulan_indo[$month + 1]} {$year}";
+    $result = "{$day} {$bulan_indo[$month - 1]} {$year}";
     return $result;
 }

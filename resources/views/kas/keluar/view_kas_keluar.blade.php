@@ -87,6 +87,19 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
+                                                    <label>Currency</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select class="form-control" name="currency_id" id="currency_id" disabled>
+                                                        <option value="" selected>Select Currency</option>
+                                                        @foreach ($currency as $curr)
+                                                            <option value="{{ $curr->id }}" <?= ($header->currency_id == $curr->id ? 'selected' : '') ?>>{{ $curr->code }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
                                                     <label>Memo</label>
                                                 </div>
                                                 <div class="col-md-8">

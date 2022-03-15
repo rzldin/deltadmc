@@ -172,3 +172,31 @@ ALTER TABLE t_proforma_invoice_detail CHANGE is_merge is_merge TINYINT(1) DEFAUL
 ALTER TABLE `t_bcharges_dtl` ADD `cost_adjustment` DECIMAL(25,4) NOT NULL DEFAULT '0' AFTER `qty`;
 ALTER TABLE `t_invoice_detail` ADD `cost_adjustment` DECIMAL(25,4) NOT NULL AFTER `qty`;
 ALTER TABLE `t_invoice` ADD `total_cost_adjustment` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `pph23`;
+
+-- hendry 10032022
+CREATE SP_getCashReport()
+ALTER TABLE t_kas_masuk ADD currency_id int(10) unsigned DEFAULT 0 NOT NULL;
+ALTER TABLE t_kas_masuk CHANGE currency_id currency_id int(10) unsigned DEFAULT 0 NOT NULL AFTER client_id;
+ALTER TABLE t_kas_keluar ADD currency_id int(10) unsigned DEFAULT 0 NOT NULL;
+ALTER TABLE t_kas_keluar CHANGE currency_id currency_id int(10) unsigned DEFAULT 0 NOT NULL AFTER client_id;
+
+-- hendry 11032022
+
+-- clear table
+TRUNCATE TABLE t_general_ledgers;
+TRUNCATE TABLE t_journal_details;
+TRUNCATE TABLE t_journals;
+TRUNCATE TABLE t_deposit_details;
+TRUNCATE TABLE t_deposits;
+TRUNCATE TABLE t_pembayaran;
+TRUNCATE TABLE t_pembayaran_detail;
+TRUNCATE TABLE t_external_invoice;
+TRUNCATE TABLE t_external_invoice_detail;
+TRUNCATE TABLE t_proforma_invoice;
+TRUNCATE TABLE t_proforma_invoice_detail;
+TRUNCATE TABLE t_invoice;
+TRUNCATE TABLE t_invoice_detail;
+
+UPDATE t_bcharges_dtl SET t_invoice_id = NULL, t_invoice_cost_id = NULL, invoice_type = NULL;
+UPDATE t_quote_shipg_dtl SET t_invoice_id = NULL, t_invoice_cost_id = NULL, invoice_type = NULL;
+UPDATE t_booking SET flag_invoice = 0;

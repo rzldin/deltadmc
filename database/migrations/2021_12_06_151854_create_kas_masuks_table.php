@@ -19,6 +19,7 @@ class CreateKasMasuksTable extends Migration
             $table->integer('account_id')->index();
             $table->text('memo');
             $table->integer('client_id')->default(0)->unsigned();
+            $table->integer('currency_id')->default(0)->unsigned();
             $table->string('transaction_no')->nullable();
             $table->string('transaction_date')->nullable();
             $table->decimal('total', 14, 2);

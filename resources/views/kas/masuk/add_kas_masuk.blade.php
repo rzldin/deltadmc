@@ -64,7 +64,7 @@
                                                     <label>Account</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="account_id" id="account_id">
+                                                    <select class="form-control select2bs44" name="account_id" id="account_id">
                                                         <option value="" selected>Select Account</option>
                                                         @foreach ($kas_accounts as $kas_account)
                                                             <option value="{{ $kas_account->id }}">{{ $kas_account->account_number.' - '.$kas_account->account_name }}</option>
@@ -77,10 +77,23 @@
                                                     <label>Client</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control" name="client_id" id="client_id">
+                                                    <select class="form-control select2bs44" name="client_id" id="client_id">
                                                         <option value="" selected>Select Client</option>
                                                         @foreach ($companies as $company)
                                                             <option value="{{ $company->id }}">{{ $company->client_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label>Currency</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <select class="form-control select2bs44" name="currency_id" id="currency_id">
+                                                        <option value="" selected>Select Currency</option>
+                                                        @foreach ($currency as $curr)
+                                                            <option value="{{ $curr->id }}">{{ $curr->code }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -208,7 +221,7 @@
                                             <tr>
                                                 <td>#</td>
                                                 <td>
-                                                    <select class="form-control select2" id="dtl_account_id" onchange="getDetailAccount(this.value)">
+                                                    <select class="form-control select2bs44" id="dtl_account_id" onchange="getDetailAccount(this.value)">
                                                         <option value=""></option>
                                                         @foreach ($accounts as $account)
                                                             <option value="{{ $account->id }}">{{ $account->account_number.' || '.$account->account_name }}</option>
@@ -353,7 +366,7 @@
         }
 
         $(function() {
-            $('.select2').select2();
+            // $('.select2').select2();
             loadDetailKasMasuk();
             $('#kas_masuk_date_picker').datetimepicker({
                 format: 'L'

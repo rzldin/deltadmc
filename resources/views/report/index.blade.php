@@ -24,7 +24,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between bd-highlight mb-3">
                                 <div class="p-2 bd-highlight">
-                                    {{-- <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addTax()"><i class="fa fa-plus"></i> Add Tax</a> --}}
+
                                 </div>
                                 <div class="p-2 bd-highlight">
 
@@ -39,7 +39,11 @@
                                         <label for="report_code" class="col-sm-2 col-form-label">Report</label>
                                         <div class="col-sm-10">
                                             <select name="report_code" id="report_code" class="form-control select2bs44">
+                                                <option value="cash" {{ old('report_code') == 'cash' ? 'selected' : '' }} >Cash</option>
+                                                <option value="ar" {{ old('report_code') == 'ar' ? 'selected' : '' }} >Account Receivable</option>
+                                                <option value="ap" {{ old('report_code') == 'ap' ? 'selected' : '' }} >Account Payable</option>
                                                 <option value="general_ledger" {{ old('report_code') == 'general_ledger' ? 'selected' : '' }} >General Ledger</option>
+                                                <option value="trial_balance" {{ old('report_code') == 'trial_balance' ? 'selected' : '' }} >Trial Balance</option>
                                                 <option value="income_statement" {{ old('report_code') == 'income_statement' ? 'selected' : '' }} >Income Statement</option>
                                                 <option value="balance_sheet" {{ old('report_code') == 'balance_sheet' ? 'selected' : '' }} >Balance Sheet</option>
                                             </select>

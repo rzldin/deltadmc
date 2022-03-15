@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\GeneralLedger;
 use App\IncomeStatementBalance;
 use App\MasterModel;
 use Illuminate\Http\Request;
@@ -37,6 +38,14 @@ class ReportController extends Controller
             return redirect()->route('report.print.income_statement', $request->all());
         } else if ($request->report_code == 'balance_sheet') {
             return redirect()->route('report.print.balance_sheet', $request->all());
+        } else if ($request->report_code == 'general_ledger') {
+            return redirect()->route('report.print.general_ledger', $request->all());
+        } else if ($request->report_code == 'trial_balance') {
+            return redirect()->route('report.print.trial_balance', $request->all());
+        } else if ($request->report_code == 'cash') {
+            return redirect()->route('report.print.cash', $request->all());
+        } else if ($request->report_code == 'ar' || $request->report_code == 'ap') {
+            return redirect()->route('report.print.ar_ap', $request->all());
         }
     }
 
@@ -176,9 +185,91 @@ class ReportController extends Controller
         $data['title'] = "Laporan Neraca";
         $data['start_date'] = $request->start_date;
         $data['end_date'] = $request->end_date;
-        // dd($data);
 
         return view('report.print_balance_sheet')->with($data);
+    }
+
+    public function print_general_ledger(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $accounts = GeneralLedger::getAllAccountHasGLWithPeriod($currency_id, $start_date, $end_date);
+        $data['header'] = $accounts;
+        foreach ($accounts as $key => $account) {
+            $details = GeneralLedger::getAllGLByAccountIdWithPeriod($account->id, $request->currency_id, $start_date, $end_date)->get();
+            $data['header'][$key]->details = $details;
+        }
+
+        $data['title'] = "Laporan Buku Besar";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        return view('report.print_general_ledger')->with($data);
+    }
+
+    public function print_trial_balance(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $parent_acc = GeneralLedger::getParentAccountTrialBalance($currency_id, $start_date, $end_date);
+        $data['parent_acc'] = $parent_acc;
+        foreach ($parent_acc as $key => $parent) {
+            $child_acc = GeneralLedger::getChildAccountTrialBalance($currency_id, $start_date, $end_date, $parent->account_number);
+            $data['parent_acc'][$key]->child_acc = $child_acc;
+        }
+
+        $data['title'] = "Laporan Trial Balance";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        return view('report.print_trial_balance')->with($data);
+    }
+
+    public function print_cash(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $data['cash'] = DB::select("CALL getCashReport('{$start_date}', '{$end_date}', {$currency_id})");
+
+        $data['title'] = "Laporan Jurnal Umum";
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        return view('report.print_cash')->with($data);
+    }
+
+    public function print_ar_ap(Request $request)
+    {
+        $start_date = date('Y-m-d', strtotime($request->start_date));
+        $end_date = date('Y-m-d', strtotime($request->end_date));
+        $currency_id = $request->currency_id;
+
+        $parent_account = '1-1200';
+        $parent_account = $request->report_code == 'ap' ? '2-1000' : $parent_account;
+
+        $data['trx'] = DB::select("CALL getChildHutangPiutangAccount('{$start_date}', '{$end_date}', {$currency_id}, '{$parent_account}')");
+        foreach ($data['trx'] as $key => $row) {
+            // $starting_balance = DB::select("SELECT COALESCE(SUM(balance),0) start_balance FROM t_general_ledgers tgl WHERE account_id = {$row->account_id} AND gl_date < '{$start_date}' GROUP BY account_id");
+            $starting_balance = GeneralLedger::getStartingBalance($row->account_id, $start_date);
+            $data['trx'][$key]->starting_balance = $starting_balance;
+        }
+
+        $data['title'] = $request->report_code == 'ap' ? 'Hutang' : 'Piutang';
+        $data['currency_id'] = $request->currency_id;
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+        // dd($data);
+
+        return view('report.print_ar_ap')->with($data);
     }
 
     public function test()

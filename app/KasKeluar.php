@@ -14,8 +14,9 @@ class KasKeluar extends Model
     {
         return KasKeluar::from('t_kas_keluar AS kk')
             ->join('t_maccount AS a', 'a.id', '=', 'kk.account_id')
+            ->join('t_mcurrency AS curr', 'curr.id', '=', 'kk.currency_id')
             ->leftJoin('t_mcompany AS c', 'c.id', '=', 'kk.client_id')
-            ->select('kk.*', 'a.account_number', 'a.account_name', 'c.client_code', 'c.client_name');
+            ->select('kk.*', 'a.account_number', 'a.account_name', 'c.client_code', 'c.client_name', 'curr.code as currency_code', 'curr.name as currency_name');
     }
 
     public static function findKasKeluar($id)
