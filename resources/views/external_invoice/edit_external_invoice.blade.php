@@ -360,6 +360,7 @@
                     console.log(result);
                     if (result.status == 'success') {
                         toast('success', result.message);
+                        location.reload();
                     } else {
                         fire('error', 'Oppss..', result.message);
                     }

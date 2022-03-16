@@ -49,13 +49,8 @@
                                                         <label>Bill To</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control select2bs44" name="client_id" id="client_id" onchange="client_detail(this.value)">
-                                                            <option value="">Select Company</option>
-                                                            @foreach ($companies as $company)
-                                                                <option value="{{ $company->id }}" <?= $company->id == $proforma_invoice_header['client_id'] ? 'selected' : '' ?>>
-                                                                    {{ '('.$company->client_code.') '.$company->client_name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input type="text" id="bill_to_name" class="form-control" value="{{ $companies->client_name }}" disabled>
+                                                        <input type="hidden" id="client_id" name="client_id" value="{{ $companies->id }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -63,10 +58,12 @@
                                                         <label>Address</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control select2bs44" name="client_addr_id" id="client_addr_id">
+                                                        <select class="form-control select2bs44" name="client_addr_id"
+                                                            id="client_addr_id">
                                                             <option value="">Select Address</option>
-                                                            @foreach ($addresses as $address)
-                                                                <option value="{{ $address->id }}" <?= $company->id == $proforma_invoice_header['client_addr_id'] ? 'selected' : '' ?>>
+                                                            @foreach($addresses as $address)
+                                                                <option value="{{ $address->id }}"
+                                                                    <?= $companies->id == $proforma_invoice_header['client_addr_id'] ? 'selected' : '' ?>>
                                                                     {{ $address->address }}</option>
                                                             @endforeach
                                                         </select>

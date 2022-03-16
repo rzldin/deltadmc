@@ -30,7 +30,7 @@ class ProformaInvoiceController extends Controller
         Session::forget('invoice_details');
         $data['invoice_header'] = InvoiceModel::getInvoice($invoiceId)->first();
         $data['invoice_details'] = InvoiceDetailModel::getInvoiceDetails($invoiceId)->get();
-        $data['companies'] = MasterModel::company_data();
+        $data['companies'] = MasterModel::company_get($data['invoice_header']->client_id);
         $data['addresses'] = MasterModel::get_address($data['invoice_header']['client_id']);
         $data['pics'] = MasterModel::get_pic($data['invoice_header']['client_id']);
         $data['currency']       = MasterModel::currency();
@@ -351,6 +351,7 @@ class ProformaInvoiceController extends Controller
             // dd($details);
             $total_before_vat = 0;
             $total_vat = 0;
+            $total_pph23 = 0;
             $total_invoice = 0;
 
             // clear proforma details first
@@ -384,6 +385,7 @@ class ProformaInvoiceController extends Controller
                 // dd($details, $paramDetail);
                 $total_before_vat += $detail['sell_val'];
                 $total_vat += $detail['vat'];
+                $total_pph23 += $detail['pph23'];
                 $total_invoice += $detail['subtotal'];
                 $pid = ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
                 if(isset($detail['id'])){
@@ -419,7 +421,7 @@ class ProformaInvoiceController extends Controller
         $data['responsibility'] = SiteHelpers::getUserRole();
         $data['proforma_invoice_header'] = ProformaInvoiceModel::getProformaInvoice($proformaInvoiceId)->first();
         $data['proforma_invoice_details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($proformaInvoiceId)->get();
-        $data['companies'] = MasterModel::company_data();
+        $data['companies'] = MasterModel::company_get($data['proforma_invoice_header']->client_id);
         $data['addresses'] = MasterModel::get_address($data['proforma_invoice_header']['client_id']);
         $data['pics'] = MasterModel::get_pic($data['proforma_invoice_header']['client_id']);
         $data['currency']       = MasterModel::currency();
@@ -479,6 +481,9 @@ class ProformaInvoiceController extends Controller
             $total_vat = 0;
             $total_pph23 = 0;
             $total_invoice = 0;
+
+            $reimburse_flag = 0;
+            //Existing Detail Loop
             foreach ($proforma_details as $key => $proforma_detail) {
                 if ($proforma_detail->id_invoice_detail != null || $proforma_detail->id_invoice_detail != '') {
                     $id_invoice_dtl_arr = explode(',', $proforma_detail->id_invoice_detail);
@@ -519,6 +524,42 @@ class ProformaInvoiceController extends Controller
                 $total_pph23 += $pph23;
                 $total_invoice += $subtotal;
 
+                $reimburse_flag = $proforma_detail->reimburse_flag;
+            }
+
+            //New Detail Loop
+            $loop_new = InvoiceDetailModel::where('invoice_id',$request->invoice_id)->where('pfi_detail_id',0)->get();
+            foreach ($loop_new as $key => $value) {
+                $paramDetail['id'] = 0;
+                $paramDetail['proforma_invoice_id'] = $request->proforma_invoice_id;
+                $paramDetail['t_mcharge_code_id'] = $value->t_mcharge_code_id;
+                $paramDetail['reimburse_flag'] = $reimburse_flag;
+                $paramDetail['desc'] = $value->desc;
+                $paramDetail['currency'] = $value->currency;
+                $paramDetail['rate'] = $value->rate;
+                $paramDetail['cost'] = $value->cost;
+                $paramDetail['sell'] = $value->sell;
+                $paramDetail['qty'] = $value->qty;
+                $paramDetail['cost_val'] = $value->cost_val;
+                $paramDetail['sell_val'] = $value->sell_val;
+                $paramDetail['vat'] = $value->vat;
+                $paramDetail['pph23'] = $value->pph23;
+                $paramDetail['subtotal'] = $value->subtotal;
+                $paramDetail['routing'] = $value->routing;
+                $paramDetail['transit_time'] = $value->transit_time;
+                $paramDetail['created_by'] = Auth::user()->name;
+                $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                $paramDetail['is_merge'] = 0;
+                $paramDetail['id_invoice_detail'] = $value->id;
+                // dd($details, $paramDetail);
+                $total_before_vat += $value->sell_val;
+                $total_vat += $value->vat;
+                $total_pph23 += $value->pph23;
+                $total_invoice += $value->subtotal;
+                $pid = ProformaInvoiceDetailModel::saveProformaInvoiceDetail($paramDetail);
+                InvoiceDetailModel::where('id', $value->id)->update([
+                    'pfi_detail_id' => $pid->id
+                ]);
             }
             DB::table('t_proforma_invoice')->where('id', $request->proforma_invoice_id)->update([
                 'total_before_vat' => $total_before_vat,

@@ -26,7 +26,7 @@ class ExternalInvoiceController extends Controller
     {
         $data['proforma_invoice_header'] = ProformaInvoiceModel::getProformaInvoice($proformaInvoiceId)->first();
         $data['proforma_invoice_details'] = ProformaInvoiceDetailModel::getProformaInvoiceDetails($proformaInvoiceId)->get();
-        $data['companies'] = MasterModel::company_data();
+        $data['companies'] = MasterModel::company_get($data['proforma_invoice_header']->client_id);
         $data['addresses'] = MasterModel::get_address($data['proforma_invoice_header']['client_id']);
         $data['pics'] = MasterModel::get_pic($data['proforma_invoice_header']['client_id']);
         $data['currency']       = MasterModel::currency();

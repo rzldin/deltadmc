@@ -124,7 +124,8 @@ class InvoiceModel extends Model
     }
 
     public static function list_invoice_booking($id,$tipe,$client_id){
-        return InvoiceModel::where('t_booking_id', $id)->where('tipe_inv',$tipe)->where('status',0)->where('client_id', $client_id)->get();
+        return InvoiceModel::where('t_booking_id', $id)->where('tipe_inv',$tipe)->where('status',0)
+                ->where('flag_bayar',0)->where('client_id', $client_id)->get();
     }
 
     public static function count_inv($id){
