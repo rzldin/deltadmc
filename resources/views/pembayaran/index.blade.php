@@ -58,6 +58,9 @@
                                 <td>
                                     @if($pmb->status==0)
                                         <a class="btn btn-info btn-sm" href="{{route('pembayaran.edit', ['id'=>$pmb->id])}}"><i class="fa fa-edit"></i> Edit </a>
+                                        @if($pmb->jumlah==0)
+                                            <a class="btn btn-danger btn-sm" href="javascript:;"  onclick="deleteInvoice({{ $pmb->id }})"><i class="fa fa-trash"></i> Delete </a>
+                                        @endif
                                     @else
                                         <a class="btn btn-primary btn-sm" href="{{route('pembayaran.view', ['id'=>$pmb->id])}}"><i class="fa fa-file-alt"></i> View </a>
                                     @endif
@@ -95,6 +98,25 @@
             $('#jenis_pmb').val(1);
             $('#formku').submit();
         }
+    }
+
+    function deleteInvoice(id) {
+        let url = `{{ route('pembayaran.delete', ':id') }}`;
+        url = url.replace(':id', id);
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        })
     }
 </script>
 @endpush

@@ -114,11 +114,14 @@
                                                         <label>Invoice Type {{ $reimburse }}</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="radio" name="invoice_type" id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG" <?= $reimburse == 'on' ? 'checked' : '' ?>> Reguler<br>
-                                                        <input type="radio" name="invoice_type" id="invoice_type_reimbursment" onchange="loadSellCost({{ $booking->id }})" value="REM" <?= $reimburse == 'on' ? 'checked' : '' ?>>
+                                                    @if($is_reimburse>0)
+                                                        <input type="radio" name="invoice_type" id="invoice_type_reimbursment" onchange="loadSellCost({{ $booking->id }})" value="REM" checked>
                                                         Reimbursment<br>
+                                                    @else
+                                                        <input type="radio" name="invoice_type" id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG"> Reguler<br>
                                                         <input type="radio" name="invoice_type" id="invoice_type_debit_note" onchange="loadSellCost({{ $booking->id }})" value="DN"> Debit Note<br>
                                                         <input type="radio" name="invoice_type" id="invoice_type_credit_note" onchange="loadSellCost({{ $booking->id }})" value="CN"> Credit Note<br>
+                                                    @endif
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -268,7 +271,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                                                            <input type="text" name="onboard_date" id="onboard_date" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                                                            <input type="text" name="onboard_date" id="onboard_date" class="form-control datetimepicker-input" data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->etd_date)->format('d/m/Y') }}" />
                                                             <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>

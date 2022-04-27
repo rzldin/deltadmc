@@ -265,30 +265,48 @@ class BookingController extends Controller
 
         #Doc Date
         if($request->doc_date != null){
-            $doc_date = Carbon::parse($request->doc_date);
+            $doc_date = Carbon::createFromFormat('d/m/Y', $request->doc_date)->format('Y-m-d');
         }else{
             $doc_date = null;
         }
 
         #Igm Date
         if($request->igm_date != null){
-            $igm_date = Carbon::parse($request->igm_date);
+            $igm_date = Carbon::createFromFormat('d/m/Y', $request->igm_date)->format('Y-m-d');
         }else{
             $igm_date = null;
         }
 
         #Mbl Date
         if($request->mbl_date != null){
-            $mbl_date = Carbon::parse($request->mbl_date);
+            $mbl_date = Carbon::createFromFormat('d/m/Y', $request->mbl_date)->format('Y-m-d');
         }else{
             $mbl_date = null;
         }
 
         #Hbl Date
         if($request->hbl_date != null){
-            $hbl_date = Carbon::parse($request->hbl_date);
+            $hbl_date = Carbon::createFromFormat('d/m/Y', $request->hbl_date)->format('Y-m-d');
         }else{
             $hbl_date = null;
+        }
+
+        if($request->stuf_date !== null){
+            $stuf_date = Carbon::createFromFormat('d/m/Y', $request->stuf_date)->format('Y-m-d');
+        }else{
+            $stuf_date = null;
+        }
+
+        if($request->eta_date !== null){
+            $eta_date = Carbon::createFromFormat('d/m/Y', $request->eta_date)->format('Y-m-d');
+        }else{
+            $eta_date = null;
+        }
+
+        if($request->etd_date !== null){
+            $etd_date = Carbon::createFromFormat('d/m/Y', $request->etd_date)->format('Y-m-d');
+        }else{
+            $etd_date = null;
         }
 
         DB::beginTransaction();
@@ -298,7 +316,7 @@ class BookingController extends Controller
             $id =   DB::table('t_booking')->insertGetId([
                         't_quote_id'            => $request->id_quote,
                         'booking_no'            => $request->booking_no,
-                        'booking_date'          => Carbon::parse($request->booking_date),
+                        'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
                         'shipment_by'           => $request->shipment_by,
@@ -334,8 +352,8 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
-                        'eta_date'              => Carbon::parse($request->eta),
-                        'etd_date'              => Carbon::parse($request->etd),
+                        'eta_date'              => $eta_date,
+                        'etd_date'              => $etd_date,
                         'place_origin'          => $request->pfo,
                         'place_destination'     => $request->pod,
                         'pol_id'                => $request->pol,
@@ -352,7 +370,7 @@ class BookingController extends Controller
                         'value_prepaid'         => $request->vop,
                         'value_collect'         => $request->voc,
                         'freetime_detention'    => $request->fod,
-                        'stuffing_date'         => Carbon::parse($request->stuf_date),
+                        'stuffing_date'         => $stuf_date,
                         'stuffing_place'        => $request->posx,
                         'delivery_of_goods'     => $request->dogs,
                         'valuta_comm'           => $request->valuta_com,
@@ -482,6 +500,7 @@ class BookingController extends Controller
 
     public function booking_doAddVersion(Request $request)
     {
+        DB::beginTransaction();
         $shipping   = QuotationModel::get_quoteShipping($request->id_quote);
         // $dtlQuote   = QuotationModel::get_quoteDetail($request->id_quote);
         $shp = $shipping[0];
@@ -495,30 +514,48 @@ class BookingController extends Controller
 
         #Doc Date
         if($request->doc_date != null){
-            $doc_date = Carbon::parse($request->doc_date);
+            $doc_date = Carbon::createFromFormat('d/m/Y', $request->doc_date)->format('Y-m-d');
         }else{
             $doc_date = null;
         }
 
         #Igm Date
         if($request->igm_date != null){
-            $igm_date = Carbon::parse($request->igm_date);
+            $igm_date = Carbon::createFromFormat('d/m/Y', $request->igm_date)->format('Y-m-d');
         }else{
             $igm_date = null;
         }
 
         #Mbl Date
         if($request->mbl_date != null){
-            $mbl_date = Carbon::parse($request->mbl_date);
+            $mbl_date = Carbon::createFromFormat('d/m/Y', $request->mbl_date)->format('Y-m-d');
         }else{
             $mbl_date = null;
         }
 
         #Hbl Date
         if($request->hbl_date != null){
-            $hbl_date = Carbon::parse($request->hbl_date);
+            $hbl_date = Carbon::createFromFormat('d/m/Y', $request->hbl_date)->format('Y-m-d');
         }else{
             $hbl_date = null;
+        }
+
+        if($request->stuf_date !== null){
+            $stuf_date = Carbon::createFromFormat('d/m/Y', $request->stuf_date)->format('Y-m-d');
+        }else{
+            $stuf_date = null;
+        }
+
+        if($request->eta !== null){
+            $eta_date = Carbon::createFromFormat('d/m/Y', $request->eta)->format('Y-m-d');
+        }else{
+            $eta_date = null;
+        }
+
+        if($request->etd !== null){
+            $etd_date = Carbon::createFromFormat('d/m/Y', $request->etd)->format('Y-m-d');
+        }else{
+            $etd_date = null;
         }
 
         try{
@@ -527,7 +564,7 @@ class BookingController extends Controller
             $id =   DB::table('t_booking')->insertGetId([
                         't_quote_id'            => $request->id_quote,
                         'booking_no'            => $request->booking_no,
-                        'booking_date'          => Carbon::parse($request->booking_date),
+                        'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
                         'shipment_by'           => $request->shipment_by,
@@ -562,8 +599,8 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
-                        'eta_date'              => Carbon::parse($request->eta),
-                        'etd_date'              => Carbon::parse($request->etd),
+                        'eta_date'              => $eta_date,
+                        'etd_date'              => $etd_date,
                         'place_origin'          => $request->pfo,
                         'place_destination'     => $request->pod,
                         'pol_id'                => $request->pol,
@@ -580,7 +617,7 @@ class BookingController extends Controller
                         'value_prepaid'         => $request->vop,
                         'value_collect'         => $request->voc,
                         'freetime_detention'    => $request->fod,
-                        'stuffing_date'         => Carbon::parse($request->stuf_date),
+                        'stuffing_date'         => $stuf_date,
                         'stuffing_place'        => $request->posx,
                         'delivery_of_goods'     => $request->dogs,
                         'valuta_comm'           => $request->valuta_com,
@@ -687,7 +724,7 @@ class BookingController extends Controller
                             't_booking_id'          => $id,
                             't_mdoc_type_id'        => $row->t_mdoc_type_id,
                             'doc_no'                => $row->doc_no,
-                            'doc_date'              => Carbon::parse($request->date),
+                            'doc_date'              => $doc_date,
                             'created_by'            => $user,
                             'created_on'            => $tanggal
                         ]);
@@ -781,13 +818,15 @@ class BookingController extends Controller
                         't_booking_id' => $id
                     ]);
 
-                    DB::table('t_booking')->where('t_booking_id', $request->booking_idx)->update([
+                    DB::table('t_booking')->where('id', $request->booking_idx)->update([
                         'status' => 9,//Status sudah ada versi diatasnya,jadi gaboleh di edit lagi versi sebelumnya, hanya buat histori
                         'updated_by'            => $user,
-                        'updated_on'            => $tanggal
+                        'updated_at'            => $tanggal
                     ]);
+            DB::commit();
             return redirect('booking/edit_booking/'.$id)->with('status', 'Successfully added');
         } catch (\Exception $e) {
+            DB::rollback();
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
     }
@@ -1250,7 +1289,7 @@ class BookingController extends Controller
                 't_booking_id'      => $request->booking,
                 't_mdoc_type_id'    => $request->doc,
                 'doc_no'            => $request->number,
-                'doc_date'          => Carbon::parse($request->date),
+                'doc_date'          => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                 'created_by'        => $user,
                 'created_on'        => $tanggal
             ]);
@@ -1336,7 +1375,7 @@ class BookingController extends Controller
             ->update([
                 't_mdoc_type_id'    => $request->doc,
                 'doc_no'            => $request->number,
-                'doc_date'          => Carbon::parse($request->date)
+                'doc_date'          => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d')
             ]);
 
             $return_data = 'sukses';
@@ -1366,22 +1405,60 @@ class BookingController extends Controller
         $countPack  = count($packages);
         $countCon   = count($container);
 
+        $quote->flag_invoice = 0; // biar ga disabled
+
         return view('booking.new_version', compact('quote', 'versionNow', 'commodity', 'packages', 'container', 'doc', 'roadCons', 'schedule', 'sellCost', 'countCom', 'countPack', 'countCon'));
     }
 
     public function doUpdate(Request $request)
     {
         try {
+            $doc_date = null;
+            $igm_date = null;
+            $eta_date = null;
+            $etd_date = null;
+            $stuf_date = null;
+            $mbl_date = null;
+            $hbl_date = null;
+
+            if($request->doc_date !== null){
+                $doc_date = Carbon::createFromFormat('d/m/Y', $request->doc_date)->format('Y-m-d');
+            }
+
+            if($request->igm_date !== null){
+                $igm_date = Carbon::createFromFormat('d/m/Y', $request->igm_date)->format('Y-m-d');
+            }
+
+            if($request->eta_date !== null){
+                $eta_date = Carbon::createFromFormat('d/m/Y', $request->eta_date)->format('Y-m-d');
+            }
+
+            if($request->etd_date !== null){
+                $etd_date = Carbon::createFromFormat('d/m/Y', $request->etd_date)->format('Y-m-d');
+            }
+
+            if($request->stuf_date !== null){
+                $stuf_date = Carbon::createFromFormat('d/m/Y', $request->stuf_date)->format('Y-m-d');
+            }
+
+            if($request->mbl_date !== null){
+                $mbl_date = Carbon::createFromFormat('d/m/Y', $request->mbl_date)->format('Y-m-d');
+            }
+
+            if($request->hbl_date !== null){
+                $hbl_date = Carbon::createFromFormat('d/m/Y', $request->hbl_date)->format('Y-m-d');
+            }
+
             DB::table('t_booking')
             ->where('id', $request->id_booking)
             ->update([
                 'booking_no'            => $request->booking_no,
-                'booking_date'          =>  Carbon::parse($request->booking_date),
+                'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                 't_mdoc_type_id'        => $request->doctype,
                 'custom_doc_no'         => $request->doc_no,
-                'custom_doc_date'       => Carbon::parse($request->doc_date),
+                'custom_doc_date'       => $doc_date,
                 'igm_no'                => $request->igm_number,
-                'igm_date'              => Carbon::parse($request->igm_date),
+                'igm_date'              => $igm_date,
                 'custom_pos'            => $request->pos,
                 'custom_subpos'         => $request->sub_pos,
                 'client_id'             => $request->customer_add,
@@ -1407,8 +1484,8 @@ class BookingController extends Controller
                 'vendor_pic_id'         => $request->vendor_pic,
                 'carrier_id'            => $request->carrier,
                 'flight_number'         => $request->voyage,
-                'eta_date'              => Carbon::parse($request->eta),
-                'etd_date'              => Carbon::parse($request->etd),
+                'eta_date'              => $eta_date,
+                'etd_date'              => $etd_date,
                 'place_origin'          => $request->pfo,
                 'place_destination'     => $request->pod,
                 'pol_id'                => $request->pol,
@@ -1426,7 +1503,7 @@ class BookingController extends Controller
                 'value_prepaid'         => $request->vop,
                 'value_collect'         => $request->voc,
                 'freetime_detention'    => $request->fod,
-                'stuffing_date'         => Carbon::parse($request->stuf_date),
+                'stuffing_date'         => $stuf_date,
                 'stuffing_place'        => $request->posx,
                 'delivery_of_goods'     => $request->dogs,
                 'valuta_comm'           => $request->valuta_com,
@@ -1438,13 +1515,13 @@ class BookingController extends Controller
                 'mbl_consignee'         => $request->cons_mbl,
                 'mbl_not_party'         => $request->notify_mbl,
                 'mbl_no'                => $request->mbl_number,
-                'mbl_date'              => Carbon::parse($request->mbl_date),
+                'mbl_date'              => $mbl_date,
                 'valuta_mbl'            => $request->valuta_mbl,
                 'hbl_shipper'           => $request->shipper_hbl,
                 'hbl_consignee'         => $request->cons_hbl,
                 'hbl_not_party'         => $request->notify_hbl,
                 'hbl_no'                => $request->hbl_number,
-                'hbl_date'              => Carbon::parse($request->hbl_date),
+                'hbl_date'              => $hbl_date,
                 'valuta_hbl'            => $request->valuta_hbl,
                 't_mbl_issued_id'       => $request->mbl_issued,
                 'total_commodity'       => $request->total_commo,
@@ -1585,7 +1662,7 @@ class BookingController extends Controller
                 't_mschedule_type_id'   => $request->schedule,
                 'position_no'           => $p,
                 'desc'                  => $request->desc,
-                'date'                  => Carbon::parse($request->date),
+                'date'                  => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                 'notes'                 => $request->notes,
                 'created_by'            => $user,
                 'created_on'            => $tanggal
@@ -1661,7 +1738,7 @@ class BookingController extends Controller
             ->update([
                 't_mschedule_type_id'   => $request->schedule,
                 'desc'                  => $request->desc,
-                'date'                  => Carbon::parse($request->date),
+                'date'                  => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                 'notes'                 => $request->notes,
             ]);
 
@@ -1723,13 +1800,14 @@ class BookingController extends Controller
             $tabel .= '<td class="text-left">'.$row->charge_name.'</td>';
             $tabel .= '<td class="text-left">'.$row->desc.'</td>';
             $tabel .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
+            $tabel .= '<td class="text-left">'.(($row->term==0)? '(P) Prepaid':'(C) Collect').'</td>';
             $tabel .= '<td class="text-left">'.$row->qty.'</td>';
             $tabel .= '<td class="text-left">'.$row->code_cur.'</td>';
             $tabel .= '<td class="text-right">'.number_format($row->cost,2,',','.').'</td>';
             $tabel .= '<td class="text-right">'.number_format(($row->qty * $row->cost),2,',','.').'</td>';
             $tabel .= '<td class="text-right">'.number_format($row->rate,2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format($row->vat,2,',','.').'</td>';
-            $tabel .= '<td class="text-right">'.number_format($amount,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($row->cost_adjustment,2,',','.').'</td>';
+            $tabel .= '<td class="text-right">'.number_format($amount+$row->cost_adjustment,2,',','.').'</td>';
             if($row->paid_to == null){
                 $tabel .= '<td>';
                 $tabel .= '<select onchange="fillPaidToName('.$no.')" id="paid_to_'.$no.'" class="form-control select2bs44" data-placeholder="Pilih..." style="margin-bottom:5px;">';
@@ -1777,6 +1855,7 @@ class BookingController extends Controller
             $tabel1 .= '<td class="text-left">'.$row->charge_name.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->desc.'</td>';
             $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_'.$no.'" '.$style.' onclick="return false;" disabled></td>';
+            $tabel1 .= '<td class="text-left">'.(($row->term==0)? '(P) Prepaid':'(C) Collect').'</td>';
             $tabel1 .= '<td class="text-left">'.$row->qty.'</td>';
             $tabel1 .= '<td class="text-left">'.$row->code_cur.'</td>';
             $tabel1 .= '<td class="text-right">'.number_format($row->sell,2,',','.').'</td>';
@@ -1849,10 +1928,10 @@ class BookingController extends Controller
                     $tabel2 .= '<td class="text-center"><strong>'.$profit->routing.'</strong></td>';
                     $tabel2 .= '<td class="text-center"><strong>'.$profit->transit_time.'</strong></td>';
                 }
-                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.').'</strong></td>';
-                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.').'</strong></td>';
-                $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.').'</strong></td>';
-                $tabel2 .= '<td class="text-center"><strong>'.number_format($profitPct,2).'%</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalCost,2,',','.') .'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($totalSell,2,',','.') .'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($profitAll,2,',','.') .'</strong></td>';
+                $tabel2 .= '<td class="text-center"><strong>'. number_format($profitPct,2) .'%</strong></td>';
                 $tabel2 .= '</tr>';
                 $no++;
         }
@@ -2030,6 +2109,7 @@ class BookingController extends Controller
         $shipping   = QuotationModel::get_quoteShipping($booking->t_quote_id);
         $quote      = QuotationModel::get_detailQuote($booking->t_quote_id);
 
+
         $data['booking']    = $booking;
         $data['profit']     = $profit;
         $data['quoteDtl']   = $quoteDtl;
@@ -2051,7 +2131,7 @@ class BookingController extends Controller
             DB::table('t_booking')
             ->where('id', $request->id)
             ->update([
-                'status'            => 1,
+                'status' => 1,
             ]);
 
             $return_data = 'sukses';
@@ -2087,7 +2167,7 @@ class BookingController extends Controller
         # Insert Booking
         $id =   DB::table('t_booking')->insertGetId([
             't_quote_id'            => $booking->t_quote_id,
-            'booking_date'          => Carbon::parse($booking->booking_date),
+            'booking_date'          => Carbon::createFromFormat('d/m/Y', $booking->booking_date)->format('Y-m-d'),
             'version_no'            => 1,
             'activity'              => $booking->activity,
             'nomination_flag'       => $booking->nomination_flag,
@@ -2430,6 +2510,7 @@ class BookingController extends Controller
             'sell_val'          => str_replace(',','', $request->sell_val),
             'vat'               => $request->vat,
             'subtotal'          => str_replace(',','', $request->total),
+            'term'              => $request->term,
             'routing'           => $shp_routing,
             'transit_time'      => $shp_transit_time,
             'created_by'        => $user,
@@ -2552,6 +2633,7 @@ class BookingController extends Controller
                 'cost_val'          => str_replace(',','', $request->cost_val),
                 'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
+                'term'              => $request->term,
                 'paid_to'           => $client_name,
                 'paid_to_id'        => $client_id,
                 'subtotal'          => str_replace(',','', $request->total),
@@ -2580,6 +2662,7 @@ class BookingController extends Controller
                 'cost_val'          => str_replace(',','', $request->cost_val),
                 'sell_val'          => str_replace(',','', $request->sell_val),
                 'vat'               => $request->vat,
+                'term'              => $request->term,
                 'bill_to'           => $client_name,
                 'bill_to_id'        => $client_id,
                 'subtotal'          => str_replace(',','', $request->total),

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class JournalController extends Controller
 {
@@ -287,21 +288,37 @@ class JournalController extends Controller
                     $request->session()->push('journal_details', $newItem);
                 }
 
-                if ($invoice->pph23 > 0) {
-                    // account pph23 di credit
-                    $account_pajak = MasterModel::findAccountByAccountNumber('2-1203')->first();
+                if ($invoice->ppn1 > 0) {
+                    // account tax di credit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1403')->first();
                     $newItem = [
                         'account_id' => $account_pajak->id,
                         'account_number' => $account_pajak->account_number,
                         'account_name' => $account_pajak->account_name,
-                        'transaction_type' => 'C',
-                        'debit' => 0,
-                        'credit' => $invoice->pph23,
-                        'memo' => 'HUTANG PAJAK - PPH PASAL 23',
+                        'transaction_type' => 'D',
+                        'debit' => $invoice->ppn1,
+                        'credit' => 0,
+                        'memo' => 'PPN 1%',
                     ];
 
                     $request->session()->push('journal_details', $newItem);
                 }
+
+                // if ($invoice->pph23 > 0) {
+                //     // account pph23 di credit
+                //     $account_pajak = MasterModel::findAccountByAccountNumber('2-1203')->first();
+                //     $newItem = [
+                //         'account_id' => $account_pajak->id,
+                //         'account_number' => $account_pajak->account_number,
+                //         'account_name' => $account_pajak->account_name,
+                //         'transaction_type' => 'C',
+                //         'debit' => 0,
+                //         'credit' => $invoice->pph23,
+                //         'memo' => 'HUTANG PAJAK - PPH PASAL 23',
+                //     ];
+
+                //     $request->session()->push('journal_details', $newItem);
+                // }
 
                 // account ap di credit
                 $newItem = [
@@ -310,7 +327,7 @@ class JournalController extends Controller
                     'account_name' => $company[0]->account_payable_name,
                     'transaction_type' => 'D',
                     'debit' => 0,
-                    'credit' => $invoice->total_invoice,
+                    'credit' => $invoice->total_invoice + $invoice->pph23,
                     'memo' => 'AP ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
                 ];
 
@@ -465,7 +482,7 @@ class JournalController extends Controller
 
             $param['id'] = $request->id;
             $param['journal_no'] = $request->journal_no;
-            $param['journal_date'] = date('Y-m-d', strtotime($request->journal_date));
+            $param['journal_date'] = Carbon::createFromFormat('d/m/Y', $request->journal_date)->format('Y-m-d');
             $param['currency_id'] = $request->currency_id;
             $param['amount'] = $request->amount;
             $param['created_by'] = Auth::user()->name;
@@ -579,7 +596,7 @@ class JournalController extends Controller
             $journal_details = JournalDetail::where('journal_id', $request->id)->get();
             foreach ($journal_details as $key => $detail) {
                 $param['id'] = 0;
-                $param['gl_date'] = date('Y-m-d', strtotime($journal->journal_date));
+                $param['gl_date'] = Carbon::createFromFormat('d/m/Y', $request->journal_date)->format('Y-m-d');
                 $param['journal_id'] = $request->id;
                 $param['account_id'] = $detail->account_id;
                 $param['currency_id'] = $journal->currency_id;

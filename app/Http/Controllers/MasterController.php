@@ -1937,4 +1937,80 @@ class MasterController extends Controller
         }
     }
 
+    /** Document Type **/
+    public function doc_type()
+    {
+        $data['list_data'] = MasterModel::get_doc();
+
+        return view('master.doc_type')->with($data);
+    }
+
+    public function doc_type_doAdd(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+
+            $status = 0;
+            if($request->status == 1){
+                $status = 1;
+            }
+            DB::table('t_mdoc_type')->insert([
+                'name'          => $request->name,
+                'desc'          => $request->desc,
+                'doc_group'     => $request->doc_group,
+                'status'        => $status,
+                'created_by'    => $user,
+                'created_on'    => $tanggal
+            ]);
+
+            return redirect()->route('master.doc_type')->with('status', 'Successfully added');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function doc_type_doEdit(Request $request)
+    {
+        try {
+            $user = Auth::user()->name;
+            $tanggal = Carbon::now();
+
+            $status = 0;
+            if($request->status == 1){
+                $status = 1;
+            }
+
+            $get = DB::table('t_mdoc_type')->where('id', $request->id)->update([
+                'name'          => $request->name,
+                'desc'          => $request->desc,
+                'doc_group'     => $request->doc_group,
+                'active_flag'        => $status,
+                'created_by'    => $user,
+                'created_on'    => $tanggal
+            ]);
+
+            return redirect()->route('master.doc_type')->with('status', 'Successfully updated');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
+    public function doc_type_get(Request $request)
+    {
+        $data = DB::table('t_mdoc_type')->where('id', $request['id'])->first();
+        return json_encode($data);
+    }
+
+    public function doc_type_delete($id)
+    {
+        try {
+            DB::table('t_mdoc_type')->where('id', $id)->delete();
+
+            return redirect()->route('master.country')->with('status', 'Successfully deleted');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
+        }
+    }
+
 }

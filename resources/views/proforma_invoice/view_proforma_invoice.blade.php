@@ -206,7 +206,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input readonly class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $header->mbl_no }}">
+                                                        id="mbl_shipper" value="{{ $header->mbl_shipper }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">

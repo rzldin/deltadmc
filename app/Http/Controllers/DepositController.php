@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class DepositController extends Controller
 {
@@ -65,7 +66,7 @@ class DepositController extends Controller
             $deposit = Deposit::saveDeposit($paramHeader);
 
             $paramDetail['deposit_id'] = $deposit->id;
-            $paramDetail['deposit_date'] = date('Y-m-d', strtotime($request->deposit_date));
+            $paramDetail['deposit_date'] = Carbon::createFromFormat('d/m/Y', $request->deposit_date)->format('Y-m-d');
             $paramDetail['amount'] = $request->amount;
             $paramDetail['invoice_id'] = ($request->has('invoice_id') ? $request->invoice_id : 0);
             $paramDetail['journal_id'] = ($request->has('journal_id') ? $request->journal_id : 0);
@@ -105,7 +106,7 @@ class DepositController extends Controller
             foreach ($request->journal_id as $key => $journal_id) {
                 $amount_detail = $request->amount[$key];
                 $paramDetail['deposit_id'] = $deposit->id;
-                $paramDetail['deposit_date'] = date('Y-m-d', strtotime($request->deposit_date));
+                $paramDetail['deposit_date'] = Carbon::createFromFormat('d/m/Y', $request->deposit_date)->format('Y-m-d');
                 $paramDetail['amount'] = $amount_detail;
                 $paramDetail['invoice_id'] = $request->invoice_id;
                 $paramDetail['pembayaran_id'] = $request->pembayaran_id;

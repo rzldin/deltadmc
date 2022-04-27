@@ -195,55 +195,55 @@
 
     //Date picker
     $('#reservationdate').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#bookingdate').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#docdate').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#igmdate').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdatex').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdatexx').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdateDOC').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdateMBL').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdatez').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdateAWB').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#reservationdatec').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#ETA').datetimepicker({
-        format: 'L'
+        format: 'DD/MM/yy'
     });
 
     $('#stuffingDate').datetimepicker({
-        format : 'L'
+        format: 'DD/MM/yy'
     });
 
       $(function () {

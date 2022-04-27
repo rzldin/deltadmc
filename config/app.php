@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'id',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,6 +166,7 @@ return [
          * Package Service Providers...
          */
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
+        Riskihajar\Terbilang\TerbilangServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -233,6 +234,7 @@ return [
         'SiteHelpers' => App\Helpers\SiteHelpers::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
 
+        'Terbilang' => Riskihajar\Terbilang\Facades\Terbilang::class,
     ],
 
 ];

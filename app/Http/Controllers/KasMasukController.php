@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class KasMasukController extends Controller
 {
@@ -112,13 +113,13 @@ class KasMasukController extends Controller
 
             $param = $request->all();
             $param['id'] = 0;
-            $param['kas_masuk_date'] = date('Y-m-d', strtotime($request->kas_masuk_date));
-            $param['transaction_date'] = date('Y-m-d', strtotime($request->transaction_date));
+            $param['kas_masuk_date'] = Carbon::createFromFormat('d/m/Y', $request->kas_masuk_date)->format('Y-m-d');
+            $param['transaction_date'] = Carbon::createFromFormat('d/m/Y', $request->transaction_date)->format('Y-m-d');
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
             if ($request->has('giro')) {
                 unset($param['giro']);
-                $param['due_date'] = date('Y-m-d', strtotime($request->due_date));
+                $param['due_date'] = Carbon::createFromFormat('d/m/Y', $request->due_date)->format('Y-m-d');
             }
             $kasMasuk = KasMasuk::saveKasMasuk($param);
 

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class JournalDepositController extends Controller
 {
@@ -237,7 +238,7 @@ class JournalDepositController extends Controller
 
             $param['id'] = $request->id;
             $param['journal_no'] = $request->journal_no;
-            $param['journal_date'] = date('Y-m-d', strtotime($request->journal_date));
+            $param['journal_date'] = Carbon::createFromFormat('d/m/Y', $request->journal_date)->format('Y-m-d');
             $param['currency_id'] = $request->currency_id;
             if ($request->has('journal_type') && $request->journal_type != 'general_journal') {
                 $param['company_id'] = $request->company_id;
@@ -307,7 +308,7 @@ class JournalDepositController extends Controller
 
             $paramDepositD['id'] = $deposit_detail == [] ? 0 : $deposit_detail->id;
             $paramDepositD['deposit_id'] = $deposit->id;
-            $paramDepositD['deposit_date'] = date('Y-m-d', strtotime($request->journal_date));
+            $paramDepositD['deposit_date'] = Carbon::createFromFormat('d/m/Y', $request->journal_date)->format('Y-m-d');
             $paramDepositD['amount'] = $amount;
             $paramDepositD['invoice_id'] = ($request->has('invoice_id') ? $request->invoice_id : 0);
             $paramDepositD['journal_id'] = $journal->id;

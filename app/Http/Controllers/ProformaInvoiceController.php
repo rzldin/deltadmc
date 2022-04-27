@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class ProformaInvoiceController extends Controller
 {
@@ -316,7 +317,7 @@ class ProformaInvoiceController extends Controller
                 $param['proforma_invoice_no'] = $request->proforma_invoice_no;
             }
             $param['truck_no'] = $request->truck_no;
-            $param['proforma_invoice_date'] = date('Y-m-d', strtotime($request->proforma_invoice_date));
+            $param['proforma_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->proforma_invoice_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
@@ -328,7 +329,7 @@ class ProformaInvoiceController extends Controller
             $param['m_vessel'] = $request->m_vessel;
             $param['pol_id'] = $request->pol_id;
             $param['pod_id'] = $request->pod_id;
-            $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
+            $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
             $param['rate'] = $request->rate;
             $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);
             $param['total_vat'] = str_replace(',', '', $request->input_ppn);
@@ -343,6 +344,8 @@ class ProformaInvoiceController extends Controller
             unset($param['pod_name']);
             unset($param['input_ppn']);
             unset($param['input_pph23']);
+
+            // print_r($param);die();
 
             // dd($request->all(), $param);
             $proforma_invoice = ProformaInvoiceModel::saveProformaInvoice($param);

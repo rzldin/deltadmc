@@ -124,6 +124,12 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/company_deletePic','MasterController@company_deletePic')->name('master.company_deletePic');
     Route::post('/master/company_updatePic', 'MasterController@company_updatePic')->name('master.company_updatePic');
 
+    //Document Type
+    Route::get('/master/doc_type', 'MasterController@doc_type')->name('master.doc_type');
+    Route::post('/master/doc_type_doAdd', 'MasterController@doc_type_doAdd')->name('master.doc_type_doAdd');
+    Route::post('/master/doc_type_doEdit', 'MasterController@doc_type_doEdit')->name('master.doc_type_doEdit');
+    Route::post('/master/doc_type_get', 'MasterController@doc_type_get')->name('master.doc_type_get');
+    Route::get('/master/doc_type_delete/{id}', 'MasterController@doc_type_delete')->name('master.doc_type_delete');
 
     //User
     Route::get('/master/user', 'MasterController@user')->name('master.user');
@@ -404,7 +410,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/internal/loadSellCost', 'InvoiceController@loadSellCost')->name('invoice.loadSellCost');
     Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
     Route::post('/invoice/internal/openINV', 'InvoiceController@openINV')->name('invoice.openINV');
+    Route::get('/invoice/internal/print/{id}', 'InvoiceController@print')->name('invoice.print');
 
+    /** External **/
+    Route::get('/invoice/external/create/{proformaInvoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');
     Route::get('/invoice/external', 'ExternalInvoiceController@index')->name('external_invoice.index');
     Route::get('/invoice/external/find/{id}', 'ExternalInvoiceController@getExternalInvoice')->name('external_invoice.getExternalInvoice');
     Route::get('/invoice/external/view/{id}', 'ExternalInvoiceController@view')->name('external_invoice.view');
@@ -430,6 +439,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/pembayaran/add', 'PembayaranController@add')->name('pembayaran.add');
     Route::post('/pembayaran/save', 'PembayaranController@save')->name('pembayaran.save');
     Route::get('/pembayaran/edit/{id}', 'PembayaranController@edit')->name('pembayaran.edit');
+    Route::get('/pembayaran/delete/{id}', 'PembayaranController@delete')->name('pembayaran.delete');
     Route::post('/pembayaran/list_hutang', 'PembayaranController@list_hutang')->name('pembayaran.list_hutang');
     Route::post('/pembayaran/getDataInv', 'PembayaranController@getDataInv')->name('pembayaran.getDataInv');
     Route::post('/pembayaran/saveDetailPembayaran', 'PembayaranController@saveDetailPembayaran')->name('pembayaran.saveDetailPembayaran');

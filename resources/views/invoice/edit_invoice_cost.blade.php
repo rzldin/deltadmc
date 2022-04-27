@@ -174,6 +174,15 @@
                                             </div>
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
+                                                    <label>Kurs</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input readonly class="form-control" type="text" name="kurs"
+                                                        id="kurs" value="{{ number_format($header->rate,2,',','.') }}">
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
                                                     <label>MB/L NO.</label>
                                                 </div>
                                                 <div class="col-md-8">
@@ -266,8 +275,9 @@
                                                 <th>ROE</th>
                                                 <th>Total</th>
                                                 <th>Cost Adjustment</th>
-                                                <th>PPN</th>
+                                                <th>PPN 10%</th>
                                                 <th>PPH23 (-)</th>
+                                                <th>PPN 1%</th>
                                                 <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
                                                 <th>Action</th>
@@ -278,6 +288,7 @@
                                                 $total = 0;
                                                 $ppn = 0;
                                                 $pph23 = 0;
+                                                $ppn1 = 0;
                                                 $subtotal = 0;
                                             @endphp
                                             @foreach ($details as $key => $detail)
@@ -294,6 +305,7 @@
                                                     <td align="right">{{ number_format($detail->cost_adjustment, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->pph23, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->ppn1, 2, ',', '.') }}</td>
                                                     <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
                                                     <td>
                                                         <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
@@ -303,6 +315,7 @@
                                                     $total += $detail->cost_val;
                                                     $ppn += $detail->vat;
                                                     $pph23 += $detail->pph23;
+                                                    $ppn1 += $detail->ppn1;
                                                     $subtotal += $detail->subtotal;
                                                 @endphp
                                             @endforeach
@@ -312,7 +325,9 @@
                                                 <td></td>
                                                 <td>{{ number_format($ppn,2,',','.') }}</td>
                                                 <td>{{ number_format($pph23,2,',','.') }}</td>
+                                                <td>{{ number_format($ppn1,2,',','.') }}</td>
                                                 <td>{{ number_format($subtotal,2,',','.') }}</td>
+                                                <td></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -357,15 +372,18 @@
     }
 
     function syncInvoice() {
-        let is_ppn = 0;
-        let is_pph23 = 0;
+        // let is_ppn = 0;
+        // let is_pph23 = 0;
 
-        if (@json($header->total_vat) > 0) {
-            is_ppn = 1;
-        }
-        if (@json($header->pph23) > 0) {
-            is_pph23 = 1;
-        }
+        // if (@json($header->total_vat) > 0) {
+        //     is_ppn = 1;
+        // }
+        // if (@json($header->pph23) > 0) {
+        //     is_pph23 = 1;
+        // }
+        // if (@json($header->ppn1) > 0) {
+        //     is_pph23 = 1;
+        // }
         $.ajax({
             type: 'get',
             url: `{{ route('invoice.syncInvoiceDetail') }}`,
@@ -373,8 +391,8 @@
                 t_booking_id : @json($header->t_booking_id),
                 invoice_id : @json($header->id),
                 type_invoice : 'cost',
-                is_ppn : is_ppn,
-                is_pph23 : is_pph23,
+                // is_ppn : is_ppn,
+                // is_pph23 : is_pph23,
             },
             success: function(result) {
                 if (result.status == 'success') {

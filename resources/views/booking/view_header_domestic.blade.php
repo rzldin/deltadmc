@@ -448,7 +448,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>ETD</label>
+                        <label>ETD<font color="red">*</font></label>
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatex" data-target-input="nearest">

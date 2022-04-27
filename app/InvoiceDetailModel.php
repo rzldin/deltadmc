@@ -42,7 +42,6 @@ class InvoiceDetailModel extends Model
 
     public static function findHeader($id){
         return InvoiceDetailModel::leftJoin('t_invoice as ti', 'ti.id', '=', 't_invoice_detail.invoice_id')
-            ->select('ti.id','ti.t_booking_id','ti.total_before_vat','ti.total_vat','ti.pph23 as total_pph23','ti.total_invoice','ti.tipe_inv',
-                't_invoice_detail.*')->where('t_invoice_detail.id', $id)->first();
+            ->select('ti.id as id_inv','ti.t_booking_id','ti.total_before_vat','ti.total_vat','ti.pph23 as total_pph23','ti.ppn1 as total_ppn1','ti.total_invoice','ti.tipe_inv','t_invoice_detail.*')->where('t_invoice_detail.id', $id)->first();
     }
 }

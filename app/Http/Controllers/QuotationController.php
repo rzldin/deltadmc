@@ -371,7 +371,7 @@ class QuotationController extends Controller
             $id = DB::table('t_quote')->insertGetId([
                     'quote_no'              => $request->quote_no,
                     'version_no'            => $request->version,
-                    'quote_date'            => Carbon::parse($request->date),
+                    'quote_date'            => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                     'customer_id'           => $request->customer_add,
                     'activity'              => $request->activity,
                     't_mloaded_type_id'     => $request->loaded,
@@ -485,7 +485,6 @@ class QuotationController extends Controller
                 $i = 0; 
                 foreach ($dataProfit as $dp)
                 {
-                    
                     DB::table('t_quote_profit')->insert([
                         't_quote_id'            => $id,
                         't_quote_ship_dtl_id'   => $a[$i],
@@ -1580,7 +1579,7 @@ class QuotationController extends Controller
             ->update([
                 'quote_no'              => $request->quote_no,
                 'version_no'            => $request->version,
-                'quote_date'            => Carbon::parse($request->date),
+                'quote_date'            => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                 'customer_id'           => $request->customer_add,
                 'activity'              => $request->activity,
                 't_mloaded_type_id'     => $request->loaded,

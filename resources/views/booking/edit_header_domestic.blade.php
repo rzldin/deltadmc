@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="bookingdate" data-target-input="nearest">
-                            <input type="text" name="booking_date" id="booking_date" value="@if($quote->booking_date != null){{ \Carbon\Carbon::parse($quote->booking_date)->format('m/d/Y') }}@endif" class="form-control datetimepicker-input" data-target="#bookingdate"/>
+                            <input type="text" name="booking_date" id="booking_date" value="@if($quote->booking_date != null){{ \Carbon\Carbon::parse($quote->booking_date)->format('d/m/Y') }}@endif" class="form-control datetimepicker-input" data-target="#bookingdate"/>
                             <div class="input-group-append" data-target="#bookingdate" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" data-target="#reservationdate" readonly/>
+                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -431,7 +431,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                            <input type="text" name="etd" id="etd" value="@if($quote->etd_date != null){{ \Carbon\Carbon::parse($quote->etd_date)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <input type="text" name="etd" id="etd" value="@if($quote->etd_date != null){{ \Carbon\Carbon::parse($quote->etd_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                             <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -444,7 +444,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatez" data-target-input="nearest">
-                            <input type="text" name="eta" id="eta" value="@if($quote->eta_date != null){{ \Carbon\Carbon::parse($quote->eta_date)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <input type="text" name="eta" id="eta" value="@if($quote->eta_date != null){{ \Carbon\Carbon::parse($quote->eta_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                             <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -461,7 +461,7 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="input-group date" id="reservationdatexx" data-target-input="nearest">
-                                    <input type="text" name="stuf_date" id="stuf_date" value="@if($quote->stuffing_date != null){{ \Carbon\Carbon::parse($quote->stuffing_date)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                    <input type="text" name="stuf_date" id="stuf_date" value="@if($quote->stuffing_date != null){{ \Carbon\Carbon::parse($quote->stuffing_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                     <div class="input-group-append" data-target="#reservationdatexx" data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>

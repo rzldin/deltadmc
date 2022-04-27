@@ -77,7 +77,7 @@
                                                         <select class="form-control select2bs44" name="client_pic_id" id="client_pic_id">
                                                             <option value="">Select PIC</option>
                                                             @foreach ($pics as $pic)
-                                                                <option value="{{ $pic->id }}" <?= $company->id == $proforma_invoice_header['client_pic_id'] ? 'selected' : '' ?>>
+                                                                <option value="{{ $pic->id }}" <?= $companies->id == $proforma_invoice_header['client_pic_id'] ? 'selected' : '' ?>>
                                                                     {{ $pic->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -197,7 +197,7 @@
                                                         <label>MB/L NO.</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="mbl_shipper" id="mbl_shipper" value="{{ $proforma_invoice_header->mbl_no }}" readonly>
+                                                        <input class="form-control" type="text" name="mbl_shipper" id="mbl_shipper" value="{{ $proforma_invoice_header->mbl_shipper }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">

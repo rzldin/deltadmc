@@ -58,7 +58,7 @@
                                                         </div>
                                                         <div class="col-md-8">
                                                             <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                <input type="text" name="booking_date" id="booking_date" value="{{ \Carbon\Carbon::parse($booking->booking_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                                                <input type="text" name="booking_date" id="booking_date" value="{{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                                                 <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                 </div>
@@ -100,7 +100,7 @@
                                                         </div>
                                                         <div class="col-md-8">
                                                             <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                                                <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" data-target="#reservationdate" readonly/>
+                                                                <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
                                                                 <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                                 </div>

@@ -71,33 +71,35 @@
                                 @endif
                                 <td>{{ $invoice->activity }}</td>
                                 <td>
-                                    <a class="btn btn-primary btn-sm" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
+                                    <a class="mb-1 btn btn-primary btn-xs" href="{{ route('invoice.view', ['id' => $invoice->id]) }}" ><i class="fa fa-file-alt"></i>  &nbsp;View &nbsp; &nbsp; &nbsp;</a>
                                     @if($invoice->tipe_inv == 0)
                                         @if ($invoice->proforma_invoice_id == 0)
-                                            <a class="btn btn-info btn-sm" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
+                                            <a class="mb-1 btn btn-info btn-xs" href="{{ route('proforma_invoice.create', ['invoiceId' => $invoice->id]) }}"><i class="fa fa-paper-plane"></i> Pro. Inv. </a>
                                         @endif
                                         @if ($invoice->journal_id == 0)
-                                            <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
+                                            <a class="mb-1 btn btn-secondary btn-xs" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
                                                     <i class="fa fa-book"></i> Journal
                                             </a>
                                         @endif
                                         @if($invoice->flag_bayar_external == 0 && $invoice->journal_id == 0)
-                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
+                                            <a class="mb-1 btn btn-success btn-xs" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
                                             @if($invoice->proforma_invoice_id==0)
-                                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
+                                            <a class="mb-1 btn btn-danger btn-xs" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                             @endif
                                         @endif
                                     @else
                                         @if ($invoice->journal_id == 0)
-                                            <a class="btn btn-secondary btn-sm" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
+                                            <a class="mb-1 btn btn-secondary btn-xs" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
                                                     <i class="fa fa-book"></i> Journal
                                             </a>
                                         @endif
                                         @if($invoice->flag_bayar==0 && $invoice->journal_id == 0)
-                                            <a class="btn btn-success btn-sm" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
-                                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
+                                            <a class="mb-1 btn btn-success btn-xs" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
+                                            <a class="mb-1 btn btn-danger btn-xs" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete </a>
+                                        @else
                                         @endif
                                     @endif
+                                            <a class="mb-1 btn btn-default btn-xs" href="{{ route('invoice.print', ['id' => $invoice->id]) }}" target="_blank"><i class="fa fa-print"></i>  &nbsp;Print </a>
                                 </td>
                             </tr>
                             @endforeach

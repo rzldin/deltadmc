@@ -108,14 +108,14 @@
                                                     <label>Invoice Type</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reg" value="REG" onchange="loadSellCost({{ $booking->id }})" checked> Reguler<br>
-                                                    <input type="radio" name="invoice_type"
-                                                        id="invoice_type_reimbursment" value="REM" onchange="loadSellCost({{ $booking->id }})"> Reimbursment<br>
-                                                    <input type="radio" name="invoice_type"
-                                                        id="invoice_type_debit_note" value="DN" onchange="loadSellCost({{ $booking->id }})"> Debit Note<br>
-                                                    <input type="radio" name="invoice_type"
-                                                        id="invoice_type_credit_note" value="CN" onchange="loadSellCost({{ $booking->id }})"> Credit Note<br>
+                                                @if($is_reimburse>0)
+                                                    <input type="radio" name="invoice_type" id="invoice_type_reimbursment" onchange="loadSellCost({{ $booking->id }})" value="REM" checked>
+                                                    Reimbursment<br>
+                                                @else
+                                                    <input type="radio" name="invoice_type" id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG" checked> Reguler<br>
+                                                    <input type="radio" name="invoice_type" id="invoice_type_debit_note" onchange="loadSellCost({{ $booking->id }})" value="DN"> Debit Note<br>
+                                                    <input type="radio" name="invoice_type" id="invoice_type_credit_note" onchange="loadSellCost({{ $booking->id }})" value="CN"> Credit Note<br>
+                                                @endif
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -125,8 +125,7 @@
                                                 <div class="col-md-8">
                                                     @foreach ($taxes as $tax)
                                                         <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" type="checkbox" id="{{ $tax->code }}" value="{{ $tax->value }}" onchange="checkedTax(`{{ $tax->code }}`, `{{ $tax->name }}`, {{ $tax->value }})">
-                                                            <label class="form-check-label" for="{{ $tax->code }}">{{ "$tax->name ($tax->value %)" }}</label>
+                                                            <button type="button" class="btn btn-info btn-xs" onclick="checkedTax(`{{$tax->code}}`)">{{ "$tax->name ($tax->value %)" }}</button>
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -205,7 +204,7 @@
                                                     <label>Currency <font color="#f00">*</font></label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <select class="form-control select2bs44" name="currency" id="currency">
+                                                    <select class="form-control select2bs44" name="currency" id="currency" onchange="show_kurs(this.value)">
                                                         <option value="" selected>-- Select Valuta --</option>
                                                         @foreach($currency as $item)
                                                             <option value="{{ $item->id }}" @if ($booking->
@@ -213,6 +212,15 @@
                                                                 {{ '('.$item->code.') '.$item->name }}</option>
                                                         @endforeach
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3 show_kurs" style="display: none;">
+                                                <div class="col-md-4">
+                                                    <label>Kurs</label>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="kurs"
+                                                        id="kurs" value="1">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -281,7 +289,7 @@
                                                         data-target-input="nearest">
                                                         <input type="text" name="onboard_date" id="onboard_date"
                                                             class="form-control datetimepicker-input"
-                                                            data-target="#reservationdate" />
+                                                            data-target="#reservationdate" value="{{ \Carbon\Carbon::parse($booking->etd_date)->format('d/m/Y') }}"/>
                                                         <div class="input-group-append" data-target="#reservationdatex"
                                                             data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i>
@@ -302,7 +310,7 @@
                                     Selected</a> --}}
                                 </div>
                                 <div class="card-body table-responsive p-0">
-                                    <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                    <table class="table table-bordered table-striped" style="width: 100%">
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
@@ -315,8 +323,11 @@
                                                 <th>Total</th>
                                                 <th>ROE</th>
                                                 {{-- <th>Vat</th> --}}
-                                                <th>Cost Adjustment</th>
+                                                <th>Cost<br>Adj</th>
                                                 <th>Amount</th>
+                                                @foreach ($taxes as $tax)
+                                                    <th>{{ "$tax->name ($tax->value %)" }}</th>
+                                                @endforeach
                                                 <th>Note</th>
                                                 {{-- <th>Action</th> --}}
                                             </tr>
@@ -356,16 +367,6 @@
                     success: function(result) {
                         console.log(result.status);
                         if(result.status == 'sukses'){
-                            if(result.data.total_vat>0){
-                                $('#ppn').prop('checked',true).trigger('change');
-                            }else{
-                                $('#ppn').prop('checked',false).trigger('change');
-                            }
-                            if(result.data.pph23>0){
-                                $('#pph23').prop('checked',true).trigger('change');
-                            }else{
-                                $('#pph23').prop('checked',false).trigger('change');
-                            }
                             $('.show_new').hide('slow');
                         }else{
                             alert(result.message);
@@ -426,6 +427,14 @@
             }
         });
 
+        function show_kurs(val){
+            if(val == '' || val == 65){//idr
+                $('.show_kurs').hide('slow');
+            }else{
+                $('.show_kurs').show('slow');
+            }
+        }
+
         function client_detail(val) {
             if (val != '') {
 
@@ -458,38 +467,63 @@
             }
         }
 
-            function checkedTax(code, name, value) {
-                if ($('#'+code).is(':checked')) {
+            function checkedTax(code) {
+                $('.'+code).trigger('click');
+            }
+
+            function checkedTaxDetail(code, no, name, value) {
+                if ($('#btn_'+code+no).is(':checked')) {
+                    $('#lbl_'+code+no).show();
+                } else {
+                    $('#lbl_'+code+no).hide();
+                }
+                checkstate(code,name,value);
+            }
+
+            function checkstate(code,name,value) {
+                let elems = document.getElementsByClassName(code);
+                let checked = false;
+                let total_value = Number(0);
+                for (let i = 0; i < elems.length; i++) {
+                    if (elems[i].checked) {
+                        total_value += Number(elems[i].value);
+                        checked = true;
+                    }
+                }
+                $('#input_'+code).val(Number(total_value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                if (checked) {
                     $('#row_'+code).show();
-                    $('#lbl_'+code).text(name + ' (' + value + ' %)');
-                    $('#value_'+code).val(value);
+                    $('#lbl_total_'+code).text(name + ' (' + value + ' %)');
                 } else {
                     $('#row_'+code).hide();
-                    $('#value_'+code).val(0);
                 }
-
                 calculateTotal();
             }
 
             function calculateTotal() {
                 let total_before_vat = $('#total_before_vat');
-                let total_invoice = $('#total_invoice');
-                let ppn = $('#value_ppn');
-                let pph23 = $('#value_pph23');
-                let total_ppn = $('#input_ppn');
-                let total_pph23 = $('#input_pph23');
-
+                let total_invoice = $('.total_invoice');
                 let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
-                let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
-                let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
-                let total_ppn_val = total_before_vat_val * (ppn_val / 100);
-                let total_pph23_val = total_before_vat_val * (pph23_val / 100);
+                @foreach ($taxes as $tax)
+                    let total_{{$tax->code}}_val = $('#input_{{$tax->code}}').val().toString().replace(/\,/g, "");
+                @endforeach
+                // let ppn = $('#value_ppn');
+                // let pph23 = $('#value_pph23');
+                // let total_ppn = $('#input_ppn');
+                // let total_pph23 = $('#input_pph23');
+
+                // let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
+                // let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
+                // let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
+                // let total_ppn_val = total_before_vat_val * (ppn_val / 100);
+                // let total_pph23_val = total_before_vat_val * (pph23_val / 100);
 
                 let result;
-                result = total_before_vat_val + total_ppn_val - total_pph23_val;
+                result = Number(total_before_vat_val) + Number(total_ppn_val) - Number(total_pph23_val) + Number(total_ppn1_val);
 
-                total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-                total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                // total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                // total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                total_invoice.text(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
 

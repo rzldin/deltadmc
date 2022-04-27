@@ -47,12 +47,12 @@
                             </li>
                         </ul>
                         @if(count($errors)>0)
-                        @foreach($errors->all() as $error)
-                        <div class="alert alert-danger" role="alert">
-                            {{ $error }}
-                        </div>  		
-                        @endforeach
-                    @endif
+                            @foreach($errors->all() as $error)
+                            <div class="alert alert-danger" role="alert">
+                                {{ $error }}
+                            </div>  		
+                            @endforeach
+                        @endif
                         <div class="tab-content" id="custom-content-below-tabContent">
                             <div class="tab-pane fade show active" id="custom-content-below-home" role="tabpanel" aria-labelledby="custom-content-below-home-tab">
                                 <div class="container-fluid mt-3">
@@ -213,7 +213,7 @@
                                                                 <td>{{ $loop->iteration }}</td>
                                                                 <td>{{ $row->name }}</td>
                                                                 <td>{{ $row->doc_no }}</td>
-                                                                <td>{{ \Carbon\Carbon::parse($row->doc_date)->format('m/d/Y') }}</td>
+                                                                <td>{{ \Carbon\Carbon::parse($row->doc_date)->format('d/m/Y') }}</td>
                                                             </tr>
                                                            @endforeach
                                                        </tbody>

@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-8">
                           <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                              <input type="text" name="tanggal" id="tanggal_dt" value="@if($header->tanggal != null){{ \Carbon\Carbon::parse($header->tanggal)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                              <input type="text" name="tanggal" id="tanggal_dt" value="@if($header->tanggal != null){{ \Carbon\Carbon::parse($header->tanggal)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                               <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                               </div>
@@ -143,7 +143,7 @@
                         </div>
                         <div class="col-md-8">
                           <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                              <input type="text" name="tgl_jatuh_tempo" id="tgl_jatuh_tempo" value="@if($header->tgl_jatuh_tempo != null){{ \Carbon\Carbon::parse($header->tgl_jatuh_tempo)->format('m/d/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdatex"/>
+                              <input type="text" name="tgl_jatuh_tempo" id="tgl_jatuh_tempo" value="@if($header->tgl_jatuh_tempo != null){{ \Carbon\Carbon::parse($header->tgl_jatuh_tempo)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdatex"/>
                               <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                               </div>

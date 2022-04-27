@@ -16,7 +16,7 @@ class PembayaranModel extends Model
     {
         return PembayaranModel::from('t_pembayaran as p')
             ->leftJoin('t_journals as j', 'j.pembayaran_id', '=', 'p.id')
-            ->select('p.*', DB::raw('COALESCE(j.id, 0) journal_id'))
+            ->select('p.*', DB::raw('COALESCE(j.id, 0) journal_id'), DB::raw('(select count(id) from t_pembayaran_detail where id_pmb = p.id) jumlah'))
             ->where('p.jenis_pmb', $jenis);
     }
 

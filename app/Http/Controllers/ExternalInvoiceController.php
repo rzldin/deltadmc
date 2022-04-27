@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class ExternalInvoiceController extends Controller
 {
@@ -57,8 +58,8 @@ class ExternalInvoiceController extends Controller
             DB::beginTransaction();
 
             $param = $request->all();
-            $param['external_invoice_date'] = date('Y-m-d', strtotime($request->external_invoice_date));
-            $param['onboard_date'] = date('Y-m-d', strtotime($request->onboard_date));
+            $param['external_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->external_invoice_date)->format('Y-m-d');
+            $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);

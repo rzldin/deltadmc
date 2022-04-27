@@ -1653,6 +1653,12 @@
                 text: 'Please input Booking Date',
                 icon: 'error'
             });
+        }else if($.trim($('#etd').val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input etd Date',
+                icon: 'error'
+            });
         }else{
             $(this).prop('disabled', true).text('Please Wait ...');
             $('#formku').submit();

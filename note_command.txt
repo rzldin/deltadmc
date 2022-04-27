@@ -200,3 +200,9 @@ TRUNCATE TABLE t_invoice_detail;
 UPDATE t_bcharges_dtl SET t_invoice_id = NULL, t_invoice_cost_id = NULL, invoice_type = NULL;
 UPDATE t_quote_shipg_dtl SET t_invoice_id = NULL, t_invoice_cost_id = NULL, invoice_type = NULL;
 UPDATE t_booking SET flag_invoice = 0;
+
+--- april 2022
+ALTER TABLE `t_bcharges_dtl` ADD `term` TINYINT(1) NOT NULL DEFAULT '0' AFTER `t_mcarrier_id`;
+
+ALTER TABLE `t_invoice_detail` ADD `ppn1` DECIMAL(14,2) NULL DEFAULT '0' AFTER `pph23`;
+ALTER TABLE `t_invoice` ADD `ppn1` DECIMAL(14,2) NULL DEFAULT '0' AFTER `pph23`;

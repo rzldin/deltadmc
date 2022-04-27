@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class KasTransferController extends Controller
 {
@@ -47,7 +48,7 @@ class KasTransferController extends Controller
 
             $param = $request->all();
             $param['id'] = 0;
-            $param['transfer_date'] = date('Y-m-d', strtotime($request->transfer_date));
+            $param['transfer_date'] = Carbon::createFromFormat('d/m/Y', $request->transfer_date)->format('Y-m-d');
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
 

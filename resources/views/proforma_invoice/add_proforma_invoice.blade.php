@@ -75,7 +75,7 @@
                                                         <select class="form-control select2bs44" name="client_pic_id" id="client_pic_id">
                                                             <option value="">Select PIC</option>
                                                             @foreach ($pics as $pic)
-                                                                <option value="{{ $pic->id }}" <?= $company->id == $invoice_header['client_pic_id'] ? 'selected' : '' ?>>
+                                                                <option value="{{ $pic->id }}" <?= $companies->id == $invoice_header['client_pic_id'] ? 'selected' : '' ?>>
                                                                     {{ $pic->name }}</option>
                                                             @endforeach
                                                         </select>

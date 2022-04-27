@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('m/d/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                            <input type="text" name="date" id="datex" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
                                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>

@@ -47,6 +47,7 @@
                         <thead>
                             <tr>
                                 <th>Booking Number</th>
+                                <th>Version</th>
                                 <th>Booking Date</th>
                                 <th>Shipper</th>
                                 <th>Consignee</th>
@@ -60,7 +61,8 @@
                         <tbody style="font-size: 14px">
                             @foreach ($list as $row)
                             <tr>
-                                <td>{{ $row->booking_no }}</td>
+                                <td>{{ $row->booking_no}}</td>
+                                <td>{{ $row->version_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($row->booking_date)->format('d/m/Y') }}</td>
                                 <td>{{ $row->company_d }}</td>
                                 <td>{{ $row->company_c }}</td>

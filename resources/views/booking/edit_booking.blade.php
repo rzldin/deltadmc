@@ -710,12 +710,13 @@
                                                                     <th>Service/Fee</th>
                                                                     <th>Description</th>
                                                                     <th>Reimburse</th>
+                                                                    <th>Term</th>
                                                                     <th>Unit</th>
                                                                     <th>Currency</th>
                                                                     <th>rate/unit</th>
                                                                     <th>Total</th>
                                                                     <th>ROE</th>
-                                                                    <th>Vat</th>
+                                                                    <th>Cost<br>Adjustment</th>
                                                                     <th>Amount</th>
                                                                     <th width="10%">Paid To</th>
                                                                     <th>Invoice No.</th>
@@ -750,6 +751,7 @@
                                                                 <th>Service/Fee</th>
                                                                 <th>Description</th>
                                                                 <th>Reimburse</th>
+                                                                <th>Term</th>
                                                                 <th>Unit</th>
                                                                 <th>Currency</th>
                                                                 <th>rate/unit</th>
@@ -897,7 +899,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-md-4 col-xs-4">
-                            Description
+                            Description <font color="#f00">*</font>
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" class="form-control" name="desc" id="descx" placeholder="Desc ...">
@@ -970,6 +972,17 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" class="form-control" name="sell_val" id="sell_valx" placeholder="Sell Value ..." readonly>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-4 col-xs-4">
+                            Term <font color="#f00">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control select2bs44" name="term" id="termx">
+                                <option value="0">(P) Prepaid</option>
+                                <option value="1">(C) Collect</option>
+                            </select>
                         </div>
                     </div>
                     {{-- <div class="row mb-2">
@@ -1897,6 +1910,7 @@
                     $('#qtyx').val(data.qty);
                     $('#cost_valx').val(cost_val);
                     $('#sell_valx').val(sell_val);
+                    $('#termx').val(data.term).trigger('change');
                     // $('#vatx').val(Number(data.vat));
                     // $('#totalx').val(subtotal);
                     $('#notex').val(data.notes);
@@ -1910,17 +1924,22 @@
                     if(tipe=='cost' && data.paid_to_id!= null){
                         if(data.t_invoice_cost_id!=null){
                             $('#show_name_to').hide();
+                        }else{
+                            $('#show_name_to').show();
                         }
                         $('#name_to_text').text('Paid To');
                         $('#name_to').val(data.paid_to_id).trigger('change');
                     }else if(tipe=='sell' && data.bill_to_id!= null){
                         if(data.t_invoice_id!=null){
                             $('#show_name_to').hide();
+                        }else{
+                            $('#show_name_to').show();
                         }
                         $('#name_to_text').text('Bill To');
                         $('#name_to').val(data.bill_to_id).trigger('change');
                     }else{
                         $('#show_name_to').hide();
+                        $('#name_to').val('').trigger('change');
                     }
 
                     dsState = "Edit";
@@ -1992,6 +2011,7 @@
                             cost_adjustment:$('#cost_adjustmentx').val(),
                             cost_val:$('#cost_valx').val(),
                             sell_val:$('#sell_valx').val(),
+                            term:$('#termx').val(),
                             // vat:$('#vatx').val(),
                             // total:$('#totalx').val(),
                             note:$('#notex').val()
@@ -2029,6 +2049,7 @@
                             cost_adjustment:$('#cost_adjustmentx').val(),
                             cost_val:$('#cost_valx').val(),
                             sell_val:$('#sell_valx').val(),
+                            term:$('#termx').val(),
                             // vat:$('#vatx').val(),
                             // total:$('#totalx').val(),
                             note:$('#notex').val(),

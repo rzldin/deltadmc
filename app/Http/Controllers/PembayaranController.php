@@ -60,7 +60,7 @@ class PembayaranController extends Controller
                 $flag_giro = 1;
                 $id_kas = 0;
                 $no_giro = $request->no_giro;
-                $tgl_jatuh_tempo = date('Y-m-d', strtotime($request->tanggal_giro));
+                $tgl_jatuh_tempo = Carbon::createFromFormat('d/m/Y', $request->tanggal_giro)->format('Y-m-d');
                 $no_rekening = $request->no_rekening;
                 $bank = $request->nama_bank;
             }
@@ -68,7 +68,7 @@ class PembayaranController extends Controller
             $id_pmb = PembayaranModel::insertGetId([
                 'no_pembayaran' => $request->no_pembayaran,
                 'jenis_pmb' => $request->jenis_pmb,
-                'tanggal' => date('Y-m-d', strtotime($request->tanggal)),
+                'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
                 'id_company' => $request->customer,
                 'id_kas' => $id_kas,
                 'currency_id' => $request->currency_id,
@@ -105,6 +105,23 @@ class PembayaranController extends Controller
             return view('pembayaran.edit_piutang')->with($data);
         } else {
             return view('pembayaran.edit')->with($data);
+        }
+    }
+
+    public function delete($id)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('t_pembayaran')->where('id',$id)->delete();
+
+            DB::commit();
+            return redirect()->back()->with('status', 'Pembayaran Deleted!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            Log::error("delete Pembayaran Error {$th->getMessage()}");
+
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
@@ -202,7 +219,7 @@ class PembayaranController extends Controller
         $sisa = $invoice->total_invoice - $invoice_bayar;
         if ($sisa <= 0) {
             $flag = 1;
-            $tanggal_lunas = date('Y-m-d', strtotime($request->tanggal_bayar));
+            $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
         } else {
             $flag = 2;
             $tanggal_lunas = null;
@@ -327,7 +344,7 @@ class PembayaranController extends Controller
                 $flag_giro = 1;
                 $id_kas = 0;
                 $no_giro = $request->no_giro;
-                $tgl_jatuh_tempo = date('Y-m-d', strtotime($request->tanggal_giro));
+                $tgl_jatuh_tempo = Carbon::createFromFormat('d/m/Y', $request->tanggal_giro)->format('Y-m-d');
                 $no_rekening = $request->no_rekening;
                 $bank = $request->nama_bank;
             }
@@ -344,7 +361,7 @@ class PembayaranController extends Controller
                 $id_pmb = PembayaranModel::where('id', $request->id)->update([
                     'no_pembayaran' => $request->no_pembayaran,
                     'status' => 1,
-                    'tanggal' => date('Y-m-d', strtotime($request->tanggal)),
+                    'tanggal' => Carbon::createFromFormat('d/m/Y', $request->tanggal)->format('Y-m-d'),
                     'id_kas' => $id_kas,
                     'flag_giro' => $flag_giro,
                     'no_giro' => $no_giro,
@@ -428,7 +445,7 @@ class PembayaranController extends Controller
         $sisa = $invoice->total_invoice - $invoice_bayar;
         if ($sisa <= 0) {
             $flag = 1;
-            $tanggal_lunas = date('Y-m-d', strtotime($request->tanggal_bayar));;
+            $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
         } else {
             $flag = 2;
             $tanggal_lunas = null;
@@ -487,7 +504,7 @@ class PembayaranController extends Controller
             //     DepositController::deleteDepositPembayaran($param);
             // }
             $deposits = DepositDetail::where('pembayaran_id', $data->id_pmb)->get();
-            if ($deposits != []) {
+            if (count($deposits)) {
                 $amount = 0;
                 foreach ($deposits as $dtl) {
                     $amount += $dtl->amount;
