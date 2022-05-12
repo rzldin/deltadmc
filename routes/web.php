@@ -404,6 +404,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/sync', 'InvoiceController@syncInvoiceDetail')->name('invoice.syncInvoiceDetail');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
+    Route::get('/invoice/internal/view_selisih/{id}', 'InvoiceController@view_selisih')->name('invoice.view_selisih');
 
     Route::get('/invoice/internal/delete_detail/{id}', 'InvoiceController@delete_detail')->name('invoice.delete_detail');
     // Route::post('/invoice/internal/delete', 'InvoiceController@delete')->name('invoice.delete');
@@ -499,6 +500,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/accounting/journal/updateDetail', 'JournalController@updateDetailJournal')->name('journal.updateDetail');
     Route::post('/accounting/journal/deleteDetail', 'JournalController@deleteDetailJournal')->name('journal.deleteDetail');
     Route::post('/accounting/journal/clearSession', 'JournalController@clearSessionJournal')->name('journal.clearSession');
+    Route::post('/accounting/journal/updatepph23', 'JournalController@updatepph23Journal')->name('journal.updatepph23');
 
     /** Journal Deposit */
     Route::get('/accounting/journal_deposit/add', 'JournalDepositController@addJournal')->name('journal_deposit.add');

@@ -30,12 +30,12 @@ class PembayaranModel extends Model
             where pd.id_pmb = ".$id);
     }
 
-    public static function get_list_hutang($id,$idp)
+    public static function get_list_hutang($id,$idp,$curr)
     {
         return DB::select("
             Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and id_pmb =".$idp.")as count
             from t_invoice as i
-            where tipe_inv = 1 and flag_bayar in (0,2) and i.client_id = ".$id);
+            where tipe_inv = 1 and flag_bayar in (0,2) and i.client_id = ".$id." and i.currency=".$curr);
     }
 
     public static function get_detail($id){
@@ -62,5 +62,13 @@ class PembayaranModel extends Model
     public static function getAllDetailsByIdPmb($id_pmb)
     {
         return DB::table('t_pembayaran_detas as pd')->where('id_pmb', $id_pmb);
+    }
+
+    public static function get_list_pmb_invoice($id)
+    {
+        return DB::select("
+            Select i.* from t_pembayaran_detail pd
+            left join t_invoice i on pd.id_invoice = i.id
+            where pd.id_pmb = ".$id);
     }
 }

@@ -148,6 +148,7 @@ class PembayaranController extends Controller
             $tabel .= '<td>' . $no . '</td>';
             $tabel .= '<td class="text-left">' . $v->invoice_no . '</td>';
             $tabel .= '<td class="text-left">' . $v->invoice_date . '</td>';
+            $tabel .= '<td class="text-right">' . number_format($v->kurs, 2, ',', '.') . '</td>';
             $tabel .= '<td class="text-right">' . number_format($v->nilai, 2, ',', '.') . '</td>';
             $tabel .= '<td>';
             $tabel .= '<a href="javascript:;" class="btn btn-warning btn-xs red" onclick="delete_detail(' . $v->id . ');" style="margin-top:2px; margin-bottom:2px;" id="addInv"><i class="fa fa-trash"></i> Delete </a>';
@@ -164,7 +165,7 @@ class PembayaranController extends Controller
     {
         $tabel      = "";
         $no         = 1;
-        $data       = PembayaranModel::get_list_hutang($request->id, $request->id_pmb);
+        $data       = PembayaranModel::get_list_hutang($request->id, $request->id_pmb, $request->currency);
 
         foreach ($data as $v) {
 
@@ -174,7 +175,11 @@ class PembayaranController extends Controller
             $tabel .= '<td>' . $no . '</td>';
             $tabel .= '<td class="text-left">' . $v->invoice_no . '</td>';
             $tabel .= '<td class="text-left">' . $v->invoice_date . '</td>';
-            $tabel .= '<td class="text-right">' . number_format($v->total_invoice - $v->invoice_bayar, 2, ',', '.') . '</td>';
+            if($v->flag_nopph23==0){
+                $tabel .= '<td class="text-right">' . number_format($v->total_invoice - $v->invoice_bayar, 2, ',', '.') . '</td>';
+            }else{
+                $tabel .= '<td class="text-right">' . number_format($v->total_invoice + $v->pph23 - $v->invoice_bayar, 2, ',', '.') . '</td>';
+            }
             $tabel .= '<td>';
             if ($v->count == 0) {
                 $tabel .= '<a href="javascript:;" class="btn btn-warning btn-xs" onclick="input_bayar(' . $v->id . ');" style="margin-top:2px; margin-bottom:2px;" id="addInv"><i class="fa fa-plus"></i> Tambah </a>';
@@ -194,12 +199,14 @@ class PembayaranController extends Controller
     {
 
         $result = DB::table('t_invoice AS i')
-            ->join('t_mcurrency AS c', 'c.id', 'i.currency')
+            ->leftJoin('t_mcurrency AS c', 'c.id', 'i.currency')
             ->select('i.*', 'c.code')
             ->where('i.id', $request->id)
             ->first();
-        $data['nilai_sisa'] = $result->total_invoice - $result->invoice_bayar;
         $data = $result;
+        $data->total_invoice_pph23 = $result->total_invoice + $result->pph23;
+        $data->nilai_sisa_pph23 = $result->total_invoice + $result->pph23 - $result->invoice_bayar;
+        $data->nilai_sisa = $result->total_invoice - $result->invoice_bayar;
 
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -207,44 +214,64 @@ class PembayaranController extends Controller
 
     public function saveDetailPembayaran(Request $request)
     {
-        $return_data = array();
-        $tanggal   = date('Y-m-d H:i:s');
+        DB::beginTransaction();
+        try{
+            $return_data = array();
+            $tanggal   = date('Y-m-d H:i:s');
 
-        $total_invoice = str_replace(',', '', $request->total_invoice);
-        $nilai_bayar = str_replace(',', '', $request->nilai_bayar);
-        $nilai_sisa = str_replace(',', '', $request->nilai_sisa);
+            $total_invoice = str_replace(',', '', $request->total_invoice);
+            $nilai_bayar = str_replace(',', '', $request->nilai_bayar);
+            $nilai_sisa = str_replace(',', '', $request->nilai_sisa);
 
-        $invoice = DB::table('t_invoice')->where('id', $request->id_invoice)->first();
-        $invoice_bayar = $invoice->invoice_bayar + $nilai_bayar;
-        $sisa = $invoice->total_invoice - $invoice_bayar;
-        if ($sisa <= 0) {
-            $flag = 1;
-            $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
-        } else {
-            $flag = 2;
-            $tanggal_lunas = null;
+            $invoice = DB::table('t_invoice')->where('id', $request->id_invoice)->first();
+            $invoice_bayar = $invoice->invoice_bayar + $nilai_bayar;
+            $sisa = $invoice->total_invoice - $invoice_bayar;
+            if($invoice->invoice_bayar>0){
+                $nopph23 = $invoice->flag_nopph23;
+            }else{
+                $nopph23 = $request->is_nopph23;
+            }
+            if ($sisa <= 0) {
+                $flag = 1;
+                $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
+            } else {
+                $flag = 2;
+                $tanggal_lunas = null;
+            }
+            DB::table('t_invoice')->where('id', $request->id_invoice)->update([
+                'invoice_bayar' => $invoice_bayar,
+                'flag_bayar' => $flag,
+                'flag_nopph23' => $nopph23,
+                'tanggal_lunas' => $tanggal_lunas,
+                'modified_by' => Auth::user()->id,
+                'modified_at' => Carbon::now()
+            ]);
+
+            DB::table('t_pembayaran_detail')->insert([
+                'id_pmb' => $request->id_pmb,
+                'jenis_pmb' => $request->jenis_pmb,
+                'id_invoice' => $request->id_invoice,
+                'currency_id' => $request->currency_id,
+                'kurs' => $request->kurs,
+                'nilai' => $nilai_bayar
+            ]);
+
+            $return_data['status'] = "sukses";
+            $return_data['message'] = "Berhasil menyimpan detail pembayaran!";
+
+            DB::commit();
+            header('Content-Type: application/json');
+            echo json_encode($return_data);
+        } catch (\Throwable $th) {
+            Log::error("saveDetailPembayaran Error {$th->getMessage()}");
+            Log::error($th->getTraceAsString());
+            $return_data['status'] = "failed";
+            $return_data['message'] = $th->getMessage();
+
+            DB::rollBack();
+            header('Content-Type: application/json');
+            echo json_encode($return_data);
         }
-        DB::table('t_invoice')->where('id', $request->id_invoice)->update([
-            'invoice_bayar' => $invoice_bayar,
-            'flag_bayar' => $flag,
-            'tanggal_lunas' => $tanggal_lunas,
-            'modified_by' => Auth::user()->id,
-            'modified_at' => Carbon::now()
-        ]);
-
-        DB::table('t_pembayaran_detail')->insert([
-            'id_pmb' => $request->id_pmb,
-            'jenis_pmb' => $request->jenis_pmb,
-            'id_invoice' => $request->id_invoice,
-            // 'currency_id' => $request->currency_id,
-            'nilai' => $nilai_bayar
-        ]);
-
-        $return_data['status'] = "sukses";
-        $return_data['message'] = "Berhasil menyimpan detail pembayaran!";
-
-        header('Content-Type: application/json');
-        echo json_encode($return_data);
     }
 
     public function deleteDetailPembayaran(Request $request)
@@ -261,13 +288,17 @@ class PembayaranController extends Controller
             if ($invoice_bayar == 0) {
                 $flag = 0;
             }
-            DB::table('t_invoice')->where('id', $data->id_invoice)->update([
-                'invoice_bayar' => $data->invoice_bayar - $data->nilai,
-                'flag_bayar' => $flag,
-                'tanggal_lunas' => $tanggal_lunas,
-                'modified_by' => Auth::user()->id,
-                'modified_at' => Carbon::now()
-            ]);
+
+            $inv = InvoiceModel::find($data->id_invoice);
+            $inv->invoice_bayar = $data->invoice_bayar - $data->nilai;
+            $inv->flag_bayar = $flag;
+            if($invoice_bayar==0){
+                $inv->flag_nopph23 = 0;
+            }
+            $inv->tanggal_lunas = $tanggal_lunas;
+            $inv->modified_by = Auth::user()->id;
+            $inv->modified_at =  Carbon::now();
+            $inv->save();
 
             /**
              * kalau ada deposit

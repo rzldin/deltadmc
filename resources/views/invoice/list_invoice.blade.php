@@ -96,7 +96,9 @@
                                         @if($invoice->flag_bayar==0 && $invoice->journal_id == 0)
                                             <a class="mb-1 btn btn-success btn-xs" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
                                             <a class="mb-1 btn btn-danger btn-xs" href="javascript:void(0);" onclick="deleteInvoice({{ $invoice->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete </a>
-                                        @else
+                                        @endif
+                                        @if($invoice->currency!=65)
+                                            <a class="mb-1 btn btn-info btn-xs" href="{{ route('invoice.view_selisih', ['id' => $invoice->id]) }}"><i class="fas fa-chart-bar"></i> Selisih</a>
                                         @endif
                                     @endif
                                             <a class="mb-1 btn btn-default btn-xs" href="{{ route('invoice.print', ['id' => $invoice->id]) }}" target="_blank"><i class="fa fa-print"></i>  &nbsp;Print </a>

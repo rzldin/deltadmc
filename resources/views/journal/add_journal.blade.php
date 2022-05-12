@@ -134,6 +134,13 @@
                                 <div class="card card-primary">
                                     <div class="card-header">
                                         <h3 class="card-title">Detail</h3>
+                                        @if($source=='pembayaran')
+                                            @if($pembayaran->flag_pph23==0)
+                                                <a href="javascript:void(0)" id="tambahpph23" onclick="tambahpph23()" class="btn btn-warning float-right"><i class="fas fa-check"></i> Tambah PPH23</a>
+                                            @else
+                                                <a href="javascript:void(0)" id="hapuspph23" onclick="hapuspph23()" class="btn btn-danger float-right"><i class="fas fa-trash"></i> Hapus PPH23</a>
+                                            @endif
+                                        @endif
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
@@ -212,6 +219,34 @@
     </section>
     @push('after-scripts')
         <script>
+            function tambahpph23(){
+                $.ajax({
+                    type: 'post',
+                    url: `{{ route('journal.updatepph23') }}`,
+                    data: {
+                        reference_no: '{{ $reference_no }}',
+                        status: 1
+                    },
+                    success: function() {
+                        location.reload();
+                    }
+                });
+            }
+
+            function hapuspph23(){
+                $.ajax({
+                    type: 'post',
+                    url: `{{ route('journal.updatepph23') }}`,
+                    data: {
+                        reference_no: '{{ $reference_no }}',
+                        status: 0
+                    },
+                    success: function() {
+                        location.reload();
+                    }
+                });
+            }
+
             function changeJournalType() {
                 let journal_type = $('#journal_type').val();
                 if (journal_type == 'general_journal') {

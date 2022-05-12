@@ -46,7 +46,7 @@
         <input type="hidden" name="id" value="{{ $header->id }}">
         <input type="hidden" name="jenis_pmb" value="{{ $header->jenis_pmb }}">
           <div class="card-body">
-            <div class="row">
+            <div class="row mb-2">
                 <div class="col-md-6">
                     <div class="row">
                         <div class="col-md-4">
@@ -161,40 +161,48 @@
                     </div>
                 </div>
             </div>
-            <div class="separator_hr">List Pembayaran Detail</div>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <td>#</td>
-                  <td>Nomor</td>
-                  <td>Tanggal</td>
-                  <td>Nilai</td>
-                  <td>Action</td>
-                </tr>
-              </thead>
-              <tbody id="tblDetail">
-              </tbody>
-            </table>
-            <br>
-            <div class="separator_hr">List Hutang</div>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <td>#</td>
-                  <td>Nomor</td>
-                  <td>Tanggal</td>
-                  <td>Nilai</td>
-                  <td>Action</td>
-                </tr>
-              </thead>
-              <tbody id="tblInvoice">
-                <div class="align-items-center bg-white justify-content-center spinner_load">
-                    <div class="spinner-border" role="status">
-                      <span class="sr-only">Loading...</span>
-                    </div>
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h5 class="card-title">List Pembayaran Detail</h5>
                 </div>
-              </tbody>
-            </table>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <td>#</td>
+                      <td>Nomor</td>
+                      <td>Tanggal</td>
+                      <td>Kurs</td>
+                      <td>Nilai</td>
+                      <td>Action</td>
+                    </tr>
+                  </thead>
+                  <tbody id="tblDetail">
+                  </tbody>
+                </table>
+            </div>
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h5 class="card-title">List Hutang Detail</h5>
+                </div>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <td>#</td>
+                      <td>Nomor</td>
+                      <td>Tanggal</td>
+                      <td>Nilai</td>
+                      <td>Action</td>
+                    </tr>
+                  </thead>
+                  <tbody id="tblInvoice">
+                    <div class="align-items-center bg-white justify-content-center spinner_load">
+                        <div class="spinner-border" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                  </tbody>
+                </table>
+            </div>
           </div>
           <div class="card-footer">
               <a href="{{ route('pembayaran.index') }}" class="btn btn-default float-left mr-2">
@@ -234,7 +242,7 @@
                     <input type="hidden" id="id_modal_inv" name="id_modal_inv">
                     <div class="row">
                         <div class="col-md-5">
-                            No. Invoice
+                            <strong>No. Invoice</strong>
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="invoice_no" name="invoice_no" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
@@ -242,7 +250,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-5">
-                            Currency
+                            <strong>Currency</strong>
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="currency" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
@@ -251,15 +259,17 @@
                     </div>
                     <div class="row">
                         <div class="col-md-5">
-                            Nilai
+                            <strong>Nilai</strong> ( <input type="checkbox" id="check_pph23" name="check_pph23" value="1" onchange="hitungpph23(this)"> Tanpa PPH23 )
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="total_invoice" name="total_invoice" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
+                            <input type="hidden" id="total_invoice_pph23">
+                            <input type="hidden" id="total_invoice_asli">
                         </div>
                     </div>
                     <div class="row" style="margin-bottom:5px">
                         <div class="col-md-5">
-                            Tanggal Invoice<font color="#f00">*</font>
+                            <strong>Tanggal Invoice<font color="#f00">*</font></strong> 
                         </div>
                         <div class="col-md-7">
                           <div class="input-group date" data-target-input="nearest">
@@ -272,7 +282,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-5">
-                            Nilai Sudah di Bayar
+                            <strong>Nilai Sudah di Bayar</strong>
                         </div>
                         <div class="col-md-7">
                           <input type="text" class="form-control" name="invoice_bayar" id="invoice_bayar" readonly>
@@ -298,6 +308,14 @@
                         <div id="boxListDeposit"></div>
                     </div>
                     <div class="separator_hr">Pembayaran</div>
+                    <div class="row mb-2" {{ ($header->currency_id==65)? 'style=display:none;"':'' }}>
+                        <div class="col-md-5">
+                            Kurs
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" id="kurs" name="kurs" class="form-control myline" placeholder="Kurs Pembayaran ...">
+                        </div>
+                    </div>
                     <div class="row mb-2">
                         <div class="col-md-5">
                             Bayar
@@ -360,6 +378,7 @@ function loadInvoice(){
         data:{
             id : {{ $header->id_company }},
             id_pmb : {{ $header->id }},
+            currency : {{ $header->currency_id }},
         },
         dataType:"html",
         success:function(result){
@@ -484,11 +503,10 @@ function input_bayar(id){
             $('#nilai_bayar').attr('readonly', true);
             $('#deposit_blok').show();
             $('#is_deposit').val(1);
-        } else {
+      } else {
             $('#nilai_bayar').attr('readonly', false);
             $('#deposit_blok').hide();
             $('#is_deposit').val(0);
-
       }
 
       $("#id_modal_inv").val(result['id']);
@@ -497,11 +515,32 @@ function input_bayar(id){
       $('#nilai_bayar').val(0);
       $('#currency').val(result['code']);
       $('#currency_id').val(result['currency']);
+      $('#total_invoice_asli').val(result['total_invoice']);
+      $('#total_invoice_pph23').val(result['total_invoice_pph23']);
       $("#total_invoice").val(numberWithCommas(result['total_invoice']));
       $("#invoice_bayar").val(numberWithCommas(result['invoice_bayar']));
+      if(result['flag_nopph23']==0){
+        $('#check_pph23').prop('checked', false);
+      }else{
+        $('#check_pph23').prop('checked', true);
+      }
+      if(result['invoice_bayar']>0){
+        $('#check_pph23').prop('readonly', true);
+      }
       hitungSubTotalSJ();
     }
   });
+}
+
+function hitungpph23(checkbox){
+    let total_invoice_asli = $('#total_invoice_asli').val();
+    let total_invoice_pph23 = $('#total_invoice_pph23').val();
+    if (checkbox.checked){
+        $('#total_invoice').val(numberWithCommas(total_invoice_pph23));
+    }else{
+        $('#total_invoice').val(numberWithCommas(total_invoice_asli));
+    }
+    hitungSubTotalSJ();
 }
 
 function getDepositBalance(currency) {
@@ -614,6 +653,15 @@ $('#tambah_inv').click(function(event) {
           icon: 'error',
           title: ' Nilai bayar tidak boleh 0'
         });
+    @php
+        if($header->currency_id != 65){
+            echo "}else if($('#kurs').val() == '' || $('#kurs').val() == 0){
+                Toast.fire({
+                  icon: 'error',
+                  title: ' Nilai kurs harus diisi'
+                });";
+        }
+    @endphp
     }else{
         var r=confirm("Anda yakin meng-approve Pembayaran ini?");
         if (r==true){
@@ -625,6 +673,11 @@ $('#tambah_inv').click(function(event) {
 
 function proceed_bayar(){
   $('#tambah_inv_txt').text('Please Wait ...');
+  let is_nopph23 = 0;
+  if ($('#check_pph23').is(":checked")){
+    is_nopph23 = 1;// tanpa pph 23
+  }
+  console.log(is_nopph23);
   $.ajax({// Run getUnlockedCall() and return values to form
       url: "{{ route('pembayaran.saveDetailPembayaran') }}",
       data:{
@@ -632,10 +685,12 @@ function proceed_bayar(){
          jenis_pmb:'{{ $header->jenis_pmb }}',
          id_invoice:$('#id_modal_inv').val(),
          currency_id: $('#currency_id').val(),
+         kurs: $('#kurs').val(),
          total_invoice:$('#total_invoice').val(),
          nilai_bayar:$('#nilai_bayar').val(),
          nilai_sisa:$('#nilai_sisa').val(),
-         tanggal_bayar:$('#tanggal_dt').val()
+         tanggal_bayar:$('#tanggal_dt').val(),
+         is_nopph23:is_nopph23
       },
       type: "POST",
       dataType: "json",
@@ -670,25 +725,37 @@ function proceed_bayar(){
 }
 
 function delete_detail(id){
-  $.ajax({
-    url: "{{ route('pembayaran.deleteDetailPembayaran') }}",
-    type: "POST",
-    data: {
-        id:id,
-        company_id: @json($header->id_company),
-        currency_id: $('#currency_id_header').val(),
-    },
-    dataType: "json",
-    success: function(result){
-      if (result['status'] == 'sukses') {
-        alert('Transaksi Berhasil di hapus');
-      } else {
-        alert(result['message']);
-      }
-      loadDetail();
-      loadInvoice();
-    }
-  });
+    Swal.fire({
+        title: 'Anda yakin ingin menghapus detail invoice ini ?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "{{ route('pembayaran.deleteDetailPembayaran') }}",
+            type: "POST",
+            data: {
+                id:id,
+                company_id: @json($header->id_company),
+                currency_id: $('#currency_id_header').val(),
+            },
+            dataType: "json",
+            success: function(result){
+              if (result['status'] == 'sukses') {
+                alert('Transaksi Berhasil di hapus');
+              } else {
+                alert(result['message']);
+              }
+              loadDetail();
+              loadInvoice();
+            }
+          });
+        }
+    })
 }
 
 $(function() {

@@ -32,6 +32,7 @@ class JournalController extends Controller
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
+        $data['pembayaran'] = PembayaranModel::where('no_pembayaran', $request->reference_no)->first();
         $data['reference_no'] = $request->reference_no;
         $data['reference_id'] = $request->reference_id;
         $data['client_id'] = $request->client_id;
@@ -390,6 +391,26 @@ class JournalController extends Controller
 
                 $request->session()->push('journal_details', $newItem);
 
+                $total_pph23 = 0;
+                if($pembayaran->flag_pph23==1){
+                    $loop_pph23 = PembayaranModel::get_list_pmb_invoice($pembayaran->id);
+                    // account pph23 di debit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
+                    foreach ($loop_pph23 as $key => $value) {
+                        $newItem = [
+                            'account_id' => $account_pajak->id,
+                            'account_number' => $account_pajak->account_number,
+                            'account_name' => $account_pajak->account_name,
+                            'transaction_type' => 'C',
+                            'debit' => 0,
+                            'credit' => $value->pph23,
+                            'memo' => $value->invoice_no.' PPh 23 DIBAYAR DIMUKA',
+                        ];
+                        $request->session()->push('journal_details', $newItem);
+                        $total_pph23 += $value->pph23;
+                    }
+                }
+
                  // account bank di credit
                  $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
                  // $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
@@ -401,7 +422,7 @@ class JournalController extends Controller
                      'account_name' => $account->account_name,
                      'transaction_type' => 'D',
                      'debit' => 0,
-                     'credit' => $pembayaran->nilai_pmb,
+                     'credit' => $pembayaran->nilai_pmb - $total_pph23,
                      'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
                  ];
 
@@ -428,6 +449,15 @@ class JournalController extends Controller
         ];
 
         $request->session()->push('journal_details', $newItem);
+    }
+
+    public function updatepph23Journal(Request $request)
+    {
+        DB::table('t_pembayaran')->where('no_pembayaran',$request->reference_no)->update([
+            'flag_pph23' => $request->status,
+            'modified_at' => Carbon::now(),
+            'modified_by' => Auth::user()->id
+        ]);
     }
 
     public function updateDetailJournal(Request $request)
