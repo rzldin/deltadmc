@@ -348,8 +348,8 @@ class JournalController extends Controller
                 /** pembayaran piutang */
                 // account bank di debit
                 $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
-                // $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
-                $account_no_pembayaran = '1-1101';
+                $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
+                // $account_no_pembayaran = '1-1101';
                 $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
                 $newItem = [
                     'account_id' => $account->id,

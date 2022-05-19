@@ -41,6 +41,7 @@
                                 <th>Date</th>
                                 <th>Status</th>
                                 <th>Nilai PMB</th>
+                                <th>Jumlah Invoice</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -55,6 +56,7 @@
                                     <td class="bg-success text-center">Approved</td>
                                 @endif
                                 <td>{{ number_format($pmb->nilai_pmb,2,',','.') }}</td>
+                                <td>{{ $pmb->jumlah }}</td>
                                 <td>
                                     @if($pmb->status==0)
                                         <a class="btn btn-info btn-sm" href="{{route('pembayaran.edit', ['id'=>$pmb->id])}}"><i class="fa fa-edit"></i> Edit </a>

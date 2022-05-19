@@ -1908,7 +1908,7 @@ class BookingController extends Controller
             $tabel1 .= '</tr>';
             $no++;
 
-            $totalAmount    += $amount;
+            $totalAmount    += $amount+$row->cost_adjustment;
             $totalAmount2   += $amount2;
         }
 
@@ -1918,8 +1918,8 @@ class BookingController extends Controller
 
         foreach($shipping as $profit)
         {
-            $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
-            $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
+            $totalCost = $totalAmount;
+            $totalSell = $totalAmount2;
             $profitAll = $totalSell - $totalCost;
             $profitPct = ($profitAll*100)/$totalSell;
             $tabel2 .= '<tr>';

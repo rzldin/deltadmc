@@ -46,7 +46,7 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="journal_date_picker" data-target-input="nearest">
-                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker" value="{{ date('d/m/Y') }}" />
+                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker" value="<?=(isset($pembayaran->tanggal))?date('m/d/Y'):date('m/d/Y', strtotime($pembayaran->tanggal));?>" />
                                                             <div class="input-group-append" data-target="#journal_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -107,7 +107,7 @@
                                                         <select class="form-control select2bs44" name="currency_id" id="currency_id">
                                                             <option value="" selected>Select Currency</option>
                                                             @foreach ($currency as $curr)
-                                                                <option value="{{ $curr->id }}">{{ $curr->code }}</option>
+                                                                <option value="{{ $curr->id }}" <?=($curr->id == $pembayaran->currency_id )?'selected':'';?>>{{ $curr->code }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
