@@ -92,6 +92,7 @@ class InvoiceController extends Controller
         $no=0;
         if (isset($request->cek_sell_chrg)) {
             foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
+                $no++;
                 $data['chrg_dtl_id'][$key] = $chrg_dtl_id;
                 $cek = DB::table('t_bcharges_dtl')->where('id', $chrg_dtl_id)->first();
                 $is_reimburse += $cek->reimburse_flag;
@@ -280,48 +281,6 @@ class InvoiceController extends Controller
                     $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
                     $tabel1 .= '<td class="text-left">' . $row->code_currency . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->sell, 2, '.', ',') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($total, 2, '.', ',') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, '.', ',') . '</td>';
-                    // $tabel1 .= '<td class="text-right">' . number_format($row->vat, 2, '.', ',') . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($amount, 2, '.', ',') . '</td>';
-                    $tabel1 .= '<td class="text-left"></td>';
-                    $tabel1 .= '</tr>';
-                    $no++;
-
-                    $total_cost     += $total;
-                    $totalAmount    += $amount;
-                    $totalAmount2   += $amount2;
-                }
-            }
-
-            if (isset($request->chrg_dtl_id)) {
-                $data   = BookingModel::getChargesDetailUsingInId($chrg_dtl_id);
-                foreach ($data as $row) {
-                    if ($row->reimburse_flag == 1) {
-                        $style = 'checked';
-                    } else {
-                        $style = '';
-                    }
-
-                    $total = ($row->qty * $row->cost);
-                    $total2 = ($row->qty * $row->sell);
-                    // $amount = ($total * $row->rate) + $row->vat;
-                    $amount = ($total * $row->rate);
-                    // $amount2 = ($total2 * $row->rate) + $row->vat;
-                    $amount2 = ($total2 * $row->rate);
-
-                    $tabel1 .= '<tr>';
-                    $tabel1 .= '<td>';
-                    $tabel1 .= ($no);
-                    $tabel1 .= '<input type="hidden" name="cek_sell_chrg[]" value="' . $row->id . '" />';
-                    $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="' . $row->bill_to_id . '" />';
-                    $tabel1 .= '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
-                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" ' . ($request->invoice_type == 'REM' ? 'checked' : '') . '></td>';
-                    $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
-                    $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
-                    $tabel1 .= '<td class="text-right">' . number_format($row->sell, 2, '.', ',') . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($total2, 2, '.', ',') . '</td>';
                     $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, '.', ',') . '</td>';
                     // $tabel1 .= '<td class="text-right">' . number_format($row->vat, 2, '.', ',') . '</td>';
@@ -334,6 +293,54 @@ class InvoiceController extends Controller
                     $totalAmount    += $amount;
                     $totalAmount2   += $amount2;
                 }
+            }
+
+            if (isset($request->chrg_dtl_id)) {
+                $total_sell = 0;
+                $data   = BookingModel::getChargesDetailUsingInId($chrg_dtl_id);
+                foreach ($data as $row) {
+                    if ($row->reimburse_flag == 1) {
+                        $style = 'checked';
+                    } else {
+                        $style = '';
+                    }
+
+                    $total = ($row->qty * $row->cost);
+                    $total2 = ($row->qty * $row->sell);
+                    // $amount = ($total * $row->rate) + $row->vat;
+                    $amount = ($total * $row->rate)+$row->cost_adjustment;
+                    // $amount2 = ($total2 * $row->rate) + $row->vat;
+                    $amount2 = ($total2 * $row->rate);
+
+                    // Sell
+                    $tabel1 .= '<tr>';
+                    $tabel1 .= '<td>';
+                    $tabel1 .= ($no);
+                    $tabel1 .= '<input type="hidden" name="cek_sell_chrg['.$no.'][id]" value="' . $row->id . '" />';
+                    $tabel1 .= '<input type="hidden" name="cek_bill_to[]" value="' . $row->bill_to_id . '" />';
+                    $tabel1 .= '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
+                    $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" ' . ($request->invoice_type == 'REM' ? 'checked' : '') . '></td>';
+                    $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
+                    $tabel1 .= '<td class="text-left">' . $row->code_cur . '</td>';
+                    $tabel1 .= '<td class="text-right">' . number_format($row->sell, 2, '.', ',') . '</td>';
+                    $tabel1 .= '<td class="text-right">' . number_format(($row->qty * $row->sell), 2, '.', ',') . '</td>';
+                    $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, '.', ',') . '</td>';
+                    $tabel1 .= '<td class="text-right">' . number_format($amount2, 2, '.', ',') . '</td>';
+                    foreach ($taxes as $tax){
+                        $taxvalue[$tax->code] = $amount2 * $tax->value/100;
+                        $tabel1 .= '<td><label id="lbl_'.$tax->code.$no.'" style="display:none;">'.number_format($taxvalue[$tax->code],2,',','.').'</label><br>
+                                     <input type="checkbox" name="cek_sell_chrg['.$no.']['.$tax->code.']" class="'.$tax->code.'" id="btn_'.$tax->code.$no.'" onchange="checkedTaxDetail(\''.$tax->code.'\','.$no.',\''.$tax->name.'\','.$tax->value.')" value="'.$taxvalue[$tax->code].'" /></td>';
+                    }
+                    $tabel1 .= '<td class="text-left"></td>';
+                    $tabel1 .= '</tr>';
+                    $no++;
+
+                    $total_sell     += $total;
+                    $totalAmount    += $amount;
+                    $totalAmount2   += $amount2;
+                }
 
                 // $tabel1 .= '<tr>';
                 // $tabel1 .= '<td colspan="10" class="text-right">Total</td>';
@@ -342,38 +349,33 @@ class InvoiceController extends Controller
                 // $tabel1 .= '</tr>';
             }
             $tabel1 .= "<tr id='row_subtotal'>";
-            $tabel1 .= "<td colspan='7' class='text-right'><span id='lbl_subtotal'>Subtotal</span></td>";
-            $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='text' class='form-control' name='total_before_roe' id='total_before_roe' value='" . number_format($total_sell, 2, '.', ',') . "' readonly/>";
-            $tabel1 .= "</td>";
-            $tabel1 .= "<td class='text-right'></td>";
-            $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='text' class='form-control' name='total_before_vat' id='total_before_vat' value='" . number_format($totalAmount2, 2, '.', ',') . "' readonly/>";
-            $tabel1 .= "</td>";
-            $tabel1 .= "<td colspan='1'></td>";
+                $tabel1 .= "<td colspan='7' class='text-right'><span id='lbl_subtotal'>Subtotal</span></td>";
+                $tabel1 .= "<td>".number_format($total_sell,2,',','.')."</td>";
+                $tabel1 .= "<td></td>";
+                $tabel1 .= "<td class='text-right'>";
+                $tabel1 .= number_format($totalAmount2, 2, '.', ',');
+                $tabel1 .= "<input type='hidden' class='form-control' name='total_before_vat' id='total_before_vat' value='" . number_format($totalAmount2, 2, '.', ',') . "' readonly/>";
+                $tabel1 .= "</td>";
+                $tabel1 .= "<td colspan='4'></td>";
             $tabel1 .= "</tr>";
-            $tabel1 .= "<tr id='row_ppn' style='display: none;'>";
-            $tabel1 .= "<td colspan='9' class='text-right'><span id='lbl_ppn'></span></td>";
-            $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='hidden' class='form-control' name='value_ppn' id='value_ppn' value='0.00' readonly/>";
-            $tabel1 .= "<input type='text' class='form-control' name='input_ppn' id='input_ppn' value='0.00' readonly/>";
-            $tabel1 .= "</td>";
-            $tabel1 .= "<td colspan='1'></td>";
-            $tabel1 .= "</tr>";
-            $tabel1 .= "<tr id='row_pph23' style='display: none;'>";
-            $tabel1 .= "<td colspan='9' class='text-right'><span id='lbl_pph23'></span></td>";
-            $tabel1 .= "<td class='text-right'>";
-            $tabel1 .= "<input type='hidden' class='form-control' name='value_pph23' id='value_pph23' value='0.00' readonly/>";
-            $tabel1 .= "<input type='text' class='form-control' name='input_pph23' id='input_pph23' value='0.00' readonly/>";
-            $tabel1 .= "</td>";
-            $tabel1 .= "<td colspan='1'></td>";
-            $tabel1 .= "</tr>";
+            foreach ($taxes as $tax){
+                $tabel1 .= "<tr id='row_".$tax->code."' style='display: none;'>";
+                    $tabel1 .= "<td colspan='10' class='text-right'><span id='lbl_total_".$tax->code."'></span></td>";
+                    $tabel1 .= "<td class='text-right'>";
+                    // $tabel1 .= "<input type='hidden' class='form-control' name='value_".$tax->code."' id='value_".$tax->code."' value='0.00' readonly/>";
+                    $tabel1 .= "<input type='text' class='form-control' name='input_".$tax->code."' id='input_".$tax->code."' value='0.00' readonly/>";
+                    $tabel1 .= "</td>";
+                    $tabel1 .= "<td colspan='4'></td>";
+                $tabel1 .= "</tr>";
+            }
             $tabel1 .= '<tr>';
-            $tabel1 .= '<td colspan="9" class="text-right">Total</td>';
-            $tabel1 .= '<td class="text-right">';
-            $tabel1 .= '<input type="text" class="form-control" name="total_invoice" id="total_invoice" value="' . number_format($totalAmount2, 2, '.', ',') . '" readonly/>';
-            $tabel1 .= '</td>';
-            $tabel1 .= '<td colspan="1"></td>';
+                $tabel1 .= '<td colspan="10" class="text-right">Total</td>';
+                $tabel1 .= '<td class="text-right">';
+                $tabel1 .= '<label class="total_invoice">'.number_format($totalAmount2, 2, '.', ',').'</label>';
+                $tabel1 .= '<input type="hidden" class="total_invoice" name="total_invoice" value="' . number_format($totalAmount2, 2, '.', ',') . '" readonly/>';
+                $tabel1 .= '<input type="hidden" class="total_sell" name="total_sell" value="' . number_format($total_sell, 2, '.', ',') . '" readonly/>';
+                $tabel1 .= '</td>';
+                $tabel1 .= '<td colspan="4"></td>';
             $tabel1 .= '</tr>';
         } else {
             if (isset($request->chrg_dtl_id)) {
@@ -472,7 +474,7 @@ class InvoiceController extends Controller
 
     public function save(Request $request)
     {
-        if ($request->create_type == 0) {
+        if ($request->create_type == 0) { //Invoice Baru
             $rules = [
                 'client_id' => 'required',
                 'invoice_no' => 'required|unique:t_invoice',
@@ -490,117 +492,103 @@ class InvoiceController extends Controller
             try {
                 DB::beginTransaction();
 
+                $param = $request->all();
+
                 DB::table('t_booking')->where('id', $request->t_booking_id)->update([
                     'flag_invoice' => 1
                 ]);
 
+                if($request->currency!=65){//idr
+                    $request->total_invoice = str_replace(',', '', $request->total_sell);
+                }
+
+                $invoice_id = DB::table('t_invoice')->insertGetId(
+                    [
+                        'tipe_inv' => 0,
+                        // 't_proforma_invoice_id' => 0,
+                        't_booking_id' => $request->t_booking_id,
+                        'activity' => $request->activity,
+                        'client_id' => $request->client_id,
+                        'client_addr_id' => $request->client_addr_id,
+                        'client_pic_id' => $request->client_pic_id,
+                        'invoice_no' => $request->invoice_no,
+                        'invoice_date' => Carbon::createFromFormat('d/m/Y', $request->invoice_date)->format('Y-m-d'),
+                        'onboard_date' => Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d'),
+                        'truck_no' => $request->truck_no,
+                        'reimburse_flag' => (($request->invoice_type == 'REM') ? 1 : 0),
+                        'debit_note_flag' => (($request->invoice_type == 'DN') ? 1 : 0),
+                        'credit_note_flag' => (($request->invoice_type == 'CN') ? 1 : 0),
+                        'top' => $request->top,
+                        'currency' => $request->currency,
+                        'rate' => $request->kurs,
+                        'total_before_vat' => str_replace(',', '', $request->total_before_vat),
+                        'total_vat' => str_replace(',', '', $request->input_ppn),
+                        'pph23' => str_replace(',', '', $request->input_pph23),
+                        'ppn1' => str_replace(',', '', $request->input_ppn1),
+                        'total_cost_adjustment' => str_replace(',', '', $request->total_cost_adjustment),
+                        'total_invoice' => str_replace(',', '', $request->total_invoice),
+                        'created_by' => Auth::user()->name,
+                        'created_on' => date('Y-m-d h:i:s')
+                    ]
+                );
+
+                $pno = 0;
                 $total_before_vat = 0;
                 $total_vat = 0;
-                $total_invoice = 0;
-
-                $param = $request->all();
-                $param['invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->invoice_date)->format('Y-m-d');
-                $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
-                $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-                $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
-                $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
-                $param['rate'] = 1;
-                $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);
-                $param['total_vat'] = str_replace(',', '', $request->input_ppn);
-                $param['pph23'] = str_replace(',', '', $request->input_pph23);
-                $param['total_invoice'] = (($request->currency=='IDR')? str_replace(',', '', $request->total_invoice):str_replace(',', '', $request->total_before_roe));
-                $param['created_by'] = Auth::user()->name;
-                $param['created_on'] = date('Y-m-d h:i:s');
-                // dd($request->all(), $param);
-                $invoice = InvoiceModel::saveInvoice($param);
-                // dd($invoice);
-                $paramDetail['id'] = '';
-                $paramDetail['invoice_id'] = $invoice->id;
-                // if (isset($request->cek_sell_shp)) {
-                //     foreach ($request->cek_sell_shp as $key => $shp_dtl_id) {
-                //         $shp_dtl   = QuotationModel::get_quoteShippingById($shp_dtl_id);
-                //         $paramDetail['desc'] = $shp_dtl->notes.' | Routing: '.$shp_dtl->routing.' | Transit time : '.$shp_dtl->transit_time;
-                //         $paramDetail['currency'] = $request->currency;
-                //         $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-                //         $paramDetail['rate'] = 1;
-                //         $paramDetail['cost'] = $shp_dtl->cost;
-                //         $paramDetail['sell'] = $shp_dtl->sell;
-                //         $paramDetail['qty'] = $shp_dtl->qty;
-                //         $paramDetail['cost_val'] = $shp_dtl->cost_val;
-                //         $paramDetail['sell_val'] = $shp_dtl->sell_val;
-                //         $paramDetail['subtotal'] = $shp_dtl->subtotal;
-                //         $paramDetail['created_by'] = Auth::user()->name;
-                //         $paramDetail['created_on'] = date('Y-m-d h:i:s');
-
-                //         InvoiceDetailModel::saveInvoiceDetail($paramDetail);
-
-                //         $shpDtlParam['id'] = $shp_dtl_id;
-                //         $shpDtlParam['t_invoice_id'] = $invoice->id;
-                //         $shpDtlParam['invoice_type'] = $request->invoice_type;
-                //         $shpDtlParam['created_by'] = Auth::user()->name;
-                //         $shpDtlParam['created_on'] = date('Y-m-d h:i:s');
-                //         QuotationModel::saveShipDetail($shpDtlParam);
-                //     }
-                // }
+                $total_sub = 0;
 
                 if (isset($request->cek_sell_chrg)) {
-                    foreach ($request->cek_sell_chrg as $key => $chrg_dtl_id) {
-                        $chrg_dtl = BookingModel::getChargesDetailById($chrg_dtl_id);
+                    foreach ($request->cek_sell_chrg as $key => $chrg) {
+                        $chrg_dtl = BookingModel::getChargesDetailById($chrg['id']);
                         $vat_dtl = 0;
                         $pph23_dtl = 0;
-                        $subtotal = 0;
-                        if ($request->value_ppn > 0) {
-                            $vat_dtl = $chrg_dtl->sell_val * ($request->value_ppn / 100);
+                        $ppn1_dtl = 0;
+                        $subtotal = $chrg_dtl->sell;
+                        if(isset($chrg['ppn'])){
+                            $vat_dtl = $chrg['ppn'];
                         }
-
-                        if ($request->value_pph23 > 0) {
-                            $pph23_dtl = $chrg_dtl->sell_val * ($request->value_pph23 / 100);
+                        if(isset($chrg['pph23'])){
+                            $pph23_dtl = $chrg['pph23'];
                         }
-
-                        if($request->currency=='IDR'){
-                            $subtotal = $chrg_dtl->sell_val + $vat_dtl - $pph23_dtl;
-                        }else{
-                            $subtotal = $chrg_dtl->sell;
+                        if(isset($chrg['ppn1'])){
+                            $ppn1_dtl = $chrg['ppn1'];
                         }
-                        $paramDetail['t_bcharges_id'] = $chrg_dtl->id;
-                        $paramDetail['t_mcharge_code_id'] = $chrg_dtl->t_mcharge_code_id;
-                        $paramDetail['desc'] = $chrg_dtl->desc;
-                        $paramDetail['currency'] = $request->currency;
-                        $paramDetail['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
-                        $paramDetail['rate'] = 1;
-                        $paramDetail['cost'] = $chrg_dtl->cost;
-                        $paramDetail['sell'] = $chrg_dtl->sell;
-                        $paramDetail['qty'] = $chrg_dtl->qty;
-                        $paramDetail['cost_val'] = (($request->currency == 'IDR')? $chrg_dtl->cost_val: $chrg_dtl->cost);
-                        $paramDetail['sell_val'] = (($request->currency == 'IDR')? $chrg_dtl->sell_val: $chrg_dtl->sell);
-                        $paramDetail['vat'] = $vat_dtl;
-                        $paramDetail['pph23'] = $pph23_dtl;
-                        $paramDetail['subtotal'] = $subtotal;
-                        $paramDetail['routing'] = $chrg_dtl->routing;
-                        $paramDetail['transit_time'] = $chrg_dtl->transit_time;
-                        $paramDetail['created_by'] = Auth::user()->name;
-                        $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                        $total = $subtotal + $vat_dtl - $pph23_dtl + $ppn1_dtl;
+                        // $sub_total = ($chrg_dtl->qty * $chrg_dtl->cost_val) + $chrg_dtl->vat;
+                        DB::table('t_invoice_detail')->insert(
+                            [
+                                'invoice_id'     => $invoice_id,
+                                't_bcharges_id'  => $chrg_dtl->id,
+                                't_mcharge_code_id' => $chrg_dtl->t_mcharge_code_id,
+                                'position_no'    => $pno++, //Position
+                                'desc'           => $chrg_dtl->desc,
+                                'reimburse_flag' => $chrg_dtl->reimburse_flag,
+                                'currency'       => $request->currency,
+                                'rate'           => $chrg_dtl->rate,
+                                'cost'           => $chrg_dtl->cost,
+                                'sell'           => $chrg_dtl->sell,
+                                'qty'            => $chrg_dtl->qty,
+                                'cost_val'       => $chrg_dtl->cost_val,
+                                'sell_val'       => $chrg_dtl->sell_val,
+                                'vat'            => $vat_dtl,
+                                'pph23'          => $pph23_dtl,
+                                'ppn1'           => $ppn1_dtl,
+                                'subtotal'       => $total,
+                                'routing'        => $chrg_dtl->routing,
+                                'transit_time'   => $chrg_dtl->transit_time,
+                                'created_by'     => Auth::user()->name,
+                                'created_on'     => date('Y-m-d h:i:s')
+                            ]
+                        );
 
-                        InvoiceDetailModel::saveInvoiceDetail($paramDetail);
-
-                        $chrgDtlParam['id'] = $chrg_dtl_id;
-                        $chrgDtlParam['t_invoice_id'] = $invoice->id;
+                        $chrgDtlParam['id'] = $chrg['id'];
+                        $chrgDtlParam['t_invoice_id'] = $invoice_id;
                         $chrgDtlParam['invoice_type'] = $request->invoice_type;
                         $chrgDtlParam['created_by'] = Auth::user()->name;
                         $chrgDtlParam['created_on'] = date('Y-m-d h:i:s');
                         QuotationModel::saveChargeDetail($chrgDtlParam);
-
-                        // $total_before_vat += $chrg_dtl->sell_val;
-                        // $total_vat += $chrg_dtl->vat;
-                        // $total_invoice += $chrg_dtl->subtotal;
                     }
                 }
-
-                // DB::table('t_invoice')->where('id', $invoice->id)->update([
-                //     'total_before_vat' => $total_before_vat,
-                //     'total_vat' => $total_vat,
-                //     'total_invoice' => $total_invoice,
-                // ]);
                 DB::commit();
                 return redirect()->route('booking.edit', ['id' => $request->t_booking_id])->with('success', 'Invoice Created!');
             } catch (\Throwable $th) {
@@ -741,7 +729,7 @@ class InvoiceController extends Controller
                 ]);
 
                 if($request->currency!=65){//idr
-                    $request->total_invoice = $request->total_cost + $request->total_cost_adjustment;;
+                    $request->total_invoice = str_replace(',', '', $request->total_cost) + str_replace(',', '', $request->total_cost_adjustment);
                 }
 
                 $invoice_id = DB::table('t_invoice')->insertGetId(
@@ -756,19 +744,13 @@ class InvoiceController extends Controller
                         'invoice_no' => $request->invoice_no,
                         'invoice_date' => Carbon::createFromFormat('d/m/Y', $request->invoice_date)->format('Y-m-d'),
                         'onboard_date' => Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d'),
+                        'truck_no' => $request->truck_no,
                         'reimburse_flag' => (($request->invoice_type == 'REM') ? 1 : 0),
                         'debit_note_flag' => (($request->invoice_type == 'DN') ? 1 : 0),
                         'credit_note_flag' => (($request->invoice_type == 'CN') ? 1 : 0),
                         'top' => $request->top,
                         'currency' => $request->currency,
                         'rate' => $request->kurs,
-                        'mbl_shipper' => $request->mbl_shipper,
-                        'hbl_shipper' => $request->hbl_shipper,
-                        'vessel' => $request->vessel,
-                        'm_vessel' => $request->m_vessel,
-                        'pol_id' => $request->pol_id,
-                        'pod_id' => $request->pod_id,
-                        'onboard_date' => $request->onboard_date,
                         'total_before_vat' => str_replace(',', '', $request->total_before_vat),
                         'total_vat' => str_replace(',', '', $request->input_ppn),
                         'pph23' => str_replace(',', '', $request->input_pph23),

@@ -186,8 +186,7 @@
                                                     <label>MB/L NO.</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $header->mbl_no }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->mbl_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -195,8 +194,7 @@
                                                     <label>HB/L</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="hbl_shipper"
-                                                        id="hbl_shipper" value="{{ $header->hbl_shipper }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->hbl_no }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -204,7 +202,7 @@
                                                     <label>VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="vessel" id="vessel" value="{{ $header->vessel }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->vessel }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -212,8 +210,7 @@
                                                     <label>M. VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="m_vessel"
-                                                        id="m_vessel" value="{{ $header->m_vessel }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->m_vessel }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -221,10 +218,7 @@
                                                     <label>Loading</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="pol_name"
-                                                        id="pol_name" value="{{ $header->pol_name }}">
-                                                    <input readonly class="form-control" type="hidden" name="pol_id" id="pol_id"
-                                                        value="{{ $header->pol_id }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->pol_name }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -232,10 +226,7 @@
                                                     <label>Destination</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input readonly class="form-control" type="text" name="pod_name"
-                                                        id="pod_name" value="{{ $header->pod_name }}">
-                                                    <input readonly class="form-control" type="hidden" name="pod_id" id="pod_id"
-                                                        value="{{ $header->pod_id }}">
+                                                    <input readonly class="form-control" type="text" value="{{ $header->pod_name }}">
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -284,14 +275,23 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php 
+                                            @php
                                                 $total = 0;
-                                                $ppn = 0;
-                                                $pph23 = 0;
-                                                $ppn1 = 0;
-                                                $subtotal = 0;
+                                                $total_ppn = 0;
+                                                $total_pph23 = 0;
+                                                $total_ppn1 = 0;
+                                                $total_before_vat = 0;
+                                                $total_invoice = 0;
                                             @endphp
                                             @foreach ($details as $key => $detail)
+                                                @php
+                                                    $total += $detail->cost_val;
+                                                    $total_ppn += $detail->vat;
+                                                    $total_pph23 += $detail->pph23;
+                                                    $total_ppn1 += $detail->ppn1;
+                                                    $total_before_vat += $detail->sell_val;
+                                                    $total_invoice += $detail->subtotal;
+                                                @endphp
                                                 <tr>
                                                     <td align="center">{{ $key + 1 }}</td>
                                                     <td>{{ $detail->charge_name }}</td>
@@ -311,22 +311,15 @@
                                                         <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
                                                     </td>
                                                 </tr>
-                                                @php
-                                                    $total += $detail->cost_val;
-                                                    $ppn += $detail->vat;
-                                                    $pph23 += $detail->pph23;
-                                                    $ppn1 += $detail->ppn1;
-                                                    $subtotal += $detail->subtotal;
-                                                @endphp
                                             @endforeach
                                             <tr>
                                                 <td colspan="8" class="text-right">Total</td>
                                                 <td>{{ number_format($total,2,',','.') }}</td>
                                                 <td></td>
-                                                <td>{{ number_format($ppn,2,',','.') }}</td>
-                                                <td>{{ number_format($pph23,2,',','.') }}</td>
-                                                <td>{{ number_format($ppn1,2,',','.') }}</td>
-                                                <td>{{ number_format($subtotal,2,',','.') }}</td>
+                                                <td>{{ number_format($total_ppn,2,',','.') }}</td>
+                                                <td>{{ number_format($total_pph23,2,',','.') }}</td>
+                                                <td>{{ number_format($total_ppn1,2,',','.') }}</td>
+                                                <td>{{ number_format($total_invoice,2,',','.') }}</td>
                                                 <td></td>
                                             </tr>
                                         </tbody>

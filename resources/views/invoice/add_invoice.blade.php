@@ -111,14 +111,14 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
-                                                        <label>Invoice Type {{ $reimburse }}</label>
+                                                        <label>Invoice Type</label>
                                                     </div>
                                                     <div class="col-md-8">
                                                     @if($is_reimburse>0)
                                                         <input type="radio" name="invoice_type" id="invoice_type_reimbursment" onchange="loadSellCost({{ $booking->id }})" value="REM" checked>
                                                         Reimbursment<br>
                                                     @else
-                                                        <input type="radio" name="invoice_type" id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG"> Reguler<br>
+                                                        <input type="radio" name="invoice_type" id="invoice_type_reg" onchange="loadSellCost({{ $booking->id }})" value="REG" checked> Reguler<br>
                                                         <input type="radio" name="invoice_type" id="invoice_type_debit_note" onchange="loadSellCost({{ $booking->id }})" value="DN"> Debit Note<br>
                                                         <input type="radio" name="invoice_type" id="invoice_type_credit_note" onchange="loadSellCost({{ $booking->id }})" value="CN"> Credit Note<br>
                                                     @endif
@@ -131,8 +131,7 @@
                                                     <div class="col-md-8">
                                                         @foreach ($taxes as $tax)
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input taxcheck" type="checkbox" id="{{ $tax->code }}" value="{{ $tax->value }}" onchange="checkedTax(`{{ $tax->code }}`, `{{ $tax->name }}`, {{ $tax->value }})">
-                                                                <label class="form-check-label" for="{{ $tax->code }}">{{ "$tax->name ($tax->value %)" }}</label>
+                                                                <button type="button" class="btn btn-info btn-xs" onclick="checkedTax(`{{$tax->code}}`)">{{ "$tax->name ($tax->value %)" }}</button>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -206,7 +205,7 @@
                                                         <label>Currency</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <select class="form-control select2bs44" name="currency" id="currency">
+                                                        <select class="form-control select2bs44" name="currency" id="currency" onchange="show_kurs(this.value)">
                                                             <option value="" selected>-- Select Valuta --</option>
                                                             @foreach ($currency as $item)
                                                                 <option value="{{ $item->id }}" @if ($booking->valuta_payment == $item->id) selected @endif>
@@ -215,12 +214,21 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="row mb-3 show_kurs" style="display: none;">
+                                                    <div class="col-md-4">
+                                                        <label>Kurs</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <input class="form-control" type="text" name="kurs"
+                                                            id="kurs" value="1">
+                                                    </div>
+                                                </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
                                                         <label>MB/L NO.</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="mbl_shipper" id="mbl_shipper" value="{{ $booking->mbl_no }}" readonly>
+                                                        <input class="form-control" type="text" value="{{ $booking->mbl_no }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -228,7 +236,7 @@
                                                         <label>HB/L</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="hbl_shipper" id="hbl_shipper" value="{{ $booking->hbl_shipper }}" readonly>
+                                                        <input class="form-control" type="text" value="{{ $booking->hbl_no }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -236,7 +244,7 @@
                                                         <label>VESSEL</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="vessel" id="vessel" readonly>
+                                                        <input class="form-control" type="text" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -244,7 +252,7 @@
                                                         <label>M. VESSEL</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="m_vessel" id="m_vessel" readonly>
+                                                        <input class="form-control" type="text" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -252,8 +260,7 @@
                                                         <label>Loading</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="pol_name" id="pol_name" value="{{ $booking->port1 }}" readonly>
-                                                        <input class="form-control" type="hidden" name="pol_id" id="pol_id" value="{{ $booking->pol_id }}">
+                                                        <input class="form-control" type="text" value="{{ $booking->port1 }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -261,8 +268,7 @@
                                                         <label>Destination</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="pod_name" id="pod_name" value="{{ $booking->port3 }}" readonly>
-                                                        <input class="form-control" type="hidden" name="pod_id" id="pod_id" value="{{ $booking->pod_id }}">
+                                                        <input class="form-control" type="text" value="{{ $booking->port3 }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -305,6 +311,9 @@
                                                     <th>ROE</th>
                                                     {{-- <th>Vat</th> --}}
                                                     <th>Amount</th>
+                                                    @foreach ($taxes as $tax)
+                                                        <th>{{ "$tax->name ($tax->value %)" }}</th>
+                                                    @endforeach
                                                     <th>Note</th>
                                                     {{-- <th>Action</th> --}}
                                                 </tr>
@@ -331,6 +340,14 @@
     </section>
     @push('after-scripts')
         <script>
+        function show_kurs(val){
+            if(val == '' || val == 65){//idr
+                $('.show_kurs').hide('slow');
+            }else{
+                $('.show_kurs').show('slow');
+            }
+        }
+
             $('#create_type').on('change', function() {
                 if($('#create_type').val() == 0){
                     $('.show_new').show('slow');
@@ -447,38 +464,71 @@
                 }
             }
 
-            function checkedTax(code, name, value) {
-                if ($('#'+code).is(':checked')) {
+            function checkedTax(code) {
+                $('.'+code).trigger('click');
+            }
+
+            function checkedTaxDetail(code, no, name, value) {
+                if ($('#btn_'+code+no).is(':checked')) {
+                    $('#lbl_'+code+no).show();
+                } else {
+                    $('#lbl_'+code+no).hide();
+                }
+                checkstate(code,name,value);
+            }
+
+            function checkstate(code,name,value) {
+                let elems = document.getElementsByClassName(code);
+                let checked = false;
+                let total_value = Number(0);
+                for (let i = 0; i < elems.length; i++) {
+                    if (elems[i].checked) {
+                        total_value += Number(elems[i].value);
+                        checked = true;
+                    }
+                }
+                $('#input_'+code).val(Number(total_value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                if (checked) {
                     $('#row_'+code).show();
-                    $('#lbl_'+code).text(name + ' (' + value + ' %)');
-                    $('#value_'+code).val(value);
+                    $('#lbl_total_'+code).text(name + ' (' + value + ' %)');
                 } else {
                     $('#row_'+code).hide();
-                    $('#value_'+code).val(0);
                 }
-
                 calculateTotal();
             }
 
             function calculateTotal() {
-                let total_before_vat = $('#total_before_vat');
-                let total_invoice = $('#total_invoice');
-                let ppn = $('#value_ppn');
-                let pph23 = $('#value_pph23');
-                let total_ppn = $('#input_ppn');
-                let total_pph23 = $('#input_pph23');
+                // let total_before_vat = $('#total_before_vat');
+                // let total_invoice = $('#total_invoice');
+                // let ppn = $('#value_ppn');
+                // let pph23 = $('#value_pph23');
+                // let total_ppn = $('#input_ppn');
+                // let total_pph23 = $('#input_pph23');
 
+                // let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
+                // let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
+                // let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
+                // let total_ppn_val = total_before_vat_val * (ppn_val / 100);
+                // let total_pph23_val = total_before_vat_val * (pph23_val / 100);
+
+                // let result;
+                // result = total_before_vat_val + total_ppn_val - total_pph23_val;
+
+                // total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                // total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                // total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+                let total_before_vat = $('#total_before_vat');
+                let total_invoice = $('.total_invoice');
                 let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
-                let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
-                let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
-                let total_ppn_val = total_before_vat_val * (ppn_val / 100);
-                let total_pph23_val = total_before_vat_val * (pph23_val / 100);
+                @foreach ($taxes as $tax)
+                    let total_{{$tax->code}}_val = $('#input_{{$tax->code}}').val().toString().replace(/\,/g, "");
+                @endforeach
 
                 let result;
-                result = total_before_vat_val + total_ppn_val - total_pph23_val;
+                result = Number(total_before_vat_val) + Number(total_ppn_val) - Number(total_pph23_val) + Number(total_ppn1_val);
 
-                total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-                total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                total_invoice.text(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
 

@@ -148,6 +148,9 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-md-12" style="text-align: right">
+                                                <a class="btn btn-info" href="{{ route('journal.edit', ['id' => $header->id]) }}">
+                                                    <i class="fa fa-edit"></i> Edit
+                                                </a>
                                                 @if ($header->flag_post == 0)
                                                     <a class="btn btn-primary" href="javascript:void(0)" onclick="$('#formJournal').submit()">
                                                         <i class="fa fa-paper-plane"></i> Post

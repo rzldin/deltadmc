@@ -46,7 +46,19 @@
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="journal_date_picker" data-target-input="nearest">
-                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker" value="<?=(isset($pembayaran->tanggal))?date('m/d/Y'):date('m/d/Y', strtotime($pembayaran->tanggal));?>" />
+                                                            <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker"
+                                                            @php
+                                                                $tgl = date('m/d/Y');
+                                                                $no_journal = '';
+                                                                if(isset($pembayaran)){
+                                                                    $tgl = date('m/d/Y', strtotime($pembayaran->tanggal));
+                                                                    $no_journal = $pembayaran->no_pembayaran;
+                                                                }elseif(isset($invoice)){
+                                                                    $tgl = date('m/d/Y', strtotime($invoice->invoice_date));
+                                                                    $no_journal = $invoice->invoice_no;
+                                                                }
+                                                            @endphp
+                                                                value="{{$tgl}}" />
                                                             <div class="input-group-append" data-target="#journal_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -96,7 +108,8 @@
                                                         <label>Journal No.</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input type="text" class="form-control" name="journal_no" id="journal_no">
+                                                        <input type="text" class="form-control" name="journal_no" id="journal_no" 
+                                                            value="{{ $no_journal }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -107,7 +120,11 @@
                                                         <select class="form-control select2bs44" name="currency_id" id="currency_id">
                                                             <option value="" selected>Select Currency</option>
                                                             @foreach ($currency as $curr)
-                                                                <option value="{{ $curr->id }}" <?=($curr->id == $pembayaran->currency_id )?'selected':'';?>>{{ $curr->code }}</option>
+                                                                @if(isset($pembayaran))
+                                                                    <option value="{{ $curr->id }}" <?=($curr->id == $pembayaran->currency_id )?'selected':'';?>>{{ $curr->code }}</option>
+                                                                @elseif(isset($invoice))
+                                                                    <option value="{{ $curr->id }}" <?=($curr->id == $invoice->currency )?'selected':'';?>>{{ $curr->code }}</option>
+                                                                @endif
                                                             @endforeach
                                                         </select>
                                                     </div>

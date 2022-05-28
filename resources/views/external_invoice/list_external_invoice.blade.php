@@ -34,9 +34,9 @@
                                             <th>Date</th>
                                             <th>Booking Number</th>
                                             <th>Booking Date</th>
+                                            <th>Client</th>
                                             <th>Shipper</th>
                                             <th>Consignee</th>
-                                            <th>Client</th>
                                             <th>Activity</th>
                                             <th>Status Pembayaran</th>
                                             <th>Action</th>
@@ -49,9 +49,9 @@
                                                 <td>{{ \Carbon\Carbon::parse($invoice->external_invoice_date)->format('d/m/Y') }}</td>
                                                 <td>{{ $invoice->booking_no }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($invoice->booking_date)->format('d/m/Y') }}</td>
+                                                <td>{{ $invoice->company_b }}</td>
                                                 <td>{{ $invoice->company_d }}</td>
                                                 <td>{{ $invoice->company_c }}</td>
-                                                <td>{{ $invoice->company_b }}</td>
                                                 <td>{{ $invoice->activity }}</td>
                                                 <td>
                                                     @if ($invoice->flag_bayar == 0)

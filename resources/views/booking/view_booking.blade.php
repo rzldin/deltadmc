@@ -1363,8 +1363,8 @@
                                                             @foreach ($shipping as $profit)
                                                             <tr>
                                                             <?php
-                                                                $totalCost = $totalAmount + (($profit->qty * $profit->cost) * $profit->rate) + $profit->vat;
-                                                                $totalSell = $totalAmount2 + (($profit->qty * $profit->sell) * $profit->rate) + $profit->vat;
+                                                                $totalCost = $totalAmount;
+                                                                $totalSell = $totalAmount2;
                                                                 $profitAll = $totalSell - $totalCost;
                                                                 $profitPct = ($profitAll*100)/$totalSell;
                 if($quote->shipment_by != 'LAND'){

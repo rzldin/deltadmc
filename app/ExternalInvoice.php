@@ -23,11 +23,11 @@ class ExternalInvoice extends Model
 
     public static function getExternalInvoice($id)
     {
-        return ExternalInvoice::leftJoin('t_mport as pol', 'pol.id', '=', 't_external_invoice.pol_id')
-            ->leftJoin('t_mport as pod', 'pod.id', '=', 't_external_invoice.pod_id')
-            ->leftJoin('t_booking as b', 'b.id', '=', 't_external_invoice.t_booking_id')
+        return ExternalInvoice::leftJoin('t_booking as b', 'b.id', '=', 't_external_invoice.t_booking_id')
+            ->leftJoin('t_mport as pol', 'pol.id', '=', 'b.pol_id')
+            ->leftJoin('t_mport as pod', 'pod.id', '=', 'b.pod_id')
             ->leftJoin('t_proforma_invoice as pi', 'pi.id', '=', 't_external_invoice.t_proforma_invoice_id')
-            ->select('t_external_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name')
+            ->select('t_external_invoice.*', 'b.activity', 'pol.port_name as pol_name', 'pod.port_name as pod_name','b.mbl_no','b.hbl_no','b.mbl_shipper')
             ->where('t_external_invoice.id', $id);
     }
 
@@ -50,12 +50,6 @@ class ExternalInvoice extends Model
                 'credit_note_flag' => $request['credit_note_flag'] ,
                 'top' => $request['top'],
                 'currency' => $request['currency'],
-                'mbl_shipper' => $request['mbl_shipper'],
-                'hbl_shipper' => $request['hbl_shipper'],
-                'vessel' => $request['vessel'],
-                'm_vessel' => $request['m_vessel'],
-                'pol_id' => $request['pol_id'],
-                'pod_id' => $request['pod_id'],
                 'onboard_date' => $request['onboard_date'],
                 'rate' => $request['rate'],
                 'total_before_vat' => $request['total_before_vat'],

@@ -35,9 +35,10 @@
                                 <th>Jenis</th>
                                 <th>Booking Number</th>
                                 <th>Booking Date</th>
+                                <th>Client</th>
                                 <th>Shipper</th>
                                 <th>Consignee</th>
-                                <th>Client</th>
+                                <th>Nominal</th>
                                 <th>Status</th>
                                 <th>Activity</th>
                                 <th>Action</th>
@@ -46,14 +47,15 @@
                         <tbody style="font-size: 14px">
                             @foreach ($invoices as $invoice)
                             <tr>
-                                <td>{{ $invoice->invoice_no }}</td>
+                                <td style="text-align: right;">{{ $invoice->invoice_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</td>
                                 <td><?=($invoice->tipe_inv==0)?'Piutang':'Hutang';?></td>
                                 <td>{{ $invoice->booking_no }}</td>
                                 <td>{{ \Carbon\Carbon::parse($invoice->booking_date)->format('d/m/Y') }}</td>
+                                <td>{{ $invoice->company_b }}</td>
                                 <td>{{ $invoice->company_d }}</td>
                                 <td>{{ $invoice->company_c }}</td>
-                                <td>{{ $invoice->company_b }}</td>
+                                <td style="text-align: right;">{{ number_format($invoice->total_invoice,2,',','.') }}</td>
                                 @if($invoice->tipe_inv == 1)<!-- Hutang -->
                                     @if ($invoice->flag_bayar == 0)
                                         <td class="bg-secondary text-center">Draft</td>

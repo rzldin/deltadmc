@@ -61,7 +61,7 @@
                                                         <select class="form-control select2bs44" name="client_addr_id" id="client_addr_id">
                                                             <option value="">Select Address</option>
                                                             @foreach ($addresses as $address)
-                                                                <option value="{{ $address->id }}" <?= $companies->id == $invoice_header['client_addr_id'] ? 'selected' : '' ?>>
+                                                                <option value="{{ $address->id }}" <?= $address->id == $invoice_header['client_addr_id'] ? 'selected' : '' ?>>
                                                                     {{ $address->address }}</option>
                                                             @endforeach
                                                         </select>
@@ -75,7 +75,7 @@
                                                         <select class="form-control select2bs44" name="client_pic_id" id="client_pic_id">
                                                             <option value="">Select PIC</option>
                                                             @foreach ($pics as $pic)
-                                                                <option value="{{ $pic->id }}" <?= $companies->id == $invoice_header['client_pic_id'] ? 'selected' : '' ?>>
+                                                                <option value="{{ $pic->id }}" <?= $pic->id == $invoice_header['client_pic_id'] ? 'selected' : '' ?>>
                                                                     {{ $pic->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -86,7 +86,7 @@
                                                         <label>Proforma Invoice No</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="proforma_invoice_no" id="proforma_invoice_no" value="">
+                                                        <input class="form-control" type="text" name="proforma_invoice_no" id="proforma_invoice_no" value="{{ $invoice_header->invoice_no }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -159,7 +159,7 @@
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="proforma_invoice_date_picker" data-target-input="nearest">
                                                             <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" class="form-control datetimepicker-input" data-target="#proforma_invoice_date_picker"
-                                                                value="{{ date('d/m/Y') }}" />
+                                                                value="{{ date('m/d/Y', strtotime($invoice_header->invoice_date)) }}" />
                                                             <div class="input-group-append" data-target="#proforma_invoice_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -198,7 +198,7 @@
                                                         <label>MB/L NO.</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="mbl_shipper" id="mbl_shipper" value="{{ $invoice_header->mbl_no }}" readonly>
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->mbl_no }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -206,7 +206,7 @@
                                                         <label>HB/L</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="hbl_shipper" id="hbl_shipper" value="{{ $invoice_header->hbl_shipper }}" readonly>
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->hbl_no }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -214,7 +214,7 @@
                                                         <label>VESSEL</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="vessel" id="vessel" value="{{ $invoice_header->vessel }}" readonly>
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->vessel }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -222,7 +222,7 @@
                                                         <label>M. VESSEL</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="m_vessel" id="m_vessel" value="{{ $invoice_header->m_vessel }}" readonly>
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->m_vessel }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -230,8 +230,7 @@
                                                         <label>Loading</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="pol_name" id="pol_name" value="{{ $invoice_header->pol_name }}" readonly>
-                                                        <input class="form-control" type="hidden" name="pol_id" id="pol_id" value="{{ $invoice_header->pol_id }}">
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->pol_name }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
@@ -239,8 +238,7 @@
                                                         <label>Destination</label>
                                                     </div>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="pod_name" id="pod_name" value="{{ $invoice_header->pod_name }}" readonly>
-                                                        <input class="form-control" type="hidden" name="pod_id" id="pod_id" value="{{ $invoice_header->pod_id }}">
+                                                        <input readonly class="form-control" type="text" value="{{ $invoice_header->pod_name }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">

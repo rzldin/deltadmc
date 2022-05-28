@@ -34,9 +34,9 @@
                                             <th>Date</th>
                                             <th>Booking Number</th>
                                             <th>Booking Date</th>
+                                            <th>Client</th>
                                             <th>Shipper</th>
                                             <th>Consignee</th>
-                                            <th>Client</th>
                                             <th>Activity</th>
                                             <th>Action</th>
                                         </tr>
@@ -48,9 +48,9 @@
                                                 <td>{{ \Carbon\Carbon::parse($proforma_invoice->proforma_invoice_date)->format('d/m/Y') }}</td>
                                                 <td>{{ $proforma_invoice->booking_no }}</td>
                                                 <td>{{ \Carbon\Carbon::parse($proforma_invoice->booking_date)->format('d/m/Y') }}</td>
+                                                <td>{{ $proforma_invoice->company_b }}</td>
                                                 <td>{{ $proforma_invoice->company_d }}</td>
                                                 <td>{{ $proforma_invoice->company_c }}</td>
-                                                <td>{{ $proforma_invoice->company_b }}</td>
                                                 <td>{{ $proforma_invoice->activity }}</td>
                                                 <td>
                                                     <a class="btn btn-primary btn-sm" href="{{ route('proforma_invoice.view', ['id' => $proforma_invoice->id]) }}"><i class="fa fa-file-alt"></i> View </a>

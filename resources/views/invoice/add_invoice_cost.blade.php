@@ -228,8 +228,7 @@
                                                     <label>MB/L NO.</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="mbl_shipper"
-                                                        id="mbl_shipper" value="{{ $booking->mbl_no }}" readonly>
+                                                    <input class="form-control" type="text" value="{{ $booking->mbl_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -237,8 +236,7 @@
                                                     <label>HB/L</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="hbl_shipper"
-                                                        id="hbl_shipper" value="{{ $booking->hbl_shipper }}" readonly>
+                                                    <input class="form-control" type="text" value="{{ $booking->hbl_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -246,7 +244,7 @@
                                                     <label>VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="vessel" id="vessel" readonly>
+                                                    <input class="form-control" type="text" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -254,8 +252,7 @@
                                                     <label>M. VESSEL</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="m_vessel"
-                                                        id="m_vessel" readonly>
+                                                    <input class="form-control" type="text" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -263,10 +260,7 @@
                                                     <label>Loading</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pol_name"
-                                                        id="pol_name" value="{{ $booking->port1 }}" readonly>
-                                                    <input class="form-control" type="hidden" name="pol_id" id="pol_id"
-                                                        value="{{ $booking->pol_id }}">
+                                                    <input class="form-control" type="text" value="{{ $booking->port1 }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -274,10 +268,7 @@
                                                     <label>Destination</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input class="form-control" type="text" name="pod_name"
-                                                        id="pod_name" value="{{ $booking->port3 }}" readonly>
-                                                    <input class="form-control" type="hidden" name="pod_id" id="pod_id"
-                                                        value="{{ $booking->pod_id }}">
+                                                    <input class="form-control" type="text" value="{{ $booking->port3 }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -543,6 +534,7 @@
                     success: function (result) {
                         var tabel = JSON.parse(result);
                         $('#tblCost').html(tabel[0]);
+                        $(".taxcheck").prop('checked', false);//reset biar nge checkbox ulang tax nya
                         // $('#tblProfit').html(tabel[2]);
                     }
                 })

@@ -32,14 +32,16 @@ class JournalController extends Controller
         $data['companies'] = MasterModel::company_data();
         $data['accounts'] = MasterModel::account_get();
         $data['currency'] = MasterModel::currency();
-        $data['pembayaran'] = PembayaranModel::where('no_pembayaran', $request->reference_no)->first();
         $data['reference_no'] = $request->reference_no;
         $data['reference_id'] = $request->reference_id;
         $data['client_id'] = $request->client_id;
         $data['source'] = $request->source;
 
         Session::forget('journal_details');
-        if ($request->has('source')) $this->saveDefaultDetailJournal($request);
+        if ($request->has('source')){
+            if ($request->source == 'invoice') $data['invoice'] = $this->saveDetailJournalInvoice($request);
+            if ($request->source == 'pembayaran') $data['pembayaran'] = $this->saveDetailJournalPembayaran($request);
+        }
 
         return view('journal.add_journal')->with($data);
     }
@@ -336,6 +338,7 @@ class JournalController extends Controller
                 /** end invoice hutang */
             }
         }
+        return $invoice;
     }
 
     public function saveDetailJournalPembayaran(Request $request)
@@ -431,6 +434,7 @@ class JournalController extends Controller
                 /** end pembayaran hutang */
             }
         }
+        return $pembayaran;
     }
 
     public function saveDetailJournal(Request $request)
@@ -514,6 +518,7 @@ class JournalController extends Controller
             $param['journal_no'] = $request->journal_no;
             $param['journal_date'] = Carbon::createFromFormat('d/m/Y', $request->journal_date)->format('Y-m-d');
             $param['currency_id'] = $request->currency_id;
+            $param['company_id'] = $request->company_id;
             $param['amount'] = $request->amount;
             $param['created_by'] = Auth::user()->name;
             $param['created_on'] = date('Y-m-d h:i:s');
@@ -586,22 +591,22 @@ class JournalController extends Controller
         try {
             $journal = Journal::find($journalId);
             $amount = 0;
-            $deposit_dtl = DepositDetail::where('journal_id', $journalId);
-            if ($deposit_dtl->count() > 0) {
-                foreach ($deposit_dtl->get() as $key => $dtl) {
-                    if ($dtl->pembayaran_id != 0) {
-                        DB::rollBack();
+            // $deposit_dtl = DepositDetail::where('journal_id', $journalId);
+            // if ($deposit_dtl->count() > 0) {
+            //     foreach ($deposit_dtl->get() as $key => $dtl) {
+            //         if ($dtl->pembayaran_id != 0) {
+            //             DB::rollBack();
 
-                        return redirect()->back()->with('error', 'Hapus jurnal gagal, karena deposit sudah dilakukan pembayaran');
-                    }
-                    $amount += $dtl->amount;
-                }
-                $amount *= -1;
-                DepositDetail::where('journal_id', $journalId)->delete();
-                $deposit = Deposit::where('company_id', $journal->company_id)->first();
-                $deposit->balance += $amount;
-                $deposit->save();
-            }
+            //             return redirect()->back()->with('error', 'Hapus jurnal gagal, karena deposit sudah dilakukan pembayaran');
+            //         }
+            //         $amount += $dtl->amount;
+            //     }
+            //     $amount *= -1;
+            //     DepositDetail::where('journal_id', $journalId)->delete();
+            //     $deposit = Deposit::where('company_id', $journal->company_id)->first();
+            //     $deposit->balance += $amount;
+            //     $deposit->save();
+            // }
 
             JournalDetail::where('journal_id', $journalId)->delete();
             $journal->delete();

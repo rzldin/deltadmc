@@ -58,8 +58,8 @@ class ExternalInvoiceController extends Controller
             DB::beginTransaction();
 
             $param = $request->all();
-            $param['external_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->external_invoice_date)->format('Y-m-d');
-            $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
+            $param['external_invoice_date'] = Carbon::createFromFormat('m/d/Y', $request->external_invoice_date)->format('Y-m-d');
+            $param['onboard_date'] = Carbon::createFromFormat('m/d/Y', $request->onboard_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
@@ -281,6 +281,10 @@ class ExternalInvoiceController extends Controller
             //     $total_pph23 += $proforma_detail->pph23;
             //     $total_invoice += $proforma_detail->subtotal;
             // }
+
+            if($request['currency']==65){//idr
+                $total_invoice = $total_before_vat;
+            }
 
             DB::table('t_external_invoice')->where('id', $request->external_invoice_id)->update([
                 'total_before_vat' => $total_before_vat,

@@ -324,7 +324,12 @@
           dropdownParent: $("#myModalx")
         })
       })
-
+      $(function(){
+        $('.select2bs44').select2({
+          theme: 'bootstrap4',
+          tags: false,
+        })
+      })
       function numberOnly(root){
         var reet = root.value;
         var arr1=reet.length;
@@ -338,13 +343,6 @@
             }
       }
 
-      $(function(){
-        $('.select2bs44').select2({
-          theme: 'bootstrap4',
-          tags: false,
-        })
-      })
-
       $('#date_id').datetimepicker({
           format: 'YYYY-MM-DD',
       });
@@ -356,6 +354,9 @@
       $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
 
       $.fn.modal.Constructor.prototype._enforceFocus = function() {};
+      $(document).on('select2:open', () => {
+        setTimeout(() => document.querySelector('.select2-search__field').focus(), 200);
+      });
     </script>
 
     @stack('after-scripts')

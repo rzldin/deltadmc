@@ -305,6 +305,10 @@ class ProformaInvoiceController extends Controller
         try {
             DB::beginTransaction();
 
+            if($request->currency==65){//idr
+                $request->total_invoice = str_replace(',', '', $request->total_before_vat);
+            }
+
             $param = $request->all();
             $param['id'] = $request->id;
             $param['t_invoice_id'] = $request->t_invoice_id;
@@ -317,18 +321,12 @@ class ProformaInvoiceController extends Controller
                 $param['proforma_invoice_no'] = $request->proforma_invoice_no;
             }
             $param['truck_no'] = $request->truck_no;
-            $param['proforma_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->proforma_invoice_date)->format('Y-m-d');
+            $param['proforma_invoice_date'] = Carbon::createFromFormat('m/d/Y', $request->proforma_invoice_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);
             $param['top'] = $request->top;
             $param['currency'] = $request->currency;
-            $param['mbl_shipper'] = $request->mbl_shipper;
-            $param['hbl_shipper'] = $request->hbl_shipper;
-            $param['vessel'] = $request->vessel;
-            $param['m_vessel'] = $request->m_vessel;
-            $param['pol_id'] = $request->pol_id;
-            $param['pod_id'] = $request->pod_id;
             $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
             $param['rate'] = $request->rate;
             $param['total_before_vat'] = str_replace(',', '', $request->total_before_vat);

@@ -210,3 +210,6 @@ ALTER TABLE `t_pembayaran_detail` ADD `kurs` DECIMAL(14,2) NULL DEFAULT NULL AFT
 
 ALTER TABLE `t_invoice` ADD `flag_nopph23` TINYINT(1) NOT NULL DEFAULT '0' AFTER `flag_bayar`;
 ALTER TABLE `t_pembayaran` ADD `flag_pph23` TINYINT(1) NOT NULL DEFAULT '0' AFTER `flag_giro`;
+
+ALTER TABLE `m_taxes` DROP INDEX `code`;
+ALTER TABLE `m_taxes` ADD `active_before` DATE NOT NULL AFTER `value`;

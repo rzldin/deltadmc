@@ -140,8 +140,9 @@ class PembayaranController extends Controller
         $no         = 1;
         $data       = PembayaranModel::get_list_detail($request->id);
 
+        $total_nilai = 0;
         foreach ($data as $v) {
-
+            $total_nilai+= $v->nilai;
             // Cost
             $tabel .= '<tr>';
             // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$v->id.'"  id="cekx_'.$no.'"></td>';
@@ -156,6 +157,12 @@ class PembayaranController extends Controller
             $tabel .= '</tr>';
             $no++;
         }
+        $tabel .= '<tr>';
+        // $tabel .= '<td><input type="checkbox" name="cek_cost[]" value="'.$v->id.'"  id="cekx_'.$no.'"></td>';
+        $tabel .= '<td>Total</td>';
+        $tabel .= '<td colspan="4" class="text-right">' . number_format($total_nilai, 2, ',', '.') . '</td>';
+        $tabel .= '<td></td>';
+        $tabel .= '</tr>';
 
         header('Content-Type: application/json');
         echo json_encode($tabel);
