@@ -481,6 +481,11 @@ class PembayaranController extends Controller
         $invoice = DB::table('t_external_invoice')->where('id', $request->id_invoice)->first();
         $invoice_bayar = $invoice->invoice_bayar + $nilai_bayar;
         $sisa = $invoice->total_invoice - $invoice_bayar;
+        if($invoice->invoice_bayar>0){
+            $nopph23 = $invoice->flag_nopph23;
+        }else{
+            $nopph23 = $request->is_nopph23;
+        }
         if ($sisa <= 0) {
             $flag = 1;
             $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
@@ -491,6 +496,7 @@ class PembayaranController extends Controller
         DB::table('t_external_invoice')->where('id', $request->id_invoice)->update([
             'invoice_bayar' => $invoice_bayar,
             'flag_bayar' => $flag,
+            'flag_nopph23' => $nopph23,
             'tanggal_lunas' => $tanggal_lunas,
             'modified_by' => Auth::user()->id,
             'modified_at' => Carbon::now()
@@ -592,8 +598,10 @@ class PembayaranController extends Controller
             ->select('i.*', 'c.code')
             ->where('i.id', $request->id)
             ->first();
-        $data['nilai_sisa'] = $result->total_invoice - $result->invoice_bayar;
         $data = $result;
+        $data->total_invoice_pph23 = $result->total_invoice + $result->pph23;
+        $data->nilai_sisa_pph23 = $result->total_invoice + $result->pph23 - $result->invoice_bayar;
+        $data->nilai_sisa = $result->total_invoice - $result->invoice_bayar;
 
         header('Content-Type: application/json');
         echo json_encode($data);

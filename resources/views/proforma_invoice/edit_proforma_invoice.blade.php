@@ -168,7 +168,7 @@
                                                         <input type="text" name="proforma_invoice_date"
                                                             id="proforma_invoice_date"
                                                             class="form-control datetimepicker-input"
-                                                            data-target="#proforma_invoice_date_picker" value="{{ date('m/d/Y', strtotime($proforma_invoice_header->proforma_invoice_date)) }}" />
+                                                            data-target="#proforma_invoice_date_picker" value="{{ \Carbon\Carbon::parse($proforma_invoice_header->proforma_invoice_date)->format('d/m/Y') }}" />
                                                         <div class="input-group-append" data-target="#proforma_invoice_date_picker"
                                                             data-toggle="datetimepicker">
                                                             <div class="input-group-text"><i class="fa fa-calendar"></i>

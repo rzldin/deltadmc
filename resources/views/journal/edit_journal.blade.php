@@ -46,7 +46,7 @@
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="journal_date_picker" data-target-input="nearest">
                                                             <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker"
-                                                                value="{{ date('d/m/Y', strtotime($header->journal_date)) }}" />
+                                                                value="{{ \Carbon\Carbon::parse($header->journal_date)->format('d/m/Y') }}" />
                                                             <div class="input-group-append" data-target="#journal_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -437,7 +437,7 @@
                 loadDetailJournal();
                 $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({
-                    format: 'L'
+                    format: 'DD/MM/yy'
                 });
             });
         </script>

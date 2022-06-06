@@ -158,7 +158,7 @@
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="external_invoice_date_picker" data-target-input="nearest">
                                                             <input type="text" name="external_invoice_date" id="external_invoice_date" class="form-control datetimepicker-input" data-target="#external_invoice_date_picker"
-                                                                value="{{ date('m/d/Y', strtotime($proforma_invoice_header->proforma_invoice_date)) }}" />
+                                                                value="{{ date('d/m/Y', strtotime($proforma_invoice_header->proforma_invoice_date)) }}" />
                                                             <div class="input-group-append" data-target="#external_invoice_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -247,7 +247,7 @@
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="onboard_date_picker" data-target-input="nearest">
                                                             <input type="text" name="onboard_date" id="onboard_date" class="form-control datetimepicker-input" data-target="#onboard_date_picker"
-                                                                value="{{ date('m/d/Y', strtotime($proforma_invoice_header->onboard_date)) }}" />
+                                                                value="{{ \Carbon\Carbon::parse($proforma_invoice_header->onboard_date)->format('d/m/Y') }}" />
                                                             <div class="input-group-append" data-target="#onboard_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>
@@ -375,10 +375,10 @@
 
             $(function() {
                 $('#external_invoice_date_picker').datetimepicker({
-                    format: 'L'
+                    format: 'DD/MM/yy'
                 });
                 $('#onboard_date_picker').datetimepicker({
-                    format: 'L'
+                    format: 'DD/MM/yy'
                 });
             });
         </script>

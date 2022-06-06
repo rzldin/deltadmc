@@ -58,8 +58,13 @@ class ExternalInvoiceController extends Controller
             DB::beginTransaction();
 
             $param = $request->all();
-            $param['external_invoice_date'] = Carbon::createFromFormat('m/d/Y', $request->external_invoice_date)->format('Y-m-d');
-            $param['onboard_date'] = Carbon::createFromFormat('m/d/Y', $request->onboard_date)->format('Y-m-d');
+
+            if($request->currency==65){//idr
+                $request->total_invoice = str_replace(',', '', $request->total_before_vat);
+            }
+
+            $param['external_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->external_invoice_date)->format('Y-m-d');
+            $param['onboard_date'] = Carbon::createFromFormat('d/m/Y', $request->onboard_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);

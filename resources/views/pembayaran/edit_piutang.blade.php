@@ -252,10 +252,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-5">
-                            Nilai
+                            Nilai ( <input type="checkbox" id="check_pph23" name="check_pph23" value="1" onchange="hitungpph23(this)"> Tanpa PPH23 )
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="total_invoice" name="total_invoice" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
+                            <input type="hidden" id="total_invoice_pph23">
+                            <input type="hidden" id="total_invoice_asli">
                         </div>
                     </div>
                     <div class="row" style="margin-bottom:5px">
@@ -411,6 +413,17 @@ function useDeposit(journal_id) {
 
 }
 
+function hitungpph23(checkbox){
+    let total_invoice_asli = $('#total_invoice_asli').val();
+    let total_invoice_pph23 = $('#total_invoice_pph23').val();
+    if (checkbox.checked){
+        $('#total_invoice').val(numberWithCommas(total_invoice_pph23));
+    }else{
+        $('#total_invoice').val(numberWithCommas(total_invoice_asli));
+    }
+    hitungSubTotalSJ();
+}
+
 function useDepositBalance() {
     let total_invoice = $('#total_invoice');
     let invoice_bayar = $('#invoice_bayar');
@@ -497,12 +510,22 @@ function input_bayar(id){
       $("#id_modal_inv").val(result['id']);
       $("#invoice_no").val(result['external_invoice_no']);
       $("#invoice_date").val(result['external_invoice_date']);
+      $('#total_invoice_asli').val(result['total_invoice']);
+      $('#total_invoice_pph23').val(result['total_invoice_pph23']);
       $("#total_invoice").val(numberWithCommas(result['total_invoice']));
       // $("#nominal_sdh_bayar").val(numberWithCommas(result['nilai_total_bayar']));
       $('#nilai_bayar').val(0);
       $('#currency').val(result['code']);
       $('#currency_id').val(result['currency']);
       $("#invoice_bayar").val(numberWithCommas(result['invoice_bayar']));
+      if(result['flag_nopph23']==0){
+        $('#check_pph23').prop('checked', false);
+      }else{
+        $('#check_pph23').prop('checked', true);
+      }
+      if(result['invoice_bayar']>0){
+        $('#check_pph23').prop('readonly', true);
+      }
       hitungSubTotalSJ();
     }
   });
@@ -635,6 +658,10 @@ $('#tambah_inv').click(function(event) {
 // function proceed_bayar(deposit_detail_id = 0){
 function proceed_bayar(){
   $('#tambah_inv_txt').text('Please Wait ...');
+  let is_nopph23 = 0;
+  if ($('#check_pph23').is(":checked")){
+    is_nopph23 = 1;// tanpa pph 23
+  }
   $.ajax({// Run getUnlockedCall() and return values to form
       url: "{{ route('pembayaran.saveDetailPembayaranPiutang') }}",
       data:{
@@ -646,7 +673,8 @@ function proceed_bayar(){
          total_invoice:$('#total_invoice').val(),
          nilai_bayar:$('#nilai_bayar').val(),
          nilai_sisa:$('#nilai_sisa').val(),
-         tanggal_bayar:$('#tanggal').val()
+         tanggal_bayar:$('#tanggal').val(),
+         is_nopph23:is_nopph23
       },
       type: "POST",
       dataType: "json",

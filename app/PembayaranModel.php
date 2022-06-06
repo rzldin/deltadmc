@@ -71,4 +71,12 @@ class PembayaranModel extends Model
             left join t_invoice i on pd.id_invoice = i.id
             where pd.id_pmb = ".$id);
     }
+
+    public static function get_list_pmb_invoice_piutang($id)
+    {
+        return DB::select("
+            Select i.* from t_pembayaran_detail pd
+            left join t_external_invoice i on pd.id_invoice = i.id
+            where pd.id_pmb = ".$id);
+    }
 }

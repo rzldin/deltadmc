@@ -1314,7 +1314,7 @@ class BookingController extends Controller
             foreach($data as $row)
             {
                 if($row->doc_date != null){
-                    $date = Carbon::parse($row->doc_date)->format('m/d/Y');
+                    $date = Carbon::parse($row->doc_date)->format('d/m/Y');
                 }else{
                     $date = '';
                 }

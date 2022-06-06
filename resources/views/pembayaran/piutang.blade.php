@@ -42,7 +42,7 @@
                                         @foreach ($pembayaran as $pmb)
                                             <tr>
                                                 <td>{{ $pmb->no_pembayaran }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($pmb->pmb_date)->format('d/m/Y') }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($pmb->tanggal)->format('d/m/Y') }}</td>
                                                 <td>{{ number_format($pmb->nilai_pmb, 2, ',', '.') }}</td>
                                                 <td>{{ $pmb->jumlah }}</td>
                                                 {{-- <td> --}}

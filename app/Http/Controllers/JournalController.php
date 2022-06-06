@@ -193,28 +193,28 @@ class JournalController extends Controller
                     'account_number' => $company[0]->account_receivable_number,
                     'account_name' => $company[0]->account_receivable_name,
                     'transaction_type' => 'D',
-                    'debit' => $invoice->total_invoice,
+                    'debit' => $invoice->total_invoice + $invoice->pph23,
                     'credit' => 0,
                     'memo' => 'AR ' . $company[0]->client_name . ' ' . $invoice->invoice_no,
                 ];
 
                 $request->session()->push('journal_details', $newItem);
 
-                if ($invoice->pph23 > 0) {
-                    // account pph23 di debit
-                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
-                    $newItem = [
-                        'account_id' => $account_pajak->id,
-                        'account_number' => $account_pajak->account_number,
-                        'account_name' => $account_pajak->account_name,
-                        'transaction_type' => 'D',
-                        'debit' => $invoice->pph23,
-                        'credit' => 0,
-                        'memo' => 'PPh 23 DIBAYAR DIMUKA',
-                    ];
+                // if ($invoice->pph23 > 0) {
+                //     // account pph23 di debit
+                //     $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
+                //     $newItem = [
+                //         'account_id' => $account_pajak->id,
+                //         'account_number' => $account_pajak->account_number,
+                //         'account_name' => $account_pajak->account_name,
+                //         'transaction_type' => 'D',
+                //         'debit' => $invoice->pph23,
+                //         'credit' => 0,
+                //         'memo' => 'PPh 23 DIBAYAR DIMUKA',
+                //     ];
 
-                    $request->session()->push('journal_details', $newItem);
-                }
+                //     $request->session()->push('journal_details', $newItem);
+                // }
 
                 if ($invoice->total_vat > 0) {
                     // account tax di credit
@@ -354,17 +354,41 @@ class JournalController extends Controller
                 $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
                 // $account_no_pembayaran = '1-1101';
                 $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
+
+                $total_pph23 = 0;
+                $loop_pph23 = PembayaranModel::get_list_pmb_invoice_piutang($pembayaran->id);
+                foreach ($loop_pph23 as $key => $value) {
+                    $total_pph23 += $value->pph23;
+                }
+
                 $newItem = [
                     'account_id' => $account->id,
                     'account_number' => $account->account_number,
                     'account_name' => $account->account_name,
                     'transaction_type' => 'D',
-                    'debit' => $pembayaran->nilai_pmb,
+                    'debit' => $pembayaran->nilai_pmb - $total_pph23,
                     'credit' => 0,
                     'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
                 ];
 
                 $request->session()->push('journal_details', $newItem);
+
+                if($pembayaran->flag_pph23==1){
+                    // account pph23 di debit
+                    $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
+                    foreach ($loop_pph23 as $key => $value) {
+                        $newItem = [
+                            'account_id' => $account_pajak->id,
+                            'account_number' => $account_pajak->account_number,
+                            'account_name' => $account_pajak->account_name,
+                            'transaction_type' => 'D',
+                            'debit' => $value->pph23,
+                            'credit' => 0,
+                            'memo' => $value->external_invoice_no.' PPh 23 DIBAYAR DIMUKA',
+                        ];
+                        $request->session()->push('journal_details', $newItem);
+                    }
+                }
 
                 // account ar di credit
                 $newItem = [

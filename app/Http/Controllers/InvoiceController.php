@@ -337,7 +337,7 @@ class InvoiceController extends Controller
                     $tabel1 .= '</tr>';
                     $no++;
 
-                    $total_sell     += $total;
+                    $total_sell     += $total2;
                     $totalAmount    += $amount;
                     $totalAmount2   += $amount2;
                 }

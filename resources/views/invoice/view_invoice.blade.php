@@ -225,7 +225,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input readonly type="text" name="onboard_date" id="onboard_date"
-                                                        class="form-control"value="{{ date('m/d/Y', strtotime($header->onboard_date)) }}" />
+                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->onboard_date)) }}" />
                                                 </div>
                                             </div>
                                         </div>

@@ -82,6 +82,10 @@
                                             <a class="mb-1 btn btn-secondary btn-xs" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
                                                     <i class="fa fa-book"></i> Journal
                                             </a>
+                                        @else
+                                            <a class="btn btn-primary btn-xs" href="{{ route('journal.view', ['id' => $invoice->journal_id]) }}">
+                                                <i class="fa fa-file-alt"></i> View Journal
+                                            </a>
                                         @endif
                                         @if($invoice->flag_bayar_external == 0 && $invoice->journal_id == 0)
                                             <a class="mb-1 btn btn-success btn-xs" href="{{ route('invoice.edit', ['id' => $invoice->id]) }}" ><i class="fa fa-edit"></i>  &nbsp;Edit &nbsp; &nbsp; &nbsp;</a>
@@ -93,6 +97,10 @@
                                         @if ($invoice->journal_id == 0)
                                             <a class="mb-1 btn btn-secondary btn-xs" href="{{ route('journal.add') }}?reference_no={{ $invoice->invoice_no }}&reference_id={{ $invoice->id }}&client_id={{ $invoice->client_id }}&source=invoice">
                                                     <i class="fa fa-book"></i> Journal
+                                            </a>
+                                        @else
+                                            <a class="btn btn-primary btn-xs" href="{{ route('journal.view', ['id' => $invoice->journal_id]) }}">
+                                                <i class="fa fa-file-alt"></i> View Journal
                                             </a>
                                         @endif
                                         @if($invoice->flag_bayar==0 && $invoice->journal_id == 0)

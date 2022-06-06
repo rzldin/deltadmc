@@ -171,7 +171,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <input readonly type="text" name="external_invoice_date" id="external_invoice_date"
-                                                        class="form-control"value="{{ date('m/d/Y', strtotime($header->external_invoice_date)) }}" />
+                                                        class="form-control"value="{{ date('d/m/Y', strtotime($header->external_invoice_date)) }}" />
                                                 </div>
                                             </div>
                                             <div class="row mb-3">

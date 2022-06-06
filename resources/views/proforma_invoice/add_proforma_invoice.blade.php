@@ -159,7 +159,7 @@
                                                     <div class="col-md-8">
                                                         <div class="input-group date" id="proforma_invoice_date_picker" data-target-input="nearest">
                                                             <input type="text" name="proforma_invoice_date" id="proforma_invoice_date" class="form-control datetimepicker-input" data-target="#proforma_invoice_date_picker"
-                                                                value="{{ date('m/d/Y', strtotime($invoice_header->invoice_date)) }}" />
+                                                                value="{{ date('d/m/Y', strtotime($invoice_header->invoice_date)) }}" />
                                                             <div class="input-group-append" data-target="#proforma_invoice_date_picker" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i>
                                                                 </div>

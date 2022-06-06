@@ -48,13 +48,13 @@
                                                         <div class="input-group date" id="journal_date_picker" data-target-input="nearest">
                                                             <input type="text" name="journal_date" id="journal_date" class="form-control datetimepicker-input" data-target="#journal_date_picker"
                                                             @php
-                                                                $tgl = date('m/d/Y');
+                                                                $tgl = date('d/m/Y');
                                                                 $no_journal = '';
                                                                 if(isset($pembayaran)){
-                                                                    $tgl = date('m/d/Y', strtotime($pembayaran->tanggal));
+                                                                    $tgl = date('d/m/Y', strtotime($pembayaran->tanggal));
                                                                     $no_journal = $pembayaran->no_pembayaran;
                                                                 }elseif(isset($invoice)){
-                                                                    $tgl = date('m/d/Y', strtotime($invoice->invoice_date));
+                                                                    $tgl = date('d/m/Y', strtotime($invoice->invoice_date));
                                                                     $no_journal = $invoice->invoice_no;
                                                                 }
                                                             @endphp
@@ -220,7 +220,7 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-md-12" style="text-align: right">
-                                                <a href="{{ url()->previous() }}" class="btn btn-danger">Back</a>
+                                                <a href="{{ route('journal.index') }}" class="btn btn-danger">Back</a>
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </div>
                                         </div>
@@ -508,7 +508,7 @@
                 loadDetailJournal();
                 // $('.select2').select2();
                 $('#journal_date_picker').datetimepicker({
-                    format: 'L'
+                    format: 'DD/MM/yy'
                 });
             });
         </script>

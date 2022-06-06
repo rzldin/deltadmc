@@ -677,7 +677,6 @@ function proceed_bayar(){
   if ($('#check_pph23').is(":checked")){
     is_nopph23 = 1;// tanpa pph 23
   }
-  console.log(is_nopph23);
   $.ajax({// Run getUnlockedCall() and return values to form
       url: "{{ route('pembayaran.saveDetailPembayaran') }}",
       data:{

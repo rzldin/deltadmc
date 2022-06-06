@@ -209,6 +209,7 @@ ALTER TABLE `t_invoice` ADD `ppn1` DECIMAL(14,2) NULL DEFAULT '0' AFTER `pph23`;
 ALTER TABLE `t_pembayaran_detail` ADD `kurs` DECIMAL(14,2) NULL DEFAULT NULL AFTER `currency_id`;
 
 ALTER TABLE `t_invoice` ADD `flag_nopph23` TINYINT(1) NOT NULL DEFAULT '0' AFTER `flag_bayar`;
+ALTER TABLE `t_external_invoice` ADD `flag_nopph23` TINYINT(1) NOT NULL DEFAULT '0' AFTER `flag_bayar`;
 ALTER TABLE `t_pembayaran` ADD `flag_pph23` TINYINT(1) NOT NULL DEFAULT '0' AFTER `flag_giro`;
 
 ALTER TABLE `m_taxes` DROP INDEX `code`;

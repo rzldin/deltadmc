@@ -321,7 +321,7 @@ class ProformaInvoiceController extends Controller
                 $param['proforma_invoice_no'] = $request->proforma_invoice_no;
             }
             $param['truck_no'] = $request->truck_no;
-            $param['proforma_invoice_date'] = Carbon::createFromFormat('m/d/Y', $request->proforma_invoice_date)->format('Y-m-d');
+            $param['proforma_invoice_date'] = Carbon::createFromFormat('d/m/Y', $request->proforma_invoice_date)->format('Y-m-d');
             $param['reimburse_flag'] = (($request->invoice_type == 'REM') ? 1 : 0);
             $param['debit_note_flag'] = (($request->invoice_type == 'DN') ? 1 : 0);
             $param['credit_note_flag'] = (($request->invoice_type == 'CN') ? 1 : 0);

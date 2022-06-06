@@ -49,7 +49,7 @@
                             @foreach ($pembayaran as $pmb)
                             <tr>
                                 <td>{{ $pmb->no_pembayaran }}</td>
-                                <td>{{ \Carbon\Carbon::parse($pmb->pmb_date)->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($pmb->tanggal)->format('d/m/Y') }}</td>
                                 @if ($pmb->status == 0)
                                     <td class="bg-secondary text-center">Draft</td>
                                 @elseif($pmb->status == 1)
