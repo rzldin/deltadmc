@@ -43,7 +43,8 @@
                             </div>
                         </div>
                     @endif
-                    <form action="{{ route('booking.doAdd') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                    <form action="{{ route('booking.doAdd') }}" class="eventInsForm" method="post" target="_self" 
+                        name="formku" id="formku" action=""> 
                         {{ csrf_field() }}
                     <div class="card-body">
                         <div class="container-fluid mt-3">
@@ -560,7 +561,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                                                    <input type="text" name="etd" id="etd" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                    <input type="text" name="etd_date" id="etd_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                                     <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
@@ -573,7 +574,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="input-group date" id="ETA" data-target-input="nearest">
-                                                    <input type="text" name="eta" id="eta" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                                    <input type="text" name="eta_date" id="eta_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                                                     <div class="input-group-append" data-target="#ETA" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
@@ -882,6 +883,14 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
+                                                        <label>Description</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea name="desc_mbl" id="desc_mbl" cols="30" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
                                                         <label>MBL Number</label>
                                                     </div>
                                                     <div class="col-md-8">
@@ -953,6 +962,14 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-4">
+                                                        <label>Description</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <textarea name="desc_hbl" id="desc_hbl" cols="30" rows="3" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
                                                         <label>BL/AWB Number</label>
                                                     </div>
                                                     <div class="col-md-8">
@@ -993,7 +1010,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="row mb-3 bl-issued">
+                                <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>B/L Issued</label>
                                     </div>
@@ -1001,16 +1018,26 @@
                                         <select class="form-control select2bs44" style="width: 100%;" name="mbl_issued" id="mbl_issued">
                                             <option value="" selected>-- Select B/L Issued --</option>
                                             @foreach ($mbl_issued as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 print-hbl-awb">
-                                <a class="btn btn-md btn-danger"><i class="fa fa-trash"></i></a>
-                                <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HBL</a>
-                                <a class="btn btn-md btn-dark" target="_blank"><i class="fa fa-print"></i> Print HAWB</a>
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>B/L AWB Issued</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" style="width: 100%;" name="hbl_issued" id="hbl_issued">
+                                            <option value="" selected>-- Select B/L Issued --</option>
+                                            @foreach ($mbl_issued as $item)
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <br>

@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\DepositController;
 
 class PembayaranController extends Controller
 {
@@ -204,7 +205,6 @@ class PembayaranController extends Controller
 
     public function getDataInv(Request $request)
     {
-
         $result = DB::table('t_invoice AS i')
             ->leftJoin('t_mcurrency AS c', 'c.id', 'i.currency')
             ->select('i.*', 'c.code')
@@ -214,6 +214,15 @@ class PembayaranController extends Controller
         $data->total_invoice_pph23 = $result->total_invoice + $result->pph23;
         $data->nilai_sisa_pph23 = $result->total_invoice + $result->pph23 - $result->invoice_bayar;
         $data->nilai_sisa = $result->total_invoice - $result->invoice_bayar;
+
+        $cek_deposit = DB::table('t_mcompany')->where('id', $result->client_id)->where('balance_deposit','>',0)->first();
+        if($cek_deposit){
+            $data->deposit_id = $cek_deposit->id;
+            $data->nilai_deposit = $cek_deposit->balance_deposit;
+        }else{
+            $data->deposit_id = 0;
+            $data->nilai_deposit =  0;
+        }
 
         header('Content-Type: application/json');
         echo json_encode($data);
@@ -225,6 +234,7 @@ class PembayaranController extends Controller
         try{
             $return_data = array();
             $tanggal   = date('Y-m-d H:i:s');
+            $tanggal_bayar = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
 
             $total_invoice = str_replace(',', '', $request->total_invoice);
             $nilai_bayar = str_replace(',', '', $request->nilai_bayar);
@@ -240,7 +250,7 @@ class PembayaranController extends Controller
             }
             if ($sisa <= 0) {
                 $flag = 1;
-                $tanggal_lunas = Carbon::createFromFormat('d/m/Y', $request->tanggal_bayar)->format('Y-m-d');
+                $tanggal_lunas = $tanggal_bayar;
             } else {
                 $flag = 2;
                 $tanggal_lunas = null;
@@ -254,14 +264,88 @@ class PembayaranController extends Controller
                 'modified_at' => Carbon::now()
             ]);
 
+            $company = DB::table('t_mcompany')->where('id', $request->company_id)->first();
+            $balance_deposit = $company->balance_deposit - $nilai_bayar;
+            DB::table('t_mcompany')->where('id', $request->company_id)->update([
+                'balance_deposit' => $balance_deposit
+            ]);
+
+            $deposit = 0;
+            //FUNGSI DEPOSIT
+
+            if($request->is_deposit==1){
+                $deposit = Deposit::insertGetId([
+                    'company_id' => $request->company_id,
+                    'currency_id' => $request->currency_id,
+                    'balance' => $nilai_bayar,
+                    'jenis_trx' => 1,//keluar
+                    'created_by' => Auth::user()->name,
+                    'created_on' => date('Y-m-d h:i:s')
+                ]);
+
+                $paramDetail['deposit_id'] = $deposit;
+                $paramDetail['deposit_date'] = $tanggal_bayar;
+                $paramDetail['amount'] = $nilai_bayar;
+                $paramDetail['invoice_id'] = $request->id_invoice;
+                $paramDetail['pembayaran_id'] = $request->id_pmb;
+                $paramDetail['created_by'] = Auth::user()->name;
+                $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                $depositDetail = DepositDetail::create($paramDetail);
+            }
+
+            //END FUNGSI DEPOSIT
+
             DB::table('t_pembayaran_detail')->insert([
                 'id_pmb' => $request->id_pmb,
                 'jenis_pmb' => $request->jenis_pmb,
                 'id_invoice' => $request->id_invoice,
                 'currency_id' => $request->currency_id,
+                'deposit_id' => $deposit,
                 'kurs' => $request->kurs,
                 'nilai' => $nilai_bayar
             ]);
+
+            //FUNGSI DEPOSIT LEBIH BAYAR
+
+            if($request->nilai_tambah_deposit>0){
+                $company = DB::table('t_mcompany')->where('id', $request->company_id)->first();
+                $nilai_tambah_deposit = str_replace(',', '', $request->nilai_tambah_deposit);
+                $balance_deposit = $company->balance_deposit + $nilai_tambah_deposit;
+                DB::table('t_mcompany')->where('id', $request->company_id)->update([
+                    'balance_deposit' => $balance_deposit
+                ]);
+
+                $deposit = Deposit::insertGetId([
+                    'company_id' => $request->company_id,
+                    'currency_id' => $request->currency_id,
+                    'balance' => $nilai_tambah_deposit,
+                    'jenis_trx' => 0,//keluar
+                    'created_by' => Auth::user()->name,
+                    'created_on' => date('Y-m-d h:i:s')
+                ]);
+
+                $paramDetail['deposit_id'] = $deposit;
+                $paramDetail['deposit_date'] = $tanggal_bayar;
+                $paramDetail['amount'] = $nilai_tambah_deposit;
+                $paramDetail['invoice_id'] = $request->id_invoice;
+                $paramDetail['pembayaran_id'] = $request->id_pmb;
+                $paramDetail['created_by'] = Auth::user()->name;
+                $paramDetail['created_on'] = date('Y-m-d h:i:s');
+                $depositDetail = DepositDetail::create($paramDetail);
+                
+                DB::table('t_pembayaran_detail')->insert([
+                    'id_pmb' => $request->id_pmb,
+                    'jenis_pmb' => $request->jenis_pmb,
+                    'tipe' => 1,//Tipe Pembayaran Nambah Nilai
+                    'id_invoice' => $request->id_invoice,
+                    'currency_id' => $request->currency_id,
+                    'deposit_id' => $deposit,
+                    'kurs' => $request->kurs,
+                    'nilai' => $nilai_tambah_deposit
+                ]);
+            }
+
+            //END DEPOSIT LEBIH BAYAR
 
             $return_data['status'] = "sukses";
             $return_data['message'] = "Berhasil menyimpan detail pembayaran!";
@@ -287,56 +371,87 @@ class PembayaranController extends Controller
         DB::beginTransaction();
         try {
             $tanggal   = date('Y-m-d H:i:s');
-
             $data = PembayaranModel::get_detail($request->id)->first();
-            $invoice_bayar = $data->invoice_bayar - $data->nilai;
-            $tanggal_lunas = null;
-            $flag = 2;
-            if ($invoice_bayar == 0) {
-                $flag = 0;
-            }
-
-            $inv = InvoiceModel::find($data->id_invoice);
-            $inv->invoice_bayar = $data->invoice_bayar - $data->nilai;
-            $inv->flag_bayar = $flag;
-            if($invoice_bayar==0){
-                $inv->flag_nopph23 = 0;
-            }
-            $inv->tanggal_lunas = $tanggal_lunas;
-            $inv->modified_by = Auth::user()->id;
-            $inv->modified_at =  Carbon::now();
-            $inv->save();
-
-            /**
-             * kalau ada deposit
-             */
-            // if ($data->deposit_detail_id != 0) {
-            //     $param['deposit_detail_id'] = $data->deposit_detail_id;
-            //     DepositController::deleteDepositPembayaran($param);
-            // }
-            $deposits = DepositDetail::where('pembayaran_id', $data->id_pmb)->get();
-            if (empty($deposits)) {
-                $amount = 0;
-                foreach ($deposits as $dtl) {
-                    $amount += $dtl->amount;
-                    DepositDetail::find($dtl->id)->delete();
+            if($data->tipe==0){
+                $invoice_bayar = $data->invoice_bayar - $data->nilai;
+                $tanggal_lunas = null;
+                $flag = 2;
+                if ($invoice_bayar == 0) {
+                    $flag = 0;
                 }
-                $amount = $amount * -1;
-                $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
-                $deposit->balance = $deposit->balance + $amount;
-                $deposit->save();
-            }
-            /** end */
 
-            /**
-             * kalau udah ada jurnalnya
-             */
-            $journal = Journal::where('pembayaran_id', $data->id_pmb)->first();
-            if ($journal != []) {
-                JournalDetail::deleteJournalDetailByJournalId($journal->id);
-                $journal->delete();
+                $inv = InvoiceModel::find($data->id_invoice);
+                $inv->invoice_bayar = $data->invoice_bayar - $data->nilai;
+                $inv->flag_bayar = $flag;
+                if($invoice_bayar==0){
+                    $inv->flag_nopph23 = 0;
+                }
+                $inv->tanggal_lunas = $tanggal_lunas;
+                $inv->modified_by = Auth::user()->id;
+                $inv->modified_at =  Carbon::now();
+                $inv->save();
+
+                /**
+                 * kalau ada deposit
+                 */
+                // if ($data->deposit_detail_id != 0) {
+                //     $param['deposit_detail_id'] = $data->deposit_detail_id;
+                //     DepositController::deleteDepositPembayaran($param);
+                // }
+                $deposits = DepositDetail::where('deposit_id', $data->deposit_id)->get();
+                if ($deposits->count()>0) {
+                    // $amount = 0;
+                    // foreach ($deposits as $dtl) {
+                    //     $amount += $dtl->amount;
+                    //     DepositDetail::find($dtl->id)->delete();
+                    // }
+                    // $amount = $amount * -1;
+                    // $deposit = Deposit::where('company_id', $request->company_id)->where('currency_id', $request->currency_id)->first();
+                    // $deposit->balance = $deposit->balance + $amount;
+                    // $deposit->save();
+
+                    //v2
+                    foreach ($deposits as $dtl) {
+                        $dd = DepositDetail::find($dtl->id);
+                        Deposit::where('id',$dd->deposit_id)->delete();
+                        $dd->delete();
+                    }
+                }
+                /** end */
+
+                /**
+                 * kalau udah ada jurnalnya
+                 */
+                // $journal = Journal::where('pembayaran_id', $data->id_pmb)->first();
+                // if ($journal != []) {
+                //     JournalDetail::deleteJournalDetailByJournalId($journal->id);
+                //     $journal->delete();
+                // }
+                /** end */
+
+                $company = DB::table('t_mcompany')->where('id', $inv->client_id)->first();
+                $balance_deposit = $company->balance_deposit + $data->nilai;
+                DB::table('t_mcompany')->where('id', $request->company_id)->update([
+                    'balance_deposit' => $balance_deposit
+                ]);
+            }else{
+                $deposits = DepositDetail::where('deposit_id', $data->deposit_id)->get();
+                if ($deposits->count()>0) {
+                    foreach ($deposits as $dtl) {
+                        $dd = DepositDetail::find($dtl->id);
+                        Deposit::where('id',$dd->deposit_id)->delete();
+                        $dd->delete();
+                    }
+
+                    DB::table('t_pembayaran_detail')->where('id', $request->id)->delete();
+
+                    $company = DB::table('t_mcompany')->where('id', $request->company_id)->first();
+                    $balance_deposit = $company->balance_deposit - $data->nilai;
+                    DB::table('t_mcompany')->where('id', $request->company_id)->update([
+                        'balance_deposit' => $balance_deposit
+                    ]);
+                }
             }
-            /** end */
 
             DB::table('t_pembayaran_detail')->where('id', $request->id)->delete();
 

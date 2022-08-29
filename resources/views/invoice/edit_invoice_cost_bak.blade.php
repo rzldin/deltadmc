@@ -30,7 +30,7 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form method="post" id="formInvoice" action="{{ route('invoice.update_cost') }}">
+                        <form method="post" id="formInvoice">
                             @csrf
                             <input type="hidden" name="id" id="id" value="{{ $header->id }}" />
                             <input type="hidden" name="tipe_inv" value="{{ $header->tipe_inv }}">
@@ -138,18 +138,6 @@
                                                             </li>
                                                         @endforeach
                                                     </ul>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-4">
-                                                    <label>Tax</label>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    @foreach ($taxes as $tax)
-                                                        <div class="form-check form-check-inline">
-                                                            <button type="button" class="btn btn-info btn-xs" onclick="checkedTax(`{{$tax->code}}`)">{{ "$tax->name ($tax->value %)" }}</button>
-                                                        </div>
-                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
@@ -275,18 +263,65 @@
                                                 <th>Unit</th>
                                                 <th>Currency</th>
                                                 <th>rate/unit</th>
-                                                <th>Total</th>
                                                 <th>ROE</th>
+                                                <th>Total</th>
                                                 <th>Cost Adjustment</th>
-                                                <th>Amount</th>
                                                 <th>PPN 10%</th>
                                                 <th>PPH23 (-)</th>
                                                 <th>PPN 1%</th>
+                                                <th>Amount</th>
                                                 {{-- <th>Note</th> --}}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tblCost">
+                                        <tbody>
+                                            @php
+                                                $total = 0;
+                                                $total_ppn = 0;
+                                                $total_pph23 = 0;
+                                                $total_ppn1 = 0;
+                                                $total_before_vat = 0;
+                                                $total_invoice = 0;
+                                            @endphp
+                                            @foreach ($details as $key => $detail)
+                                                @php
+                                                    $total += $detail->cost_val;
+                                                    $total_ppn += $detail->vat;
+                                                    $total_pph23 += $detail->pph23;
+                                                    $total_ppn1 += $detail->ppn1;
+                                                    $total_before_vat += $detail->sell_val;
+                                                    $total_invoice += $detail->subtotal;
+                                                @endphp
+                                                <tr>
+                                                    <td align="center">{{ $key + 1 }}</td>
+                                                    <td>{{ $detail->charge_name }}</td>
+                                                    <td>{{ $detail->desc }}</td>
+                                                    <td align="center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs" <?= ($header->reimburse_flag == 1 ? 'checked' : '') ?> onclick="return false;" /></td>
+                                                    <td>{{ $detail->qty }}</td>
+                                                    <td>{{ $detail->currency_code }}</td>
+                                                    <td align="right">{{ number_format($detail->cost, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->rate, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->cost_val, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->cost_adjustment, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->vat, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->pph23, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->ppn1, 2, ',', '.') }}</td>
+                                                    <td align="right">{{ number_format($detail->subtotal, 2, ',', '.') }}</td>
+                                                    <td>
+                                                        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteInvoice({{ $detail->id }})" ><i class="fa fa-trash"></i>  &nbsp;Delete &nbsp; &nbsp; &nbsp;</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            <tr>
+                                                <td colspan="8" class="text-right">Total</td>
+                                                <td>{{ number_format($total,2,',','.') }}</td>
+                                                <td></td>
+                                                <td>{{ number_format($total_ppn,2,',','.') }}</td>
+                                                <td>{{ number_format($total_pph23,2,',','.') }}</td>
+                                                <td>{{ number_format($total_ppn1,2,',','.') }}</td>
+                                                <td>{{ number_format($total_invoice,2,',','.') }}</td>
+                                                <td></td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -295,9 +330,8 @@
                                 <div class="col-md-12">
                                   <a href="{{ url()->previous() }}" class="btn btn-default float-left mr-2">
                                     <i class="fa fa-angle-left"></i> Kembali
-                                  </a>
-                                <button type="submit" class="btn btn-primary float-right" id="saveData">Save</button>    
-                                </div>
+                                  </a>    
+                                </div>       
                             </div>
 
                         </form>
@@ -311,87 +345,6 @@
 
 @push('after-scripts')
 <script>
-    function checkedTax(code) {
-        $('.'+code).trigger('click');
-    }
-
-    function checkedTaxDetail(code, no, name, value) {
-        if ($('#btn_'+code+no).is(':checked')) {
-            $('#lbl_'+code+no).show();
-        } else {
-            $('#lbl_'+code+no).hide();
-        }
-        checkstate(code,name,value);
-    }
-
-    function checkstate(code,name,value) {
-        let elems = document.getElementsByClassName(code);
-        let checked = false;
-        let total_value = Number(0);
-        for (let i = 0; i < elems.length; i++) {
-            if (elems[i].checked) {
-                total_value += Number(elems[i].value);
-                checked = true;
-            }
-        }
-        $('#input_'+code).val(Number(total_value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        if (checked) {
-            $('#row_'+code).show();
-            $('#lbl_total_'+code).text(name + ' (' + value + ' %)');
-        } else {
-            $('#row_'+code).hide();
-        }
-        calculateTotal();
-    }
-
-    function calculateTotal() {
-        let total_before_vat = $('#total_before_vat');
-        let total_invoice = $('.total_invoice');
-        let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
-        @foreach ($taxes as $tax)
-            let total_{{$tax->code}}_val = $('#input_{{$tax->code}}').val().toString().replace(/\,/g, "");
-        @endforeach
-        // let ppn = $('#value_ppn');
-        // let pph23 = $('#value_pph23');
-        // let total_ppn = $('#input_ppn');
-        // let total_pph23 = $('#input_pph23');
-
-        // let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
-        // let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
-        // let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
-        // let total_ppn_val = total_before_vat_val * (ppn_val / 100);
-        // let total_pph23_val = total_before_vat_val * (pph23_val / 100);
-
-        let result;
-        result = Number(total_before_vat_val) + Number(total_ppn_val) - Number(total_pph23_val) + Number(total_ppn1_val);
-
-        // total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-        // total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-        total_invoice.text(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-    }
-
-    /** Load Detail **/
-    function loadDetailInvoice(id) {
-        if (id != null) {
-            $.ajax({
-                type: "POST",
-                url: "{{ route('invoice.loadDetailInvoice') }}",
-                data: {
-                    id: id,
-                    invoice_type: $('input[name="invoice_type"]:checked').val(),
-                },
-                dataType: "html",
-                success: function (result) {
-                    var tabel = JSON.parse(result);
-                    $('#tblCost').html(tabel[0]);
-                    $(".taxcheck").prop('checked', false);//reset biar nge checkbox ulang tax nya
-                    // $('#tblProfit').html(tabel[2]);
-                }
-            })
-        }
-    }
-
     function deleteInvoice(id) {
         let url = `{{ route('invoice.delete_detail', ':id') }}`;
         url = url.replace(':id', id);
@@ -412,6 +365,18 @@
     }
 
     function syncInvoice() {
+        // let is_ppn = 0;
+        // let is_pph23 = 0;
+
+        // if (@json($header->total_vat) > 0) {
+        //     is_ppn = 1;
+        // }
+        // if (@json($header->pph23) > 0) {
+        //     is_pph23 = 1;
+        // }
+        // if (@json($header->ppn1) > 0) {
+        //     is_pph23 = 1;
+        // }
         $.ajax({
             type: 'get',
             url: `{{ route('invoice.syncInvoiceDetail') }}`,
@@ -432,10 +397,5 @@
             }
         });
     }
-
-    $(function () {
-        loadDetailInvoice({{ $header->id }})
-    });
-
 </script>
 @endpush

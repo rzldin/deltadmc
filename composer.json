@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^2.0",
         "realrashid/sweet-alert": "^4.1",
-        "riskihajar/terbilang": "^1.2"
+        "riskihajar/terbilang": "^1.2",
+        "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

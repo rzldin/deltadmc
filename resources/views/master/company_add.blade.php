@@ -20,6 +20,17 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+              @if($errors->any())
+                <div class="alert alert-warning alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <h5><i class="icon fas fa-exclamation-triangle"></i> Error!</h5>
+                        {{ implode('', $errors->all('<div>:message</div>')) }}
+                </div>
+              @endif
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <div class="card-title">
@@ -53,7 +64,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
-                                        Tax ID <font color="#f00">*</font>
+                                        Tax ID
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <input type="text" id="npwp" name="npwp"
@@ -88,6 +99,32 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
+                                        Account Deposit
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_deposit_id" id="account_deposit_id">
+                                            <option value="">-- Select Account --</option>
+                                            @foreach ($list_account as $account)
+                                            <option value="{{ $account->id }}">{{ $account->account_number.' | '.$account->account_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Main Currency
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="main_currency" id="main_currency">
+                                            <option value="">-- Select Account --</option>
+                                            @foreach ($list_currency as $curr)
+                                            <option value="{{ $curr->id }}">{{ $curr->code.' | '.$curr->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                {{-- <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
                                         Sales By <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
@@ -98,7 +135,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="row mt-3">
                                     <div class="col-md-4 col-xs-4">
                                         Legal Doc
@@ -248,12 +285,12 @@
                     text: 'Please enter Company Name',
                     icon: 'error'
                 })
-            }else if($.trim($("#sales").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select Sales',
-                    icon: 'error'
-                })
+            // }else if($.trim($("#sales").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please select Sales',
+            //         icon: 'error'
+            //     })
             }else{
                 $(this).prop('disabled', true).text('Please Wait ...');
                 $('#formku').submit();

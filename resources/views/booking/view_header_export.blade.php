@@ -500,7 +500,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                            <input type="text" name="etd" id="etd" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <input type="text" name="etd_date" id="etd_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                             <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -513,7 +513,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatez" data-target-input="nearest">
-                            <input type="text" name="eta" id="eta" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <input type="text" name="eta_date" id="eta_date" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                             <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -721,6 +721,14 @@
                             </div>
                             <div class="col-md-8">
                                 <textarea name="notify_mbl" id="notify_mbl" cols="30" rows="3" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Description</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="desc_mbl" id="desc_mbl" cols="30" rows="3" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">

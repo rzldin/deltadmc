@@ -1537,6 +1537,8 @@ class QuotationController extends Controller
 
     public function quote_doUpdate(Request $request)
     {
+        $user = Auth::user()->name;
+        $tanggal = Carbon::now();
         if($request->hazard == 'on'){
             $h = 1;
         }else{
@@ -1604,6 +1606,8 @@ class QuotationController extends Controller
                 'custom_flag'           => $custom,
                 'fumigation_flag'       => $fumi,
                 'stackable_flag'        => $goods,
+                'created_by'            => $user,
+                'created_on'            => $tanggal
             ]);
 
             return redirect('quotation/list')->with('status', 'Successfully Updated');

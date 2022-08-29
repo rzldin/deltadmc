@@ -13,15 +13,15 @@ class Deposit extends Model
 
     public static function findSaldoDeposit()
     {
-        return DB::table('t_deposits')
-            ->sum('balance');
+        return DB::table('t_deposits')->selectRaw("SUM(CASE WHEN jenis_trx = 0 THEN balance ELSE -balance END) AS saldo")->first();
     }
 
     public static function getAllDeposits()
     {
         return Deposit::from('t_deposits AS d')
             ->leftJoin('t_mcompany AS c', 'c.id', '=', 'd.company_id')
-            ->select('d.*', 'c.client_code', 'c.client_name');
+            ->leftJoin('t_mcurrency AS cc',  'd.currency_id', '=', 'cc.id')
+            ->select('d.*', 'c.client_code', 'c.client_name', 'cc.code','cc.name as nama_currency');
     }
 
     public static function findDepositByCompanyId($companyId)

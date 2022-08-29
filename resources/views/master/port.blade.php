@@ -27,7 +27,7 @@
                 <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <table id="myTable" class="table table-bordered table-striped">
+                    <table id="datatable1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
@@ -39,25 +39,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($list_data as $list)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $list->port_code }}</td>
-                                <td>{{ $list->port_name }}</td>
-                                <td>{{ $list->country_name }}</td>
-                                <td align="center">
-                                    @if ($list->active_flag == 1)
-                                        <span class="badge badge-success">ACTIVE</span>
-                                    @else
-                                        <span class="badge badge-danger">NOT ACTIVE</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a onclick="editData({{ $list->id }})" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>
-                                    <a href="{{ '/master/port_delete/'.$list->id }}" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>
-                                </td>
-                            </tr>
-                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -182,6 +164,28 @@
 
 @push('after-scripts')
     <script>
+        $(function() {
+            $('#datatable1').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {    
+                   url: '{{ route('master.port_data') }}',
+                   type: "POST",
+                   headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                   }
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    { data: 'port_code', port_code: 'name' },
+                    { data: 'port_name', name: 'port_name' },
+                    { data: 'country_name', name: 'country_name' },
+                    { data: 'status', name: 'status' },
+                    { data: 'action', name: 'action' }
+                ]
+            });
+        });
+
         var dsState;
 
         $('#port').keyup(function(){

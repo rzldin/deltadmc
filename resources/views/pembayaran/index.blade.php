@@ -39,6 +39,7 @@
                             <tr>
                                 <th>No Pembayaran</th>
                                 <th>Date</th>
+                                <th>Nama</th>
                                 <th>Status</th>
                                 <th>Nilai PMB</th>
                                 <th>Jumlah Invoice</th>
@@ -50,6 +51,7 @@
                             <tr>
                                 <td>{{ $pmb->no_pembayaran }}</td>
                                 <td>{{ \Carbon\Carbon::parse($pmb->tanggal)->format('d/m/Y') }}</td>
+                                <td>{{ $pmb->client_name }}</td>
                                 @if ($pmb->status == 0)
                                     <td class="bg-secondary text-center">Draft</td>
                                 @elseif($pmb->status == 1)

@@ -86,6 +86,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     //Port
     Route::get('/master/port', 'MasterController@port')->name('master.port');
+    Route::post('/master/port_data', 'MasterController@port_data')->name('master.port_data');
     Route::post('/master/port_doAdd', 'MasterController@port_doAdd')->name('master.port_doAdd');
     Route::post('/master/cek_port_code', 'MasterController@cek_port_code')->name('master.cek_port_code');
     Route::post('/master/port_doEdit', 'MasterController@port_doEdit')->name('master.port_doEdit');
@@ -401,6 +402,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/invoice/internal/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
     Route::get('/invoice/internal/view/{id}', 'InvoiceController@view')->name('invoice.view');
     Route::get('/invoice/internal/delete/{id}', 'InvoiceController@delete')->name('invoice.delete');
+    Route::post('/invoice/internal/update_cost', 'InvoiceController@update_cost')->name('invoice.update_cost');
     Route::get('/invoice/internal/sync', 'InvoiceController@syncInvoiceDetail')->name('invoice.syncInvoiceDetail');
     Route::get('/invoice/internal/create', 'InvoiceController@create')->name('invoice.create');
     Route::post('/invoice/internal/save', 'InvoiceController@save')->name('invoice.save');
@@ -412,6 +414,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/invoice/internal/getListInvoiceByCompanyId', 'InvoiceController@getListInvoiceByCompanyId')->name('invoice.getListInvoiceByCompanyId');
     Route::post('/invoice/internal/openINV', 'InvoiceController@openINV')->name('invoice.openINV');
     Route::get('/invoice/internal/print/{id}', 'InvoiceController@print')->name('invoice.print');
+    Route::post('/invoice/internal/loadDetailInvoice', 'InvoiceController@loadDetailInvoice')->name('invoice.loadDetailInvoice');
 
     /** External **/
     Route::get('/invoice/external/create/{proformaInvoiceId}', 'ExternalInvoiceController@create')->name('external_invoice.create');

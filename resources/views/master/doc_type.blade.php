@@ -18,6 +18,18 @@
 </section>
 <section class="content">
     <div class="container-fluid">
+    @if($errors->any())
+        <div class="row">
+            <div class="col-12 alert alert-danger">
+                <ul>
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button class="close" onclick="$('.alert').hide()"><i class="fa fa-close"></i></button>
+            </div>
+        </div>
+    @endif
       <div class="row">
         <div class="col-12">
             <div class="card">

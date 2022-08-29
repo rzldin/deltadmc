@@ -214,3 +214,10 @@ ALTER TABLE `t_pembayaran` ADD `flag_pph23` TINYINT(1) NOT NULL DEFAULT '0' AFTE
 
 ALTER TABLE `m_taxes` DROP INDEX `code`;
 ALTER TABLE `m_taxes` ADD `active_before` DATE NOT NULL AFTER `value`;
+ALTER TABLE `t_mcompany` ADD `account_deposit_id` INT NULL AFTER `account_receivable_id`;
+ALTER TABLE `t_deposit_details` ADD `journal_id` INT NULL AFTER `pembayaran_id`;
+ALTER TABLE `t_mcompany` ADD `balance_deposit` DECIMAL(14,2) NOT NULL DEFAULT '0' AFTER `account_deposit_id`;
+ALTER TABLE `t_mcompany` ADD `main_currency` INT NULL AFTER `account_deposit_id`;
+ALTER TABLE `t_deposits` ADD `jenis_trx` TINYINT(1) NOT NULL DEFAULT '0' AFTER `id`;
+ALTER TABLE `t_pembayaran_detail` ADD `deposit_id` INT NULL DEFAULT '0' AFTER `kurs`;
+ALTER TABLE `t_pembayaran_detail` ADD `tipe` TINYINT(1) NOT NULL DEFAULT '0' AFTER `jenis_pmb`;

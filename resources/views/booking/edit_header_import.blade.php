@@ -514,7 +514,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatex" data-target-input="nearest">
-                            <input type="text" name="etd" id="etd" value="@if($quote->etd_date != null){{ \Carbon\Carbon::parse($quote->etd_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate" @if($quote->flag_invoice == 1) disabled @endif/>
+                            <input type="text" name="etd_date" id="etd_date" value="@if($quote->etd_date != null){{ \Carbon\Carbon::parse($quote->etd_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate" @if($quote->flag_invoice == 1) disabled @endif/>
                             <div class="input-group-append" data-target="#reservationdatex" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -527,7 +527,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="input-group date" id="reservationdatez" data-target-input="nearest">
-                            <input type="text" name="eta" id="eta" value="@if($quote->eta_date != null){{ \Carbon\Carbon::parse($quote->eta_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate" @if($quote->flag_invoice == 1) disabled @endif/>
+                            <input type="text" name="eta_date" id="eta_date" value="@if($quote->eta_date != null){{ \Carbon\Carbon::parse($quote->eta_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate" @if($quote->flag_invoice == 1) disabled @endif/>
                             <div class="input-group-append" data-target="#reservationdatez" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -771,6 +771,14 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
+                                <label>Description</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="desc_mbl" id="desc_mbl" cols="30" rows="3" class="form-control" @if($quote->flag_invoice == 1) disabled @endif>{{ $quote->mbl_desc }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
                                 <label>MBL Number</label>
                             </div>
                             <div class="col-md-8">
@@ -840,6 +848,14 @@
                             </div>
                             <div class="col-md-8">
                                 <textarea name="notify_hbl" id="notify_hbl" cols="30" rows="3" class="form-control" @if($quote->flag_invoice == 1) disabled @endif>{{ $quote->hbl_not_party }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Description</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="desc_hbl" id="desc_hbl" cols="30" rows="3" class="form-control" @if($quote->flag_invoice == 1) disabled @endif>{{ $quote->hbl_desc }}</textarea>
                             </div>
                         </div>
                         <div class="row mb-3">

@@ -141,10 +141,16 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label>Commodity</label>
+                                        <label>To</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ..." value="{{ $quote->commodity }}">
+                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}">
+                                        <datalist id="tox">
+                                            {{-- @foreach ($port as $p)
+                                            <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
+                                            @endforeach --}}
+                                            <input type="hidden" name="to_id" id="to_id">
+                                        </datalist>
                                     </div>
                                 </div>
                             </div>
@@ -199,16 +205,10 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label>To</label>
+                                        <label>Commodity</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}">
-                                        <datalist id="tox">
-                                            {{-- @foreach ($port as $p)
-                                            <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                            @endforeach --}}
-                                            <input type="hidden" name="to_id" id="to_id">
-                                        </datalist>
+                                        <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ..." value="{{ $quote->commodity }}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -2243,36 +2243,36 @@
                     text: 'Please Input To',
                     icon: 'error'
                 })
-            }else if($.trim($("#pieces").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Pieces',
-                    icon: 'error'
-                })
-            }else if($.trim($("#weight").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Weight',
-                    icon: 'error'
-                })
-            }else if($.trim($("#uom_weight").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select UOM Weight',
-                    icon: 'error'
-                })
-            }else if($.trim($("#volume").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Volume',
-                    icon: 'error'
-                })
-            }else if($.trim($("#uom_volume").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please select UOM Volume',
-                    icon: 'error'
-                })
+            // }else if($.trim($("#pieces").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input Pieces',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#weight").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input Weight',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#uom_weight").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please select UOM Weight',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#volume").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input Volume',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#uom_volume").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please select UOM Volume',
+            //         icon: 'error'
+            //     })
             }else{
                 $(this).prop('disabled', false).text('Please Wait ...');
                 $('#formku').submit();

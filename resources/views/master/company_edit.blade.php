@@ -67,7 +67,7 @@
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_payable_id" id="account_payable_id">
-                                            <option value="" disabled>-- Select Account --</option>
+                                            <option value="">-- Select Account --</option>
                                             @foreach ($list_account as $account)
                                             <option value="{{ $account->id }}" @if ($company->account_payable_id == $account->id) selected
                                             @endif>{{ $account->account_number.' | '.$account->account_name }}</option>
@@ -81,10 +81,38 @@
                                     </div>
                                     <div class="col-md-8 col-xs-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_receivable_id" id="account_receivable_id">
-                                            <option value="" disabled>-- Select Account --</option>
+                                            <option value="">-- Select Account --</option>
                                             @foreach ($list_account as $account)
                                             <option value="{{ $account->id }}" @if ($company->account_receivable_id == $account->id) selected
                                             @endif>{{ $account->account_number.' | '.$account->account_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Account Deposit
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="account_deposit_id" id="account_deposit_id">
+                                            <option value="">-- Select Account --</option>
+                                            @foreach ($list_account as $account)
+                                            <option value="{{ $account->id }}" @if ($company->account_deposit_id == $account->id) selected
+                                            @endif>{{ $account->account_number.' | '.$account->account_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-4 col-xs-4">
+                                        Main Currency
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="main_currency" id="main_currency">
+                                            <option value="">-- Select Account --</option>
+                                            @foreach ($list_currency as $curr)
+                                            <option value="{{ $curr->id }}" @if ($company->main_currency == $curr->id) selected
+                                            @endif>{{ $curr->code.' | '.$curr->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

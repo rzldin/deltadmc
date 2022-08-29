@@ -134,10 +134,13 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label>Commodity</label>
+                                    <label>To</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ...">
+                                    <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ...">
+                                    <datalist id="tox">
+                                    </datalist>
+                                    <input type="hidden" name="to_id" id="to_id">
                                 </div>
                             </div>
                         </div>
@@ -184,13 +187,10 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label>To</label>
+                                <label>Commodity</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ...">
-                                <datalist id="tox">
-                                </datalist>
-                                <input type="hidden" name="to_id" id="to_id">
+                                <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ...">
                             </div>
                         </div>
                         <div class="row mb-3">

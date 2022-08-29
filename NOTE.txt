@@ -97,3 +97,10 @@ tipe_inv dan jenis_pmb
 
 tambah adjustment seperti dibawah ini, hanya untuk nilai cost value
 cost * rate * quantity = cost total     --> nah dari cost total itu kasih kolom inputan baru, adjustment, jadi nanti  cost total + adjustment = cost total final
+
+----
+Quotation from to buat atas bawah (done)
+Selain company code dan company name mandatory nya matiin (done)
+Form quote,
+	pieces, weight, volume jangan bikin mandatory yang diatas(header) (done)
+Di list quote urut by last update, tampilin last update (done)

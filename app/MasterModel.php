@@ -109,10 +109,12 @@ class MasterModel extends Model
     {
         return DB::select("SELECT
             c.*, ap.account_name as account_payable_name, ap.account_number as account_payable_number,
-            ar.account_name as account_receivable_name, ar.account_number as account_receivable_number, u.name as user_name
+            ar.account_name as account_receivable_name, ar.account_number as account_receivable_number,
+            ad.account_name as account_deposit_name, ad.account_number as account_deposit_number, u.name as user_name
             FROM t_mcompany c
             LEFT JOIN t_maccount ap ON c.account_payable_id = ap.id
             LEFT JOIN t_maccount ar ON c.account_receivable_id = ar.id
+            LEFT JOIN t_maccount ad ON c.account_deposit_id = ad.id
             LEFT JOIN users u ON c.sales_by = u.id
             WHERE c.id='".$id."'");
     }
@@ -129,7 +131,10 @@ class MasterModel extends Model
 
     public static function port()
     {
-        return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id ORDER BY a.port_name");
+        // return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id ORDER BY a.port_name");
+
+        return DB::table('t_mport')->select('t_mport.*', 't_mcountry.country_name')
+            ->leftJoin('t_mcountry','t_mport.t_mcountry_id','=','t_mcountry.id');
     }
 
     public static function port_filter()

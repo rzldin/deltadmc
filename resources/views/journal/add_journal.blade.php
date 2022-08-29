@@ -162,14 +162,14 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-body table-responsive p-0">
-                                                <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                                                <table class="table table-bordered table-striped" id="myTable2" style="width: 125%">
                                                     <thead>
                                                         <tr>
                                                             <th>No.</th>
-                                                            <th>Account No.</th>
-                                                            <th>Account Name</th>
-                                                            <th>Debit</th>
-                                                            <th>Kredit</th>
+                                                            <th style="width: 15%">Account No.</th>
+                                                            <th style="width: 20%">Account Name</th>
+                                                            <th style="width: 15%">Debit</th>
+                                                            <th style="width: 15%">Kredit</th>
                                                             <th>Remark</th>
                                                             <th>Action</th>
                                                         </tr>

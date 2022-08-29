@@ -947,6 +947,7 @@ class InvoiceController extends Controller
         $data['currency'] = MasterModel::currency();
         $data['containers'] = BookingModel::get_container($data['header']->t_booking_id);
         $data['goods'] = BookingModel::get_commodity($data['header']->t_booking_id);
+        $data['taxes'] = Tax::all();
         if ($data['header']->tipe_inv == 1) {
             return view('invoice.edit_invoice_cost')->with($data);
         } else {
@@ -1295,5 +1296,185 @@ class InvoiceController extends Controller
         $data['pembayaran'] = InvoiceDetailModel::getInvoicePMB($id);
 
         return view('invoice.view_selisih')->with($data);
+    }
+
+    public function loadDetailInvoice(Request $request)
+    {
+        $taxes = Tax::all();
+        $header = InvoiceModel::getInvoice($request->id)->first();
+
+        $tabel1     = "";
+        $tabel2     = "";
+        $no         = 1;
+
+        $total      = 0;
+        $amount     = 0;
+        $total_cost     = 0;
+        $total_sell     = 0;
+        $totalAmount    = 0;
+
+            $total_cost_adjustment = 0;
+            $total_cost = 0;
+            $data    = InvoiceDetailModel::getInvoiceDetails($request->id)->get();
+            foreach ($data as $row) {
+                if ($row->reimburse_flag == 1) {
+                    $style = 'checked';
+                } else {
+                    $style = '';
+                }
+
+                $total = ($row->qty * $row->cost);
+                $amount = ($total * $row->rate)+$row->cost_adjustment;
+
+                $tabel1 .= '<tr>';
+                $tabel1 .= '<td>';
+                $tabel1 .= ($no);
+                $tabel1 .= '<input type="hidden" name="cek_cost_chrg['.$no.'][id]" value="' . $row->id . '" />';
+                $tabel1 .= '</td>';
+                $tabel1 .= '<td class="text-left">' . $row->charge_name . ($request->invoice_type == 'REM' ? ' (Reimburse)' : '') . '</td>';
+                $tabel1 .= '<td class="text-left">' . $row->desc . ' | Routing: ' . $row->routing . ' | Transit time : ' . $row->transit_time . '</td>';
+                $tabel1 .= '<td class="text-center"><input type="checkbox" name="reimburs" style="width:50px;" id="reimburs_' . $no . '" ' . $style . ' onclick="return false;" ' . ($request->invoice_type == 'REM' ? 'checked' : '') . '></td>';
+                $tabel1 .= '<td class="text-left">' . $row->qty . '</td>';
+                $tabel1 .= '<td class="text-left">' . $row->currency_code . '</td>';
+                $tabel1 .= '<td class="text-right">' . number_format($row->cost, 2, '.', ',') . '</td>';
+                $tabel1 .= '<td class="text-right">' . number_format(($row->qty * $row->cost), 2, '.', ',') . '</td>';
+                $tabel1 .= '<td class="text-right">' . number_format($row->rate, 2, '.', ',') . '</td>';
+                // $tabel1 .= '<td class="text-right">' . number_format($row->vat, 2, '.', ',') . '</td>';
+                $tabel1 .= '<td class="text-right">' . number_format($row->cost_adjustment, 2, '.', ',') . '</td>';
+                $tabel1 .= '<td class="text-right">' . number_format($amount, 2, '.', ',') . '</td>';
+                foreach ($taxes as $tax){
+                    if($tax->code == 'ppn'){
+                        $taxvalue[$tax->code] = $row->vat;
+                    }else{
+                        $taxvalue[$tax->code] = $row->{$tax->code};
+                    }
+                    $display = (($taxvalue[$tax->code]==0)? 'style="display:none;"':'');
+                    $checked = (($taxvalue[$tax->code]==0)? '':'checked');
+                    // $totalAmount += (($taxvalue[$tax->code]==0)? 0:$taxvalue[$tax->code]);
+                    $taxvalue[$tax->code] = $amount * $tax->value/100;
+                    $tabel1 .= '<td><label id="lbl_'.$tax->code.$no.'"  '.$display.'>'.number_format($taxvalue[$tax->code],2,',','.').'</label><br>
+                                 <input type="checkbox" name="cek_cost_chrg['.$no.']['.$tax->code.']" class="'.$tax->code.'" id="btn_'.$tax->code.$no.'" onchange="checkedTaxDetail(\''.$tax->code.'\','.$no.',\''.$tax->name.'\','.$tax->value.')" value="'.$taxvalue[$tax->code].'" '.$checked.'/></td>';
+                }
+                $tabel1 .= '<td class="text-left"></td>';
+                $tabel1 .= '</tr>';
+                $no++;
+
+                $total_cost_adjustment += $row->cost_adjustment;
+                $total_cost     += $total;
+                $totalAmount    += $amount;
+            }
+            $tabel1 .= "<tr id='row_subtotal'>";
+                $tabel1 .= "<td colspan='7' class='text-right'><span id='lbl_subtotal'>Subtotal</span></td>";
+                $tabel1 .= "<td>".number_format($total_cost,2,',','.')."</td>";
+                $tabel1 .= "<td colspan='2'></td>";
+                $tabel1 .= "<td class='text-right'>";
+                $tabel1 .= number_format($totalAmount, 2, '.', ',');
+                $tabel1 .= "<input type='hidden' class='form-control' name='total_before_vat' id='total_before_vat' value='" . number_format($totalAmount, 2, '.', ',') . "' readonly/>";
+                $tabel1 .= "</td>";
+                $tabel1 .= "<td colspan='4'></td>";
+            $tabel1 .= "</tr>";
+            foreach ($taxes as $tax){
+                if($tax->code == 'ppn'){
+                    if($row->vat>0){
+                        $taxvalue[$tax->code] = $header->total_vat;
+                    }
+                }else{
+                    $taxvalue[$tax->code] = $header->{$tax->code};
+                }
+                if($tax->code == 'pph23'){
+                    $totalAmount -= $taxvalue[$tax->code];
+                }else{
+                    $totalAmount += $taxvalue[$tax->code];
+                }
+                $display = (($taxvalue[$tax->code]==0)? 'style="display:none;"':'');
+                $tabel1 .= "<tr id='row_".$tax->code."' ".$display.">";
+                    $tabel1 .= "<td colspan='10' class='text-right'><span id='lbl_total_".$tax->code."'></span></td>";
+                    $tabel1 .= "<td class='text-right'>";
+                    // $tabel1 .= "<input type='hidden' class='form-control' name='value_".$tax->code."' id='value_".$tax->code."' value='0.00' readonly/>";
+                    $tabel1 .= "<input type='text' class='form-control' name='input_".$tax->code."' id='input_".$tax->code."' value='".$taxvalue[$tax->code]."' readonly/>";
+                    $tabel1 .= "</td>";
+                    $tabel1 .= "<td colspan='4'></td>";
+                $tabel1 .= "</tr>";
+            }
+            $tabel1 .= '<tr>';
+                $tabel1 .= '<td colspan="10" class="text-right">Total</td>';
+                $tabel1 .= '<td class="text-right">';
+                $tabel1 .= '<input type="hidden" class="form-control" name="total_cost_adjustment" id="total_cost_adjustment" value="'.$total_cost_adjustment.'" readonly/>';
+                $tabel1 .= '<label class="total_invoice">'.number_format($totalAmount, 2, '.', ',').'</label>';
+                $tabel1 .= '<input type="hidden" class="total_invoice" name="total_invoice" value="' . number_format($totalAmount, 2, '.', ',') . '" readonly/>';
+                $tabel1 .= '<input type="hidden" class="total_cost" name="total_cost" value="' . number_format($total_cost, 2, '.', ',') . '" readonly/>';
+                $tabel1 .= '</td>';
+                $tabel1 .= '<td colspan="4"></td>';
+            $tabel1 .= '</tr>';
+
+        header('Content-Type: application/json');
+        echo json_encode([$tabel1]);
+    }
+
+    public function update_cost(Request $request)
+    {
+        $rules = [
+            'id' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->with('errorForm', $validator->errors()->messages());
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $invoice = InvoiceModel::find($request->id);
+            $total_before_vat = str_replace(',', '', $request->total_before_vat);
+            $total_vat = str_replace(',', '', $request->input_ppn);
+            $pph23 = str_replace(',', '', $request->input_pph23);
+            $ppn1 = str_replace(',', '', $request->input_ppn1);
+            $total_invoice = str_replace(',', '', $request->total_invoice) + str_replace(',', '', $request->total_cost_adjustment);
+
+            DB::table('t_invoice')->where('id', $invoice->id)->update([
+                'total_before_vat' => $total_before_vat,
+                'total_vat' => $total_vat,
+                'pph23' => $pph23,
+                'ppn1' => $ppn1,
+                'total_invoice' => $total_invoice,
+            ]);
+
+            // print("<pre>".print_r($request->cek_cost_chrg,true)."</pre>");die();
+            foreach ($request->cek_cost_chrg as $key => $chrg) {
+                $chrg_dtl = InvoiceDetailModel::where('id', $chrg['id'])->first();
+                $vat_dtl = 0;
+                $pph23_dtl = 0;
+                $ppn1_dtl = 0;
+                $subtotal = $chrg_dtl->cost + $chrg_dtl->cost_adjustment;
+                if(isset($chrg['ppn'])){
+                    $vat_dtl = $chrg['ppn'];
+                }
+                if(isset($chrg['pph23'])){
+                    $pph23_dtl = $chrg['pph23'];
+                }
+                if(isset($chrg['ppn1'])){
+                    $ppn1_dtl = $chrg['ppn1'];
+                }
+
+                $subtotal = $subtotal + $vat_dtl - $pph23_dtl + $ppn1_dtl;
+
+                InvoiceDetailModel::where('id', $chrg_dtl->id)->update([
+                    'reimburse_flag' => (($invoice->reimburse_flag == 1) ? 1 : 0),
+                    'vat' => $vat_dtl,
+                    'pph23' => $pph23_dtl,
+                    'ppn1' => $ppn1_dtl,
+                    'subtotal' => $subtotal,
+                    'created_by' => Auth::user()->name,
+                    'created_on' => date('Y-m-d h:i:s')
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('invoice.edit', ['id' => $request->id])->with('success', 'Invoice Updated!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+        }
     }
 }

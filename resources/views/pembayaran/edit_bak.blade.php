@@ -259,7 +259,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-5">
-                            <strong>Nilai</strong> ( <input type="checkbox" id="check_pph23" name="check_pph23" value="1" onchange="hitungpph23(this)"> Dengan PPH23 )
+                            <strong>Nilai</strong> ( <input type="checkbox" id="check_pph23" name="check_pph23" value="1" onchange="hitungpph23(this)"> Tanpa PPH23 )
                         </div>
                         <div class="col-md-7">
                             <input type="text" id="total_invoice" name="total_invoice" class="form-control myline" style="margin-bottom:5px" readonly="readonly">
@@ -332,15 +332,6 @@
                           <input type="text" class="form-control" name="nilai_sisa" id="nilai_sisa" value="0" onkeyup="getComa(this.value, this.id); hitungSubTotalSJ();" placeholder="Pembayaran Deposit ...">
                         </div>
                     </div>
-                    <div class="separator_hr">Deposit Lebih Bayar</div>
-                    <div class="row mb-2">
-                        <div class="col-md-5">
-                            Nilai Lebih Bayar
-                        </div>
-                        <div class="col-md-7">
-                          <input type="text" class="form-control" name="nilai_tambah_deposit" id="nilai_tambah_deposit" value="0" onkeyup="getComa(this.value, this.id);" placeholder="Nilai Lebih Bayar ...">
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -350,6 +341,7 @@
         </div>
     </div>
 </div>
+
 @push('after-scripts')
 
 <script>
@@ -505,21 +497,17 @@ function input_bayar(id){
       $("#INVModal").modal('show',{backdrop: 'true'});
       $("#tambah_inv").show();
       $("#alert-danger").hide();
-      $('#nilai_bayar').attr('readonly', false);
-      $('#is_deposit').val(0);
-      if (result['nilai_deposit'] > 0) {
-            // getDepositBalance(result['currency']);
-            // getListDeposit(result['currency']);
-            $('#deposit_id').val(result['deposit_id']);
-            $('#balance').val(numberWithCommas(result['nilai_deposit']));
-            // $('#nilai_bayar').attr('readonly', true);
+      // if ($('#akun_kas').val() == 263) {
+            getDepositBalance(result['currency']);
+            getListDeposit(result['currency']);
+            $('#nilai_bayar').attr('readonly', true);
             $('#deposit_blok').show();
-            // $('#is_deposit').val(1);
-      } else {
-            // $('#nilai_bayar').attr('readonly', false);
-            $('#deposit_blok').hide();
-            // $('#is_deposit').val(0);
-      }
+            $('#is_deposit').val(1);
+      // } else {
+      //       $('#nilai_bayar').attr('readonly', false);
+      //       $('#deposit_blok').hide();
+      //       $('#is_deposit').val(0);
+      // }
 
       $("#id_modal_inv").val(result['id']);
       $("#invoice_no").val(result['invoice_no']);
@@ -694,7 +682,6 @@ function proceed_bayar(){
       data:{
          id_pmb:'{{ $header->id }}',
          jenis_pmb:'{{ $header->jenis_pmb }}',
-         company_id: '{{ $header->id_company }}',
          id_invoice:$('#id_modal_inv').val(),
          currency_id: $('#currency_id').val(),
          kurs: $('#kurs').val(),
@@ -702,20 +689,18 @@ function proceed_bayar(){
          nilai_bayar:$('#nilai_bayar').val(),
          nilai_sisa:$('#nilai_sisa').val(),
          tanggal_bayar:$('#tanggal_dt').val(),
-         is_deposit:$('#is_deposit').val(),
-         nilai_tambah_deposit:$('#nilai_tambah_deposit').val(),
          is_nopph23:is_nopph23
       },
       type: "POST",
       dataType: "json",
       success: function(result){
         if (result['status'] == 'sukses') {
-            // if ($('#is_deposit').val() == 1) {
-            //     updateDepositBalance(@json($header->id));
-            // } else {
+            if ($('#is_deposit').val() == 1) {
+                updateDepositBalance(@json($header->id));
+            } else {
                 alert('Transaksi Berhasil di Bayar');
                 $("#INVModal").modal('hide');
-            // }
+            }
         } else {
           alert(result['message']);
           $("#INVModal").modal('hide');

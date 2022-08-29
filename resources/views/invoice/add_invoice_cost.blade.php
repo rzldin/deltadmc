@@ -498,27 +498,14 @@
                 @foreach ($taxes as $tax)
                     let total_{{$tax->code}}_val = $('#input_{{$tax->code}}').val().toString().replace(/\,/g, "");
                 @endforeach
-                // let ppn = $('#value_ppn');
-                // let pph23 = $('#value_pph23');
-                // let total_ppn = $('#input_ppn');
-                // let total_pph23 = $('#input_pph23');
-
-                // let total_before_vat_val = Number(total_before_vat.val().toString().replace(/\,/g, ""));
-                // let ppn_val = Number(ppn.val().toString().replace(/\,/g, ""));
-                // let pph23_val = Number(pph23.val().toString().replace(/\,/g, ""));
-                // let total_ppn_val = total_before_vat_val * (ppn_val / 100);
-                // let total_pph23_val = total_before_vat_val * (pph23_val / 100);
-
                 let result;
                 result = Number(total_before_vat_val) + Number(total_ppn_val) - Number(total_pph23_val) + Number(total_ppn1_val);
 
-                // total_ppn.val(total_ppn_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
-                // total_pph23.val(total_pph23_val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
                 total_invoice.text(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 total_invoice.val(result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             }
 
-        /** Load Schedule **/
+        /** Load Detail **/
         function loadSellCost(id) {
             if (id != null) {
                 $.ajax({

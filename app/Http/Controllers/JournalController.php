@@ -343,7 +343,7 @@ class JournalController extends Controller
 
     public function saveDetailJournalPembayaran(Request $request)
     {
-        $company = MasterModel::company_detail_get($request->client_id);
+        $company = collect(MasterModel::company_detail_get($request->client_id))->first();
         $pembayaran = PembayaranModel::find($request->reference_id);
 
         if ($company != []) {
@@ -368,7 +368,7 @@ class JournalController extends Controller
                     'transaction_type' => 'D',
                     'debit' => $pembayaran->nilai_pmb - $total_pph23,
                     'credit' => 0,
-                    'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
+                    'memo' => 'Payment ' . $company->client_name . ' ' . $pembayaran->no_pembayaran,
                 ];
 
                 $request->session()->push('journal_details', $newItem);
@@ -392,38 +392,45 @@ class JournalController extends Controller
 
                 // account ar di credit
                 $newItem = [
-                    'account_id' => $company[0]->account_receivable_id,
-                    'account_number' => $company[0]->account_receivable_number,
-                    'account_name' => $company[0]->account_receivable_name,
+                    'account_id' => $company->account_receivable_id,
+                    'account_number' => $company->account_receivable_number,
+                    'account_name' => $company->account_receivable_name,
                     'transaction_type' => 'C',
                     'debit' => 0,
                     'credit' => $pembayaran->nilai_pmb,
-                    'memo' => 'Piutang ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
+                    'memo' => 'Piutang ' . $company->client_name . ' ' . $pembayaran->no_pembayaran,
                 ];
 
                 $request->session()->push('journal_details', $newItem);
                 /** end pembayaran piutang */
             } else {
                 /** pembayaran hutang */
-               // account ap di debit
+                // account bank di debit
+                $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
+                $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
+                // $account_no_pembayaran = '1-1101';
+                $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
+
+                $total_pph23 = 0;
+                $loop_pph23 = PembayaranModel::get_list_pmb_invoice_piutang($pembayaran->id);
                 $newItem = [
-                    'account_id' => $company[0]->account_payable_id,
-                    'account_number' => $company[0]->account_payable_number,
-                    'account_name' => $company[0]->account_payable_name,
+                    'account_id' => $account->id,
+                    'account_number' => $account->account_number,
+                    'account_name' => $account->account_name,
                     'transaction_type' => 'C',
-                    'debit' => $pembayaran->nilai_pmb,
-                    'credit' => 0,
-                    'memo' => 'Hutang ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
+                    'debit' => 0,
+                    'credit' => $pembayaran->nilai_pmb,
+                    'memo' => 'Hutang ' . $company->client_name . ' ' . $pembayaran->no_pembayaran,
                 ];
 
                 $request->session()->push('journal_details', $newItem);
 
+                $loop_pmb = PembayaranModel::get_list_pmb_invoice($pembayaran->id);
                 $total_pph23 = 0;
                 if($pembayaran->flag_pph23==1){
-                    $loop_pph23 = PembayaranModel::get_list_pmb_invoice($pembayaran->id);
                     // account pph23 di debit
                     $account_pajak = MasterModel::findAccountByAccountNumber('1-1401')->first();
-                    foreach ($loop_pph23 as $key => $value) {
+                    foreach ($loop_pmb as $key => $value) {
                         $newItem = [
                             'account_id' => $account_pajak->id,
                             'account_number' => $account_pajak->account_number,
@@ -438,22 +445,33 @@ class JournalController extends Controller
                     }
                 }
 
-                 // account bank di credit
-                 $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
-                 // $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
-                 $account_no_pembayaran = '1-1101';
-                 $account = MasterModel::findAccountByAccountNumber($account_no_pembayaran)->first();
-                 $newItem = [
-                     'account_id' => $account->id,
-                     'account_number' => $account->account_number,
-                     'account_name' => $account->account_name,
-                     'transaction_type' => 'D',
-                     'debit' => 0,
-                     'credit' => $pembayaran->nilai_pmb - $total_pph23,
-                     'memo' => 'Payment ' . $company[0]->client_name . ' ' . $pembayaran->no_pembayaran,
-                 ];
+                // account bank di credit
+                $account_pembayaran = MasterModel::account_get_detail($pembayaran->id_kas);
+                $account_no_pembayaran = ($pembayaran->id_kas == 0 ? '1-1101' : $account_pembayaran->account_number);
+                // $account_no_pembayaran = '1-1101';
+                foreach ($loop_pmb as $key => $value) {
+                     $tipe = 'Payment';
+                     $account_id     = $company->account_payable_id;
+                     $account_number = $company->account_payable_number;
+                     $account_name   = $company->account_payable_name;
+                     if($value->deposit_id>0){
+                        $account_id     = $company->account_deposit_id;
+                        $account_number = $company->account_deposit_number;
+                        $account_name   = $company->account_deposit_name;
+                        $tipe = 'Payment Deposit';
+                     }
+                     $newItem = [
+                         'account_id' => $account_id,
+                         'account_number' => $account_number,
+                         'account_name' => $account_name,
+                         'transaction_type' => 'D',
+                         'debit' => $value->nilai - $value->pph23,
+                         'credit' => 0,
+                         'memo' => $tipe.' '. $company->client_name . ' ' . $pembayaran->no_pembayaran,
+                     ];
 
-                 $request->session()->push('journal_details', $newItem);
+                     $request->session()->push('journal_details', $newItem);
+                }
 
                 /** end pembayaran hutang */
             }

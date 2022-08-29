@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
+use DataTables;
 use Carbon\Carbon;
 use App\MasterModel;
 
@@ -358,9 +359,30 @@ class MasterController extends Controller
     /** Port */
     public function port()
     {
-        $data['list_data'] = MasterModel::port();
+        // $data['list_data'] = MasterModel::port()->simplePaginate(10);
         $data['list_country'] = MasterModel::country();
         return view('master.port')->with($data);
+    }
+
+    public function port_data()
+    {
+        return Datatables::of(MasterModel::port())
+            ->addIndexColumn()
+            ->addColumn('status', function($row){
+                if($row->active_flag == 1){
+                    $btn = '<span class="badge badge-success">ACTIVE</span>';
+                }else{
+                    $btn = '<span class="badge badge-danger">NOT ACTIVE</span>';
+                }
+                return $btn;
+            })
+            ->addColumn('action', function($row){
+                $btn = '<a onclick="editData('.$row->id.')" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit </a>';
+                $btn .= '<a href="'.route('master.port_delete', ['id'=> $row->id]).'" class="btn btn-danger btn-xs hapus-link"><i class="fa fa-trash"></i> Delete </a>';
+
+                return $btn;
+            })
+            ->rawColumns(['status','action'])->toJson();
     }
 
     public function port_doAdd(Request $request)
@@ -553,6 +575,7 @@ class MasterController extends Controller
         ->where('t_mmatrix.active_flag', '1')->get();
         $data['list_account'] = MasterModel::account_get();
         $data['list_country'] = MasterModel::country();
+        $data['list_currency'] = MasterModel::currency();
         $data['list_sales'] = $sales;
         return view('master.company_add')->with($data);
     }
@@ -630,6 +653,8 @@ class MasterController extends Controller
                     'npwp'                  => $request->npwp,
                     'account_payable_id'    => $request->account_payable_id,
                     'account_receivable_id' => $request->account_receivable_id,
+                    'account_deposit_id'    => $request->account_deposit_id,
+                    'main_currency'         => $request->main_currency,
                     'sales_by'              => $request->sales,
                     'legal_doc_flag'        => $legal_doc,
                     'customer_flag'         => $cust,
@@ -661,6 +686,7 @@ class MasterController extends Controller
         $data['list_account'] = MasterModel::account_get();
         $data['list_country'] = MasterModel::country();
         $data['list_sales'] = $sales;
+        $data['list_currency'] = MasterModel::currency();
         $data['company'] = MasterModel::company_get($id);
         return view('master.company_edit')->with($data);
     }
@@ -783,6 +809,8 @@ class MasterController extends Controller
                 'npwp'                  => $request->npwp,
                 'account_payable_id'    => $request->account_payable_id,
                 'account_receivable_id' => $request->account_receivable_id,
+                'account_deposit_id'    => $request->account_deposit_id,
+                'main_currency'         => $request->main_currency,
                 'sales_by'              => $request->sales,
                 'legal_doc_flag'        => $legal_doc,
                 'customer_flag'         => $cust,
@@ -801,6 +829,12 @@ class MasterController extends Controller
             } catch (\Exception $e) {
                 return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
             }
+    }
+
+    public function company_get(Request $request)
+    {
+        $data = MasterModel::company_get($request['id']);
+        return json_encode($data);
     }
 
     public function company_addAddress(Request $request)
@@ -1959,7 +1993,7 @@ class MasterController extends Controller
                 'name'          => $request->name,
                 'desc'          => $request->desc,
                 'doc_group'     => $request->doc_group,
-                'status'        => $status,
+                'active_flag'   => $status,
                 'created_by'    => $user,
                 'created_on'    => $tanggal
             ]);
@@ -1985,7 +2019,7 @@ class MasterController extends Controller
                 'name'          => $request->name,
                 'desc'          => $request->desc,
                 'doc_group'     => $request->doc_group,
-                'active_flag'        => $status,
+                'active_flag'   => $status,
                 'created_by'    => $user,
                 'created_on'    => $tanggal
             ]);

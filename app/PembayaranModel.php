@@ -16,7 +16,8 @@ class PembayaranModel extends Model
     {
         return PembayaranModel::from('t_pembayaran as p')
             ->leftJoin('t_journals as j', 'j.pembayaran_id', '=', 'p.id')
-            ->select('p.*', DB::raw('COALESCE(j.id, 0) journal_id'), DB::raw('(select count(id) from t_pembayaran_detail where id_pmb = p.id) jumlah'))
+            ->leftJoin('t_mcompany AS b', 'p.id_company', '=', 'b.id')
+            ->select('p.*', 'b.client_name', DB::raw('COALESCE(j.id, 0) journal_id'), DB::raw('(select count(id) from t_pembayaran_detail where id_pmb = p.id) jumlah'))
             ->where('p.jenis_pmb', $jenis);
     }
 
@@ -33,7 +34,7 @@ class PembayaranModel extends Model
     public static function get_list_hutang($id,$idp,$curr)
     {
         return DB::select("
-            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and id_pmb =".$idp.")as count
+            Select i.*, (select count(id) from t_pembayaran_detail where id_invoice = i.id and jenis_pmb = 1 and deposit_id = 0 and id_pmb =".$idp.")as count
             from t_invoice as i
             where tipe_inv = 1 and flag_bayar in (0,2) and i.client_id = ".$id." and i.currency=".$curr);
     }
@@ -67,7 +68,7 @@ class PembayaranModel extends Model
     public static function get_list_pmb_invoice($id)
     {
         return DB::select("
-            Select i.* from t_pembayaran_detail pd
+            Select pd.*, i.pph23, i.invoice_no from t_pembayaran_detail pd
             left join t_invoice i on pd.id_invoice = i.id
             where pd.id_pmb = ".$id);
     }

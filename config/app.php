@@ -178,6 +178,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\SiteHelpersServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        
+        Yajra\DataTables\DataTablesServiceProvider::class,
 
     ],
 
@@ -235,6 +237,7 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
 
         'Terbilang' => Riskihajar\Terbilang\Facades\Terbilang::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
     ],
 
 ];

@@ -16,18 +16,20 @@ class DepositController extends Controller
 {
     public function index()
     {
-        $account = MasterModel::account_get_detail(265);
+        // $account = MasterModel::account_get_detail(265);
+        $currency = MasterModel::currency();
         $saldo = Deposit::findSaldoDeposit();
         $deposits = Deposit::getAllDeposits()->get();
         $companies = MasterModel::company_data();
 
-        return view('deposit.list_deposit', compact('account', 'saldo', 'deposits', 'companies'));
+        return view('deposit.index', compact('currency', 'saldo', 'deposits', 'companies'));
     }
 
     public function save(Request $request)
     {
         $rules = [
             'deposit_date' => 'required',
+            'currency_id' => 'required',
             'company_id' => 'required',
             'amount' => 'required|numeric|not_in:0',
         ];
@@ -54,15 +56,16 @@ class DepositController extends Controller
         try {
             $paramHeader['id'] = $request->id;
             // $paramHeader['account_id'] = $request->account_id;
+            $paramHeader['currency_id'] = $request->currency_id;
             $paramHeader['company_id'] = $request->company_id;
             $paramHeader['balance'] = $request->amount;
             $paramHeader['created_by'] = Auth::user()->name;
             $paramHeader['created_on'] = date('Y-m-d h:i:s');
 
             $deposit = Deposit::find($request->id);
-            if ($deposit != []) {
-                $paramHeader['balance'] = ($deposit->balance + $request->amount);
-            }
+            // if ($deposit != []) {
+            //     $paramHeader['balance'] = ($deposit->balance + $request->amount);
+            // }
             $deposit = Deposit::saveDeposit($paramHeader);
 
             $paramDetail['deposit_id'] = $deposit->id;
@@ -74,6 +77,12 @@ class DepositController extends Controller
             $paramDetail['created_by'] = Auth::user()->name;
             $paramDetail['created_on'] = date('Y-m-d h:i:s');
             $depositDetail = DepositDetail::create($paramDetail);
+
+            $company = DB::table('t_mcompany')->where('id', $request->company_id)->first();
+            $balance_deposit = $company->balance_deposit + $request->amount;
+            DB::table('t_mcompany')->where('id', $request->company_id)->update([
+                'balance_deposit' => $balance_deposit
+            ]);
             DB::commit();
 
             $response = [

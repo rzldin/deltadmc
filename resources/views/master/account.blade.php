@@ -97,7 +97,7 @@
                         </div>
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="account_number" name="account_number" 
-                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Account Number ..." onkeyup="numberOnly(this);">
+                                class="form-control myline" style="margin-bottom:5px" placeholder="Input Account Number ...">
                             <input type="hidden" id="id" name="id">
                         </div>
                     </div>
