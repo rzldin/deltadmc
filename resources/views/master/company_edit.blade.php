@@ -206,6 +206,14 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="np" name="np" value="1" @if ($company->np_flag == 1) checked @endif>
+                                                    <label for="np">
+                                                        NOTIFY PARTY
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -231,6 +239,14 @@
                                                     <input type="checkbox" id="ppjk" name="ppjk" value="1" @if ($company->ppjk_flag == 1) checked @endif>
                                                     <label for="ppjk">
                                                         PPJK
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="consignee" name="consignee" value="1" @if ($company->consignee_flag == 1) checked @endif>
+                                                    <label for="consignee">
+                                                        CONSIGNEE
                                                     </label>
                                                 </div>
                                             </div>
@@ -322,6 +338,7 @@
                             <thead>
                                 <tr>
                                     <th width="5%">#</th>
+                                    <th width="10%">Title</th>
                                     <th>Name</th>
                                     <th>Phone 1</th>
                                     <th>Phone 2</th>
@@ -338,6 +355,13 @@
 
                                 <tr>
                                     <td><i class="fa fa-plus"></i></td>
+                                    <td>
+                                        <select class="form-control" name="title" id="title_1">
+                                            <option value="Mr.">Mr.</option>
+                                            <option value="Ms.">Ms.</option>
+                                            <option value="Mrs.">Mrs.</option>
+                                        </select>
+                                    </td>
                                     <td>
                                         <input type="text" class="form-control" name="pic_name" id="pic_name_1" placeholder="Input Name..">
                                     </td>
@@ -570,6 +594,8 @@
                    let tabel = '';
                    let status = '';
                    let style = '';
+                   let title = '';
+                   let type = '';
                    $.each(result, function(i,data){
                         if(data.active_flag == 1){
                             status = '<span class="badge badge-success">active</span>';
@@ -578,8 +604,18 @@
                             status = '<span class="badge badge-danger">not active</span>';
                             style = '';
                         }
+                        if(data.title!=null){
+                            title = data.title;
+                        }
                         tabel += `<tr>
                             <td class="text-center" style="font-size:12px;">${no-1}</td>
+                            <td><label id="lbl_title_${no}" style="font-size:12px;">${title}</label>
+                            <select id="title_${no}" name="title" class="form-control" data-placeholder="Pilih..." style="margin-bottom:5px; display:none">
+                                <option value="Mr."`+((title=='Mr.') ? 'selected':'')+`>Mr.</option>
+                                <option value="Ms."`+((title=='Ms.') ? 'selected':'')+`>Ms.</option>
+                                <option value="Mrs."`+((title=='Mrs.') ? 'selected':'')+`>Mrs.</option>
+                            </select>
+                            </td>
                             <td><label id="lbl_pic_name_${no}" style="font-size:12px;">${data.name}</label>
                                 <input type="text" id="pic_name_${no}" name="pic_name" class="form-control" value="${data.name}" style="display:none" onkeyup="pic_font('${no}')">
                             </td>
@@ -604,6 +640,7 @@
                         `
                         no++;
                    })
+
                     $('#tblDetailx').html(tabel);
                 }
             })
@@ -749,6 +786,7 @@
             cek += `<input type="checkbox" id="statusx_${id}" name="status" style="width: 15px" class="form-control" value="1" style="display:none" ${c}> Active`;
 
             $('#btnEditx_'+id).hide();
+            $('#lbl_title_'+id).hide();
             $('#lbl_pic_name_'+id).hide();
             $('#lbl_phonex_'+id).hide();
             $('#lbl_phonexx_'+id).hide();
@@ -758,6 +796,7 @@
             $('#lbl_statusx_'+id).hide();
 
             $('#btnUpdatex_'+id).show();
+            $('#title_'+id).show();
             $('#pic_name_'+id).show();
             $('#phonex_'+id).show();
             $('#phonexx_'+id).show();
@@ -783,11 +822,11 @@
                     icon: 'error',
                     title: 'Please input Phone Number!'
                 });
-            }else if($.trim($("#email_"+id).val()) == ""){
-                Toast.fire({
-                    icon: 'error',
-                    title: 'Please input Email!'
-                });
+            // }else if($.trim($("#email_"+id).val()) == ""){
+            //     Toast.fire({
+            //         icon: 'error',
+            //         title: 'Please input Email!'
+            //     });
             }else if($.trim($("#pic_desc_"+id).val()) == ""){
                 Toast.fire({
                     icon: 'error',
@@ -799,6 +838,7 @@
                     url:"{{ route('master.company_updatePic') }}",
                     data:{
                         id:id_detail,
+                        title:$('#title_'+id).val(),
                         name:$('#pic_name_'+id).val(),
                         desc:$('#pic_desc_'+id).val(),
                         phone1:$('#phonex_'+id).val(),
@@ -946,6 +986,7 @@
                     url:"{{ route('master.company_addPic') }}",
                     data:{
                         company:{{ $company->id }},
+                        title:$('#title_'+id).val(),
                         pic_name:$('#pic_name_'+id).val(),
                         phone1:$('#phonex_'+id).val(),
                         phone2:$('#phonexx_'+id).val(),

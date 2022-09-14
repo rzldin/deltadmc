@@ -39,9 +39,9 @@
             </td>
         </tr>
     </table>
-    <table width="100%" style="margin-left:10%; margin-right:10%;border-top: 1 solid #000;text-align:center;vertical-align:top;">
+    <table width="100%" style="border-top: 1 solid #000;text-align:center;vertical-align:top;">
         <tr>
-            <td style="font-size: 18px;padding-left:120px;"><b>SURAT JALAN</b></td>
+            <td style="font-size: 18px;"><b>SURAT JALAN</b></td>
         </tr>
     </table>
     <br>
@@ -53,7 +53,7 @@
                     <tr>
                         <td style="vertical-align:top;" height="100">
                             <b>DARI : <br>
-                            {{ ucwords($data[0]->pickup_addr) }}
+                            {!! ucwords(nl2br($data[0]->pickup_addr)) !!}
                             </b>
                         </td>
                     </tr>
@@ -138,7 +138,7 @@
                     <tr>
                         <td style="vertical-align:top;" height="100">
                             <b>KEPADA : <br>
-                            {{ ucwords($data[0]->delivery_addr) }}
+                            {!! ucwords(nl2br($data[0]->delivery_addr)) !!}
                             </b>
                         </td>
                     </tr>
@@ -182,17 +182,21 @@
                 $cbm = 0;
             ?>
             @foreach ($barang as $item)
-            <?php $qty_kgs = ''; $qty_cbm = ''; if($item->qty_uom == 1){
+{{--             <?php $qty_kgs = ''; $qty_cbm = ''; if($item->qty_uom == 1){
                 $qty_kgs = $item->qty;
             }else{
                 $qty_cbm = $item->qty;
-            }?>
+            }?> --}}
+            <?php 
+                $kgs += $item->qty;
+                $cbm += $item->cbm;
+            ?>
             <tr>
                 <td style="text-align: center;">
-                    
+                    {{ $item->pkgs }}
                 </td>
                 <td style="text-align: center;">
-                    
+                    {{ $item->ctn }}
                 </td>
                 <td style="text-align: center;">
                     {{ $item->desc }}
@@ -200,13 +204,13 @@
                 <td>
                     <table width="100%" cellspacing="0" cellpadding="0">
                         <tr>
-                            <td width="50%" style="text-align: center;border-right:1 solid #000" height="25">{{ $qty_kgs }}</td>
-                            <td width="50%" style="text-align: center;">{{ $qty_cbm }}</td>
+                            <td width="50%" style="text-align: center;border-right:1 solid #000" height="25">{{ $item->qty }}</td>
+                            <td width="50%" style="text-align: center;">{{ $item->cbm }}</td>
                         </tr>
                     </table>
                 </td>
                 <td style="text-align: center">
-                    
+                    {{ $item->keterangan }}
                 </td>
             </tr>
             <?php if($item->qty_uom == 1) {

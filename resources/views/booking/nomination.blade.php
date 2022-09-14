@@ -557,6 +557,14 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
+                                                <label>Connecting Vessel</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="text" name="conn_vessel" id="conn_vessel" class="form-control" value="" placeholder="Connecting Vessel ...">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
                                                 <label>ETD</label>
                                             </div>
                                             <div class="col-md-8">

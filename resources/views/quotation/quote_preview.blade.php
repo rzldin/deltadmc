@@ -66,7 +66,11 @@
                 </tr>
             </thead>
             <tbody>
+                @php $refund = 0; @endphp
                 @foreach ($detail_quote as $item)
+                @php 
+                    if($item->t_mcharge_code_id!=33){//refund tidak di tunjukkan
+                @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td style="text-align: center">{{ $item->name_charge }}</td>
@@ -76,6 +80,11 @@
                     <td class="price">{{ number_format($item->vat,2,',','.') }}</td>
                     <td class="price">{{ number_format($item->subtotal,2,',','.') }}</td>
                 </tr>
+                @php 
+                    }else{
+                        $refund += $item->subtotal;
+                    }
+                @endphp
                 @endforeach
             </tbody>
         </table>
@@ -96,7 +105,7 @@
                     <td style="text-align: left">{{ $item->carrier_code }}</td>
                     <td style="text-align: left">{{ $item->routing }}</td>
                     <td style="text-align: center">{{ $item->transit_time }}</td>
-                    <td class="price">{{ number_format($item->total_sell,2,',','.') }}</td>
+                    <td class="price">{{ number_format($item->total_sell-$refund,2,',','.') }}</td>
                 </tr>
                 @endforeach
             </tbody>

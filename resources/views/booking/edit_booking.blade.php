@@ -68,18 +68,6 @@
                                                 @endif
                                             </form>
                                             <div class="row float-right mt-2">
-                                                <?php if($booking->shipment_by == 'SEA') {?>
-                                                    @if ($booking->loaded_type == 'FCL')
-                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_fcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
-                                                    @else
-                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm m-2"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_lcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
-                                                    @endif
-                                                <?php }elseif($booking->shipment_by == 'AIR'){?>
-                                                    <a href="{{ url('booking/cetak_si_air/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm m-2"><i class="fa fa-print"></i> Print SI</a>
-                                                <?php }?>
-
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -194,55 +182,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h3 class="card-title">Packages</h3>
-                                                </div>
-                                                <div class="card-body table-responsive p-0">
-                                                   <table class="table table_lowm table-bordered" id="Table1">
-                                                       <thead>
-                                                           <tr>
-                                                               <th width="1%">#</th>
-                                                               <th width="35%">Merk</th>
-                                                               <th width="15%">Qty</th>
-                                                               <th width="15%">Unit</th>
-                                                               <th width="10%">Action</th>
-                                                           </tr>
-                                                       </thead>
-                                                       <tbody>
-                                                           <tbody id="tblPackages">
-
-                                                           </tbody>
-                                                        @if($booking->flag_invoice == 0)
-                                                           <tr>
-                                                                <td>
-                                                                    <i class="fa fa-plus"></i>
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" class="form-control" name="merk" id="merk_1" placeholder="Merk ...">
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" class="form-control" name="qtyx" id="qtyx_1" placeholder="Qty ...">
-                                                                </td>
-                                                                <td>
-                                                                    <select class="form-control select2bs44" name="unit" id="unit_1">
-                                                                        <option value="">--Select Uom--</option>
-                                                                        @foreach ($uom as $item)
-                                                                        <option value="{{ $item->id }}">{{ $item->uom_code }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </td>
-                                                                <td>
-                                                                    <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailPckg(1)"><i class="fa fa-plus"></i> Add</button>
-                                                                </td>
-                                                           </tr>
-                                                        @endif
-                                                       </tbody>
-                                                   </table>
-                                                </div>
-                                            </div>
-                                        </div> --}}
                                         <div class="col-md-12">
                                             <div class="card">
                                                 <div class="card-header">
@@ -467,8 +406,99 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
+                                <input type="hidden" name="id_booking_road" value="{{$booking->id}}">  
                                 <section class="content">
                                     <div class="container-fluid mt-3">
+                                        <div class="row mb-3">
+                                            <div class="col-md-2">
+                                                <label>Trucking Company</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control select2bs44" name="trucking_company" id="trucking_company">
+                                                    <option value="">--Select Company--</option>
+                                                    @foreach ($company as $item)
+                                                    <option value="{{ $item->id }}" <?=($booking->trucking_company==$item->id)?'selected':'';?>>{{ '('.$item->client_code.') '.$item->client_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label>Jenis SI Trucking</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control select2bs44" style="width: 100%;" name="jenis" id="jenis" @if($quote->flag_invoice == 1) disabled @endif>
+                                                    <option value="0" @if ($quote->jenis == 0)
+                                                        selected
+                                                    @endif>Trucking Only</option>
+                                                    <option value="1" @if ($quote->jenis == 1)
+                                                        selected
+                                                    @endif>Trucking with PEB</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="doUpdate_road()">
+                                                    <i class="fa fa-save"></i> Save
+                                                </a>
+                                            </div>
+                                        </div>
+                                      <div class="row">
+
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">Packages</h3>
+                                                </div>
+                                                <div class="card-body table-responsive p-0">
+                                                   <table class="table table_lowm table-bordered" id="Table1">
+                                                       <thead>
+                                                           <tr>
+                                                               <th width="1%">#</th>
+                                                               <th width="10%">PKGS</th>
+                                                               <th width="10%">CTN</th>
+                                                               <th width="35%">Nama Barang</th>
+                                                               <th width="10%">Gross Weight</th>
+                                                               <th width="10%">CBM</th>
+                                                               <th width="10%">Keterangan</th>
+                                                               <th width="10%">Action</th>
+                                                           </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                           <tbody id="tblPackages">
+
+                                                           </tbody>
+                                                        @if($booking->flag_invoice == 0)
+                                                           <tr>
+                                                                <td>
+                                                                    <i class="fa fa-plus"></i>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="pkgs" id="pkgs_1" placeholder="pkgs ...">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="ctn" id="ctn_1" placeholder="ctn ...">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="merk" id="merk_1" placeholder="Nama Barang ...">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="qtyx" id="qtyx_1" placeholder="Gross Weight ...">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="cbm" id="cbm_1" placeholder="cbm ...">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="p_ket" id="p_ket_1" placeholder="Keterangan ...">
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-block btn-outline-success btn-xs" onclick="saveDetailPckg(1)"><i class="fa fa-plus"></i> Add</button>
+                                                                </td>
+                                                           </tr>
+                                                        @endif
+                                                       </tbody>
+                                                   </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      </div>
                                       <div class="row">
                                         <div class="col-md-12">
                                             <div class="card card-primary">
@@ -477,6 +507,17 @@
                                                     <a class="btn btn-dark btn-sm float-left" onclick="newRoad()"><i class="fa fa-plus"></i> Add Data</a>
                                                 @endif
                                                     <a href="{{ url('booking/cetak_suratjalan/'.$booking->id) }}" target="_blank" class="btn btn-success btn-sm float-right"><i class="fa fa-print"></i> Print Surat Jalan</a>
+                                                <?php if($booking->shipment_by == 'SEA') {?>
+                                                    @if ($booking->loaded_type == 'FCL')
+                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_fcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                    @else
+                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    <a href="{{ url('booking/cetak_si_lcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                    @endif
+                                                <?php }elseif($booking->shipment_by == 'AIR'){?>
+                                                    <a href="{{ url('booking/cetak_si_air/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                <?php }?>
                                                 </div>
                                                 <div class="card-body">
                                                     <table id="myTable" class="table table-bordered table-striped" width="100%">
@@ -554,7 +595,7 @@
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
-                                                        Driver<font color="#f00">*</font>
+                                                        Driver
                                                     </div>
                                                     <div class="col-md-8 col-xs-8">
                                                         <input type="text" id="driver" name="driver"
@@ -563,7 +604,7 @@
                                                 </div>
                                                 <div class="row mb-2">
                                                     <div class="col-md-4 col-xs-4">
-                                                        Driver Phone<font color="#f00">*</font>
+                                                        Driver Phone
                                                     </div>
                                                     <div class="col-md-8 col-xs-8">
                                                         <input type="text" id="driver_ph" name="driver_ph" class="form-control" placeholder="driver phone ...">
@@ -574,7 +615,7 @@
                                                         Pickup Address<font color="#f00">*</font>
                                                     </div>
                                                     <div class="col-md-8 col-xs-8">
-                                                        <input type="text" id="pickup_addr" name="pickup_addr" class="form-control" placeholder="Pickup Address ...">
+                                                        <textarea id="pickup_addr" name="pickup_addr" class="form-control" placeholder="Pickup Address ..." rows="5"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-2">
@@ -582,7 +623,7 @@
                                                         Delivery Address<font color="#f00">*</font>
                                                     </div>
                                                     <div class="col-md-8 col-xs-8">
-                                                        <input type="text" id="deliv_addr" name="deliv_addr" class="form-control" placeholder="Delivery Address ...">
+                                                        <textarea id="deliv_addr" name="deliv_addr" class="form-control" placeholder="Delivery Address ..." rows="5"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-2">
@@ -1243,6 +1284,98 @@
         </div>
     </div>
 
+
+    <!-- Modal Add Customer -->
+    <div class="modal fade" id="add-customer-address" tabindex="-1" role="basic" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">&nbsp;</h4>
+                </div>
+                <br>
+                <div class="modal-body">
+                    <form class="eventInsForm" method="post" target="_self" name="formCustomerAddress" 
+                            id="formCustomerAddress" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="row">
+                            <div class="col-md-4 col-xs-4">
+                                Company <font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <select class="form-control select2bs44" style="width: 100%;" name="company_customer_addr" id="company_customer_addr">
+                              
+                                </select>
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="col-md-4 col-xs-4">
+                                Address Type <font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <select class="form-control select2bs44" name="address_type" id="address_type">
+                                    <option value="" selected>Silahkan Pilih ...</option>
+                                    <option value="UTAMA">UTAMA</option>
+                                    <option value="GUDANG">GUDANG</option>
+                                    <option value="INVOICE">INVOICE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4 col-xs-4">
+                                Country <font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <select class="form-control select2bs44" name="country" id="country">
+                                    <option value="" selected>Silahkan Pilih ...</option>
+                                    @foreach ($list_country as $country)
+                                        <option value="{{ $country->id }}">{{ $country->country_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4 col-xs-4">
+                                Province<font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <input type="text" class="form-control" name="province" id="province" placeholder="Input Province...">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4 col-xs-4">
+                                City <font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <input type="text" class="form-control" name="city" id="city" placeholder="Input City ...">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4 col-xs-4">
+                                Postal Code <font color="#f00">*</font>
+                            </div>                                
+                            <div class="col-md-8 col-xs-8">
+                                <input type="text" class="form-control" name="postal_code" id="postal_code" placeholder="Input Postal Code ...">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-4 col-xs-4">
+                                Address
+                            </div>
+                            <div class="col-md-8 col-xs-8">
+                                <textarea name="address" class="form-control" id="address" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">                        
+                    <button type="button" class="btn btn-primary" onClick="saveCustomerAddress();"><i class="fa fa-save"></i> Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--- Modal Add Port -->
     <div class="modal fade" id="add-port" tabindex="-1" role="basic" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -1302,7 +1435,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                            Province <font color="#f00">*</font>
+                            Province
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="province_port" name="province" 
@@ -1311,7 +1444,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                            City <font color="#f00">*</font>
+                            City
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="city_port" name="city" 
@@ -1320,7 +1453,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                            Postal Code <font color="#f00">*</font>
+                            Postal Code
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <input type="text" id="postal_code_port" name="postal_code" 
@@ -1329,7 +1462,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4 col-xs-4">
-                            Address <font color="#f00">*</font>
+                            Address
                             </div>                                
                             <div class="col-md-8 col-xs-8">
                                 <textarea name="address" id="address_port" class="form-control" rows="3" placeholder="Input Address..."></textarea>
@@ -1486,6 +1619,30 @@
         }
     }
 
+    /** Update Package **/
+    function doUpdate_road()
+    {
+        // console.log($('#paid_to_id_'+id).val());
+        $.ajax({
+            type:"POST",
+            url:"{{ route('booking.doUpdate_road') }}",
+            data:{
+                id_booking:{{$booking->id}},
+                trucking_company:$('#trucking_company').val(),
+                jenis:$('#jenis').val()
+            },
+            success:function(result){
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Sukses Update Data!'
+                });
+            },error: function (xhr, ajaxOptions, thrownError) {
+                alert('Gagal Mengupdate data!');
+            },
+        });
+    }
+
+
     $(document).ready(function(){
         $('#reimburs').click(function() {
             if($('#reimburs').is(':checked')){
@@ -1614,6 +1771,36 @@
         $("#add-customer").modal('show',{backdrop: 'true'}); 
     }
 
+    /** Add Customer **/
+    function addCustomerAddress(val)
+    {
+        if(val == 'client'){
+            $('#company_type').val('client')
+        }else if(val == 'shipper'){
+            $('#company_type').val('shipper')
+        }else if(val == 'consignee'){
+            $('#company_type').val('consignee')
+        }else if(val == 'notifyParty'){
+            $('#company_type').val('notifyParty')
+        }else if(val == 'agent'){
+            $('#company_type').val('agent')
+        }else if(val == 'shipline'){
+            $('#company_type').val('shipline')
+        }else if(val == 'vendor'){
+            $('#company_type').val('vendor')
+        }
+
+        $('#address_type').val('').trigger("change");
+        $('#country').val('').trigger("change");
+        $('#province').val('');
+        $('#city').val('');
+        $('#postal_code').val('');
+        $('#address').val('');
+        
+        $("#add-customer-address").find('.modal-title').text('Add Data Address');
+        $("#add-customer-address").modal('show',{backdrop: 'true'}); 
+    }
+
     function saveCustomer(){
         if($.trim($("#client_code").val()) == ""){
             Swal.fire({
@@ -1676,6 +1863,87 @@
                 Toast.fire({
                     icon: 'success',
                     title: 'Sukses Add Data!'
+                });
+            },error: function (xhr, ajaxOptions, thrownError) {           
+                    alert('Gagal menambahkan item!');
+                },  
+            });
+        }
+    }
+
+    function saveCustomerAddress(){
+        if($.trim($("#company_customer_addr").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please choose Company',
+                icon: 'error'
+            })
+        }else if($.trim($("#address_type").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please choose Address Type',
+                icon: 'error'
+            })
+        }else if($.trim($("#country").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please choose Country',
+                icon: 'error'
+            })
+        }else if($.trim($("#province").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Province',
+                icon: 'error'
+            })
+        }else if($.trim($("#city").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input City',
+                icon: 'error'
+            })
+        }else if($.trim($("#postal_code").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Postal Code',
+                icon: 'error'
+            })
+        }else if($.trim($("#address").val()) == ""){
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please input Address',
+                icon: 'error'
+            })
+        }else{
+            $.ajax({
+            type:"POST",
+            url:"{{ route('master.company_addAddress') }}",
+            data:{
+                company:$('#company_customer_addr').val(),
+                address_type:$('#address_type').val(),
+                country:$('#country').val(),
+                province:$('#province').val(),
+                city:$('#city').val(),
+                postal_code:$('#postal_code').val(),
+                address:$('#address').val(),
+                status:1
+            },
+            success:function(result){
+                $('#add-customer-address').modal('hide')
+
+                if($('#company_type').val() == 'client'){
+                    client_detail($('#customer_add').val());
+                    shipper_detail($('#shipper').val());
+                    consignee_detail($('#consignee').val());
+                    not_detail($('#notify_party').val());
+                    agent_detail($('#agent').val());
+                    shipline_detail($('#shipline_detail').val());
+                    vendor_detail($('#vendor').val());
+                }
+                
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Sukses Add Data Address!'
                 });
             },error: function (xhr, ajaxOptions, thrownError) {           
                     alert('Gagal menambahkan item!');
@@ -1803,28 +2071,31 @@
                 text: 'Please select Country',
                 icon: 'error'
             });
-        }else if($.trim($("#province_port").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please enter Province',
-                icon: 'error'
-            });
-        }else if($.trim($("#city_port").val()) == ""){
-            Swal.fire({
-                title: 'Error!',
-                text: 'Please enter City',
-                icon: 'error'
-            });
+        // }else if($.trim($("#province_port").val()) == ""){
+        //     Swal.fire({
+        //         title: 'Error!',
+        //         text: 'Please enter Province',
+        //         icon: 'error'
+        //     });
+        // }else if($.trim($("#city_port").val()) == ""){
+        //     Swal.fire({
+        //         title: 'Error!',
+        //         text: 'Please enter City',
+        //         icon: 'error'
+        //     });
         }else{
             $.ajax({
                 type:"POST",
-                url:"{{ route('master.cek_port_code') }}",
-                data:"data="+$("#port").val(),
+                url:"{{ route('master.cek_port_name') }}",
+                data:{
+                    data:$("#port_name").val(),
+                    id:0,
+                },
                 success:function(result){
                     if(result=="duplicate"){
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Port Code Existing',
+                            text: 'Port Name Existing',
                             icon: 'error'
                         })
                     }else{ 
@@ -2163,6 +2434,7 @@
                 success: function(result) {
                     var final = JSON.parse(result);
                     $("#customer_add").html(final);
+                    $("#company_customer_addr").html(final);
                 }
             })
         }
@@ -2627,24 +2899,24 @@
                     text: 'Please select Vehicle Type',
                     icon: 'error'
                 })
-            }else if($.trim($("#vehicle_no").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Vehicle',
-                    icon: 'error'
-                })
-            }else if($.trim($("#driver").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input driver',
-                    icon: 'error'
-                })
-            }else if($.trim($("#driver_ph").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please input Driver Phone',
-                    icon: 'error'
-                })
+            // }else if($.trim($("#vehicle_no").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input Vehicle',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#driver").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input driver',
+            //         icon: 'error'
+            //     })
+            // }else if($.trim($("#driver_ph").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please input Driver Phone',
+            //         icon: 'error'
+            //     })
             }else if($.trim($("#pickup_addr").val()) == ""){
                 Swal.fire({
                     title: 'Error!',
@@ -3009,22 +3281,22 @@
         }
 
         /** Load Packages **/
-        // function loadPackages(id){
-        //     $.ajax({
-        //         type:"POST",
-        //         url:"{{ route('booking.loadPackages') }}",
-        //         data:{
-        //             id:id,
-        //             flag_invoice: {{$booking->flag_invoice}}
-        //         },
-        //         dataType:"html",
-        //         success:function(result){
-        //             var tabel = JSON.parse(result);
-        //             $('#tblPackages').html(tabel[0]);
-        //             $('#total_package').val(tabel[1]);
-        //         }
-        //     })
-        // }
+        function loadPackages(id){
+            $.ajax({
+                type:"POST",
+                url:"{{ route('booking.loadPackages') }}",
+                data:{
+                    id:id,
+                    flag_invoice: {{$booking->flag_invoice}}
+                },
+                dataType:"html",
+                success:function(result){
+                    var tabel = JSON.parse(result);
+                    $('#tblPackages').html(tabel[0]);
+                    $('#total_package').val(tabel[1]);
+                }
+            })
+        }
 
         /** Load Container **/
         function loadContainer(id){
@@ -3083,25 +3355,25 @@
             }
         }
 
-        // function hapusDetailPckg(id){
-        //     var r=confirm("Anda yakin menghapus data ini?");
-        //     if (r==true){
-        //         $.ajax({
-        //             type:"POST",
-        //             url:"{{ route('booking.deletePackages') }}",
-        //             data:"id="+ id,
-        //             success:function(result){
-        //                 loadPackages({{ Request::segment(3) }});
-        //                 Toast.fire({
-        //                     icon: 'success',
-        //                     title: 'Deleted!'
-        //                 });
-        //             },error: function (xhr, ajaxOptions, thrownError) {
-        //                 alert('Gagal Menghapus Packages!');
-        //             },
-        //         });
-        //     }
-        // }
+        function hapusDetailPckg(id){
+            var r=confirm("Anda yakin menghapus data ini?");
+            if (r==true){
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.deletePackages') }}",
+                    data:"id="+ id,
+                    success:function(result){
+                        loadPackages({{ Request::segment(3) }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Deleted!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Gagal Menghapus Packages!');
+                    },
+                });
+            }
+        }
 
         function hapusDetailCon(id){
             var r=confirm("Anda yakin menghapus data ini?");
@@ -3251,48 +3523,37 @@
         }
 
         /*** Edit Packages **/
-        // function editDetailPckg(uom, id){
-        //     let style   = '';
-        //     let html    = '';
-        //     $.ajax({
-        //         url: "{{ route('quotation.quote_getAll') }}",
-        //         type: "POST",
-        //         dataType: "json",
-        //         success: function(result) {
+        function editDetailPckg(id){
+            $.ajax({
+                url: "{{ route('booking.getPackages') }}",
+                type: "POST",
+                data:{
+                    id:id
+                },
+                dataType: "json",
+                success: function(result) {
 
-        //             $.each(result, function(i,data){
-        //                 if(uom == data.id){
-        //                     style = 'selected';
-        //                 }else{
-        //                     style = '';
-        //                 }
+                    $('#btnEditPckg_'+id).hide();
+                    $('#lbl_pkgs_'+id).hide();
+                    $('#lbl_ctn_'+id).hide();
+                    $('#lbl_merk_'+id).hide();
+                    $('#lbl_qtyx_'+id).hide();
+                    $('#lbl_cbm_'+id).hide();
+                    $('#lbl_p_ket_'+id).hide();
 
-        //                 /** Dropdown UOM Unit **/
-        //                 html += `<option value="${data.id}" ${style}>${data.uom_code}</option>`;
-
-        //             })
-
-
-        //             $('#btnEditPckg_'+id).hide();
-        //             $('#lbl_merk_'+id).hide();
-        //             $('#lbl_qtyx_'+id).hide();
-        //             $('#lbl_unit_'+id).hide();
-
-        //             $("#unit_"+id).show();
-        //             $("#unit_"+id).html(html);
-        //             $("#unit_"+id).select2({
-        //                 theme: 'bootstrap4'
-        //             });
-
-        //             $('#merk_'+id).show();
-        //             $('#qtyx_'+id).show();
-        //             $('#btnUpdatePckg_'+id).show();
-        //         }
-        //     });
-        // }
+                    $('#pkgs_'+id).show();
+                    $('#ctn_'+id).show();
+                    $('#merk_'+id).show();
+                    $('#qtyx_'+id).show();
+                    $('#cbm_'+id).show();
+                    $('#p_ket_'+id).show();
+                    $('#btnUpdatePckg_'+id).show();
+                }
+            });
+        }
 
         /*** Edit Container **/
-        function editDetailCon(loaded_type, container_type, qty_uom, weight_uom, id){
+        function editDetailCon(loaded_type, container_type, qty_uom, weight_uom, vgm_uom, id){
             let style   = '';
             let style2  = '';
             let style3  = '';
@@ -3328,33 +3589,39 @@
                         }
 
                         /** Dropdown UOM Unit **/
-                        html2 += `<option value="${data.id}" ${style}>${data.container_type}</option>`;
+                        html2 += `<option value="${data.id}" ${style2}>${data.container_type}</option>`;
 
                     });
 
                     $.each(result[2], function(i,data){
-                        html3 += `<option value="${data.id}" ${style}>${data.uom_code}</option>`;
+                        if(vgm_uom == data.id){
+                            style3 = 'selected';
+                        }else{
+                            style3 = '';
+                        }
+
+                        html3 += `<option value="${data.id}" ${style3}>${data.uom_code}</option>`;
                     });
 
-                    $.each(result[3], function(i,data){
+                    $.each(result[2], function(i,data){
                         if(qty_uom == data.id){
                             style4 = 'selected';
                         }else{
                             style4 = '';
                         }
 
-                        /** Dropdown UOM Weight **/
+                        /** Dropdown UOM QTY **/
                         html4 += `<option value="${data.id}" ${style4}>${data.uom_code}</option>`;
                     });
 
-                    $.each(result[4], function(i,data){
+                    $.each(result[2], function(i,data){
                         if(weight_uom == data.id){
                             style5 = 'selected';
                         }else{
                             style5 = '';
                         }
 
-                        /** Dropdown UOM Packages **/
+                        /** Dropdown UOM Weight **/
                         html5 += `<option value="${data.id}" ${style5}>${data.uom_code}</option>`;
                     });
 
@@ -3366,6 +3633,8 @@
                     $('#lbl_seal_no_'+id).hide();
                     $('#lbl_cont_qty_'+id).hide();
                     $('#lbl_cont_weight_'+id).hide();
+                    $('#lbl_cont_qty_uom_'+id).hide();
+                    $('#lbl_cont_weight_uom_'+id).hide();
                     $('#lbl_vgm_'+id).hide();
                     $('#lbl_vgm_uom_'+id).hide();
                     $('#lbl_resp_'+id).hide();
@@ -3373,9 +3642,10 @@
                     $('#lbl_mow_'+id).hide();
                     $('#lbl_wparty_'+id).hide();
 
-                    $("#loaded_"+id).show();
-                    $("#loaded_"+id).html(html);
-                    $("#loaded_"+id).select2({
+                    $("#s_loaded_"+id).show();
+                    console.log(id+html);
+                    $("#s_loaded_"+id).html(html);
+                    $("#s_loaded_"+id).select2({
                         theme: 'bootstrap4'
                     });
 
@@ -3385,18 +3655,6 @@
                         theme: 'bootstrap4'
                     });
 
-                    $('#cont_qty_'+id).show();
-                    $('#cont_qty_uom_'+id).show();
-                    $("#cont_qty_uom_"+id).html(html3);
-                    $("#cont_qty_uom_"+id).select2({
-                        theme: 'bootstrap4'
-                    });
-                    $('#cont_weight_'+id).show();
-                    $('#cont_weight_uom_'+id).show();
-                    $("#cont_weight_uom_"+id).html(html3);
-                    $("#cont_weight_uom_"+id).select2({
-                        theme: 'bootstrap4'
-                    });
                     if($("#activityx").val() == 'export')
                     {
 
@@ -3412,6 +3670,19 @@
                             theme: 'bootstrap4'
                         });
                     }
+
+                    $('#cont_qty_'+id).show();
+                    $('#cont_qty_uom_'+id).show();
+                    $("#cont_qty_uom_"+id).html(html4);
+                    $("#cont_qty_uom_"+id).select2({
+                        theme: 'bootstrap4'
+                    });
+                    $('#cont_weight_'+id).show();
+                    $('#cont_weight_uom_'+id).show();
+                    $("#cont_weight_uom_"+id).html(html5);
+                    $("#cont_weight_uom_"+id).select2({
+                        theme: 'bootstrap4'
+                    });
 
                     $('#con_numb_'+id).show();
                     $('#size_'+id).show();
@@ -3559,45 +3830,48 @@
         }
 
         /** Update Package **/
-        // function updateDetailPckg(id_detail, id)
-        // {
-        //     if($.trim($("#merk_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Merk!'
-        //         })
-        //     }else if($.trim($("#qtyx_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Qty!'
-        //         });
-        //     }else if($.trim($("#unit_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Unit!'
-        //         });
-        //     }else{
-        //         $.ajax({
-        //             type:"POST",
-        //             url:"{{ route('booking.updatePackages') }}",
-        //             data:{
-        //                 id:id_detail,
-        //                 merk:$('#merk_'+id).val(),
-        //                 qty:$('#qtyx_'+id).val(),
-        //                 unit:$('#unit_'+id).val()
-        //             },
-        //             success:function(result){
-        //                 loadPackages({{ Request::segment(3) }});
-        //                 Toast.fire({
-        //                     icon: 'success',
-        //                     title: 'Sukses Update Data!'
-        //                 });
-        //             },error: function (xhr, ajaxOptions, thrownError) {
-        //                 alert('Gagal Mengupdate Commodity!');
-        //             },
-        //         });
-        //     }
-        // }
+        function updateDetailPckg(id_detail, id)
+        {
+            if($.trim($("#merk_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Enter Merk!'
+                })
+            }else if($.trim($("#qtyx_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Enter Qty!'
+                });
+            // }else if($.trim($("#unit_"+id).val()) == ""){
+            //     Toast.fire({
+            //         icon: 'error',
+            //         title: 'Please Enter Unit!'
+            //     });
+            }else{
+                $.ajax({
+                    type:"POST",
+                    url:"{{ route('booking.updatePackages') }}",
+                    data:{
+                        id:id_detail,
+                        pkgs:$('#pkgs_'+id).val(),
+                        ctn:$('#ctn_'+id).val(),
+                        merk:$('#merk_'+id).val(),
+                        qty:$('#qtyx_'+id).val(),
+                        cbm:$('#cbm_'+id).val(),
+                        p_ket:$('#p_ket_'+id).val(),
+                    },
+                    success:function(result){
+                        loadPackages({{ Request::segment(3) }});
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Sukses Update Data!'
+                        });
+                    },error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Gagal Mengupdate Commodity!');
+                    },
+                });
+            }
+        }
 
         /** Update COntainer **/
         function updateDetailCon(id_detail, id)
@@ -3631,7 +3905,7 @@
                         con_numb:$('#con_numb_'+id).val(),
                         size:$('#size_'+id).val(),
                         container:$('#container_'+id).val(),
-                        loaded:$('#loaded_'+id).val(),
+                        loaded:$('#s_loaded_'+id).val(),
                         seal_no:$('#seal_no_'+id).val(),
                         qty:$('#cont_qty_'+id).val(),
                         qty_uom:$('#cont_qty_uom_'+id).val(),
@@ -3805,47 +4079,53 @@
         }
 
         /** Save Detail Packages **/
-        // function saveDetailPckg(id){
-        //     if($.trim($("#merk_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Merk!'
-        //         })
-        //     }else if($.trim($("#qtyx_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Qty!'
-        //         });
-        //     }else if($.trim($("#unit_"+id).val()) == ""){
-        //         Toast.fire({
-        //             icon: 'error',
-        //             title: 'Please Enter Unit!'
-        //         });
-        //     }else{
-        //         $.ajax({
-        //         type:"POST",
-        //         url:"{{ route('booking.addPackages') }}",
-        //         data:{
-        //             booking:{{ $booking->id }},
-        //             merk:$('#merk_'+id).val(),
-        //             qty:$('#qtyx_'+id).val(),
-        //             unit:$('#unit_'+id).val()
-        //         },
-        //         success:function(result){
-        //             $('#merk_'+id).val('');
-        //             $('#qtyx_'+id).val('');
-        //             $('#unit_'+id).val('').trigger('change');
-        //             loadPackages({{ Request::segment(3) }});
-        //             Toast.fire({
-        //                 icon: 'success',
-        //                 title: 'Sukses Add Data!'
-        //             });
-        //         },error: function (xhr, ajaxOptions, thrownError) {
-        //                 alert('Gagal menambahkan item!');
-        //             },
-        //         });
-        //     }
-        // }
+        function saveDetailPckg(id){
+            if($.trim($("#merk_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Enter Nama Barang!'
+                })
+            }else if($.trim($("#qtyx_"+id).val()) == ""){
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Please Enter Qty!'
+                });
+            // }else if($.trim($("#unit_"+id).val()) == ""){
+            //     Toast.fire({
+            //         icon: 'error',
+            //         title: 'Please Enter Unit!'
+            //     });
+            }else{
+                $.ajax({
+                type:"POST",
+                url:"{{ route('booking.addPackages') }}",
+                data:{
+                    booking:{{ $booking->id }},
+                    pkgs:$('#pkgs_'+id).val(),
+                    ctn:$('#ctn_'+id).val(),
+                    merk:$('#merk_'+id).val(),
+                    qty:$('#qtyx_'+id).val(),
+                    cbm:$('#cbm_'+id).val(),
+                    p_ket:$('#p_ket_'+id).val(),
+                },
+                success:function(result){
+                    $('#pkgs_'+id).val('');
+                    $('#ctn_'+id).val('');
+                    $('#merk_'+id).val('');
+                    $('#qtyx_'+id).val('');
+                    $('#cbm_'+id).val('');
+                    $('#p_ket_'+id).val('');
+                    loadPackages({{ Request::segment(3) }});
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Sukses Add Data!'
+                    });
+                },error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Gagal menambahkan item!');
+                    },
+                });
+            }
+        }
 
         /** Save Detail Container **/
         function saveDetailCon(id){
@@ -3878,7 +4158,7 @@
                     con_numb:$('#con_numb_'+id).val(),
                     size:$('#size_'+id).val(),
                     container:$('#container_'+id).val(),
-                    loaded:$('#loaded_'+id).val(),
+                    loaded:$('#s_loaded_'+id).val(),
                     seal_no:$('#seal_no_'+id).val(),
                     qty:$('#cont_qty_'+id).val(),
                     qty_uom:$('#cont_qty_uom_'+id).val(),
@@ -3895,7 +4175,7 @@
                     $('#con_numb_'+id).val('');
                     $('#size_'+id).val('');
                     $('#container_'+id).val('').trigger('change');
-                    $('#loaded_'+id).val('').trigger('change');
+                    $('#s_loaded_'+id).val('').trigger('change');
                     $('#seal_no_'+id).val('');
                     $('#vgm_'+id).val('');
                     $('#vgm_uom_'+id).val('').trigger('change');
@@ -4126,7 +4406,7 @@
             vendor_detail({{ $booking->vendor_id }})
 
             loadCommodity({{ Request::segment(3) }});
-            // loadPackages({{ Request::segment(3) }});
+            loadPackages({{ Request::segment(3) }});
             loadContainer({{ Request::segment(3) }});
             loadDoc({{ Request::segment(3) }});
             loadRoadCons({{ Request::segment(3) }});

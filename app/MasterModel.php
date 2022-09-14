@@ -147,6 +147,15 @@ class MasterModel extends Model
         return DB::select("Select * from t_mport where port_code ='".$code."'");
     }
 
+    public static function check_port_name($name,$id)
+    {
+        if($id==''){
+            return DB::select("Select * from t_mport where port_name ='".$name."'");
+        }else{
+            return DB::select("Select * from t_mport where port_name ='".$name."' and id != ".$id);
+        }
+    }
+
     public static function port_get($id)
     {
         return DB::table('t_mport')->where('id', $id)->first();

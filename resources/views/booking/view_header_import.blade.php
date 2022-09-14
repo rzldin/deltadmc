@@ -73,6 +73,14 @@
                     </div>
                     @endif
                 </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>SI Number</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="nomor_si" id="nomor_si" placeholder="SI Number ...">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

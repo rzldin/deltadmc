@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/master/port_data', 'MasterController@port_data')->name('master.port_data');
     Route::post('/master/port_doAdd', 'MasterController@port_doAdd')->name('master.port_doAdd');
     Route::post('/master/cek_port_code', 'MasterController@cek_port_code')->name('master.cek_port_code');
+    Route::post('/master/cek_port_name', 'MasterController@cek_port_name')->name('master.cek_port_name');
     Route::post('/master/port_doEdit', 'MasterController@port_doEdit')->name('master.port_doEdit');
     Route::post('/master/port_get', 'MasterController@port_get')->name('master.port_get');
     Route::post('/master/port_doEdit', 'MasterController@port_doEdit')->name('master.port_doEdit');
@@ -256,7 +257,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/quotation/quote_addDimension', 'QuotationController@quote_addDimension')->name('quotation.quote_addDimension');
     Route::post('/quotation/quote_loadDimension','QuotationController@quote_loadDimension')->name('quotation.quote_loadDimension');
     Route::post('/quotation/quote_deleteDimension','QuotationController@quote_deleteDimension')->name('quotation.quote_deleteDimension');
-    Route::post('/quotation/uom_getAll', 'QuotationController@uom_getAll')->name('quotation.quote_getAll');
+    // Route::post('/quotation/uom_getAll', 'QuotationController@uom_getAll')->name('quotation.quote_getAll');
     Route::post('/quotation/quote_updateDimension', 'QuotationController@quote_updateDimension')->name('quotation.quote_updateDimension');
 
     #Load Detail Shipping
@@ -298,6 +299,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/doAddVersion', 'BookingController@booking_doAddVersion')->name('booking.doAddVersion');
     Route::match(['get', 'post'], 'booking/booking_new/{id}', 'BookingController@new_version')->name('booking.new_version');
     Route::post('/booking/booking_doUpdate', 'BookingController@doUpdate')->name('booking.doUpdate');
+    Route::post('/booking/booking_doUpdate_road', 'BookingController@doUpdate_road')->name('booking.doUpdate_road');
     Route::post('/booking/roadCons_doAdd', 'BookingController@roadCons_doAdd')->name('booking.roadCons_doAdd');
     Route::post('/booking/roadCons_doUpdate', 'BookingController@roadCons_doUpdate')->name('booking.roadCons_doUpdate');
     Route::post('/booking/loadRoadCons','BookingController@loadRoadCons')->name('booking.loadRoadCons');
@@ -341,6 +343,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     #Load Detail Packages
     Route::post('/booking/addPackages', 'BookingController@addPackages')->name('booking.addPackages');
+    Route::post('/booking/getPackages','BookingController@getPackages')->name('booking.getPackages');
     Route::post('/booking/loadPackages','BookingController@loadPackages')->name('booking.loadPackages');
     Route::post('/booking/deletePackages','BookingController@deletePackages')->name('booking.deletePackages');
     Route::post('/booking/updatePackages', 'BookingController@updatePackages')->name('booking.updatePackages');

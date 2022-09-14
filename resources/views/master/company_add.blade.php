@@ -204,6 +204,14 @@
                                                     </label>
                                                 </div>
                                             </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="np" name="np" value="1">
+                                                    <label for="np">
+                                                        NOTIFY PARTY
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -229,6 +237,14 @@
                                                     <input type="checkbox" id="ppjk" name="ppjk" value="1">
                                                     <label for="ppjk">
                                                         PPJK
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <div class="icheck-primary d-inline">
+                                                    <input type="checkbox" id="consignee" name="consignee" value="1">
+                                                    <label for="consignee">
+                                                        CONSIGNEE
                                                     </label>
                                                 </div>
                                             </div>

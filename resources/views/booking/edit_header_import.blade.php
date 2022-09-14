@@ -2,7 +2,6 @@
     <div class="card-header">
         <h3 class="card-title">Booking Information</h3>
     </div>
-
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
@@ -11,7 +10,7 @@
                         <label>Booking Number</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($quote->booking_no != null)
+                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($verse > 1)
                         readonly
                         @endif>
                         <input type="hidden" name="id_booking" value="{{ $quote->id }}">
@@ -81,6 +80,14 @@
                         Note : Jenis Quote <strong>'Nomination'</strong>  
                     </div>
                     @endif
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>SI Number</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="nomor_si" id="nomor_si" placeholder="SI Number ..." value="{{ $quote->nomor_si }}">
+                    </div>
                 </div>
             </div>
         </div>
@@ -510,6 +517,14 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
+                        <label>Connecting Vessel</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="conn_vessel" id="conn_vessel" class="form-control" value="{{ $quote->conn_vessel }}"@if($quote->flag_invoice == 1) disabled @endif>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
                         <label>ETD</label>
                     </div>
                     <div class="col-md-8">
@@ -813,6 +828,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>MBL Marks & Nos</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="mbl_marks_nos" id="mbl_marks_nos" class="form-control" rows="6"@if($quote->flag_invoice == 1) disabled @endif>{{ $quote->mbl_marks_nos }}</textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -892,6 +915,22 @@
                                     @endif>{{ $item->code }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>HBL Marks & Nos</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="hbl_marks_nos" id="hbl_marks_nos" class="form-control" rows="6"@if($quote->flag_invoice == 1) disabled @endif>{{ $quote->hbl_marks_nos }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Delivery Agent Detail</label>
+                            </div>
+                            <div class="col-md-8">
+                                <textarea name="delivery_agent_detail" id="delivery_agent_detail" class="form-control" rows="6"@if($quote->flag_invoice == 1) disabled @endif>{{ $quote->delivery_agent_detail }}</textarea>
                             </div>
                         </div>
                     </div>

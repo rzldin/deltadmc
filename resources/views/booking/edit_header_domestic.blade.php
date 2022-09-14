@@ -11,7 +11,7 @@
                         <label>Booking Number</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($quote->booking_no != null)
+                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($verse > 1)
                         readonly
                         @endif>
                         <input type="hidden" name="id_booking" value="{{ $quote->id }}">
@@ -83,6 +83,14 @@
                         Note : Jenis Quote <strong>'Nomination'</strong>  
                     </div>
                     @endif
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>SI Number</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" name="nomor_si" id="nomor_si" placeholder="SI Number ..." value="{{ $quote->nomor_si }}">
+                    </div>
                 </div>
             </div>
         </div>
@@ -423,6 +431,14 @@
                     </div>
                     <div class="col-md-8">
                         <input type="text" name="voyage" id="voyage" class="form-control" value="{{ $quote->flight_number }}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Connecting Vessel</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="conn_vessel" id="conn_vessel" class="form-control" value="{{ $quote->conn_vessel }}"@if($quote->flag_invoice == 1) disabled @endif>
                     </div>
                 </div>
                 <div class="row mb-3">

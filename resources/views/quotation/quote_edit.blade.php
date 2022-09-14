@@ -332,9 +332,11 @@
                                    <th width="10%">Length</th>
                                    <th width="10%">Width</th>
                                    <th width="10%">Height</th>
+                                   <th width="10%">Total</th>
                                    <th width="15%">UOM</th>
                                    <th width="10%">Pieces</th>
                                    <th width="9%">Weight</th>
+                                   <th width="10%">Total</th>
                                    <th width="15%">UOM</th>
                                    <th width="15%">Action</th>
                                </tr>
@@ -348,13 +350,16 @@
                                         <i class="fa fa-plus"></i>
                                     </td>
                                    <td>
-                                        <input type="text" class="form-control" name="length" id="length_1" placeholder="Length ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="length" id="length_1" placeholder="Length ..." onkeyup="numberOnly(this); hitungberat(1);">
                                    </td>
                                    <td>
-                                        <input type="text" class="form-control" name="width" id="width_1" placeholder="Width ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="width" id="width_1" placeholder="Width ..." onkeyup="numberOnly(this); hitungberat(1);">
                                    </td>
                                    <td>
-                                        <input type="text" class="form-control" name="height" id="height_1" placeholder="Height ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="height" id="height_1" placeholder="Height ..." onkeyup="numberOnly(this); hitungberat(1);">
+                                   </td>
+                                   <td>
+                                       <input type="text" name="total_cbm" id="total_cbm_1" value="0" class="form-control">
                                    </td>
                                    <td>
                                        <select class="form-control select2bs44" name="height_uom" id="height_uom_1">
@@ -365,10 +370,13 @@
                                        </select>
                                    </td>
                                    <td>
-                                        <input type="text" class="form-control" name="pieces" id="pieces_1" placeholder="Pieces ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="pieces" id="pieces_1" placeholder="Pieces ..." onkeyup="numberOnly(this); hitungweight(1)">
                                    </td>
                                    <td>
-                                        <input type="text" class="form-control" name="wight" id="wight_1" placeholder="Weight ..." onkeyup="numberOnly(this)">
+                                        <input type="text" class="form-control" name="wight" id="wight_1" placeholder="Weight ..." onkeyup="numberOnly(this); hitungweight(1)">
+                                   </td>
+                                   <td>
+                                       <input type="text" name="total_weight" id="total_weight_1" value="0" class="form-control">
                                    </td>
                                    <td>
                                         <select class="form-control select2bs44" name="wight_uom" id="wight_uom_1">
@@ -1062,6 +1070,20 @@
   <script>
     var dsState;
 
+    function hitungberat(id){
+        let l = $('#length_'+id).val();
+        let w = $('#width_'+id).val();
+        let h = $('#height_'+id).val();
+        let total = Number(l)*Number(w)*Number(h)/1000000;
+        $('#total_cbm_'+id).val(total);
+    }
+
+    function hitungweight(id){
+        let p = $('#pieces_'+id).val();
+        let ww = $('#wight_'+id).val();
+        let total_weight = Number(p)*Number(ww);
+        $('#total_weight_'+id).val(total_weight);
+    }
     $('#client_name').keyup(function(){
         let position = this.selectionStart
         this.value = this.value.toUpperCase();
@@ -1612,9 +1634,11 @@
                 $('#lbl_width_'+id).hide();
                 $('#lbl_height_'+id).hide();
                 $('#lbl_height_uom_'+id).hide();
+                $('#lbl_total_cbm_'+id).hide();
                 $('#lbl_pieces_'+id).hide();
                 $('#lbl_wight_'+id).hide();
                 $('#lbl_wight_uom_'+id).hide();
+                $('#lbl_total_weight_'+id).hide();
 
                 $("#height_uom_"+id).show();
                 $("#height_uom_"+id).html(html);
@@ -1633,6 +1657,8 @@
                 $('#height_'+id).show();
                 $('#pieces_'+id).show();
                 $('#wight_'+id).show();
+                $('#total_cbm_'+id).show();
+                $('#total_weight_'+id).show();
                 $('#btnUpdated_'+id).show();
             }
         });
@@ -1772,9 +1798,11 @@
                     length:$('#length_'+id).val(),
                     width:$('#width_'+id).val(),
                     height:$('#height_'+id).val(),
+                    total_cbm:$('#total_cbm_'+id).val(),
                     height_uom:$('#height_uom_'+id).val(),
                     wight:$('#wight_'+id).val(),
                     wight_uom:$('#wight_uom_'+id).val(),
+                    total_weight:$('#total_weight_'+id).val(),
                     pieces:$('#pieces_'+id).val()
                 },
                 success:function(result){
@@ -1853,8 +1881,8 @@
     {
         let sellVal = $('#sell_val').val();
         sellVal = sellVal.replace(/,/g, '') 
-        const cost = $('#qty').val()*sellVal;
-        let total = Number(cost)+Number($('#vat').val());
+        // const cost = $('#qty').val()*sellVal;
+        let total = Number(sellVal)+Number($('#vat').val());
         total = total.toFixed(2)
         total = numberWithCommas(Number(total));
         $('#total').val(total);
@@ -1915,9 +1943,11 @@
                 length:$('#length_'+id).val(),
                 width:$('#width_'+id).val(),
                 height:$('#height_'+id).val(),
+                total_cbm:$('#total_cbm_'+id).val(),
                 height_uom:$('#height_uom_'+id).val(),
                 wight:$('#wight_'+id).val(),
                 wight_uom:$('#wight_uom_'+id).val(),
+                total_weight:$('#total_weight_'+id).val(),
                 pieces:$('#pieces_'+id).val()
             },
             success:function(result){
@@ -1925,8 +1955,10 @@
                 $("#width_"+id).val('');
                 $('#height_'+id).val('');
                 $('#height_uom_'+id).val('').trigger('change');
+                $('#total_cbm_'+id).val('');
                 $('#wight_'+id).val('');
                 $('#wight_uom_'+id).val('').trigger('change');
+                $('#total_weight_'+id).val('');
                 $('#pieces_'+id).val('');
                 loadDimension({{ Request::segment(3) }}, 'a');
                 Toast.fire({

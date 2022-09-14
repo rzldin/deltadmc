@@ -82,13 +82,15 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>SHIPPER</b>
                             <div class="isi">
-                                @if ($data->mbl_shipper !== null)
-                                    {{ $data->mbl_shipper }}
-                                @else
+                            @if($data->jenis>0)
+                                {{-- @if ($data->hbl_shipper !== null) --}}
+                                    {{ $data->hbl_shipper }}
+                                {{-- @else --}}
                                     {{ $data->company_f }}<br>
                                     {{ $data->address_f }}<br>
                                     {{ $data->pic_f }}
-                                @endif
+                                {{-- @endif --}}
+                            @endif
                             </div>
                         </td>
                     </tr>
@@ -96,13 +98,15 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>CONSIGNEE (NAME & ADDRESS)</b>
                             <div class="isi">
-                                @if ($data->mbl_consignee !== null)
-                                    {{ $data->mbl_consignee }}
-                                @else
+                            @if($data->jenis>0)
+                                {{-- @if ($data->hbl_consignee !== null) --}}
+                                    {{ $data->hbl_consignee }}
+                                {{-- @else --}}
                                     {{ $data->company_i }}<br>
                                     {{ $data->address_i }}<br>
                                     {{ $data->pic_i }}
-                                @endif
+                                {{-- @endif --}}
+                            @endif
                             </div>
                         </td>
                     </tr>
@@ -110,13 +114,15 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>NOTIFY (NAME & ADDRESS)</b>
                             <div class="isi-notify">
-                                @if ($data->mbl_not_party !== null)
-                                    {{ $data->mbl_not_party }}
-                                @else
+                            @if($data->jenis>0)
+                                {{-- @if ($data->hbl_not_party !== null) --}}
+                                    {{ $data->hbl_not_party }}
+                                {{-- @else --}}
                                     {{ $data->company_l }}<br>
                                     {{ $data->address_l }}<br>
                                     {{ $data->pic_l }}
-                                @endif
+                                {{-- @endif --}}
+                            @endif
                             </div>
                         </td>
                     </tr>
@@ -266,8 +272,8 @@
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <div class="isi-SI">
-                                <b>SI NO :</b>   <br/><br/>
-                                <b>DATE :</b>      <br/><br/>
+                                <b>SI NO :</b> {{ $data->nomor_si }}<br/><br/>
+                                <b>DATE :</b>  {{ $data->quote_date }}    <br/><br/>
                                 <b>TO :</b>      {{ $data->company_o }}  <br/><br/>
                                 <b>ATTN :</b>    {{ $data->pic_o }}  <br/><br/>
                                 <b>FROM :</b>     <br/><br/>

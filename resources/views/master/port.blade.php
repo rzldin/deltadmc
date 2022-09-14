@@ -105,7 +105,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                           Province <font color="#f00">*</font>
+                           Province
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="province" name="province" 
@@ -114,7 +114,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                           City <font color="#f00">*</font>
+                           City
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="city" name="city" 
@@ -123,7 +123,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                           Postal Code <font color="#f00">*</font>
+                           Postal Code
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <input type="text" id="postal_code" name="postal_code" 
@@ -132,7 +132,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-md-4 col-xs-4">
-                           Address <font color="#f00">*</font>
+                           Address
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <textarea name="address" id="address" class="form-control" rows="3" placeholder="Input Address..."></textarea>
@@ -177,9 +177,9 @@
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    { data: 'port_code', port_code: 'name' },
+                    { data: 'port_code', port_code: 'port_code' },
                     { data: 'port_name', name: 'port_name' },
-                    { data: 'country_name', name: 'country_name' },
+                    { data: 'country_name', name: 't_mcountry.country_name' },
                     { data: 'status', name: 'status' },
                     { data: 'action', name: 'action' }
                 ]
@@ -253,35 +253,38 @@
                     text: 'Please select Country',
                     icon: 'error'
                 });
-            }else if($.trim($("#province").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please enter Province',
-                    icon: 'error'
-                });
-            }else if($.trim($("#city").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please enter City',
-                    icon: 'error'
-                });
-            }else if($.trim($("#postal_code").val()) == ""){
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Please enter Postal Code',
-                    icon: 'error'
-                });
+            // }else if($.trim($("#province").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please enter Province',
+            //         icon: 'error'
+            //     });
+            // }else if($.trim($("#city").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please enter City',
+            //         icon: 'error'
+            //     });
+            // }else if($.trim($("#postal_code").val()) == ""){
+            //     Swal.fire({
+            //         title: 'Error!',
+            //         text: 'Please enter Postal Code',
+            //         icon: 'error'
+            //     });
             }else{
                 if(dsState=="Input"){
                     $.ajax({
                         type:"POST",
-                        url:"{{ route('master.cek_port_code') }}",
-                        data:"data="+$("#port").val(),
+                        url:"{{ route('master.cek_port_name') }}",
+                        data:{
+                            data:$("#port_name").val(),
+                            id:$("#id").val(),
+                        },
                         success:function(result){
                             if(result=="duplicate"){
                                 Swal.fire({
                                     title: 'Error!',
-                                    text: 'Port Code Existing',
+                                    text: 'Port Name Existing',
                                     icon: 'error'
                                 })
                             }else{
@@ -291,8 +294,26 @@
                         }
                     });            
                 }else{
-                    $('#formku').attr("action", "{{ route('master.port_doEdit') }}");
-                    $('#formku').submit(); 
+                    $.ajax({
+                        type:"POST",
+                        url:"{{ route('master.cek_port_name') }}",
+                        data:{
+                            data:$("#port_name").val(),
+                            id:$("#id").val(),
+                        },
+                        success:function(result){
+                            if(result=="duplicate"){
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Port Name Existing',
+                                    icon: 'error'
+                                })
+                            }else{
+                                $('#formku').attr("action", "{{ route('master.port_doEdit') }}");
+                                $('#formku').submit(); 
+                            }
+                        }
+                    }); 
                 }
             }
             

@@ -672,6 +672,8 @@ class QuotationController extends Controller
                 'wight'             => $request->wight,
                 'pieces'            => $request->pieces,
                 'wight_uom_id'      => $request->wight_uom,
+                'total_cbm'         => $request->total_cbm,
+                'total_weight'      => $request->total_weight,
                 'created_by'        => $user,
                 'created_on'        => $tanggal
             ]);
@@ -699,10 +701,13 @@ class QuotationController extends Controller
                 $tabel .= '<td class="text-right">'.($no-1).'</td>';
                 $tabel .= '<td class="text-right"><label id="lbl_length_'.$no.'">'.$row->le_dimen.'</label><input type="text" id="length_'.$no.'" name="length" class="form-control" value="'.$row->le_dimen.'" style="display:none"></td>';
                 $tabel .= '<td class="text-right"><label id="lbl_width_'.$no.'">'.$row->width.'</label>';
-                $tabel .= '<input type="text" id="width_'.$no.'" name="width" class="form-control" value="'.$row->width.'" style="display:none"></td>';
+                $tabel .= '<input type="text" id="width_'.$no.'" name="width" class="form-control" value="'.$row->width.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
                 $tabel .= '<td class="text-right"><label id="lbl_height_'.$no.'">'.$row->height.'</label>';
                 $tabel .= '<input type="text" id="height_'.$no.'" name="height" class="form-control" '
-                    . ' value="'.$row->height.'" style="display:none"></td>';
+                    . ' value="'.$row->height.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
+                $tabel .= '<td class="text-right"><label id="lbl_total_cbm_'.$no.'">'.$row->total_cbm.'</label>';
+                $tabel .= '<input type="text" id="total_cbm_'.$no.'" name="total_cbm" class="form-control" '
+                    . ' value="'.$row->total_cbm.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
                 $tabel .= '<td class="text-center"><label id="lbl_height_uom_'.$no.'">'.$row->uom_code.'</label>';
                     $tabel .= '<select id="height_uom_'.$no.'" name="height_uom" class="form-control select2bs44" ';
                     $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
@@ -711,11 +716,15 @@ class QuotationController extends Controller
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-right"><label id="lbl_pieces_'.$no.'">'.$row->pieces.'</label>';
                 $tabel .= '<input type="text" id="pieces_'.$no.'" name="pieces" class="form-control" '
-                    . ' value="'.$row->pieces.'" style="display:none">';
+                    . ' value="'.$row->pieces.'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-right"><label id="lbl_wight_'.$no.'">'.$row->wight.'</label>';
                 $tabel .= '<input type="text" id="wight_'.$no.'" name="wight" class="form-control" '
-                    . ' value="'.$row->wight.'" style="display:none">';
+                    . ' value="'.$row->wight.'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
+                $tabel .= '</td>';
+                $tabel .= '<td class="text-right"><label id="lbl_total_weight_'.$no.'">'.$row->total_weight.'</label>';
+                $tabel .= '<input type="text" id="total_weight_'.$no.'" name="total_weight" class="form-control" '
+                    . ' value="'.$row->total_weight.'" style="display:none">';
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-center"><label id="lbl_wight_uom_'.$no.'">'.$wight_uom->uom_code.'</label>';
                     $tabel .= '<select id="wight_uom_'.$no.'" name="wight_uom" class="form-control select2bs44" ';
@@ -779,6 +788,8 @@ class QuotationController extends Controller
                 'height_uom_id'     => $request->height_uom,
                 'wight'             => $request->wight,
                 'pieces'            => $request->pieces,
+                'total_cbm'         => $request->total_cbm,
+                'total_weight'      => $request->total_weight,
                 'wight_uom_id'      => $request->wight_uom
             ]);
 

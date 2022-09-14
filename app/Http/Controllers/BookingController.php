@@ -315,6 +315,7 @@ class BookingController extends Controller
             $id =   DB::table('t_booking')->insertGetId([
                         't_quote_id'            => $request->id_quote,
                         'booking_no'            => $request->booking_no,
+                        'nomor_si'              => $request->nomor_si,
                         'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
@@ -351,6 +352,7 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
+                        'conn_vessel'           => $request->conn_vessel,
                         'eta_date'              => $eta_date,
                         'etd_date'              => $etd_date,
                         'place_origin'          => $request->pfo,
@@ -384,6 +386,7 @@ class BookingController extends Controller
                         'mbl_desc'              => $request->desc_mbl,
                         'mbl_no'                => $request->mbl_number,
                         'mbl_date'              => $mbl_date,
+                        'mbl_marks_nos'         => $request->mbl_marks_nos,
                         'valuta_mbl'            => $request->valuta_mbl,
                         'hbl_shipper'           => $request->shipper_hbl,
                         'hbl_consignee'         => $request->cons_hbl,
@@ -391,6 +394,8 @@ class BookingController extends Controller
                         'hbl_no'                => $request->hbl_number,
                         'hbl_desc'              => $request->desc_hbl,
                         'hbl_date'              => $hbl_date,
+                        'hbl_marks_nos'         => $request->hbl_marks_nos,
+                        'delivery_agent_detail' => $request->delivery_agent_detail,
                         'valuta_hbl'            => $request->valuta_hbl,
                         't_mbl_issued_id'       => $request->mbl_issued,
                         't_hbl_issued_id'       => $request->hbl_issued,
@@ -574,6 +579,7 @@ class BookingController extends Controller
             $id =   DB::table('t_booking')->insertGetId([
                         't_quote_id'            => $request->id_quote,
                         'booking_no'            => $request->booking_no,
+                        'nomor_si'              => $request->nomor_si,
                         'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                         'version_no'            => $request->version_no,
                         'activity'              => $request->activity,
@@ -609,6 +615,7 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
+                        'conn_vessel'           => $request->conn_vessel,
                         'eta_date'              => $eta_date,
                         'etd_date'              => $etd_date,
                         'place_origin'          => $request->pfo,
@@ -642,6 +649,7 @@ class BookingController extends Controller
                         'mbl_desc'              => $request->desc_mbl,
                         'mbl_no'                => $request->mbl_number,
                         'mbl_date'              => $mbl_date,
+                        'mbl_marks_nos'         => $request->mbl_marks_nos,
                         'valuta_mbl'            => $request->valuta_mbl,
                         'hbl_shipper'           => $request->shipper_hbl,
                         'hbl_consignee'         => $request->cons_hbl,
@@ -649,6 +657,10 @@ class BookingController extends Controller
                         'hbl_no'                => $request->hbl_number,
                         'hbl_desc'              => $request->desc_hbl,
                         'hbl_date'              => $hbl_date,
+                        'hbl_marks_nos'         => $request->hbl_marks_nos,
+                        'delivery_agent_detail' => $request->delivery_agent_detail,
+                        'trucking_company'      => $request->trucking_company,
+                        'jenis'                 => $request->jenis,
                         'valuta_hbl'            => $request->valuta_hbl,
                         't_mbl_issued_id'       => $request->mbl_issued,
                         't_hbl_issued_id'       => $request->hbl_issued,
@@ -1045,13 +1057,16 @@ class BookingController extends Controller
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
             DB::table('t_bpackages')->insert([
-                't_booking_id'      => $request->booking,
-                'position_no'       => $p,
-                'desc'              => $request->merk,
-                'qty'               => $request->qty,
-                'qty_uom'           => $request->unit,
-                'created_by'        => $user,
-                'created_on'        => $tanggal
+                't_booking_id' => $request->booking,
+                'position_no'  => $p,
+                'pkgs'         => $request->pkgs,
+                'ctn'          => $request->ctn,
+                'desc'         => $request->merk,
+                'qty'          => $request->qty,
+                'cbm'          => $request->cbm,
+                'keterangan'   => $request->p_ket,
+                'created_by'   => $user,
+                'created_on'   => $tanggal
             ]);
 
             $return_data = 'sukses';
@@ -1076,19 +1091,17 @@ class BookingController extends Controller
             {
                 $tabel .= '<tr>';
                 $tabel .= '<td class="text-left">'.($no-1).'</td>';
+                $tabel .= '<td class="text-left"><label id="lbl_pkgs_'.$no.'">'.$row->pkgs.'</label><input type="text" id="pkgs_'.$no.'" name="pkgs" class="form-control" value="'.$row->pkgs.'" style="display:none"></td>';
+                $tabel .= '<td class="text-left"><label id="lbl_ctn_'.$no.'">'.$row->ctn.'</label><input type="text" id="ctn_'.$no.'" name="ctn" class="form-control" value="'.$row->ctn.'" style="display:none"></td>';
                 $tabel .= '<td class="text-left"><label id="lbl_merk_'.$no.'">'.$row->desc.'</label><input type="text" id="merk_'.$no.'" name="merk" class="form-control" value="'.$row->desc.'" style="display:none"></td>';
                 $tabel .= '<td class="text-left"><label id="lbl_qtyx_'.$no.'">'.$row->qty.'</label>';
                 $tabel .= '<input type="text" id="qtyx_'.$no.'" name="qtyx" class="form-control" value="'.$row->qty.'" style="display:none"></td>';
-                $tabel .= '<td class="text-center"><label id="lbl_unit_'.$no.'">'.$row->code_b.'</label>';
-                    $tabel .= '<select id="unit_'.$no.'" name="unit" class="form-control select2bs44" ';
-                    $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
-                    $tabel .= '<option value=""></option>';
-                    $tabel .= '</select>';
-                $tabel .= '</td>';
+                $tabel .= '<td class="text-left"><label id="lbl_cbm_'.$no.'">'.$row->cbm.'</label><input type="text" id="cbm_'.$no.'" name="cbm" class="form-control" value="'.$row->cbm.'" style="display:none"></td>';
+                $tabel .= '<td class="text-left"><label id="lbl_p_ket_'.$no.'">'.$row->keterangan.'</label><input type="text" id="p_ket_'.$no.'" name="p_ket" class="form-control" value="'.$row->keterangan.'" style="display:none"></td>';
                 $tabel .= '<td style="text-align:center;">';
                 if($request['flag_invoice']==0){
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                        . '" onclick="editDetailPckg('.$row->qty_uom.','.$no.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
+                        . '" onclick="editDetailPckg('.$no.');" style="margin-top:5px" id="btnEditPckg_'.$no.'"> '
                         . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
                 $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                         . '" onclick="updateDetailPckg('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdatePckg_'.$no.'"> '
@@ -1127,9 +1140,12 @@ class BookingController extends Controller
             DB::table('t_bpackages')
             ->where('id', $request->id)
             ->update([
-                'desc'              => $request->merk,
-                'qty'               => $request->qty,
-                'qty_uom'           => $request->unit,
+                'pkgs'         => $request->pkgs,
+                'ctn'          => $request->ctn,
+                'desc'         => $request->merk,
+                'qty'          => $request->qty,
+                'cbm'          => $request->cbm,
+                'keterangan'   => $request->p_ket,
             ]);
 
             $return_data = 'sukses';
@@ -1141,6 +1157,12 @@ class BookingController extends Controller
         echo json_encode($return_data);
     }
 
+    public function getPackages(Request $request){
+
+      $response = DB::table('t_bpackages')->select('*')->where('id', $request->id)->first();
+
+      return response()->json($response);
+    }
 
     public function addContainer(Request $request)
     {
@@ -1195,7 +1217,7 @@ class BookingController extends Controller
                 // $tabel .= '<td class="text-left"><label id="lbl_size_'.$no.'">'.$row->size.'</label>';
                 // $tabel .= '<input type="text" id="size_'.$no.'" name="size" class="form-control" value="'.$row->size.'" style="display:none"></td>';
                 $tabel .= '<td class="text-center"><label id="lbl_loaded_'.$no.'">'.$row->loaded_type.'</label>';
-                    $tabel .= '<select id="loaded_'.$no.'" name="loaded" class="form-control select2bs44" ';
+                    $tabel .= '<select id="s_loaded_'.$no.'" name="loaded" class="form-control select2bs44" ';
                     $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
                     $tabel .= '<option value=""></option>';
                     $tabel .= '</select>';
@@ -1226,12 +1248,12 @@ class BookingController extends Controller
                 $tabel .= '<td class="text-center">
                                 <div class="row">
                                     <div class="col-md-6">
-                                    <label id="lbl_cont_qty_'.$no.'">'.$row->weight.'</label>
+                                    <label id="lbl_cont_weight_'.$no.'">'.$row->weight.'</label>
                                     <input type="text" id="cont_weight_'.$no.'" name="cont_weight" class="form-control" '
                     . ' value="'.$row->weight.'" style="display:none">
                                     </div>
                                     <div class="col-md-6">
-                                    <label id="lbl_cont_qty_uom_'.$no.'">'.$row->code_weight.'</label>
+                                    <label id="lbl_cont_weight_uom_'.$no.'">'.$row->code_weight.'</label>
                                     ';
                     $tabel .= '<select id="cont_weight_uom_'.$no.'" name="cont_qty_uom" class="form-control select2bs44" ';
                     $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
@@ -1255,7 +1277,7 @@ class BookingController extends Controller
                 $tabel .= '<td style="text-align:center;">';
                 if($request['flag_invoice']==0){
                     $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
-                            . '" onclick="editDetailCon('.$row->t_mloaded_type_id.','.$row->t_mcontainer_type_id.','.$row->qty_uom.','.$row->weight_uom.','.$no.');" style="margin-top:5px" id="btnEditCon_'.$no.'"> '
+                            . '" onclick="editDetailCon('.$row->t_mloaded_type_id.','.$row->t_mcontainer_type_id.','.$row->qty_uom.','.$row->weight_uom.','.$row->vgm_uom.','.$no.');" style="margin-top:5px" id="btnEditCon_'.$no.'"> '
                             . '<i class="fa fa-edit"></i></a>';
                     $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
                             . '" onclick="updateDetailCon('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdateCon_'.$no.'"> '
@@ -1507,6 +1529,7 @@ class BookingController extends Controller
             ->where('id', $request->id_booking)
             ->update([
                 'booking_no'            => $request->booking_no,
+                'nomor_si'              => $request->nomor_si,
                 'booking_date'          => Carbon::createFromFormat('d/m/Y', $request->booking_date)->format('Y-m-d'),
                 't_mdoc_type_id'        => $request->doctype,
                 'custom_doc_no'         => $request->doc_no,
@@ -1538,6 +1561,7 @@ class BookingController extends Controller
                 'vendor_pic_id'         => $request->vendor_pic,
                 'carrier_id'            => $request->carrier,
                 'flight_number'         => $request->voyage,
+                'conn_vessel'           => $request->conn_vessel,
                 'eta_date'              => $eta_date,
                 'etd_date'              => $etd_date,
                 'place_origin'          => $request->pfo,
@@ -1572,6 +1596,7 @@ class BookingController extends Controller
                 'mbl_no'                => $request->mbl_number,
                 'mbl_desc'              => $request->desc_mbl,
                 'mbl_date'              => $mbl_date,
+                'mbl_marks_nos'         => $request->mbl_marks_nos,
                 'valuta_mbl'            => $request->valuta_mbl,
                 'hbl_shipper'           => $request->shipper_hbl,
                 'hbl_consignee'         => $request->cons_hbl,
@@ -1579,6 +1604,8 @@ class BookingController extends Controller
                 'hbl_no'                => $request->hbl_number,
                 'hbl_date'              => $hbl_date,
                 'hbl_desc'              => $request->desc_hbl,
+                'hbl_marks_nos'         => $request->hbl_marks_nos,
+                'delivery_agent_detail' => $request->delivery_agent_detail,
                 'valuta_hbl'            => $request->valuta_hbl,
                 't_mbl_issued_id'       => $request->mbl_issued,
                 't_hbl_issued_id'       => $request->hbl_issued,
@@ -1593,6 +1620,24 @@ class BookingController extends Controller
         }
     }
 
+    public function doUpdate_road(Request $request)
+    {
+        try {
+            DB::table('t_booking')
+            ->where('id', $request->id_booking)
+            ->update([
+                'trucking_company' => $request->trucking_company,
+                'jenis'            => $request->jenis,
+            ]);
+
+            $return_data = 'sukses';
+        } catch (\Exception $e) {
+            $return_data = $e->getMessage();
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
 
     public function roadCons_doAdd(Request $request)
     {
@@ -2258,6 +2303,7 @@ class BookingController extends Controller
             'vendor_pic_id'         => $booking->vendor_pic_id,
             'carrier_id'            => $booking->carrier_id,
             'flight_number'         => $booking->flight_number,
+            'conn_vessel'           => $booking->conn_vessel,
             'place_origin'          => $booking->place_origin,
             'place_destination'     => $booking->place_destination,
             'pol_id'                => $booking->pol_id,
@@ -2284,17 +2330,22 @@ class BookingController extends Controller
             'mbl_shipper'           => $booking->mbl_shipper,
             'mbl_consignee'         => $booking->mbl_consignee,
             'mbl_not_party'         => $booking->mbl_not_party,
-            'mbl_desc'              => $request->desc_mbl,
+            'mbl_desc'              => $booking->desc_mbl,
             'mbl_no'                => $booking->mbl_no,
+            'mbl_marks_nos'         => $booking->mbl_marks_nos,
             'valuta_mbl'            => $booking->valuta_mbl,
             'hbl_shipper'           => $booking->hbl_shipper,
             'hbl_consignee'         => $booking->hbl_consignee,
             'hbl_not_party'         => $booking->hbl_not_party,
-            'hbl_desc'              => $request->desc_hbl,
+            'hbl_desc'              => $booking->desc_hbl,
+            'hbl_marks_nos'         => $booking->hbl_marks_nos,
+            'delivery_agent_detail' => $booking->delivery_agent_detail,
+            'trucking_company'      => $booking->trucking_company,
+            'jenis'                 => $booking->jenis,
             'hbl_no'                => $booking->hbl_no,
             'valuta_hbl'            => $booking->valuta_hbl,
             't_mbl_issued_id'       => $booking->t_mbl_issued_id,
-            't_hbl_issued_id'       => $request->hbl_issued,
+            't_hbl_issued_id'       => $booking->hbl_issued,
             'total_commodity'       => $booking->total_commodity,
             'total_package'         => $booking->total_package,
             'total_container'       => $booking->total_container,

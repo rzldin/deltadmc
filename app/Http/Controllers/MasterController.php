@@ -456,6 +456,13 @@ class MasterController extends Controller
         echo $return_data;
     }
 
+    public function cek_port_name(Request $request)
+    {
+        $data = MasterModel::check_port_name($request['data'],$request['id']);
+        $return_data = ($data) ? "duplicate" : "success" ;
+        echo $return_data;
+    }
+
     public function port_get(Request $request)
     {
         $data = MasterModel::port_get($request['id']);
@@ -644,6 +651,18 @@ class MasterController extends Controller
             $ppjk = 0;
         }
 
+        if($request->consignee == 1){
+            $consignee = 1;
+        }else{
+            $consignee = 0;
+        }
+
+        if($request->np == 1){
+            $np = 1;
+        }else{
+            $np = 0;
+        }
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -664,6 +683,8 @@ class MasterController extends Controller
                     'shipping_line_flag'    => $shipper,
                     'agent_flag'            => $agent,
                     'ppjk_flag'             => $ppjk,
+                    'consignee_flag'        => $consignee,
+                    'np_flag'               => $np,
                     'active_flag'           => $status,
                     'created_by'            => $user,
                     'created_on'            => $tanggal
@@ -800,6 +821,18 @@ class MasterController extends Controller
             $ppjk = 0;
         }
 
+        if($request->consignee == 1){
+            $consignee = 1;
+        }else{
+            $consignee = 0;
+        }
+
+        if($request->np == 1){
+            $np = 1;
+        }else{
+            $np = 0;
+        }
+
         try {
             $user = Auth::user()->name;
             $tanggal = Carbon::now();
@@ -820,6 +853,8 @@ class MasterController extends Controller
                 'shipping_line_flag'    => $shipper,
                 'agent_flag'            => $agent,
                 'ppjk_flag'             => $ppjk,
+                'consignee_flag'        => $consignee,
+                'np_flag'               => $np,
                 'active_flag'           => $status,
                 'updated_by'            => $user,
                 'updated_on'            => $tanggal
@@ -942,6 +977,7 @@ class MasterController extends Controller
             $tanggal = Carbon::now();
             DB::table('t_mpic')->insert([
                 't_mcompany_id'     => $request->company,
+                'title'            => $request->title,
                 'pic_desc'          => $request->desc,
                 'name'              => $request->pic_name,
                 'phone1'            => $request->phone1,
@@ -1003,6 +1039,7 @@ class MasterController extends Controller
             ->where('id', $request->id)
             ->update([
                 'pic_desc'          => $request->desc,
+                'title'             => $request->title,
                 'name'              => $request->name,
                 'phone1'            => $request->phone1,
                 'phone2'            => $request->phone2,
