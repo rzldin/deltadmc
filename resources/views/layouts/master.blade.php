@@ -351,7 +351,10 @@
           format: 'YYYY-MM-DD'
       });
 
-      $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+      $('#reservationdatetime').datetimepicker({ 
+        format: 'YYYY-MM-DD HH:mm',
+        icons: { time: 'far fa-clock' } 
+      });
 
       $.fn.modal.Constructor.prototype._enforceFocus = function() {};
       $(document).on('select2:open', () => {

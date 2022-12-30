@@ -31,11 +31,12 @@ class BookingController extends Controller
         $data['quote']          = BookingModel::get_bookingDetail($id)[0];
         if($data['booking']->status != 9){
             $data['doc']            = MasterModel::get_doc();
+            $data['loaded']         = MasterModel::loaded_get();
+            $data['loadedc']        = MasterModel::loadedc_get();
             $data['company']        = MasterModel::company_data();
             $data['inco']           = MasterModel::incoterms_get();
             $data['uom']            = MasterModel::uom();
             $data['container']      = MasterModel::container_get();
-            $data['loaded']         = MasterModel::loaded_get();
             $data['vehicle_type']   = MasterModel::vehicleType_get();
             $data['vehicle']        = MasterModel::vehicle();
             $data['schedule']       = MasterModel::schedule_get();
@@ -135,6 +136,7 @@ class BookingController extends Controller
     {
         $data['quote']          = $quote;
         $data['loaded']         = MasterModel::loaded_get();
+        $data['loadedc']        = MasterModel::loadedc_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -152,6 +154,7 @@ class BookingController extends Controller
     {
         $data['quote']          = $quote;
         $data['loaded']         = MasterModel::loaded_get();
+        $data['loadedc']        = MasterModel::loadedc_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -170,6 +173,7 @@ class BookingController extends Controller
     {
         $data['quote']          = $quote;
         $data['loaded']         = MasterModel::loaded_get();
+        $data['loadedc']        = MasterModel::loadedc_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -188,6 +192,7 @@ class BookingController extends Controller
     {
         $data['quote']          = $quote;
         $data['loaded']         = MasterModel::loaded_get();
+        $data['loadedc']        = MasterModel::loadedc_get();
         $data['doc']            = MasterModel::get_doc();
         $data['company']        = MasterModel::company_data();
         $data['inco']           = MasterModel::incoterms_get();
@@ -234,6 +239,27 @@ class BookingController extends Controller
 
         header('Content-Type: application/json');
         echo json_encode([$table, $table1, $table2]);
+    }
+
+    public function booking_loadCarrier(Request $request)
+    {
+        $table = '';
+        $table1 = '';
+        $carrier = MasterModel::carrier();
+
+        foreach($carrier as $val)
+        {
+            if($request->carrier_id == $val->id){
+                $status = 'selected';
+            }else{
+                $status = '';
+            }
+
+            $table .= '<option value="'.$val->id.'"'.$status.'>'.$val->name.'</option>';
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode([$table]);
     }
 
     public function booking_doAdd(Request $request)
@@ -341,6 +367,11 @@ class BookingController extends Controller
                         'not_party_id'          => $request->notify_party,
                         'not_party_addr_id'     => $request->not_addr,
                         'not_party_pic_id'      => $request->not_pic,
+                        'also_nf_id'            => $request->also_notify_party,
+                        'also_nf_addr_id'       => $request->also_not_addr,
+                        'also_nf_pic_id'        => $request->also_not_pic,
+                        'mbl_also_notify_party' => $request->mbl_also_notify_party,
+                        'hbl_also_notify_party' => $request->hbl_also_notify_party,
                         'agent_id'              => $request->agent,
                         'agent_addr_id'         => $request->agent_addr,
                         'agent_pic_id'          => $request->agent_pic,
@@ -352,6 +383,10 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
+                        'carrier_id_2'          => $request->carrier_2,
+                        'flight_number_2'       => $request->voyage_2,
+                        'carrier_id_3'          => $request->carrier_3,
+                        'flight_number_3'       => $request->voyage_3,
                         'conn_vessel'           => $request->conn_vessel,
                         'eta_date'              => $eta_date,
                         'etd_date'              => $etd_date,
@@ -402,6 +437,7 @@ class BookingController extends Controller
                         'total_commodity'       => $request->total_commo,
                         'total_package'         => $request->total_package,
                         'total_container'       => $request->total_container,
+                        't_mcloaded_type_id'    => $request->loadedc,
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
@@ -604,6 +640,11 @@ class BookingController extends Controller
                         'not_party_id'          => $request->notify_party,
                         'not_party_addr_id'     => $request->not_addr,
                         'not_party_pic_id'      => $request->not_pic,
+                        'also_nf_id'            => $request->also_notify_party,
+                        'also_nf_addr_id'       => $request->also_not_addr,
+                        'also_nf_pic_id'        => $request->also_not_pic,
+                        'mbl_also_notify_party' => $request->mbl_also_notify_party,
+                        'hbl_also_notify_party' => $request->hbl_also_notify_party,
                         'agent_id'              => $request->agent,
                         'agent_addr_id'         => $request->agent_addr,
                         'agent_pic_id'          => $request->agent_pic,
@@ -615,6 +656,10 @@ class BookingController extends Controller
                         'vendor_pic_id'         => $request->vendor_pic,
                         'carrier_id'            => $request->carrier,
                         'flight_number'         => $request->voyage,
+                        'carrier_id_2'          => $request->carrier_2,
+                        'flight_number_2'       => $request->voyage_2,
+                        'carrier_id_3'          => $request->carrier_3,
+                        'flight_number_3'       => $request->voyage_3,
                         'conn_vessel'           => $request->conn_vessel,
                         'eta_date'              => $eta_date,
                         'etd_date'              => $etd_date,
@@ -667,6 +712,7 @@ class BookingController extends Controller
                         'total_commodity'       => $request->total_commo,
                         'total_package'         => $request->total_package,
                         'total_container'       => $request->total_container,
+                        't_mcloaded_type_id'    => $request->loadedc,
                         'created_by'            => $user,
                         'created_on'            => $tanggal
                     ]);
@@ -1171,6 +1217,7 @@ class BookingController extends Controller
             $tanggal = Carbon::now();
             DB::table('t_bcontainer')->insert([
                 't_booking_id'          => $request->booking,
+                'con_hs_code'           => $request->con_hs_code,
                 'container_no'          => $request->con_numb,
                 'size'                  => $request->size,
                 't_mloaded_type_id'     => $request->loaded,
@@ -1180,6 +1227,7 @@ class BookingController extends Controller
                 'qty_uom'               => $request->qty_uom,
                 'weight'                => $request->weight,
                 'weight_uom'            => $request->weight_uom,
+                'meas'                  => $request->meas,
                 'vgm'                   => $request->vgm,
                 'vgm_uom'               => $request->vgm_uom,
                 'responsible_party'     => $request->resp_party,
@@ -1195,7 +1243,7 @@ class BookingController extends Controller
             echo json_encode($return_data);
         } catch (\Exception $e) {
             $return_data['status'] = 'gagal';
-            response()->json(['error' => $e->getMessage()], 404); 
+            return response()->json(['error' => $e->getMessage()], 404); 
         }
 
     }
@@ -1213,6 +1261,7 @@ class BookingController extends Controller
             {
                 $tabel .= '<tr>';
                 $tabel .= '<td class="text-left">'.($no-1).'</td>';
+                $tabel .= '<td class="text-left"><label id="lbl_con_hs_code_'.$no.'">'.$row->con_hs_code.'</label><input type="text" id="con_hs_code_'.$no.'" name="con_hs_code" class="form-control" value="'.$row->con_hs_code.'" style="display:none"></td>';
                 $tabel .= '<td class="text-left"><label id="lbl_con_numb_'.$no.'">'.$row->container_no.'</label><input type="text" id="con_numb_'.$no.'" name="con_numb" class="form-control" value="'.$row->container_no.'" style="display:none"></td>';
                 // $tabel .= '<td class="text-left"><label id="lbl_size_'.$no.'">'.$row->size.'</label>';
                 // $tabel .= '<input type="text" id="size_'.$no.'" name="size" class="form-control" value="'.$row->size.'" style="display:none"></td>';
@@ -1260,6 +1309,11 @@ class BookingController extends Controller
                     $tabel .= '<option value=""></option>';
                     $tabel .= '</select>';
                     $tabel .= '</div>';
+                $tabel .= '</td>';
+                $tabel .= '<td class="text-center">
+                                    <label id="lbl_cont_meas_'.$no.'">'.$row->meas.'</label>
+                                    <input type="text" id="cont_meas_'.$no.'" name="cont_meas" class="form-control" '
+                    . ' value="'.$row->meas.'" style="display:none">';
                 $tabel .= '</td>';
                 if($booking[0]->activity == 'export'){
                     $tabel .= '<td class="text-left"><label id="lbl_vgm_'.$no.'">'.$row->vgm.'</label><input type="text" id="vgm_'.$no.'" name="vgm" class="form-control" value="'.$row->vgm.'" style="display:none"></td>';
@@ -1329,6 +1383,7 @@ class BookingController extends Controller
             DB::table('t_bcontainer')
             ->where('id', $request->id)
             ->update([
+                'con_hs_code'           => $request->con_hs_code,
                 'container_no'          => $request->con_numb,
                 'size'                  => $request->size,
                 't_mloaded_type_id'     => $request->loaded,
@@ -1338,6 +1393,7 @@ class BookingController extends Controller
                 'qty_uom'               => $request->qty_uom,
                 'weight'                => $request->weight,
                 'weight_uom'            => $request->weight_uom,
+                'meas'                => $request->meas,
                 'vgm'                   => $request->vgm,
                 'vgm_uom'               => $request->vgm_uom,
                 'responsible_party'     => $request->resp_party,
@@ -1550,6 +1606,11 @@ class BookingController extends Controller
                 'not_party_id'          => $request->notify_party,
                 'not_party_addr_id'     => $request->not_addr,
                 'not_party_pic_id'      => $request->not_pic,
+                'also_nf_id'            => $request->also_notify_party,
+                'also_nf_addr_id'       => $request->also_not_addr,
+                'also_nf_pic_id'        => $request->also_not_pic,
+                'mbl_also_notify_party' => $request->mbl_also_notify_party,
+                'hbl_also_notify_party' => $request->hbl_also_notify_party,
                 'agent_id'              => $request->agent,
                 'agent_addr_id'         => $request->agent_addr,
                 'agent_pic_id'          => $request->agent_pic,
@@ -1561,6 +1622,10 @@ class BookingController extends Controller
                 'vendor_pic_id'         => $request->vendor_pic,
                 'carrier_id'            => $request->carrier,
                 'flight_number'         => $request->voyage,
+                'carrier_id_2'          => $request->carrier_2,
+                'flight_number_2'       => $request->voyage_2,
+                'carrier_id_3'          => $request->carrier_3,
+                'flight_number_3'       => $request->voyage_3,
                 'conn_vessel'           => $request->conn_vessel,
                 'eta_date'              => $eta_date,
                 'etd_date'              => $etd_date,
@@ -1612,9 +1677,10 @@ class BookingController extends Controller
                 'total_commodity'       => $request->total_commo,
                 'total_package'         => $request->total_package,
                 'total_container'       => $request->total_container,
+                't_mcloaded_type_id'    => $request->loadedc,
             ]);
 
-            return redirect('booking/list')->with('status', 'Successfully Updated');
+            return redirect('booking/edit_booking/'.$request->id_booking)->with('status', 'Successfully Updated');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->withErrors([$e->getMessage()]);
         }
@@ -1628,6 +1694,7 @@ class BookingController extends Controller
             ->update([
                 'trucking_company' => $request->trucking_company,
                 'jenis'            => $request->jenis,
+                'si_data'          => $request->si_data
             ]);
 
             $return_data = 'sukses';
@@ -1765,7 +1832,7 @@ class BookingController extends Controller
                 't_mschedule_type_id'   => $request->schedule,
                 'position_no'           => $p,
                 'desc'                  => $request->desc,
-                'date'                  => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
+                'date'                  => $request->date,
                 'notes'                 => $request->notes,
                 'created_by'            => $user,
                 'created_on'            => $tanggal
@@ -1841,7 +1908,7 @@ class BookingController extends Controller
             ->update([
                 't_mschedule_type_id'   => $request->schedule,
                 'desc'                  => $request->desc,
-                'date'                  => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
+                'date'                  => $request->date,
                 'notes'                 => $request->notes,
             ]);
 
@@ -2188,6 +2255,8 @@ class BookingController extends Controller
                     ->leftJoin('t_maddress As v', 'a.vendor_addr_id', '=', 'v.id')
                     ->leftJoin('t_mpic AS w', 'a.vendor_pic_id', '=', 'w.id')
                     ->leftJoin('t_mcarrier AS carrier', 'a.carrier_id', '=', 'carrier.id')
+                    ->leftJoin('t_mcarrier AS carrier_2', 'a.carrier_id_2', '=', 'carrier_2.id')
+                    ->leftJoin('t_mcarrier AS carrier_3', 'a.carrier_id_3', '=', 'carrier_3.id')
                     ->leftJoin('t_mport AS tm', 'a.pol_id', '=', 'tm.id')
                     ->leftJoin('t_mport AS tm2', 'a.pod_id', '=', 'tm2.id')
                     ->leftJoin('t_mport AS tm3', 'a.pot_id', '=', 'tm3.id')
@@ -2197,7 +2266,7 @@ class BookingController extends Controller
                     ->leftJoin('t_muom AS tmuom', 'a.valuta_comm', '=', 'tmuom.id')
                     ->leftJoin('t_muom AS tmuom2', 'a.exchange_valuta_comm', '=', 'tmuom2.id')
                     ->leftjoin('t_mcurrency AS tmuom3', 'a.valuta_payment', '=', 'tmuom3.id')
-                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code', 'tmuom3.code as valuta_payment_code')
+                    ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'carrier_2.name as name_carrier_2', 'carrier_3.name as name_carrier_3', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmuom.uom_code as valuta_code', 'tmuom2.uom_code as exchange_code', 'tmuom3.code as valuta_payment_code')
                     ->where([['a.booking_no', '=', $request->booking_no], ['a.version_no', '=', $request->version]])->first();
 
         $profit     = QuotationModel::get_quoteProfit($booking->quote_no);
@@ -2292,6 +2361,11 @@ class BookingController extends Controller
             'not_party_id'          => $booking->not_party_id,
             'not_party_addr_id'     => $booking->not_party_addr_id,
             'not_party_pic_id'      => $booking->not_party_pic_id,
+            'also_nf_id'            => $booking->also_notify_party,
+            'also_nf_addr_id'       => $booking->also_not_addr,
+            'also_nf_pic_id'        => $booking->also_not_pic,
+            'mbl_also_notify_party' => $booking->mbl_also_notify_party,
+            'hbl_also_notify_party' => $booking->hbl_also_notify_party,
             'agent_id'              => $booking->agent_id,
             'agent_addr_id'         => $booking->agent_addr_id,
             'agent_pic_id'          => $booking->agent_pic_id,
@@ -2303,6 +2377,10 @@ class BookingController extends Controller
             'vendor_pic_id'         => $booking->vendor_pic_id,
             'carrier_id'            => $booking->carrier_id,
             'flight_number'         => $booking->flight_number,
+            'carrier_id_2'          => $booking->carrier_id_2,
+            'flight_number_2'       => $booking->flight_number_2,
+            'carrier_id_3'          => $booking->carrier_id_3,
+            'flight_number_3'       => $booking->flight_number_3,
             'conn_vessel'           => $booking->conn_vessel,
             'place_origin'          => $booking->place_origin,
             'place_destination'     => $booking->place_destination,
@@ -2349,6 +2427,7 @@ class BookingController extends Controller
             'total_commodity'       => $booking->total_commodity,
             'total_package'         => $booking->total_package,
             'total_container'       => $booking->total_container,
+            't_mcloaded_type_id'    => $request->loadedc,
             'created_by'            => $user,
             'created_on'            => $tanggal
         ]);
@@ -2491,7 +2570,7 @@ class BookingController extends Controller
         return view('booking.preview')->with($data);
     }
 
-    public function cetak_hbl($id, $hbl1, $hbl2)
+    public function cetak_hbl($id, $hbl1, $hbl2, $op2, $op3)
     {
         /** Get Detail Booking */
         $booking = BookingModel::getDetailBooking($id);
@@ -2502,7 +2581,20 @@ class BookingController extends Controller
                     ->select('a.*', 'b.uom_code as code')
                     ->where('t_booking_id', $id)->get();
 
-        $pdf = PDF::loadview('booking.cetak_hbl_pdf', ['booking' => $booking, 'packages' => $packages, 'origin' =>$hbl1, 'copy' => $hbl2]);
+        $comm   = BookingModel::get_commodity($id);
+
+        $cont = BookingModel::get_container_comm($id);
+
+        $pdf = PDF::loadview('booking.cetak_hbl_pdf', [
+            'booking' => $booking, 
+            'packages' => $packages, 
+            'origin' =>$hbl1, 
+            'copy' => $hbl2,
+            'op2' => $op2,
+            'op3' => $op3,
+            'container' => $cont,
+            'comm' => $comm
+        ]);
         return $pdf->stream();
     }
 
@@ -2522,49 +2614,67 @@ class BookingController extends Controller
         return $pdf->stream();
     }
 
-    public function cetak_si_lcl($id)
+    public function cetak_si_lcl($id,$op1,$op2,$op3,$op4)
     {
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
-        $cont    = BookingModel::get_container($id);
-        $pdf    = PDF::loadview('booking.cetak_si_lcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
+        $cont    = BookingModel::get_container_comm($id);
+        $pdf    = PDF::loadview('booking.cetak_si_fcl', [
+            'type' => 'lcl',
+            'data' => $data, 
+            'comm' => $comm, 
+            'cont' => $cont,
+            'op1' => $op1,
+            'op2' => $op2,
+            'op3' => $op3,
+            'op4' => $op4,
+        ]);
         return $pdf->stream();
     }
 
-    public function cetak_si_fcl($id)
+    public function cetak_si_fcl($id,$op1,$op2,$op3,$op4)
     {
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
-        $cont    = BookingModel::get_container($id);
-        $pdf    = PDF::loadview('booking.cetak_si_fcl', ['data' => $data, 'comm' => $comm, 'cont' => $cont]);
+        $cont   = BookingModel::get_container_comm($id);
+        $pdf    = PDF::loadview('booking.cetak_si_fcl', [
+            'type' => 'fcl',
+            'data' => $data, 
+            'comm' => $comm, 
+            'cont' => $cont,
+            'op1' => $op1,
+            'op2' => $op2,
+            'op3' => $op3,
+            'op4' => $op4,
+        ]);
         return $pdf->stream();
     }
 
 
-    public function cetak_si_air($id)
+    public function cetak_si_air($id,$op1,$op2,$op3,$op4)
     {
         $data   = BookingModel::getDetailBooking($id);
         $pdf    = PDF::loadview('booking.cetak_si_air', ['data' => $data]);
         return $pdf->stream();
     }
 
-    public function cetak_si_trucking_fcl($id)
+    public function cetak_si_trucking_fcl($id,$op1)
     {
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
-        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['data' => $data, 'comm' => $comm]);
+        $cont    = BookingModel::get_container_comm($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['type' => 'fcl', 'data' => $data, 'comm' => $comm, 'cont' => $cont, 'op1' => $op1]);
         return $pdf->stream();
     }
 
-
-    public function cetak_si_trucking_lcl($id)
+    public function cetak_si_trucking_lcl($id,$op1)
     {
         $data   = BookingModel::getDetailBooking($id);
         $comm   = BookingModel::get_commodity($id);
-        $pdf    = PDF::loadview('booking.cetak_si_trucking_lcl', ['data' => $data, 'comm' => $comm]);
+        $cont    = BookingModel::get_container_comm($id);
+        $pdf    = PDF::loadview('booking.cetak_si_trucking_fcl', ['type' => 'lcl', 'data' => $data, 'comm' => $comm, 'cont' => $cont, 'op1' => $op1]);
         return $pdf->stream();
     }
-
 
     public function cetak_suratJalan($id)
     {
@@ -2573,7 +2683,6 @@ class BookingController extends Controller
         $pdf    = PDF::loadview('booking.cetak_suratJalan', ['data' => $data, 'barang' => $barang]);
         return $pdf->stream();
     }
-
 
     public function bcharges_addDetail(Request $request)
     {

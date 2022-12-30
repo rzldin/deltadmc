@@ -101,6 +101,23 @@ class BookingModel extends Model
             WHERE a.t_booking_id='".$id."'");
     }
 
+    public static function get_container_comm($id)
+    {
+        return DB::select("SELECT a.*, b.loaded_type, c.container_type, d.uom_code, e.uom_code as code_qty, 
+                f.uom_code as code_weight, g.booking_no, COALESCE(cc.volume,'0') AS volume, h.uom_code as volume_code,
+                COALESCE(cc.netto,'0') AS netto 
+            FROM t_bcontainer a 
+                LEFT JOIN t_mloaded_type b ON a.t_mloaded_type_id = b.id 
+                LEFT JOIN t_mcontainer_type c ON a.t_mcontainer_type_id = c.id 
+                LEFT JOIN t_muom d ON a.vgm_uom = d.id 
+                LEFT JOIN t_muom e ON a.qty_uom = e.id 
+                LEFT JOIN t_muom f ON a.weight_uom = f.id 
+                LEFT JOIN t_booking g ON a.t_booking_id = g.id 
+                LEFT JOIN t_bcommodity cc ON a.con_hs_code = cc.hs_code and cc.t_booking_id = g.id
+                LEFT JOIN t_muom h ON cc.volume_uom = h.id
+            WHERE a.t_booking_id='".$id."'");
+    }
+
     public static function get_document($id)
     {
         return DB::select("SELECT a.*, b.name FROM t_bdocument a LEFT JOIN t_mdoc_type b ON a.t_mdoc_type_id = b.id WHERE a.t_booking_id='".$id."'");
@@ -169,32 +186,55 @@ class BookingModel extends Model
             ->leftJoin('t_mcompany AS c', 'a.client_id', '=', 'c.id')
             ->leftJoin('t_maddress As d', 'a.client_addr_id', '=', 'd.id')
             ->leftJoin('t_mpic AS e', 'a.client_pic_id', '=', 'e.id')
+
             ->leftJoin('t_mcompany AS f', 'a.shipper_id', '=', 'f.id')
             ->leftJoin('t_maddress As g', 'a.shipper_addr_id', '=', 'g.id')
             ->leftJoin('t_mpic AS h', 'a.shipper_pic_id', '=', 'h.id')
+
             ->leftJoin('t_mcompany AS i', 'a.consignee_id', '=', 'i.id')
             ->leftJoin('t_maddress As j', 'a.consignee_addr_id', '=', 'j.id')
             ->leftJoin('t_mpic AS k', 'a.consignee_pic_id', '=', 'k.id')
+
             ->leftJoin('t_mcompany AS l', 'a.not_party_id', '=', 'l.id')
             ->leftJoin('t_maddress As m', 'a.not_party_addr_id', '=', 'm.id')
             ->leftJoin('t_mpic AS n', 'a.not_party_pic_id', '=', 'n.id')
+
+            ->leftJoin('t_mcompany AS anp_c', 'a.also_nf_id', '=', 'anp_c.id')
+            ->leftJoin('t_maddress As anp_a', 'a.also_nf_addr_id', '=', 'anp_a.id')
+            ->leftJoin('t_mpic AS anp_p', 'a.also_nf_pic_id', '=', 'anp_p.id')
+
             ->leftJoin('t_mcompany AS o', 'a.agent_id', '=', 'o.id')
             ->leftJoin('t_maddress As p', 'a.agent_addr_id', '=', 'p.id')
             ->leftJoin('t_mpic AS q', 'a.agent_pic_id', '=', 'q.id')
+
             ->leftJoin('t_mcompany AS r', 'a.shipping_line_id', '=', 'r.id')
             ->leftJoin('t_maddress As s', 'a.shpline_addr_id', '=', 's.id')
             ->leftJoin('t_mpic AS t', 'a.shpline_pic_id', '=', 't.id')
+
             ->leftJoin('t_mcompany AS u', 'a.vendor_id', '=', 'u.id')
             ->leftJoin('t_maddress As v', 'a.vendor_addr_id', '=', 'v.id')
             ->leftJoin('t_mpic AS w', 'a.vendor_pic_id', '=', 'w.id')
+
+            ->leftJoin('t_mcompany AS trc', 'a.trucking_company', '=', 'trc.id')
+
             ->leftJoin('t_mcarrier AS carrier', 'a.carrier_id', '=', 'carrier.id')
+            ->leftJoin('t_mcarrier AS carrier_2', 'a.carrier_id_2', '=', 'carrier_2.id')
+            ->leftJoin('t_mcarrier AS carrier_3', 'a.carrier_id_3', '=', 'carrier_3.id')
+
             ->leftJoin('t_mport AS tm', 'a.pol_id', '=', 'tm.id')
             ->leftJoin('t_mport AS tm2', 'a.pod_id', '=', 'tm2.id')
             ->leftJoin('t_mport AS tm3', 'a.pot_id', '=', 'tm3.id')
+
             ->leftJoin('t_mfreight_charges AS tmc', 'a.t_mfreight_charges_id', '=', 'tmc.id')
             ->leftJoin('t_mincoterms AS tmin', 'a.t_mincoterms_id', '=', 'tmin.id')
             ->leftjoin('t_mbl_issued AS tmi', 'a.t_mbl_issued_id', '=', 'tmi.id')
-            ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'f.client_code as code_company_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'i.client_code as code_company_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'carrier.name as name_carrier', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued')
+            ->leftjoin('t_mbl_issued AS tmi2', 'a.t_hbl_issued_id', '=', 'tmi2.id')
+            ->leftJoin('t_mloaded_type AS lt', 'a.t_mloaded_type_id', '=', 'lt.id')
+            ->leftJoin('t_mloaded_type AS ltc', 'a.t_mcloaded_type_id', '=', 'ltc.id')
+            ->select('a.*', 'b.quote_no', 'b.quote_date', 'b.shipment_by', 'c.client_name as company_c', 'd.address as address_c', 'e.name as pic_c', 'f.client_name as company_f', 'f.legal_doc_flag as legal_f', 'f.client_code as code_company_f', 'g.address as address_f', 'h.name as pic_f', 'i.client_name as company_i', 'j.address as address_i', 'k.name as pic_i', 'i.client_code as code_company_i', 'l.client_name as company_l', 'm.address as address_l', 'n.name as pic_l', 'o.client_name as company_o', 'p.address as address_o', 'q.name as pic_o', 'r.client_name as company_r', 's.address as address_r', 't.name as pic_r', 'u.client_name as company_u', 'v.address as address_u', 'w.name as pic_u', 'tmdoc.name as name_doc', 'tm.port_name as port1','tm3.port_name as port2', 'tm2.port_name as port3', 'tmc.freight_charge as charge_name', 'tmin.incoterns_code', 'tmi.name as issued', 'tmi.desc as issued_desc', 'tmi2.desc as hbl_issued_desc',
+                'carrier.name as name_carrier', 'carrier_2.name as name_carrier_2', 'carrier_3.name as name_carrier_3',
+                'anp_c.client_name as company_anp', 'anp_a.address as address_anp', 'anp_p.name as pic_anp', 'lt.loaded_type','ltc.loaded_type as loadedc_type','trc.client_name as trc_name'
+            )
             ->where('a.id', '=', $id)->first();
     }
 }

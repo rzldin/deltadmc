@@ -112,7 +112,7 @@
                                                         <div class="col-md-4" style="padding: 10px">
                                                             @foreach ($loaded as $l)
                                                             <div class="icheck-primary d-inline">
-                                                                <input type="radio" class="loaded" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}">
+                                                                <input type="radio" class="loaded" id="loaded_{{ $l->id }}" name="t_mloaded_type_id" value="{{ $l->id }}">
                                                                 <label for="loaded_{{ $l->id }}">
                                                                     {{ $l->loaded_type }}
                                                                 </label>
@@ -230,7 +230,7 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <select class="form-control select2bs44" name="shipment_by" id="shipment_by">
-                                                    <option selected>-- Select Shipment --</option>
+                                                    <option value="" selected>-- Select Shipment --</option>
                                                     <option value="SEA">SEA</option>
                                                     <option value="AIR">AIR</option>
                                                     <option value="LAND">LAND</option>
@@ -1320,7 +1320,7 @@
     }
 
     $("#saveData").click(function(){
-        const rbs = document.querySelectorAll('input[name="loaded"]');
+        const rbs = document.querySelectorAll('input[name="t_mloaded_type_id"]');
         let selectedLoaded;
         for (const rb of rbs) {
             if (rb.checked) {

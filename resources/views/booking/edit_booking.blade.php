@@ -22,6 +22,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <div class="flash-data" data-flashdata="{{ session('status') }}">
                 <div class="card card-primary card-outline">
                     <div class="card-header">
                         <h3 class="card-title float-right">
@@ -196,21 +197,23 @@
                                                        <thead>
                                                            <tr>
                                                                <th width="1%">#</th>
-                                                               <th width="10%">Container Number</th>
+                                                               <th width="5%">Hs Code<br><small>*Untuk menghubungkan dengan data commodity</small></th>
+                                                               <th width="7%">Container Number</th>
                                                                <th width="5%">Loaded Type</th>
                                                                <th width="5%">Container Type</th>
-                                                               <th width="10%">Seal No</th>
+                                                               <th width="7%">Seal No</th>
                                                                <th width="10%">Quantity</th>
                                                                <th width="10%">Gross Weight</th>
+                                                               <th width="7%">Measurement</th>
                                                                @if ($booking->activity == 'export')
-                                                                <th width="10%">VGM</th>
-                                                                <th width="7%">Uom</th>
-                                                                <th width="10%">Resp.Party</th>
-                                                                <th width="10%">Auth.Person</th>
-                                                                <th width="8%">M.o.w</th>
-                                                                <th width="10%">Weighing Party</th>
+                                                                <th width="5%">VGM</th>
+                                                                <th width="3%">Uom</th>
+                                                                <th width="5%">Resp.Party</th>
+                                                                <th width="5%">Auth.Person</th>
+                                                                <th width="3%">M.o.w</th>
+                                                                <th width="5%">Weighing Party</th>
                                                                @endif
-                                                               <th width="15%">Action</th>
+                                                               <th width="7%">Action</th>
                                                            </tr>
                                                        </thead>
                                                        <tbody>
@@ -223,10 +226,13 @@
                                                                     <i class="fa fa-plus"></i>
                                                                 </td>
                                                                 <td>
+                                                                    <input type="text" class="form-control" name="con_hs_code" id="con_hs_code_1" placeholder="Container Number ...">
+                                                                </td>
+                                                                <td>
                                                                     <input type="text" class="form-control" name="con_numb" id="con_numb_1" placeholder="Container Number ...">
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control select2bs44" name="loaded" id="loaded_1">
+                                                                    <select class="form-control select2bs44" name="loaded" id="s_loaded_1">
                                                                         <option value="">--Select Container--</option>
                                                                         @foreach ($loaded as $item)
                                                                         <option value="{{ $item->id }}">{{ $item->loaded_type }}</option>
@@ -273,6 +279,9 @@
                                                                             </select>
                                                                         </div>
                                                                     </div>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="meas" id="cont_meas_1" placeholder="Measurement ...">
                                                                 </td>
                                                                 @if ($booking->activity == 'export')
                                                                 <td>
@@ -434,6 +443,17 @@
                                                     @endif>Trucking with PEB</option>
                                                 </select>
                                             </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-2">
+                                                <label>SI Data</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <select class="form-control select2bs44" name="si_data" id="si_data">
+                                                    <option value="0">Master BL</option>
+                                                    <option value="1">House BL</option>
+                                                </select>
+                                            </div>
                                             <div class="col-md-2">
                                                 <a href="javascript::" class="btn btn-primary float-left mr-2" onclick="doUpdate_road()">
                                                     <i class="fa fa-save"></i> Save
@@ -509,14 +529,14 @@
                                                     <a href="{{ url('booking/cetak_suratjalan/'.$booking->id) }}" target="_blank" class="btn btn-success btn-sm float-right"><i class="fa fa-print"></i> Print Surat Jalan</a>
                                                 <?php if($booking->shipment_by == 'SEA') {?>
                                                     @if ($booking->loaded_type == 'FCL')
-                                                    <a href="{{ url('booking/cetak_si_trucking_fcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_fcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                    <a href="javascript:;" onclick="print_si_trucking({{ $booking->id }});" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    {{-- <a href="javascript:;" onclick="print_si({{ $booking->id }});" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a> --}}
                                                     @else
-                                                    <a href="{{ url('booking/cetak_si_trucking_lcl/'.$booking->id) }}" target="_blank" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
-                                                    <a href="{{ url('booking/cetak_si_lcl/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                    <a href="javascript:;" onclick="print_si_trucking({{ $booking->id }});" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI Trucking</a>
+                                                    {{-- <a href="javascript:;" onclick="print_si({{ $booking->id }});" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a> --}}
                                                     @endif
                                                 <?php }elseif($booking->shipment_by == 'AIR'){?>
-                                                    <a href="{{ url('booking/cetak_si_air/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a>
+                                                    {{-- <a href="{{ url('booking/cetak_si_air/'.$booking->id) }}" target="_blank" class="btn btn-danger btn-sm mr-2 float-right"><i class="fa fa-print"></i> Print SI</a> --}}
                                                 <?php }?>
                                                 </div>
                                                 <div class="card-body">
@@ -890,6 +910,8 @@
     <input type="hidden" id="consignee_picx" value="{{ $booking->consignee_pic_id }}">
     <input type="hidden" id="notifyParty_addrx" value="{{ $booking->not_party_addr_id }}">
     <input type="hidden" id="notifyParty_picx" value="{{ $booking->not_party_pic_id }}">
+    <input type="hidden" id="also_notifyParty_addrx" value="{{ $booking->also_nf_addr_id }}">
+    <input type="hidden" id="also_notifyParty_picx" value="{{ $booking->also_nf_pic_id }}">
     <input type="hidden" id="agent_addrx" value="{{ $booking->agent_addr_id }}">
     <input type="hidden" id="agent_picx" value="{{ $booking->agent_pic_id }}">
     <input type="hidden" id="shipline_addrx" value="{{ $booking->shpline_addr_id }}">
@@ -907,9 +929,32 @@
             </div>
             <br>
             <div class="modal-body">
-                <form class="eventInsForm" method="post" target="_self" name="formku"
-                      id="formku" enctype="multipart/form-data">
+                <form class="eventInsForm" method="post" target="_self" name="formku" id="formku" enctype="multipart/form-data">
                     {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option Carrier 1 <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="hbl_op2">
+                                <option value="1">Carrier 1</option>
+                                <option value="2">Carrier 2</option>
+                                <option value="3">Carrier 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option Carrier 2 <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="hbl_op3">
+                                <option value="1">Carrier 1</option>
+                                <option value="2">Carrier 2</option>
+                                <option value="3">Carrier 3</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-4 col-xs-4">
                             Number of original prints HBL <font color="red">*</font>
@@ -931,6 +976,106 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onClick="cetak_hbl();"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SITRMODAL" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="formsitr"
+                      id="formsitr" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option BL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="optr1">
+                                <option value="0">Master BL</option>
+                                <option value="1">House BL</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="cetak_si_trucking();"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="SIMODAL" tabindex="-1" role="basic" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">&nbsp;</h4>
+            </div>
+            <br>
+            <div class="modal-body">
+                <form class="eventInsForm" method="post" target="_self" name="formsi"
+                      id="formsi" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option BL <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="op1">
+                                <option value="0">Master BL</option>
+                                <option value="1">House BL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option Carrier 1<font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="op2">
+                                <option value="1">Carrier 1</option>
+                                <option value="2">Carrier 2</option>
+                                <option value="3">Carrier 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option Carrier 2 <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="op3">
+                                <option value="1">Carrier 1</option>
+                                <option value="2">Carrier 2</option>
+                                <option value="3">Carrier 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-xs-4">
+                            Option TO <font color="red">*</font>
+                        </div>
+                        <div class="col-md-8 col-xs-8">
+                            <select class="form-control" id="op4">
+                                <option value="0">Vendor</option>
+                                <option value="1">Shipping Line</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onClick="cetak_si();"><i class="fa fa-print"></i> Print</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
             </div>
         </div>
@@ -1629,7 +1774,8 @@
             data:{
                 id_booking:{{$booking->id}},
                 trucking_company:$('#trucking_company').val(),
-                jenis:$('#jenis').val()
+                jenis:$('#jenis').val(),
+                si_data:$('#si_data').val()
             },
             success:function(result){
                 Toast.fire({
@@ -2009,7 +2155,12 @@
                             },
                             success:function(result){
                                 $('#add-carrier').modal('hide')
-                                load_carrier({{ $booking->carrier_id }})
+                                const cr1 = $('#carrier').val();
+                                const cr2 = $('#carrier_2').val();
+                                const cr3 = $('#carrier_3').val();
+                                get_carrier(cr1)
+                                get_carrier_2(cr2)
+                                get_carrier_3(cr3)
                                 Toast.fire({
                                     icon: 'success',
                                     title: 'Sukses Add Data!'
@@ -2481,6 +2632,20 @@
             })
         }
 
+        function get_also_notParty(val)
+        {
+            $.ajax({
+                url: "{{ route('get.customer') }}",
+                type: "POST",
+                data : "company_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#also_notify_party").html(final)
+                }
+            })
+        }
+
         function get_agent(val)
         {
             $.ajax({
@@ -2687,6 +2852,45 @@
             }
         }
 
+        function also_not_detail(val)
+        {
+            if(val!= ''){
+
+                let notifyParty_addr     = $('#also_not_addr').val();
+                let notifyParty_pic      = $('#also_not_pic').val();
+                let notifyParty_addrx    = 0;
+                let notifyParty_picx     = 0;
+
+                if(notifyParty_addr == null){
+                    notifyParty_addrx = 0
+                }else{
+                    notifyParty_addrx = notifyParty_addr
+                }
+
+                if(notifyParty_pic == null){
+                    notifyParty_picx = 0
+                }else{
+                    notifyParty_picx = notifyParty_pic
+                }
+
+                $.ajax({
+                    url: "{{ route('booking.detail') }}",
+                    type: "POST",
+                    data: {
+                        id      : val,
+                        pic_id  : notifyParty_picx,
+                        addr_id : notifyParty_addrx
+                    },
+                    dataType: "html",
+                    success: function(result) {
+                        var final = JSON.parse(result);
+                        $("#also_not_addr").html(final[0]);
+                        $("#also_not_pic").html(final[1]);
+                    }
+                });
+            }
+        }
+
         function agent_detail(val)
         {
             if(val!= ''){
@@ -2804,6 +3008,48 @@
             }
         }
 
+        function get_carrier(val)
+        {
+            $.ajax({
+                url: "{{ route('booking.loadCarrier') }}",
+                type: "POST",
+                data : "carrier_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#carrier").html(final)
+                }
+            })
+        }
+
+        function get_carrier_2(val)
+        {
+            $.ajax({
+                url: "{{ route('booking.loadCarrier') }}",
+                type: "POST",
+                data : "carrier_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#carrier_2").html(final)
+                }
+            })
+        }
+
+        function get_carrier_3(val)
+        {
+            $.ajax({
+                url: "{{ route('booking.loadCarrier') }}",
+                type: "POST",
+                data : "carrier_id="+val,
+                dataType: "html",
+                success: function(result) {
+                    var final = JSON.parse(result);
+                    $("#carrier_3").html(final)
+                }
+            })
+        }
+
         function get_exchange_rate(val)
         {
             $.ajax({
@@ -2826,6 +3072,8 @@
 
         function print_hbl(id)
         {
+            $('#hbl_op2').val('');
+            $('#hbl_op3').val('');
             $('#original_hbl').val('');
             $('#copy_non_nego_hbl').val('');
             $("#HBLMODAL").find('.modal-title').text('Print HBL');
@@ -2836,37 +3084,78 @@
         function cetak_hbl()
         {
             let id = $('#hbl_print_id').val();
+            let hbl_op2 = $('#hbl_op2').val();
+            let hbl_op3 = $('#hbl_op3').val();
             let original_hbl = $('#original_hbl').val();
             let copy_non_nego_hbl = $('#copy_non_nego_hbl').val();
 
             //window.open('http://www.smkproduction.eu5.org', '_blank');
 
             var anchor = document.createElement('a');
-            anchor.href = `{{ url('booking/cetak_hbl/${id}/${original_hbl}/${copy_non_nego_hbl}') }}`;
+            anchor.href = `{{ url('booking/cetak_hbl/${id}/${original_hbl}/${copy_non_nego_hbl}/${hbl_op2}/${hbl_op3}') }}`;
             anchor.target="_blank";
             anchor.click();
 
             $("#HBLMODAL").modal('hide');
+        }
 
+        function print_si_trucking(id)
+        {
+            $("#SITRMODAL").find('.modal-title').text('Print SI');
+            $("#SITRMODAL").modal('show',{backdrop: 'true'});
+        }
 
-            // $.ajax({
-            //     type: "POST",
-            //     url: "}",
-            //     dataType: 'json',
-            //     data : {
-            //         id : id,
-            //         original_hbl : original_hbl,
-            //         copy_non_nego_hbl : copy_non_nego_hbl
-            //     },
-            //     success: function (result){
-            //         $("#HBLMODAL").modal('hide');
-            //         loadRoadCons({{ Request::segment(3) }});
-            //         Toast.fire({
-            //             icon: 'success',
-            //             title: 'Print...!'
-            //         });
-            //     }
-            // });
+        function cetak_si_trucking()
+        {
+            let id = {{ $quote->id }};
+            let optr1 = $('#optr1').val();
+
+            //window.open('http://www.smkproduction.eu5.org', '_blank');
+
+            var anchor = document.createElement('a');
+            @if ($quote->loaded_type == 'FCL')
+                let url = 'cetak_si_trucking_fcl';
+            @else
+                let url = 'cetak_si_trucking_lcl';
+            @endif
+            anchor.href = `{{ url('booking/${url}/${id}/${optr1}') }}`;
+            anchor.target="_blank";
+            anchor.click();
+
+            $("#SITRMODAL").modal('hide');
+        }
+
+        function print_si(id)
+        {
+            $("#SIMODAL").find('.modal-title').text('Print SI');
+            $("#SIMODAL").modal('show',{backdrop: 'true'});
+        }
+
+        function cetak_si()
+        {
+            let id = {{ $quote->id }};
+            let op1 = $('#op1').val();
+            let op2 = $('#op2').val();
+            let op3 = $('#op3').val();
+            let op4 = $('#op4').val();
+
+            //window.open('http://www.smkproduction.eu5.org', '_blank');
+
+            var anchor = document.createElement('a');
+            <?php if($quote->shipment_by == 'SEA') {?>
+                @if ($quote->loaded_type == 'FCL')
+                    let url = 'cetak_si_fcl';
+                @else
+                    let url = 'cetak_si_lcl';
+                @endif
+            <?php }elseif($quote->shipment_by == 'AIR'){?>
+                    let url = 'cetak_si_air';
+            <?php }?>
+            anchor.href = `{{ url('booking/${url}/${id}/${op1}/${op2}/${op3}/${op4}') }}`;
+            anchor.target="_blank";
+            anchor.click();
+
+            $("#SIMODAL").modal('hide');
         }
 
         function newRoad(){
@@ -3626,6 +3915,7 @@
                     });
 
                     $('#btnEditCon_'+id).hide();
+                    $('#lbl_con_hs_code_'+id).hide();
                     $('#lbl_con_numb_'+id).hide();
                     $('#lbl_size_'+id).hide();
                     $('#lbl_loaded_'+id).hide();
@@ -3633,6 +3923,7 @@
                     $('#lbl_seal_no_'+id).hide();
                     $('#lbl_cont_qty_'+id).hide();
                     $('#lbl_cont_weight_'+id).hide();
+                    $('#lbl_cont_meas_'+id).hide();
                     $('#lbl_cont_qty_uom_'+id).hide();
                     $('#lbl_cont_weight_uom_'+id).hide();
                     $('#lbl_vgm_'+id).hide();
@@ -3649,6 +3940,7 @@
                         theme: 'bootstrap4'
                     });
 
+                    $('#con_hs_code_'+id).show();
                     $("#container_"+id).show();
                     $("#container_"+id).html(html2);
                     $("#container_"+id).select2({
@@ -3683,6 +3975,7 @@
                     $("#cont_weight_uom_"+id).select2({
                         theme: 'bootstrap4'
                     });
+                    $('#cont_meas_'+id).show();
 
                     $('#con_numb_'+id).show();
                     $('#size_'+id).show();
@@ -3902,6 +4195,7 @@
                     url:"{{ route('booking.updateContainer') }}",
                     data:{
                         id:id_detail,
+                        con_hs_code:$('#con_hs_code_'+id).val(),
                         con_numb:$('#con_numb_'+id).val(),
                         size:$('#size_'+id).val(),
                         container:$('#container_'+id).val(),
@@ -3911,6 +4205,7 @@
                         qty_uom:$('#cont_qty_uom_'+id).val(),
                         weight:$('#cont_weight_'+id).val(),
                         weight_uom:$('#cont_weight_uom_'+id).val(),
+                        meas:$('#cont_meas_'+id).val(),
                         vgm:$('#vgm_'+id).val(),
                         vgm_uom:$('#vgm_uom_'+id).val(),
                         resp_party:$('#resp_party_'+id).val(),
@@ -4155,6 +4450,7 @@
                 url:"{{ route('booking.addContainer') }}",
                 data:{
                     booking:{{ $booking->id }},
+                    con_hs_code:$('#con_hs_code_'+id).val(),
                     con_numb:$('#con_numb_'+id).val(),
                     size:$('#size_'+id).val(),
                     container:$('#container_'+id).val(),
@@ -4164,6 +4460,7 @@
                     qty_uom:$('#cont_qty_uom_'+id).val(),
                     weight:$('#cont_weight_'+id).val(),
                     weight_uom:$('#cont_weight_uom_'+id).val(),
+                    meas:$('#cont_meas_'+id).val(),
                     vgm:$('#vgm_'+id).val(),
                     vgm_uom:$('#vgm_uom_'+id).val(),
                     resp_party:$('#resp_party_'+id).val(),
@@ -4172,6 +4469,7 @@
                     w_party:$('#w_party_'+id).val(),
                 },
                 success:function(result){
+                    $('#con_hs_code_'+id).val('');
                     $('#con_numb_'+id).val('');
                     $('#size_'+id).val('');
                     $('#container_'+id).val('').trigger('change');
@@ -4383,6 +4681,24 @@
             })
         }
 
+        // var box = document.getElementById('textarea_limit');
+        var charlimit = 35; // char limit per line
+        function limit_line(id,val) {
+            var lines = val.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].length <= charlimit) continue;
+                var j = 0; space = charlimit;
+                while (j++ <= charlimit) {
+                    if (lines[i].charAt(j) === ' ') space = j;
+                }
+                lines[i + 1] = lines[i].substring(space + 1) + (lines[i + 1] || "");
+                lines[i] = lines[i].substring(0, space);
+            }
+            val = lines.slice(0, 10).join('\n');
+            // console.log(val);
+            $('#'+id).val(val); 
+        };
+
         $(function() {
             get_customer({{ $booking->client_id }});
             client_detail({{ $booking->client_id }});
@@ -4396,6 +4712,9 @@
             get_notParty({{ $booking->not_party_id }})
             not_detail({{ $booking->not_party_id }})
 
+            get_also_notParty({{ $booking->also_nf_id }})
+            also_not_detail({{ $booking->also_nf_id }})
+
             get_agent({{ $booking->agent_id }})
             agent_detail({{ $booking->agent_id }})
 
@@ -4404,6 +4723,10 @@
 
             get_vendor({{ $booking->vendor_id }})
             vendor_detail({{ $booking->vendor_id }})
+
+            get_carrier({{ $booking->carrier_id }})
+            get_carrier_2({{ $booking->carrier_id_2 }})
+            get_carrier_3({{ $booking->carrier_id_3 }})
 
             loadCommodity({{ Request::segment(3) }});
             loadPackages({{ Request::segment(3) }});

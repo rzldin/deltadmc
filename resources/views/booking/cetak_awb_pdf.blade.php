@@ -131,29 +131,10 @@
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
                         <td style="vertical-align:top;" height="80" colspan="5">
-                            <table width="100%" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td style="font-size:8pt;vertical-align:top;padding-left:5px;" height="64">
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size:7pt;padding-left:5px;" height="15">
-                                        
-                                    </td>
-                                </tr>
-                            </table>
                         </td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top;" height="80" colspan="5">
-                            <table width="100%" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td height="80">
-                                        
-                                    </td>
-                                </tr>
-                            </table>
                         </td>
                     </tr>
                     <tr>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SHIPPING INTRUCTION FCL</title>
+    <title>SHIPPING INTRUCTION <?=$type;?></title>
     <style>
         .text-container{
             padding-left: 20px;
@@ -24,27 +24,37 @@
         }
 
         .isi{
-            height: 80px;
+            max-height: 100%;
+            min-height: 80px;
         }
 
+        .isi-consignee{
+            max-height: 100%;
+            min-height: 90px;
+        }
         .isi-SI {
-            height : 120px;
+            max-height: 100%;
+            min-height : 120px;
         }
 
         .isi-booking {
-            height : 52.5px;
+            max-height: 100%;
+            min-height : 75px;
         }
 
         .isi-notify{
-            height: 60px;
+            max-height: 100%;
+            min-height: 70px;
         }
 
         .isi-place {
-            height : 25px;
+            max-height: 100%;
+            min-height : 25px;
         }
 
         .isi-voy {
-            height: 40px;
+            max-height: 100%;
+            min-height: 40px;
         }
 
     </style>
@@ -84,31 +94,23 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>SHIPPER</b>
                             <div class="isi">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_shipper !== null) --}}
-                                    {{ $data->hbl_shipper }}
-                                {{-- @else --}}
-                                    {{ $data->company_f }}<br>
-                                    {{ $data->address_f }}<br>
-                                    {{ $data->pic_f }}
-                                {{-- @endif --}}
-                            @endif
+                                @if($op1==0)
+                                    <?=nl2br($data->mbl_shipper);?>
+                                @else
+                                    <?=nl2br($data->hbl_shipper);?>
+                                @endif
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>CONSIGNEE (NAME & ADDRESS)</b>
-                            <div class="isi">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_consignee !== null) --}}
-                                    {{ $data->hbl_consignee }}
-                                {{-- @else --}}
-                                    {{ $data->company_i }}<br>
-                                    {{ $data->address_i }}<br>
-                                    {{ $data->pic_i }}
-                                {{-- @endif --}}
-                            @endif
+                            <div class="isi-consignee">
+                                @if($op1==0)
+                                    <?=nl2br($data->mbl_consignee);?>
+                                @else
+                                    <?=nl2br($data->hbl_consignee);?>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -116,15 +118,11 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>NOTIFY (NAME & ADDRESS)</b>
                             <div class="isi-notify">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_not_party !== null) --}}
-                                    {{ $data->hbl_not_party }}
-                                {{-- @else --}}
-                                    {{ $data->company_l }}<br>
-                                    {{ $data->address_l }}<br>
-                                    {{ $data->pic_l }}
-                                {{-- @endif --}}
-                            @endif
+                                @if($op1==0)
+                                    <?=nl2br($data->mbl_not_party);?>
+                                @else
+                                    <?=nl2br($data->hbl_not_party);?>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -178,10 +176,30 @@
                                         <table width="100%" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td width="60%" style="font-size: 7pt;text-align:center;">
-                                                   <b>{{ $data->name_carrier }}</b>
+                                                   <b>
+                                                    @php
+                                                    if($op2==1){
+                                                        echo $data->name_carrier;
+                                                    }elseif($op2==2){
+                                                        echo $data->name_carrier_2;
+                                                    }elseif ($op2==3) {
+                                                        echo $data->name_carrier_3;
+                                                    }
+                                                    @endphp
+                                                   </b>
                                                 </td>
                                                 <td width="40%" style="font-size: 7pt;text-align:center;">
-                                                    <b>{{ $data->flight_number }}</b>
+                                                    <b>
+                                                    @php
+                                                    if($op2==1){
+                                                        echo $data->flight_number;
+                                                    }elseif($op2==2){
+                                                        echo $data->flight_number_2;
+                                                    }elseif ($op2==3) {
+                                                        echo $data->flight_number_3;
+                                                    }
+                                                    @endphp
+                                                    </b>
                                                 </td>
                                             </tr>
                                         </table>
@@ -224,10 +242,30 @@
                                         <table width="100%" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td width="60%" style="font-size: 7pt;text-align:center;">
-                                                   <b></b>
+                                                   <b>
+                                                    @php
+                                                    if($op3==1){
+                                                        echo $data->name_carrier;
+                                                    }elseif($op3==2){
+                                                        echo $data->name_carrier_2;
+                                                    }elseif ($op3==3) {
+                                                        echo $data->name_carrier_3;
+                                                    }
+                                                    @endphp
+                                                   </b>
                                                 </td>
                                                 <td width="40%" style="font-size: 7pt;text-align:center;">
-                                                    <b></b>
+                                                    <b>
+                                                    @php
+                                                    if($op3==1){
+                                                        echo $data->flight_number;
+                                                    }elseif($op3==2){
+                                                        echo $data->flight_number_2;
+                                                    }elseif ($op3==3) {
+                                                        echo $data->flight_number_3;
+                                                    }
+                                                    @endphp
+                                                    </b>
                                                 </td>
                                             </tr>
                                         </table>
@@ -274,30 +312,37 @@
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <div class="isi-SI">
-                                <b>SI NO :</b>   <br/><br/>
-                                <b>DATE :</b>      <br/><br/>
-                                <b>TO :</b>      {{ $data->company_o }}  <br/><br/>
+                                <b>SI NO :</b> {{ $data->nomor_si }}<br/><br/>
+                                <b>DATE :</b>  {{ $data->quote_date }}    <br/><br/>
+                                <b>TO :</b> <?php if($op4==0){ echo $data->company_u; }else{ echo $data->company_r;} ;?>  <br/><br/>
                                 <b>ATTN :</b>    {{ $data->pic_o }}  <br/><br/>
-                                <b>FROM :</b>     <br/><br/>
+                                <b>FROM :</b>   {{ $data->updated_by }}  <br/><br/>
                                 
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
-                            <b>BOOKING NO:</b>
-                            <div class="isi-booking" style="font-size: 10pt;color:blue;">
-                                @if ($data->final_flag == 1)
-                                {{ $data->booking_no }}
-                                @endif
+                            <div class="isi-booking">
+                                <b>BOOKING NO :</b> 
+                                    {{-- @if ($data->final_flag == 1) --}}
+                                    {{ $data->booking_no }}
+                                    {{-- @endif --}}
+                                <br/><br/>
+                                <b>PEB No. :</b> {{ $data->custom_doc_no }} <br/><br/>
+                                <b>PEB Date :</b> {{ $data->custom_doc_date }} <br/><br/>                                
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
-                            <b>ALSO NOTIFY PARTY</b>
+                            <b>ALSO NOTIFY PARTY (NAME & ADDRESS)</b>
                             <div class="isi-notify">
-
+                                    @if($op1==0)
+                                        <?=nl2br($data->mbl_also_notify_party);?>
+                                    @else
+                                        <?=nl2br($data->hbl_also_notify_party);?>
+                                    @endif
                             </div>
                         </td>
                     </tr>
@@ -408,11 +453,12 @@
             </td>
         </tr>
         <tr>
-            <td width="30%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
-
+            <td width="30%" style="border-right: 1px solid #000;font-size:7pt;padding-left:2px;vertical-align:top;" height="100">
+                {{ $data->mbl_marks_nos }}
             </td>
             <td width="40%" style="border-right: 1px solid #000;font-size:9pt;padding-left:2px;vertical-align:top;">
-               {!! $comm[0]->desc !!}
+                {{-- <?=nl2br($data->mbl_consignee);?> --}}
+               {!! nl2br($data->mbl_desc).'<br><br>'.nl2br($data->hbl_desc) !!}
             </td>
             <td width="15%" style="border-right: 1px solid #000;font-size:7pt;text-align:center;" height="100">
                 <table width="100%" cellspacing="0" cellpadding="0">
@@ -421,7 +467,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:3px;" height="20">
-                            <b>GW : {{ $comm[0]->weight }} {{ $comm[0]->code_c }}</b>
+                            <b>NW : {{ $comm[0]->netto.' '.$comm[0]->code_d}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -431,7 +477,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:3px;" height="20">
-                            <b>NW : {{ $comm[0]->netto }}</b>
+                            <b>GW : {{ $comm[0]->weight.' '.$comm[0]->code_d }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -448,7 +494,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:3px;" height="20">
-                            <b>MEAS : {{ $comm[0]->volume }} {{ $comm[0]->code_e }}</b>
+                            <b>MEAS : {{ $comm[0]->volume.' '.$comm[0]->code_e }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -462,9 +508,11 @@
         <tr>
             <td width="70%" colspan="2" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;vertical-align:top;margin-left:2px;" height="60">
                 <b><u>CONTAINER/SEAL/GW/NO.OF PACKAGE (BREAKDOWN)</u></b><br>
-                @if ($data->final_flag == 1)
-                <p style="font-size: 10px;padding-left:3px;color:blue;">{{ $cont[0]->container_no }}/{{ $cont[0]->seal_no }}/{{ $comm[0]->weight }} {{ $comm[0]->code_c }}/{{ $comm[0]->qty_packages }}</p>
-                @endif
+                {{-- @if ($data->final_flag == 1) --}}
+                @foreach($cont as $ct)
+                <p style="font-size: 10px;padding-left:3px;color: blue">{{ $ct->container_no.' / '.$ct->seal_no.' / '.$ct->weight.' '.$ct->code_weight.' / '.$ct->qty.' '.$ct->code_qty.' / '.$ct->volume.' '.$ct->volume_code.' / '.$ct->container_type }}</p><br>
+                @endforeach
+                {{-- @endif --}}
             </td>
             <td width="15%" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
                 <b></b>

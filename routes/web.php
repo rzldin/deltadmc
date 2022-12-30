@@ -26,6 +26,7 @@ Route::get('/', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/', 'Auth\LoginController@login')->name('login');
 
 Route::group(['middleware' => 'auth'], function(){
+    // Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::get('/dashboard', function () {
         $user = DB::table('users AS a')
             ->leftJoin('t_mmatrix AS b', 'a.id', '=', 'b.t_muser_id')
@@ -295,6 +296,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::match(array('GET', 'POST'), 'booking/edit_booking/{id}', 'BookingController@edit_booking')->name('booking.edit');
     Route::match(['get', 'post'], 'booking/header_booking/{id}', 'BookingController@header_booking')->name('booking.header');
     Route::post('booking/detail', 'BookingController@booking_detail')->name('booking.detail');
+    Route::post('booking/loadCarrier', 'BookingController@booking_loadCarrier')->name('booking.loadCarrier');
     Route::post('/booking/doAdd', 'BookingController@booking_doAdd')->name('booking.doAdd');
     Route::post('/booking/doAddVersion', 'BookingController@booking_doAddVersion')->name('booking.doAddVersion');
     Route::match(['get', 'post'], 'booking/booking_new/{id}', 'BookingController@new_version')->name('booking.new_version');
@@ -316,14 +318,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('/booking/updateSell', 'BookingController@updateSell')->name('booking.updateSell');
     Route::post('/booking/updateSellshp', 'BookingController@updateSellshp')->name('booking.updateSellshp');
     Route::match(array('GET', 'POST'), 'booking/preview/{id}', 'BookingController@booking_preview');
-    Route::match(array('GET', 'POST'), '/booking/cetak_hbl/{id}/{hbl1}/{hbl2}', 'BookingController@cetak_hbl');
+    Route::match(array('GET', 'POST'), '/booking/cetak_hbl/{id}/{hbl1}/{hbl2}/{op2}/{op3}', 'BookingController@cetak_hbl');
     Route::get('booking/cetak_awb/{id}', 'BookingController@cetak_hawb');
     Route::get('booking/cetak_vgm/{id}', 'BookingController@cetak_vgm');
-    Route::get('booking/cetak_si_lcl/{id}', 'BookingController@cetak_si_lcl');
-    Route::get('booking/cetak_si_fcl/{id}', 'BookingController@cetak_si_fcl');
-    Route::get('booking/cetak_si_air/{id}', 'BookingController@cetak_si_air');
-    Route::get('booking/cetak_si_trucking_fcl/{id}', 'BookingController@cetak_si_trucking_fcl');
-    Route::get('booking/cetak_si_trucking_lcl/{id}', 'BookingController@cetak_si_trucking_lcl');
+    Route::get('booking/cetak_si_lcl/{id}/{op1}/{op2}/{op3}/{op4}', 'BookingController@cetak_si_lcl');
+    Route::get('booking/cetak_si_fcl/{id}/{op1}/{op2}/{op3}/{op4}', 'BookingController@cetak_si_fcl');
+    Route::get('booking/cetak_si_air/{id}/{op1}/{op2}/{op3}/{op4}', 'BookingController@cetak_si_air');
+    Route::get('booking/cetak_si_trucking_fcl/{id}/{op1}', 'BookingController@cetak_si_trucking_fcl');
+    Route::get('booking/cetak_si_trucking_lcl/{id}/{op1}', 'BookingController@cetak_si_trucking_lcl');
     Route::get('booking/cetak_suratjalan/{id}', 'BookingController@cetak_suratJalan');
     Route::post('/booking/update_request', 'BookingController@update_request')->name('booking.update_request');
     Route::post('/booking/approve_request', 'BookingController@approve_request')->name('booking.approve_request');

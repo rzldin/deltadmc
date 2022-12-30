@@ -1,99 +1,109 @@
-<div class="card card-primary">
-    <div class="card-header">
-        <h3 class="card-title">Booking Information</h3>
-    </div>
-    
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Booking Number</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($verse > 1)
-                        readonly
-                        @endif>
-                        <input type="hidden" name="id_booking" value="{{ $quote->id }}">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Booking Date</label>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="input-group date" id="bookingdate" data-target-input="nearest">
-                            <input type="text" name="booking_date" id="booking_date" value="@if($quote->booking_date != null){{ \Carbon\Carbon::parse($quote->booking_date)->format('d/m/Y') }}@endif" class="form-control datetimepicker-input" data-target="#bookingdate"/>
-                            <div class="input-group-append" data-target="#bookingdate" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Version No</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $verse }}" readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-5">
-                <?php 
-                    if($quote->nomination_flag == 1){
-                        $quote_no = 'Nomination';
-                    }else{
-                        $quote_no = $quote->quote_no;
-                    }
-                ?>
 
-                
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Quote Number</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote_no }}" readonly>
-                        <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->t_quote_id }}">
-                        <input type="hidden" name="activity" id="activityx" value="{{ $quote->activity }}">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    @if ($quote->nomination_flag == 0)
-                    <div class="col-md-4">
-                        <label>Quote Date</label>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
-                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+<div class="col-md-12">
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="header_booking_detail">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#booking_information" aria-expanded="true" aria-controls="booking_information" type="button">
+              Booking Information
+            </button>
+          </h5>
+        </div>
+
+        <div id="booking_information" class="collapse" aria-labelledby="header_booking_detail" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Booking Number</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="booking_no" id="booking_no" placeholder="Booking No ..." value="{{ $quote->booking_no }}" @if ($verse > 1)
+                                readonly
+                                @endif>
+                                <input type="hidden" name="id_booking" value="{{ $quote->id }}">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Booking Date</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                    <input type="text" name="booking_date" id="booking_date" value="@if($quote->booking_date != null){{ \Carbon\Carbon::parse($quote->booking_date)->format('d/m/Y') }}@else @endif" class="form-control datetimepicker-input" data-target="#reservationdate" 
+                                    @if($quote->flag_invoice == 1) disabled @endif/>
+                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Version No</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="version_no" id="version_no" placeholder="Version No ..." value="{{ $verse }}" readonly>
                             </div>
                         </div>
                     </div>
-                    @if ($quote->copy_booking != null)
-                    <div class="col-md-12 mt-3">
-                        Note : Copy From <strong>{{ $quote->copy_booking }}</strong>  
-                    </div>
-                    @endif
-                    @else
-                    <div class="col-md-12">
-                        Note : Jenis Quote <strong>'Nomination'</strong>  
-                    </div>
-                    @endif
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>SI Number</label>
-                    </div>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" name="nomor_si" id="nomor_si" placeholder="SI Number ..." value="{{ $quote->nomor_si }}">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5">
+                        <?php 
+                            if($quote->nomination_flag == 1){
+                                $quote_no = 'Nomination';
+                            }else{
+                                $quote_no = $quote->quote_no;
+                            }
+                        ?>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Quote Number</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote_no }}" readonly>
+                                <input type="hidden" name="id_quote" id="id_quote" value="{{ $quote->t_quote_id }}">
+                                <input type="hidden" name="activity" id="activityx" value="{{ $quote->activity }}">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            @if ($quote->nomination_flag == 0)
+                            <div class="col-md-4">
+                                <label>Quote Date</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                    <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate" readonly/>
+                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if ($quote->copy_booking != null)
+                            <div class="col-md-12 mt-3">
+                                Note : Copy From <strong>{{ $quote->copy_booking }}</strong>  
+                            </div>
+                            @endif
+                            @else
+                            <div class="col-md-12">
+                                Note : Jenis Quote <strong>'Nomination'</strong>  
+                            </div>
+                            @endif
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>SI Number</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="nomor_si" id="nomor_si" placeholder="SI Number ..." value="{{ $quote->nomor_si }}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+      </div>
     </div>
 </div>
 <div class="card card-primary">
@@ -129,6 +139,21 @@
                             </label>
                         </div>
                         @endforeach
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Activity 2</label>
+                    </div>
+                    <div class="col-md-8" style="padding: 10px">
+                        <select class="form-control" name="loadedc" id="loadedc">
+                            <option value="">Please Select ...</option>
+                        @foreach ($loadedc as $lc)
+                            <option value="{{ $lc->id }}" @if ($lc->id == $quote->t_mcloaded_type_id)
+                                selected
+                            @endif>{{$lc->loaded_type }}</option>
+                        @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -407,18 +432,14 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Carrier</label>
+                        <label>Carrier 1</label>
                     </div>
                     <div class="col-md-7">
-                        <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier">
-                            <option value="" selected>-- Select Carrier --</option>
-                            @foreach ($carrier as $item)
-                            <option value="{{ $item->id }}" @if($quote->carrier_id == $item->id)
-                                selected
-                            @endif>{{ $item->name }}</option>
-                            @endforeach
+                        <select class="form-control select2bs44" style="width: 100%;" name="carrier" id="carrier" @if($quote->flag_invoice == 1) disabled @endif>
+                            
                         </select>
                     </div>
                     <div class="col-md-1 mt-1">
@@ -427,20 +448,57 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Voyage/Flight Number</label>
+                        <label>Voyage/Flight Number 1</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="voyage" id="voyage" class="form-control" value="{{ $quote->flight_number }}">
+                        <input type="text" name="voyage" id="voyage" class="form-control" value="{{ $quote->flight_number }}" @if($quote->flag_invoice == 1) disabled @endif>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Carrier 2</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="carrier_2" id="carrier_2" @if($quote->flag_invoice == 1) disabled @endif>
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="javascript:;" onclick="addCarrier()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>Connecting Vessel</label>
+                        <label>Voyage/Flight Number 2</label>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" name="conn_vessel" id="conn_vessel" class="form-control" value="{{ $quote->conn_vessel }}"@if($quote->flag_invoice == 1) disabled @endif>
+                        <input type="text" name="voyage_2" id="voyage_2" class="form-control" value="{{ $quote->flight_number_2 }}" @if($quote->flag_invoice == 1) disabled @endif>
                     </div>
                 </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Carrier 3</label>
+                    </div>
+                    <div class="col-md-7">
+                        <select class="form-control select2bs44" style="width: 100%;" name="carrier_3" id="carrier_3" @if($quote->flag_invoice == 1) disabled @endif>
+                            
+                        </select>
+                    </div>
+                    <div class="col-md-1 mt-1">
+                        <a href="javascript:;" onclick="addCarrier()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Voyage/Flight Number 3</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" name="voyage_3" id="voyage_3" class="form-control" value="{{ $quote->flight_number_3 }}" @if($quote->flag_invoice == 1) disabled @endif>
+                    </div>
+                </div>
+
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label>ETD</label>

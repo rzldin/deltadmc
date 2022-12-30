@@ -195,7 +195,12 @@ class MasterModel extends Model
 
     public static function loaded_get()
     {
-        return DB::table('t_mloaded_type')->orderBy('loaded_type')->get();
+        return DB::table('t_mloaded_type')->where('tipe',0)->orderBy('loaded_type')->get();
+    }
+
+    public static function loadedc_get()
+    {
+        return DB::table('t_mloaded_type')->where('tipe',1)->orderBy('loaded_type')->get();
     }
 
     public static function loaded_get_detail($id)

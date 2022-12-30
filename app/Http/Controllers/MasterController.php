@@ -1309,13 +1309,13 @@ class MasterController extends Controller
 
     public function schedule_doEdit(Request $request)
     {
-        if($request->status == '1'){
+        if($request->status == 'on'){
             $status = 1;
         }else{
             $status = 0;
         }
 
-        if($request->internal == '1'){
+        if($request->internal == 'on'){
             $internal = 1;
         }else{
             $internal = 0;

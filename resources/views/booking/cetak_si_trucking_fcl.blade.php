@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SI TRUCKING FCL</title>
+    <title>SI TRUCKING <?=$type;?></title>
     <style>
         .text-container{
             padding-left: 20px;
@@ -82,15 +82,11 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>SHIPPER</b>
                             <div class="isi">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_shipper !== null) --}}
-                                    {{ $data->hbl_shipper }}
-                                {{-- @else --}}
-                                    {{ $data->company_f }}<br>
-                                    {{ $data->address_f }}<br>
-                                    {{ $data->pic_f }}
-                                {{-- @endif --}}
-                            @endif
+                                @if($op1==0)
+                                    <?=nl2br($data->mbl_shipper);?>
+                                @else
+                                    <?=nl2br($data->hbl_shipper);?>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -98,15 +94,11 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>CONSIGNEE (NAME & ADDRESS)</b>
                             <div class="isi">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_consignee !== null) --}}
-                                    {{ $data->hbl_consignee }}
-                                {{-- @else --}}
-                                    {{ $data->company_i }}<br>
-                                    {{ $data->address_i }}<br>
-                                    {{ $data->pic_i }}
-                                {{-- @endif --}}
-                            @endif
+                                @if($op1==0)
+                                    <?=nl2br($data->mbl_consignee);?>
+                                @else
+                                    <?=nl2br($data->hbl_consignee);?>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -114,15 +106,13 @@
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>NOTIFY (NAME & ADDRESS)</b>
                             <div class="isi-notify">
-                            @if($data->jenis>0)
-                                {{-- @if ($data->hbl_not_party !== null) --}}
-                                    {{ $data->hbl_not_party }}
-                                {{-- @else --}}
-                                    {{ $data->company_l }}<br>
-                                    {{ $data->address_l }}<br>
-                                    {{ $data->pic_l }}
-                                {{-- @endif --}}
-                            @endif
+                                @if($data->jenis>0)
+                                    @if($op1==0)
+                                        <?=nl2br($data->mbl_not_party);?>
+                                    @else
+                                        <?=nl2br($data->hbl_not_party);?>
+                                    @endif
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -274,26 +264,34 @@
                             <div class="isi-SI">
                                 <b>SI NO :</b> {{ $data->nomor_si }}<br/><br/>
                                 <b>DATE :</b>  {{ $data->quote_date }}    <br/><br/>
-                                <b>TO :</b>      {{ $data->company_o }}  <br/><br/>
+                                <b>TO :</b>      {{ $data->trc_name }}  <br/><br/>
                                 <b>ATTN :</b>    {{ $data->pic_o }}  <br/><br/>
-                                <b>FROM :</b>     <br/><br/>
-                                
+                                <b>FROM :</b>   {{ $data->updated_by }}  <br/><br/>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
-                            <b>BOOKING NO:</b>
-                            <div class="isi-booking" style="font-size: 10pt;color:red;">
-                                <b>{{ $data->booking_no }}</b>
-                            </div>
+                            <b>BOOKING NO :</b> 
+                                {{-- @if ($data->final_flag == 1) --}}
+                                {{ $data->booking_no }}
+                                {{-- @endif --}}
+                            <br/><br/>
+                            <b>PEB No. :</b> {{ $data->custom_doc_no }} <br/><br/>
+                            <b>PEB Date :</b> {{ $data->custom_doc_date }} <br/><br/>
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 8pt;vertical-align:top;padding-left:2px;border-bottom:1px solid #000;">
                             <b>ALSO NOTIFY PARTY</b>
                             <div class="isi-notify">
-
+                                @if($data->jenis>0)
+                                    @if($op1==0)
+                                        <?=nl2br($data->mbl_also_notify_party);?>
+                                    @else
+                                        <?=nl2br($data->hbl_also_notify_party);?>
+                                    @endif
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -417,7 +415,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
-                            <b>NW : {{ $comm[0]->weight }} {{ $comm[0]->code_c }}</b>
+                            <b>NW : {{ $comm[0]->netto.' '.$comm[0]->code_d}}</b>
                         </td>
                     </tr>
                     <tr>
@@ -427,7 +425,7 @@
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="20">
-                            <b>GW : {{ $comm[0]->netto }}</b>
+                            <b>GW : {{ $comm[0]->weight.' '.$comm[0]->code_d }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -441,12 +439,11 @@
                 <table width="100%" cellspacing="0" cellpadding="0">
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;vertical-align:bottom;padding-left:2px;" height="100.2">
-                            <b>MEAS : {{ $comm[0]->volume }}</b>
                         </td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #000;font-size:7pt;text-align:center;" height="20">
-                            <b></b>
+                            <b>MEAS : {{ $comm[0]->volume.' '.$comm[0]->code_e }}</b>
                         </td>
                     </tr>
                     <tr>
@@ -459,7 +456,12 @@
         </tr>
         <tr>
             <td width="70%" colspan="2" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;vertical-align:top;margin-left:2px;" height="60">
-                <b><u>CONTAINER/SEAL/GW/NO.OF PACKAGE (BREAKDOWN)</u></b>
+                <b><u>CONTAINER/SEAL/GW/NO.OF PACKAGE (BREAKDOWN)</u></b><br>
+                {{-- @if ($data->final_flag == 1) --}}
+                @foreach($cont as $ct)
+                <p style="font-size: 10px;padding-left:3px;color: blue">{{ $ct->container_no.' / '.$ct->seal_no.' / '.$ct->weight.' '.$ct->code_weight.' / '.$ct->qty.' '.$ct->code_qty.' / '.$ct->volume.' '.$ct->volume_code.' / '.$ct->container_type }}</p><br>
+                @endforeach
+                {{-- @endif --}}
             </td>
             <td width="15%" style="border-right: 1px solid #000;border-bottom: 1px solid #000;font-size:7pt;padding-left:2px;" height="40">
                 <b></b>

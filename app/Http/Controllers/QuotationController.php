@@ -320,7 +320,7 @@ class QuotationController extends Controller
     {
 
         $rules = [
-            'loaded' => 'required',
+            't_mloaded_type_id' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -374,7 +374,7 @@ class QuotationController extends Controller
                     'quote_date'            => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                     'customer_id'           => $request->customer_add,
                     'activity'              => $request->activity,
-                    't_mloaded_type_id'     => $request->loaded,
+                    't_mloaded_type_id'     => $request->t_mloaded_type_id,
                     't_mpic_id'             => $request->pic,
                     'shipment_by'           => $request->shipment,
                     'terms'                 => $request->terms,
@@ -1595,7 +1595,7 @@ class QuotationController extends Controller
                 'quote_date'            => Carbon::createFromFormat('d/m/Y', $request->date)->format('Y-m-d'),
                 'customer_id'           => $request->customer_add,
                 'activity'              => $request->activity,
-                't_mloaded_type_id'     => $request->loaded,
+                't_mloaded_type_id'     => $request->t_mloaded_type_id,
                 't_mpic_id'             => $request->pic,
                 'shipment_by'           => $request->shipment,
                 'terms'                 => $request->terms,

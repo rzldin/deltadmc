@@ -39,7 +39,8 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th width="60%">Schedule Type</th>
-                                <th>Status</th>
+                                <th>Status Internal</th>
+                                <th>Status Active</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -48,6 +49,13 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $list->schedule_type }}</td>
+                                <td align="center">
+                                    @if ($list->internal_flag == 1)
+                                        <span class="badge badge-success">YES</span>
+                                    @else
+                                        <span class="badge badge-danger">NO</span>
+                                    @endif
+                                </td>
                                 <td align="center">
                                     @if ($list->active_flag == 1)
                                         <span class="badge badge-success">ACTIVE</span>
@@ -117,7 +125,7 @@
                         </div>                                
                         <div class="col-md-8 col-xs-8">
                             <div class="icheck-primary d-inline">
-                                <input type="checkbox" id="status" name="status" checked>
+                                <input type="checkbox" id="status" name="status">
                                 <label for="status">
                                     Active
                                 </label>
@@ -180,11 +188,15 @@
                     $('#schedule').val(result.schedule_type);
                     $('#desc').val(result.desc);
                     if(result.internal_flag == 1){
-                        $('#internal').val(result.internal_flag).attr("checked","checked");
+                        $('#internal').attr("checked",true);
                     }else{
-                        $('#internal').val(result.internal_flag);
+                        $('#internal').attr("checked",false);
                     }
-                    $('#status').val(result.active_flag);
+                    if(result.active_flag == 1){
+                        $('#status').attr("checked",true);
+                    }else{
+                        $('#status').attr("checked",false);
+                    }
 
                     $("#myModal").find('.modal-title').text('Edit Data');
                     $("#myModal").modal('show',{backdrop: 'true'});           
