@@ -39,10 +39,51 @@
                         @endforeach
                     @endif
                     <!-- form start -->
-                    <form action="{{ route('quotation.quote_doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                  <form action="{{ route('quotation.quote_doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                     {{ csrf_field() }}   
                     <div class="card-body">
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Customer</label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="get_pic(this.value)">
+                                        
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 mt-1">
+                                        <a href="javascript:;" onclick="addCustomer()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>PIC</label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
+                                            <option>-- Select Customer First --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 mt-1">
+                                        <a href="javascript:;" onclick="addPic()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Date</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate"/>
+                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -73,35 +114,9 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label>Date</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" data-target="#reservationdate"/>
-                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Customer</label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="get_pic(this.value)">
-                                        
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1 mt-1">
-                                        <a href="javascript:;" onclick="addCustomer()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
                                         <label>Activity</label>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-8">
                                         <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity">
                                             <option value="" selected>-- Select Activity --</option>
                                             <option value="export" @if ($quote->activity == 'export')
@@ -115,60 +130,16 @@
                                             @endif>DOMESTIC</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-4" style="padding: 10px">
-                                        @foreach ($loaded as $l)
-                                        <div class="icheck-primary d-inline">
-                                            <input type="radio" id="loaded_{{ $l->id }}" name="loaded" value="{{ $l->id }}"  @if ($l->id == $quote->t_mloaded_type_id)
-                                                checked
-                                            @endif>
-                                            <label for="loaded_{{ $l->id }}">
-                                                {{ $l->loaded_type }}
-                                            </label>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>From</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ..." value="{{ $quote->from_text }}">
-                                        <datalist id="fromx">
-                                        </datalist>
-                                        <input type="hidden" name="from_id" id="from_id">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>To</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}">
-                                        <datalist id="tox">
-                                            {{-- @foreach ($port as $p)
-                                            <option id="{{ $p->id }}" value="{{ $p->port_name }}"></option>
-                                            @endforeach --}}
-                                            <input type="hidden" name="to_id" id="to_id">
-                                        </datalist>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-5">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>PIC</label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
-                                            <option>-- Select Customer First --</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1 mt-1">
-                                        <a href="javascript:;" onclick="addPic()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-primary">
+                            <p>Shipment</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>Shipment By</label>
@@ -188,6 +159,176 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Shipment By</label>
+                                    </div>
+                                    <div class="col-md-8" style="padding: 10px">
+                                        @foreach ($loaded as $l)
+                                        <div class="icheck-primary d-inline">
+                                            <input type="radio" id="loaded_{{ $l->id }}" name="t_mloaded_type_id" value="{{ $l->id }}"  @if ($l->id == $quote->t_mloaded_type_id)
+                                                checked
+                                            @endif>
+                                            <label for="loaded_{{ $l->id }}">
+                                                {{ $l->loaded_type }}
+                                            </label>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3 show_service">
+                            <div class="col-md-2">
+                                <label>Shipment Type <font color="red">*</font></label>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="btn-group" data-toggle="buttons">
+                                    @foreach ($service as $l)
+                                        <label class="btn btn-default mr-3">
+                                            <input type="radio" name="t_mservice_type_id" id="service_{{ $l->id }}" autocomplete="off" value="{{ $l->id }}" onchange="show_service(this.value)" @if ($l->id == $quote->t_mservice_type_id)
+                                                checked
+                                            @endif> {{ $l->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body div_after">
+                        <div class="card-primary">
+                            <p>Shipment Details</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 show_port_from">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>From Country</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" name="from_country" id="from_country" style="width: 100%;">
+                                            <option selected>-- Select From Country --</option>
+                                            @foreach ($list_country as $i)
+                                                <option value="{{ $i->id }}" @if ($quote->from_country == $i->id)
+                                                    selected
+                                                @endif>
+                                                    {{ $i->country_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>From Port</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="from_id" id="from_id" class="form-control select-ajax-port" onchange="get_port_name('from')">
+                                            @if($quote->from_id)
+                                                <option value="{{$quote->from_id}}" selected="selected">{{ $quote->from_text }}</option>
+                                            @endif
+                                        </select>
+                                        <input type="hidden" class="form-control" name="from" id="from"value="{{ $quote->from_text }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mb-3 show_port_from">
+                                    <div class="col-md-4">
+                                        <label>From City</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="from_city" id="from_city" placeholder="From City ..." value="{{ $quote->from_city }}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3 show_door_from">
+                                    <div class="col-md-4">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="from_postal" id="from_postal" placeholder="Postal Code ..." value="{{ $quote->from_postal }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-5 show_door_from">
+                            <div class="col-md-2">
+                                <label>Address</label>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea class="form-control" name="from_address" id="from_address">{{ $quote->from_address }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 show_port_to">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>To Country</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" name="to_country" id="to_country" style="width: 100%;">
+                                            <option selected>-- Select to Country --</option>
+                                            @foreach ($list_country as $i)
+                                                <option value="{{ $i->id }}"@if ($quote->to_country == $i->id)
+                                                    selected
+                                                @endif>
+                                                    {{ $i->country_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>To Port</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select name="to_id" id="to_id" class="form-control select-ajax-port" onchange="get_port_name('to')">
+                                            @if($quote->to_id)
+                                                <option value="{{$quote->to_id}}" selected="selected">{{ $quote->to_text }}</option>
+                                            @endif
+                                        </select>
+                                        <input type="hidden" class="form-control" name="to" id="to"value="{{ $quote->to_text }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mb-3 show_port_to">
+                                    <div class="col-md-4">
+                                        <label>To City</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="to_city" id="to_city" placeholder="to City ..." value="{{ $quote->to_city }}">
+                                    </div>
+                                </div>
+                                <div class="row mb-3 show_door_to">
+                                    <div class="col-md-4">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="to_postal" id="to_postal" placeholder="Postal Code ..." value="{{ $quote->to_postal }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row show_door_to">
+                            <div class="col-md-2">
+                                <label>Address</label>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea class="form-control" name="to_address" id="to_address">{{ $quote->to_address }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-primary">
+                            <p>Shipment Details</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>Terms</label>
@@ -203,6 +344,9 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>Commodity</label>
@@ -314,8 +458,7 @@
                             </div>
                         </div>
                     </div>
-                <!-- /.card-body -->
-                </form>
+                  </form>
                 </div>
                  <!-- /.card -->
             </div>
@@ -328,17 +471,17 @@
                        <table class="table table_lowm table-bordered">
                            <thead>
                                <tr>
-                                   <th width="1%">#</th>
-                                   <th width="10%">Length</th>
-                                   <th width="10%">Width</th>
-                                   <th width="10%">Height</th>
-                                   <th width="10%">Total</th>
-                                   <th width="15%">UOM</th>
+                                   <th>#</th>
+                                   <th width="13%">Length</th>
+                                   <th width="13%">Width</th>
+                                   <th width="13%">Height</th>
+                                   <th width="15%">Total</th>
+                                   <th width="8%">UOM</th>
                                    <th width="10%">Pieces</th>
                                    <th width="9%">Weight</th>
                                    <th width="10%">Total</th>
-                                   <th width="15%">UOM</th>
-                                   <th width="15%">Action</th>
+                                   <th width="8%">UOM</th>
+                                   <th>Action</th>
                                </tr>
                            </thead>
                            <tbody>
@@ -359,10 +502,10 @@
                                         <input type="text" class="form-control" name="height" id="height_1" placeholder="Height ..." onkeyup="numberOnly(this); hitungberat(1);">
                                    </td>
                                    <td>
-                                       <input type="text" name="total_cbm" id="total_cbm_1" value="0" class="form-control">
+                                       <input type="text" name="total_cbm" id="total_cbm_1" value="0" class="form-control" readonly>
                                    </td>
                                    <td>
-                                       <select class="form-control select2bs44" name="height_uom" id="height_uom_1">
+                                       <select class="form-control" name="height_uom" id="height_uom_1">
                                             <option value="">--Select Uom--</option>
                                             @foreach ($uom as $item)
                                             <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
@@ -376,10 +519,10 @@
                                         <input type="text" class="form-control" name="wight" id="wight_1" placeholder="Weight ..." onkeyup="numberOnly(this); hitungweight(1)">
                                    </td>
                                    <td>
-                                       <input type="text" name="total_weight" id="total_weight_1" value="0" class="form-control">
+                                       <input type="text" name="total_weight" id="total_weight_1" value="0" class="form-control" readonly>
                                    </td>
                                    <td>
-                                        <select class="form-control select2bs44" name="wight_uom" id="wight_uom_1">
+                                        <select class="form-control" name="wight_uom" id="wight_uom_1">
                                             <option value="">--Select Uom--</option>
                                             @foreach ($uom as $item)
                                             <option value="{{ $item->id }}">{{ $item->uom_code }}</option>                                                
@@ -402,27 +545,27 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newShipingDtl()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2" style="@if($quote->shipment_by != 'LAND') width: 150% @else width: 105% @endif">
+                       <table class="table table-bordered table-striped" id="myTable2">
                             <thead>
                                 <tr>
                                     <th width="2%">No</th>
                                     @if ($quote->shipment_by == 'LAND')
                                     <th width="15%">Truck Size</th>
                                     @else
-                                    <th width="15%">Carrier</th>
-                                    <th width="10%">Routing</th>
-                                    <th width="5%" style="font-size: 12px">Transit time(days)</th>
+                                    <th width="9%">Carrier</th>
+                                    <th width="3%">Routing</th>
+                                    <th width="3%" style="font-size: 12px">Transit time(days)</th>
                                     @endif
-                                    <th width="5%">Currency</th>
-                                    <th width="6%">Rate</th>
+                                    <th width="3%" style="font-size: 12px">Currency</th>
+                                    <th width="5%">Rate</th>
                                     <th width="6%">Cost</th>
                                     <th width="6%">Sell</th>
-                                    <th width="5%">Qty</th>
-                                    <th width="6%">Cost Value</th>
-                                    <th width="6%">Sell Value</th>
+                                    <th width="3%">Qty</th>
+                                    <th width="7%">Cost Value</th>
+                                    <th width="7%">Sell Value</th>
                                     <th width="5%">Vat</th>
-                                    <th width="7%">Total</th>
-                                    <th width="12%">Note</th>
+                                    <th width="9%">Total</th>
+                                    <th width="10%">Note</th>
                                     <th width="5%">Action</th>
                                 </tr>
                             </thead>
@@ -504,7 +647,7 @@
                                         Rate <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="rate" id="rate" placeholder="Rate ..." onkeyup="hitung()">
+                                        <input type="text" class="form-control" name="rate" id="rate" placeholder="Rate ..." onkeyup="hitung(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -512,7 +655,7 @@
                                         Cost <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="cost" id="cost" placeholder="Cost ..." onkeyup="hitung()">                     
+                                        <input type="text" class="form-control" name="cost" id="cost" placeholder="Cost ..." onkeyup="hitung(this)">                     
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -520,7 +663,7 @@
                                         Sell <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="sell" id="sell" placeholder="Sell ..." onkeyup="hitung()">
+                                        <input type="text" class="form-control" name="sell" id="sell" placeholder="Sell ..." onkeyup="hitung(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -528,7 +671,7 @@
                                         Qty <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="qty" id="qty" placeholder="Qty ..." onkeyup="hitung()">
+                                        <input type="text" class="form-control" name="qty" id="qty" placeholder="Qty ..." onkeyup="hitung(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -552,7 +695,7 @@
                                         Vat 
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ..." onkeyup="hitungTotal()">
+                                        <input type="text" class="form-control" name="vat" id="vat" placeholder="Vat ..." onkeyup="hitung(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -588,14 +731,14 @@
                         <a class="btn btn-primary btn-sm float-right" onclick="newDetailQuote()"><i class="fa fa-plus"></i> Add Data</a>
                     </div>
                     <div class="card-body table-responsive p-0">
-                       <table class="table table-bordered table-striped" id="myTable2" style="width: 150%">
+                       <table class="table table-bordered table-striped" id="myTable2">
                            <thead>
                                 <tr>
                                     <th width="1%">#</th>
                                     <th width="2%">No</th>
                                     <th width="10%">Service/Fee</th>
                                     <th width="10%">Description</th>
-                                    <th width="5%">Reimbursment</th>
+                                    <th width="1%" style="font-size: 10px;">Reimbursment</th>
                                     <th width="5%">Currency</th>
                                     <th width="6%">Rate</th>
                                     <th width="6%">Cost</th>
@@ -668,7 +811,7 @@
                                         Rate <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." value="" onkeyup="hitungx()">
+                                        <input type="text" class="form-control" name="rate" id="ratex" placeholder="Rate ..." value="" onkeyup="hitungx(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -676,7 +819,7 @@
                                         Cost <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx()">                     
+                                        <input type="text" class="form-control" name="cost" id="costx" placeholder="Cost ..." onkeyup="hitungx(this)">                     
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -684,7 +827,7 @@
                                         Sell <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="sell" id="sellx" placeholder="Sell ..." onkeyup="hitungx()">
+                                        <input type="text" class="form-control" name="sell" id="sellx" placeholder="Sell ..." onkeyup="hitungx(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -692,7 +835,7 @@
                                         Qty <font color="#f00">*</font>
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="qty" id="qtyx" placeholder="Qty ..." onkeyup="hitungx()">
+                                        <input type="text" class="form-control" name="qty" id="qtyx" placeholder="Qty ..." onkeyup="hitungx(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -716,7 +859,7 @@
                                         Vat 
                                     </div>
                                     <div class="col-md-8 col-xs-8">
-                                        <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungTotalx()">
+                                        <input type="text" class="form-control" name="vat" id="vatx" placeholder="Vat ..." onkeyup="hitungx(this)">
                                     </div>
                                 </div>
                                 <div class="row mb-2">
@@ -1071,18 +1214,18 @@
     var dsState;
 
     function hitungberat(id){
-        let l = $('#length_'+id).val();
-        let w = $('#width_'+id).val();
-        let h = $('#height_'+id).val();
+        let l = $('#length_'+id).val().toString().replace(/\./g, "");
+        let w = $('#width_'+id).val().toString().replace(/\./g, "");
+        let h = $('#height_'+id).val().toString().replace(/\./g, "");
         let total = Number(l)*Number(w)*Number(h)/1000000;
-        $('#total_cbm_'+id).val(total);
+        $('#total_cbm_'+id).val(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
     }
 
     function hitungweight(id){
-        let p = $('#pieces_'+id).val();
-        let ww = $('#wight_'+id).val();
+        let p = $('#pieces_'+id).val().toString().replace(/\./g, "");
+        let ww = $('#wight_'+id).val().toString().replace(/\./g, "");
         let total_weight = Number(p)*Number(ww);
-        $('#total_weight_'+id).val(total_weight);
+        $('#total_weight_'+id).val(total_weight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
     }
     $('#client_name').keyup(function(){
         let position = this.selectionStart
@@ -1280,7 +1423,7 @@
     }
 
     function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function reims(id)
@@ -1329,41 +1472,6 @@
             });
         }
     }
-
-    function get_fromto(val)
-    {
-        if(val!= ''){
-            $.ajax({
-                url: "{{ route('get.port') }}",
-                type: "POST",
-                data: "type="+val,
-                dataType: "html",
-                success: function(result) {
-                    var port = JSON.parse(result);
-                    $("#fromx").html(port);
-                    $("#tox").html(port);
-                }
-            });
-        }
-    }
-
-    $(function() {
-        $('input[name=from]').on('input',function() {
-            var selectedOption = $('option[value="'+$(this).val()+'"]');
-            console.log(selectedOption.length ? selectedOption.attr('id') : 'This option is not in the list!');
-            var id = selectedOption.attr('id');
-            $('#from_id').val(id)
-        });
-    });
-
-    $(function() {
-        $('input[name=to]').on('input',function() {
-            var selectedOption = $('option[value="'+$(this).val()+'"]');
-            console.log(selectedOption.length ? selectedOption.attr('id') : 'This option is not in the list!');
-            var id = selectedOption.attr('id');
-            $('#to_id').val(id)
-        });
-    });
 
     /** Load Dimension **/
     function loadDimension(id, val){
@@ -1728,7 +1836,7 @@
                 $('#charge').val(data.t_mcharge_code_id).trigger('change');
                 $('#descx').val(data.desc);
                 $('#id_dtl_quote').val(data.id);
-                $('#ratex').val(Number(data.rate));
+                $('#ratex').val(numberWithCommas(Number(data.rate)));
                 $('#currencyx').val(data.t_mcurrency_id).trigger('change');
                 if(data.reimburse_flag == 1){
                     $('#reimburs').prop('checked',true);
@@ -1737,12 +1845,12 @@
                     $('#reimburs').prop('checked',false);
                     $('#reimbursx').val(0)
                 }
-                $('#costx').val(Number(data.cost));
-                $('#sellx').val(Number(data.sell));
-                $('#qtyx').val(data.qty);
+                $('#costx').val(numberWithCommas(Number(data.cost)));
+                $('#sellx').val(numberWithCommas(Number(data.sell)));
+                $('#qtyx').val(numberWithCommas(Number(data.qty)));
                 $('#cost_valx').val(cost_val);
                 $('#sell_valx').val(sell_val);
-                $('#vatx').val(Number(data.vat));
+                $('#vatx').val(numberWithCommas(Number(data.vat)));
                 $('#totalx').val(subtotal);
                 $('#notex').val(data.notes);
 
@@ -1819,30 +1927,37 @@
         var reet = root.value;    
         var arr1=reet.length;      
         var ruut = reet.charAt(arr1-1);
-            if (reet.length > 0){   
-                    var regex = /[0-9]|\./;   
-                if (!ruut.match(regex)){   
-                    var reet = reet.slice(0, -1);   
-                    $(root).val(reet);   
-                }   
-            }  
+        if (reet.length > 0){   
+                var regex = /[0-9]|\./;   
+            if (!ruut.match(regex)){   
+                var reet = reet.slice(0, -1);   
+                $(root).val(reet);   
+            }else{
+                getComa(root.value,root.id);
+            }
+        }
     }
 
+    function getComa(value, id){
+        angka = value.toString().replace(/\./g, "");
+        $('#'+id).val(angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
 
     /** Hitung Cost Val Shipping Detail **/
-    function hitung()
+    function hitung(root)
     {
-        const cost = $('#qty').val()*Number($('#sell_val').val());
-        let nilai1 = $('#rate').val()*$('#cost').val();
-        let nilai2 = $('#rate').val()*$('#sell').val();
+        getComa(root.value,root.id);
+        const cost = $('#qty').val().toString().replace(/\./g, "")*Number($('#sell_val').val().toString().replace(/\./g, ""));
+        let nilai1 = $('#rate').val().toString().replace(/\./g, "")*$('#cost').val().toString().replace(/\./g, "");
+        let nilai2 = $('#rate').val().toString().replace(/\./g, "")*$('#sell').val().toString().replace(/\./g, "");
 
         /** Menghitung Cost Value **/
-        let cost_val = Number(nilai1)*Number($('#qty').val());
+        let cost_val = Number(nilai1)*Number($('#qty').val().toString().replace(/\./g, ""));
         cost_val = cost_val.toFixed(2)
         cost_val = numberWithCommas(Number(cost_val));
 
         /** Menghitung Cost Value **/
-        let sell_val = Number(nilai2)*Number($('#qty').val());
+        let sell_val = Number(nilai2)*Number($('#qty').val().toString().replace(/\./g, ""));
         sell_val = sell_val.toFixed(2)
         sell_val = numberWithCommas(Number(sell_val));
 
@@ -1854,22 +1969,22 @@
     }
 
     /** Hitung Cost Val Detail Quote **/
-    function hitungx()
+    function hitungx(root)
     {
-        let nilai1 = $('#ratex').val()*$('#costx').val();
-        let nilai2 = $('#ratex').val()*$('#sellx').val();
+        getComa(root.value,root.id);
+        let nilai1 = $('#ratex').val().toString().replace(/\./g, "")*$('#costx').val().toString().replace(/\./g, "");
+        let nilai2 = $('#ratex').val().toString().replace(/\./g, "")*$('#sellx').val().toString().replace(/\./g, "");
 
         /** Menghitung Cost Value **/
-        let cost_val = Number(nilai1)*Number($('#qtyx').val());
+        let cost_val = Number(nilai1)*Number($('#qtyx').val().toString().replace(/\./g, ""));
         cost_val = cost_val.toFixed(2)
         cost_val = numberWithCommas(Number(cost_val));
 
         /** Menghitung Cost Value **/
-        let sell_val = Number(nilai2)*Number($('#qtyx').val());
+        let sell_val = Number(nilai2)*Number($('#qtyx').val().toString().replace(/\./g, ""));
         sell_val = sell_val.toFixed(2)
         sell_val = numberWithCommas(Number(sell_val));
 
-        
         $('#cost_valx').val(cost_val);
         $('#sell_valx').val(sell_val);
         hitungTotalx();
@@ -1879,10 +1994,10 @@
     /** Hitung Total Shipping Detail **/
     function hitungTotal()
     {
-        let sellVal = $('#sell_val').val();
-        sellVal = sellVal.replace(/,/g, '') 
+        let sellVal = $('#sell_val').val().toString().replace(/\./g, "");
+        sellVal = sellVal.toString().replace(/\./g, "");
         // const cost = $('#qty').val()*sellVal;
-        let total = Number(sellVal)+Number($('#vat').val());
+        let total = Number(sellVal)+Number($('#vat').val().toString().replace(/\./g, ""));
         total = total.toFixed(2)
         total = numberWithCommas(Number(total));
         $('#total').val(total);
@@ -1892,10 +2007,10 @@
     /** Hitung Total Detail Quote **/
     function hitungTotalx()
     {
-        let sellVal = $('#sell_valx').val();
-        sellVal = sellVal.replace(/,/g, '') 
-        const cost = $('#qtyx').val()*sellVal;
-        let total = Number(cost)+Number($('#vatx').val());
+        let sellVal = $('#sell_valx').val().toString().replace(/\./g, "");
+        sellVal = sellVal.toString().replace(/\./g, "");
+        // const cost = $('#qtyx').val()*sellVal;
+        let total = Number(sellVal)+Number($('#vatx').val().toString().replace(/\./g, ""));
         total = total.toFixed(2)
         total = numberWithCommas(Number(total));
         $('#totalx').val(total);
@@ -2312,13 +2427,65 @@
         }
     }
 
+    function show_service(val)
+    {
+        if(val!= ''){
+            $('.div_after').show();
+            $('.show_port_from').hide();
+            $('.show_door_from').hide();
+            $('.show_port_to').hide();
+            $('.show_door_to').hide();
+            if(val==1){//port to port
+                $('.show_port_from').show();
+                $('.show_port_to').show();
+            }else if(val==2){//Port to Door
+                $('.show_port_from').show();
+                $('.show_port_to').show();
+                $('.show_door_to').show();
+            }else if(val==3){//door to port
+                $('.show_port_from').show();
+                $('.show_door_from').show();
+                $('.show_port_to').show();
+            }else if(val==4){//door to door
+                $('.show_port_from').show();
+                $('.show_door_from').show();
+                $('.show_port_to').show();
+                $('.show_door_to').show();
+            }
+        }else{
+            $('.div_after').hide();
+        }
+    }
+
+    function get_port_name(id){
+        const port_name = $('#'+id+'_id').select2('data')[0].text;
+        $('#'+id).val(port_name);
+    }
+
     $(function() {
+        $('.select-ajax-port').select2({
+            theme: "bootstrap4",
+          ajax: {
+            url: '{{ route("quotation.get_where_port") }}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data.items,
+              };
+            },
+            cache: true
+          },
+          placeholder: 'Search Port',
+          minimumInputLength: 3,
+        });
         loadDimension({{ Request::segment(3) }}, 'a');
         loadShipping({{ Request::segment(3) }}, 'a');
         loadDetail({{ Request::segment(3) }}, 'a');
         loadProfit({{ Request::segment(3) }}); 
+        show_service({{$quote->t_mservice_type_id}});
         get_customer({{ $quote->customer_id }});
-        get_pic({{ $quote->customer_id }})
+        get_pic({{ $quote->customer_id }});
     });
   </script>
       

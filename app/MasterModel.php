@@ -134,7 +134,7 @@ class MasterModel extends Model
         // return DB::select("SELECT a.*, b.country_name FROM t_mport a LEFT JOIN t_mcountry b ON a.t_mcountry_id = b.id ORDER BY a.port_name");
 
         return DB::table('t_mport')->select('t_mport.*', 't_mcountry.country_name')
-            ->leftJoin('t_mcountry','t_mport.t_mcountry_id','=','t_mcountry.id');
+            ->leftJoin('t_mcountry','t_mport.t_mcountry_id','=','t_mcountry.id')->get();
     }
 
     public static function port_filter()

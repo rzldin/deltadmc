@@ -66,10 +66,20 @@
                 </tr>
             </thead>
             <tbody>
-                @php $refund = 0; @endphp
+                @php 
+                    $refund = 0;
+                    $quote_sell = 0;
+                    $quote_val = 0;
+                    $quote_vat = 0;
+                    $quote_total = 0;
+                @endphp
                 @foreach ($detail_quote as $item)
                 @php 
                     if($item->t_mcharge_code_id!=33){//refund tidak di tunjukkan
+                        $quote_sell += $item->sell;
+                        $quote_val += $item->sell_val;
+                        $quote_vat += $item->vat;
+                        $quote_total += $item->subtotal;
                 @endphp
                 <tr>
                     <td>{{ $loop->iteration }}</td>
@@ -86,6 +96,14 @@
                     }
                 @endphp
                 @endforeach
+                <tr>
+                    <td style="text-align: right;" colspan="2">Total</td>
+                    <td style="text-align: right;">{{ number_format($quote_sell,2,',','.')}}</td>
+                    <td></td>
+                    <td style="text-align: right;">{{ number_format($quote_val,2,',','.')}}</td>
+                    <td style="text-align: right;">{{ number_format($quote_vat,2,',','.')}}</td>
+                    <td style="text-align: right;">{{ number_format($quote_total,2,',','.')}}</td>
+                </tr>
             </tbody>
         </table>
         <br/>

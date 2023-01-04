@@ -244,6 +244,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('get/pic_b', 'QuotationController@get_pic_b')->name('get.pic_b');
     Route::post('get/port', 'QuotationController@get_port')->name('get.port');
     Route::get('get/port_b', 'QuotationController@get_port_b')->name('get.port_b');
+    Route::get('/quotation/get_where_port','quotationController@get_where_port')->name('quotation.get_where_port');
     Route::post('/quotation/quote_getCurrencyCode', 'QuotationController@quote_getCurrencyCode')->name('quotation.quote_getCurrencyCode');
     Route::match(array('GET', 'POST'), '/quotation/customer', 'QuotationController@get_customer')->name('get.customer');
     Route::match(array('GET', 'POST'), '/quotation/shipper', 'QuotationController@get_shipper')->name('get.shipper');

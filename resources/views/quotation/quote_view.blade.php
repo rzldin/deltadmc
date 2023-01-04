@@ -32,18 +32,49 @@
                         @foreach($errors->all() as $error)
                         <div class="alert alert-danger" role="alert">
                             {{ $error }}
-                        </div>  		
+                        </div>          
                         @endforeach
                     @endif
                     <!-- form start -->
-                    <form action="" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+                  <form action="{{ route('quotation.quote_doUpdate') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                     {{ csrf_field() }}   
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Customer</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" value="{{ $quote->client_name }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>PIC</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" value="{{ $quote->name_pic }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Date</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                            <input type="text" name="date" id="datex" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
+                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>Quote Number</label>
+                                        <label>Quote Number <font color="red">*</font></label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ..." value="{{ $quote->quote_no }}" disabled>
@@ -65,69 +96,21 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label>Date</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" value="{{ \Carbon\Carbon::parse($quote->quote_date)->format('d/m/Y') }}" class="form-control datetimepicker-input" data-target="#reservationdate" disabled/>
-                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Customer</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" value="{{ $quote->client_name }}" disabled>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
                                         <label>Activity</label>
                                     </div>
                                     <div class="col-md-4">
                                         <input type="text" class="form-control" value="{{ $quote->activity }}" disabled>
                                     </div>
-                                    <div class="col-md-4" style="padding: 10px">
-                                        @foreach ($loaded as $l)
-                                        <input type="radio" name="loaded" id="loaded" value="{{ $l->id }}" disabled @if ($l->id == $quote->t_mloaded_type_id)
-                                            checked
-                                        @endif>
-                                        <label>{{ $l->loaded_type }}</label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>From</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ..." value="{{ $quote->from_text }}" disabled>
-                                        <input type="hidden" name="from_id" id="from_id">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Commodity</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ..." value="{{ $quote->commodity }}" disabled>
-                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-5">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>PIC</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" value="{{ $quote->name_pic }}" disabled>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-primary">
+                            <p>Shipment</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>Shipment By</label>
@@ -147,6 +130,163 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Shipment By</label>
+                                    </div>
+                                    <div class="col-md-8" style="padding: 10px">
+                                        @foreach ($loaded as $l)
+                                        <input type="radio" name="loaded" id="loaded" value="{{ $l->id }}" disabled @if ($l->id == $quote->t_mloaded_type_id)
+                                            checked
+                                        @endif>
+                                        <label>{{ $l->loaded_type }}</label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3 show_service">
+                            <div class="col-md-2">
+                                <label>Shipment Type <font color="red">*</font></label>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="btn-group" data-toggle="buttons">
+                                    @foreach ($service as $l)
+                                        <label class="btn btn-default mr-3">
+                                            <input type="radio" name="t_mservice_type_id" id="service_{{ $l->id }}" autocomplete="off" value="{{ $l->id }}" onchange="show_service(this.value)" disabled @if ($l->id == $quote->t_mservice_type_id)
+                                                checked
+                                            @endif> {{ $l->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body div_after">
+                        <div class="card-primary">
+                            <p>Shipment Details</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 show_port_from">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>From Country</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" name="from_country" id="from_country" style="width: 100%;" disabled>
+                                            <option selected>-- Select From Country --</option>
+                                            @foreach ($list_country as $i)
+                                                <option value="{{ $i->id }}" @if ($quote->from_country == $i->id)
+                                                    selected
+                                                @endif>
+                                                    {{ $i->country_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>From Port</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ..." value="{{ $quote->from_text }}" disabled>
+                                        <input type="hidden" name="from_id" id="from_id">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mb-3 show_port_from">
+                                    <div class="col-md-4">
+                                        <label>From City</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="from_city" id="from_city" placeholder="From City ..." value="{{ $quote->from_city }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 show_door_from">
+                                    <div class="col-md-4">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="from_postal" id="from_postal" placeholder="Postal Code ..." value="{{ $quote->from_postal }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-5 show_door_from">
+                            <div class="col-md-2">
+                                <label>Address</label>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea class="form-control" name="from_address" id="from_address" disabled>{{ $quote->from_address }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 show_port_to">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>To Country</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select class="form-control select2bs44" name="to_country" id="to_country" style="width: 100%;" disabled>
+                                            <option selected>-- Select to Country --</option>
+                                            @foreach ($list_country as $i)
+                                                <option value="{{ $i->id }}"@if ($quote->to_country == $i->id)
+                                                    selected
+                                                @endif>
+                                                    {{ $i->country_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>To Port</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row mb-3 show_port_to">
+                                    <div class="col-md-4">
+                                        <label>To City</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="to_city" id="to_city" placeholder="to City ..." value="{{ $quote->to_city }}" disabled>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 show_door_to">
+                                    <div class="col-md-4">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="to_postal" id="to_postal" placeholder="Postal Code ..." value="{{ $quote->to_postal }}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row show_door_to">
+                            <div class="col-md-2">
+                                <label>Address</label>
+                            </div>
+                            <div class="col-md-10">
+                                <textarea class="form-control" name="to_address" id="to_address" disabled>{{ $quote->to_address }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-primary">
+                            <p>Shipment Details</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>Terms</label>
@@ -155,12 +295,15 @@
                                         <input type="text" class="form-control" value="{{ $quote->incoterns_code }}" disabled>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label>To</label>
+                                        <label>Commodity</label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ..." value="{{ $quote->to_text }}" disabled>
+                                        <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ..." value="{{ $quote->commodity }}" disabled>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -212,10 +355,10 @@
                                 <div class="row mb-3">
                                     <div class="col-md-2">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="hazard" disabled @if ($quote->hazardous_flag == 1)
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="hazard" @if ($quote->hazardous_flag == 1)
                                                 checked
                                             @endif>
-                                            <label for="customCheckbox1" class="custom-control-label">Is Hazardous</label>
+                                            <label for="customCheckbox1" class="custom-control-label" disabled>Is Hazardous</label>
                                         </div>
                                     </div>
                                     <div class="col-md-10">
@@ -234,33 +377,33 @@
                                     <div class="col-md-2"></div>
                                     <div class="col-md-3">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="delivery" @if ($quote->pickup_delivery_flag == 1)
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="delivery" disabled @if ($quote->pickup_delivery_flag == 1)
                                             checked
-                                            @endif disabled>
+                                            @endif>
                                             <label for="customCheckbox2" class="custom-control-label">Need Pickup/ Delivery</label>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="custom" @if ($quote->custom_flag == 1)
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="custom" disabled @if ($quote->custom_flag == 1)
                                             checked
-                                            @endif disabled>
+                                            @endif>
                                             <label for="customCheckbox3" class="custom-control-label">Need Custom Clearance</label>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="fumigation" @if ($quote->fumigation_flag == 1)
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="fumigation" disabled @if ($quote->fumigation_flag == 1)
                                             checked
-                                            @endif disabled>
+                                            @endif>
                                             <label for="customCheckbox4" class="custom-control-label">Fumigation Required</label>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="custom-control custom-checkbox">
-                                            <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="goods" @if ($quote->stackable_flag == 1)
+                                            <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="goods" disabled @if ($quote->stackable_flag == 1)
                                             checked
-                                            @endif disabled>
+                                            @endif>
                                             <label for="customCheckbox5" class="custom-control-label">Goods are Stackable</label>
                                         </div>
                                     </div>
@@ -268,8 +411,7 @@
                             </div>
                         </div>
                     </div>
-                <!-- /.card-body -->
-                </form>
+                  </form>
                 </div>
                  <!-- /.card -->
             </div>
@@ -278,8 +420,8 @@
                     <div class="card-header">
                         <h3 class="card-title">Dimension Info</h3>
                     </div>
-                    <div class="card-body table-responsive p-0">
-                       <table class="table table_lowm table-bordered">
+                    <div class="card-body table-responsive">
+                       <table class="table table-bordered">
                            <thead>
                                <tr>
                                    <th width="1%">No</th>

@@ -41,7 +41,8 @@ class QuotationController extends Controller
             $inco = MasterModel::incoterms_get();
             $port = MasterModel::port();
             $uom = MasterModel::uom();
-            return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded', 'list_account', 'list_country', 'list_sales'));
+            $service = DB::table('m_shipment')->get();
+            return view('quotation.quote_add', compact('company', 'inco', 'port', 'uom', 'version', 'loaded', 'list_account', 'list_country', 'list_sales', 'service'));
         }else{
             return abort(403);
         }
@@ -123,18 +124,35 @@ class QuotationController extends Controller
         echo json_encode($table);
     }
 
-    public function get_port_b()
+    public function get_port_b(Request $request)
     {
         $table  = '';
+        $id = '';
+        if(isset($request->id)){
+            $id = $request->id;
+        }
         $data   = MasterModel::port();
         $table  = '<option> -- Select -- </option>';
         foreach($data as $row)
         {
-            $table .= '<option value="'.$row->id.'">'.$row->port_name.'</option>';
+            $s = '';
+            if($row->id==$id){
+                $s = 'selected';
+            }
+            $table .= '<option value="'.$row->id.'" '.$s.'>'.$row->port_name.'</option>';
         }
 
         header('Content-Type: application/json');
         echo json_encode($table);
+    }
+
+    public function get_where_port(Request $request){
+
+      $response = [];
+      $response['items'] = DB::table('t_mport')->where('port_name', 'LIKE', '%'.$request->input('term', '').'%')
+                            ->get(['id', 'port_name as text']);
+
+      return $response;
     }
 
     public function get_customer(Request $request)
@@ -321,6 +339,7 @@ class QuotationController extends Controller
 
         $rules = [
             't_mloaded_type_id' => 'required',
+            't_mservice_type_id' => 'required'
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -375,13 +394,22 @@ class QuotationController extends Controller
                     'customer_id'           => $request->customer_add,
                     'activity'              => $request->activity,
                     't_mloaded_type_id'     => $request->t_mloaded_type_id,
+                    't_mservice_type_id'    => $request->t_mservice_type_id,
                     't_mpic_id'             => $request->pic,
                     'shipment_by'           => $request->shipment,
                     'terms'                 => $request->terms,
                     'from_text'             => $request->from,
-                    'from_id'               => $request->form_id,
+                    'from_id'               => $request->from_id,
+                    'from_country'          => $request->from_country,
+                    'from_city'             => $request->from_city,
+                    'from_postal'           => $request->from_postal,
+                    'from_address'          => $request->from_address,
                     'to_text'               => $request->to,
                     'to_id'                 => $request->to_id,
+                    'to_country'            => $request->to_country,
+                    'to_city'               => $request->to_city,
+                    'to_postal'             => $request->to_postal,
+                    'to_address'            => $request->to_address,
                     'commodity'             => $request->commodity,
                     'pieces'                => $request->pieces,
                     'weight'                => $request->weight,
@@ -532,6 +560,7 @@ class QuotationController extends Controller
         $data['currency'] = MasterModel::currency();
         $data['volume_uom'] = DB::table('t_muom')->where('id', $quote->volume_uom_id)->first();
         $data['quote'] = $quote;
+        $data['service'] = DB::table('m_shipment')->get();
         return view('quotation.quote_edit')->with($data);
     }
 
@@ -561,6 +590,7 @@ class QuotationController extends Controller
         $data['list_account']   = MasterModel::account_get();
         $data['list_country']   = MasterModel::country();
         $data['list_sales']     = $sales;
+        $data['service']        = DB::table('m_shipment')->get();
         return view('quotation.quote_new_version')->with($data);
     }
 
@@ -647,6 +677,8 @@ class QuotationController extends Controller
         $data['quoteDtl']       = $quoteDtl;
         $data['profit']         = $profit;
         $data['role_user']      = session()->get('user.role');
+        $data['service']        = DB::table('m_shipment')->get();
+        $data['list_country']   = MasterModel::country();
 
         return view('quotation.quote_view')->with($data);
     }
@@ -665,15 +697,15 @@ class QuotationController extends Controller
             DB::table('t_quote_dimension')->insert([
                 't_quote_id'        => $request->quote,
                 'position_no'       => $p,
-                'length'            => $request->length,
-                'width'             => $request->width,
-                'height'            => $request->height,
+                'length'            => str_replace('.', '',$request->length),
+                'width'             => str_replace('.', '',$request->width),
+                'height'            => str_replace('.', '',$request->height),
                 'height_uom_id'     => $request->height_uom,
-                'wight'             => $request->wight,
-                'pieces'            => $request->pieces,
+                'wight'             => str_replace('.', '',$request->wight),
+                'pieces'            => str_replace('.', '',$request->pieces),
                 'wight_uom_id'      => $request->wight_uom,
-                'total_cbm'         => $request->total_cbm,
-                'total_weight'      => $request->total_weight,
+                'total_cbm'         => str_replace('.', '',$request->total_cbm),
+                'total_weight'      => str_replace('.', '',$request->total_weight),
                 'created_by'        => $user,
                 'created_on'        => $tanggal
             ]);
@@ -699,32 +731,32 @@ class QuotationController extends Controller
                 $wight_uom = DB::table('t_muom')->where('id', $row->wight_uom_id)->first();
                 $tabel .= '<tr>';
                 $tabel .= '<td class="text-right">'.($no-1).'</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_length_'.$no.'">'.$row->le_dimen.'</label><input type="text" id="length_'.$no.'" name="length" class="form-control" value="'.$row->le_dimen.'" style="display:none"></td>';
-                $tabel .= '<td class="text-right"><label id="lbl_width_'.$no.'">'.$row->width.'</label>';
-                $tabel .= '<input type="text" id="width_'.$no.'" name="width" class="form-control" value="'.$row->width.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
-                $tabel .= '<td class="text-right"><label id="lbl_height_'.$no.'">'.$row->height.'</label>';
+                $tabel .= '<td class="text-right"><label id="lbl_length_'.$no.'">'.number_format($row->le_dimen,0,',','.').'</label><input type="text" id="length_'.$no.'" name="length" class="form-control" value="'.number_format($row->le_dimen,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
+                $tabel .= '<td class="text-right"><label id="lbl_width_'.$no.'">'.number_format($row->width,0,',','.').'</label>';
+                $tabel .= '<input type="text" id="width_'.$no.'" name="width" class="form-control" value="'.number_format($row->width,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
+                $tabel .= '<td class="text-right"><label id="lbl_height_'.$no.'">'.number_format($row->height,0,',','.').'</label>';
                 $tabel .= '<input type="text" id="height_'.$no.'" name="height" class="form-control" '
-                    . ' value="'.$row->height.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
-                $tabel .= '<td class="text-right"><label id="lbl_total_cbm_'.$no.'">'.$row->total_cbm.'</label>';
+                    . ' value="'.number_format($row->height,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
+                $tabel .= '<td class="text-right"><label id="lbl_total_cbm_'.$no.'">'.number_format($row->total_cbm,0,',','.').'</label>';
                 $tabel .= '<input type="text" id="total_cbm_'.$no.'" name="total_cbm" class="form-control" '
-                    . ' value="'.$row->total_cbm.'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');"></td>';
+                    . ' value="'.number_format($row->total_cbm,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungberat('.$no.');" readonly></td>';
                 $tabel .= '<td class="text-center"><label id="lbl_height_uom_'.$no.'">'.$row->uom_code.'</label>';
                     $tabel .= '<select id="height_uom_'.$no.'" name="height_uom" class="form-control select2bs44" ';
                     $tabel .= 'data-placeholder="Pilih..." style="margin-bottom:5px; display:none" >';
                     $tabel .= '<option value=""></option>';
                     $tabel .= '</select>';
                 $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_pieces_'.$no.'">'.$row->pieces.'</label>';
+                $tabel .= '<td class="text-right"><label id="lbl_pieces_'.$no.'">'.number_format($row->pieces,0,',','.').'</label>';
                 $tabel .= '<input type="text" id="pieces_'.$no.'" name="pieces" class="form-control" '
-                    . ' value="'.$row->pieces.'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
+                    . ' value="'.number_format($row->pieces,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
                 $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_wight_'.$no.'">'.$row->wight.'</label>';
+                $tabel .= '<td class="text-right"><label id="lbl_wight_'.$no.'">'.number_format($row->wight,0,',','.').'</label>';
                 $tabel .= '<input type="text" id="wight_'.$no.'" name="wight" class="form-control" '
-                    . ' value="'.$row->wight.'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
+                    . ' value="'.number_format($row->wight,0,',','.').'" style="display:none" onkeyup="numberOnly(this); hitungweight('.$no.')">';
                 $tabel .= '</td>';
-                $tabel .= '<td class="text-right"><label id="lbl_total_weight_'.$no.'">'.$row->total_weight.'</label>';
+                $tabel .= '<td class="text-right"><label id="lbl_total_weight_'.$no.'">'.number_format($row->total_weight,0,',','.').'</label>';
                 $tabel .= '<input type="text" id="total_weight_'.$no.'" name="total_weight" class="form-control" '
-                    . ' value="'.$row->total_weight.'" style="display:none">';
+                    . ' value="'.number_format($row->total_weight,0,',','.').'" style="display:none" readonly>';
                 $tabel .= '</td>';
                 $tabel .= '<td class="text-center"><label id="lbl_wight_uom_'.$no.'">'.$wight_uom->uom_code.'</label>';
                     $tabel .= '<select id="wight_uom_'.$no.'" name="wight_uom" class="form-control select2bs44" ';
@@ -737,13 +769,13 @@ class QuotationController extends Controller
                     $tabel .= '<td style="text-align:center;">';
                     $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-primary'
                             . '" onclick="editDetaild('.$row->height_uom_id.','.$row->wight_uom_id.','.$no.');" style="margin-top:5px" id="btnEditd_'.$no.'"> '
-                            . '<i class="fa fa-edit"></i> Edit &nbsp; </a>';
+                            . '<i class="fa fa-edit"></i></a>';
                     $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-success'
-                            . '" onclick="updateDetaild('.$row->id.','.$no.');" style="margin-top:5px; display:none" id="btnUpdated_'.$no.'"> '
-                            . '<i class="fa fa-save"></i> Update </a>';
+                            . '" onclick="updateDetaild('.$row->id.','.$no.');" style="margin-top:5px; margin-right: 2px; display:none" id="btnUpdated_'.$no.'"> '
+                            . '<i class="fa fa-save"></i></a>';
                     $tabel .= '<a href="javascript:;" class="btn btn-xs btn-circle btn-danger'
-                            . '" onclick="hapusDetaild('.$row->id.');" style="margin-top:5px"> '
-                            . '<i class="fa fa-trash"></i> Delete </a>';
+                            . '" onclick="hapusDetaild('.$row->id.');" style="margin-top:5px; margin-right: 2px"> '
+                            . '<i class="fa fa-trash"></i></a>';
                     $tabel .= '</td>';
                 }
 
@@ -782,14 +814,14 @@ class QuotationController extends Controller
             DB::table('t_quote_dimension')
             ->where('id', $request->id)
             ->update([
-                'length'            => $request->length,
-                'width'             => $request->width,
-                'height'            => $request->height,
+                'length'            => str_replace('.','', $request->length),
+                'width'             => str_replace('.','', $request->width),
+                'height'            => str_replace('.','', $request->height),
                 'height_uom_id'     => $request->height_uom,
-                'wight'             => $request->wight,
-                'pieces'            => $request->pieces,
-                'total_cbm'         => $request->total_cbm,
-                'total_weight'      => $request->total_weight,
+                'wight'             => str_replace('.','', $request->wight),
+                'pieces'            => str_replace('.','', $request->pieces),
+                'total_cbm'         => str_replace('.','', $request->total_cbm),
+                'total_weight'      => str_replace('.','', $request->total_weight),
                 'wight_uom_id'      => $request->wight_uom
             ]);
 
@@ -821,71 +853,20 @@ class QuotationController extends Controller
             'transit_time'      => $request->transit,
             'truck_size'        => $request->truck_size,
             't_mcurrency_id'    => $request->currency,
-            'rate'              => $request->rate,
-            'cost'              => $request->cost,
-            'sell'              => $request->sell,
-            'qty'               => $request->qty,
-            'cost_val'          => str_replace(',','', $request->cost_val),
-            'sell_val'          => str_replace(',','', $request->sell_val),
-            'vat'               => $request->vat,
-            'subtotal'          => str_replace(',','', $request->total),
+            'rate'              => str_replace('.','', $request->rate),
+            'cost'              => str_replace('.','', $request->cost),
+            'sell'              => str_replace('.','', $request->sell),
+            'qty'               => str_replace('.','', $request->qty),
+            'cost_val'          => str_replace('.','', $request->cost_val),
+            'sell_val'          => str_replace('.','', $request->sell_val),
+            'vat'               => str_replace('.','', $request->vat),
+            'subtotal'          => str_replace('.','', $request->total),
             'notes'             => $request->note,
             'created_by'        => $user,
             'created_on'        => $tanggal
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-
-        $result = array();
-        foreach ($data as $key)
-        {
-            $result = array_merge($result, $key);
-        }
-
-        $detail = $result;
-
-        $totalCost = 0;
-        $totalSell = 0;
-        foreach($detail as $row)
-        {   
-            $totalCost += $row->cost_val;
-            $totalSell += $row->sell_val;
-        }
-
-        $costV = $totalCost;
-        $sellV = $totalSell;
-        
-        #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        if(count($detail) >= 1){
-            foreach($data as $shipping){
-                $cekProfit = DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->get();
-
-                $totalCost  = $shipping->cost_val + $costV;
-                $totalSell  = $shipping->sell_val + $sellV;
-                $profit     = $totalSell - $totalCost;
-                $user = Auth::user()->name;
-                $tanggal = Carbon::now();
-                    if(count($cekProfit) == 0){
-                        try {
-                            DB::table('t_quote_profit')->insert([
-                                't_quote_id'            => $shipping->t_quote_id,
-                                't_quote_ship_dtl_id'   => $shipping->id,
-                                't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                                'total_cost'            => $totalCost,
-                                'total_sell'            => $totalSell,
-                                'total_profit'          => $profit,
-                                'profit_pct'            => ($profit*100)/$totalSell,
-                                'created_by'            => $user,
-                                'created_on'            => $tanggal
-                            ]);
-                            $return_data = 'sukses';
-                        } catch (\Exception $e) {
-                            $return_data = $e->getMessage();
-                        }
-                    }
-                }
-            }
+        $return_data = $this->hitung_profit($request->quote);
             
         $return_data = 'sukses';
         header('Content-Type: application/json');
@@ -995,65 +976,18 @@ class QuotationController extends Controller
             'transit_time'      => $request->transit,
             'truck_size'        => $request->truck_size,
             't_mcurrency_id'    => $request->currency,
-            'rate'              => $request->rate,
-            'cost'              => $request->cost,
-            'sell'              => $request->sell,
-            'qty'               => $request->qty,
-            'cost_val'          => str_replace(',','', $request->cost_val),
-            'sell_val'          => str_replace(',','', $request->sell_val),
-            'vat'               => $request->vat,
-            'subtotal'          => str_replace(',','', $request->total),
+            'rate'              => str_replace('.','', $request->rate),
+            'cost'              => str_replace('.','', $request->cost),
+            'sell'              => str_replace('.','', $request->sell),
+            'qty'               => str_replace('.','', $request->qty),
+            'cost_val'          => str_replace('.','', $request->cost_val),
+            'sell_val'          => str_replace('.','', $request->sell_val),
+            'vat'               => str_replace('.','', $request->vat),
+            'subtotal'          => str_replace('.','', $request->total),
             'notes'             => $request->note
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE a.t_quote_id = '".$request->quote."'");
-
-        $result = array();
-        foreach ($data as $key)
-        {
-            $result = array_merge($result, $key);
-        }
-
-        $detail = $result;
-
-        $totalCost = 0;
-        $totalSell = 0;
-        foreach($detail as $row)
-        {   
-            $totalCost += $row->cost_val;
-            $totalSell += $row->sell_val;
-        }
-
-        $costV = $totalCost;
-        $sellV = $totalSell;
-        
-        #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        
-        foreach($data as $shipping){
-            $totalCost  = $shipping->cost_val + $costV;
-            $totalSell  = $shipping->sell_val + $sellV;
-            $profit     = $totalSell - $totalCost;
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-                try {
-                    DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
-                    ->update([
-                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                        'total_cost'            => $totalCost,
-                        'total_sell'            => $totalSell,
-                        'total_profit'          => $profit,
-                        'profit_pct'            => ($profit*100)/$totalSell,
-                        'created_by'            => $user,
-                        'created_on'            => $tanggal
-                    ]);
-                    $return_data = 'sukses';
-                } catch (\Exception $e) {
-                    $return_data = $e->getMessage();
-                }
-            }
-        $return_data = 'sukses';
-        
+        $return_data = $this->hitung_profit($request->quote);
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
@@ -1084,20 +1018,27 @@ class QuotationController extends Controller
             'desc'              => $request->desc,
             'reimburse_flag'    => $r,
             't_mcurrency_id'    => $request->currency,
-            'rate'              => $request->rate,
-            'cost'              => $request->cost,
-            'sell'              => $request->sell,
-            'qty'               => $request->qty,
-            'cost_val'          => str_replace(',', '', $request->cost_val),
-            'sell_val'          => str_replace(',','', $request->sell_val),
-            'vat'               => $request->vat,
-            'subtotal'          => str_replace(',','', $request->total),
+            'rate'              => str_replace('.', '', $request->rate),
+            'cost'              => str_replace('.', '', $request->cost),
+            'sell'              => str_replace('.', '', $request->sell),
+            'qty'               => str_replace('.', '', $request->qty),
+            'cost_val'          => str_replace('.', '', $request->cost_val),
+            'sell_val'          => str_replace('.','', $request->sell_val),
+            'vat'               => str_replace('.', '', $request->vat),
+            'subtotal'          => str_replace('.','', $request->total),
             'notes'             => $request->note,
             'created_by'        => $user,
             'created_on'        => $tanggal
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+        $return_data = $this->hitung_profit($request->quote);
+
+        header('Content-Type: application/json');
+        echo json_encode($return_data);
+    }
+
+    function hitung_profit($quote){
+        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$quote."'");
 
         $result = array();
         foreach ($data as $key)
@@ -1119,7 +1060,7 @@ class QuotationController extends Controller
         $sellV = $totalSell;
         
         #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
+        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$quote."'");
         if(count($detail) > 1){
             foreach($data as $shipping){
                 $totalCost  = $shipping->cost_val + $costV;
@@ -1170,9 +1111,7 @@ class QuotationController extends Controller
                 }
             $return_data = 'sukses';
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($return_data);
+        return $return_data;
     }
 
     public function quote_loadDetail(Request $request)
@@ -1240,58 +1179,7 @@ class QuotationController extends Controller
         
         DB::table('t_quote_dtl')->where('id', $request->id)->delete();
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        $result = array();
-        foreach ($data as $key)
-        {
-            $result = array_merge($result, $key);
-        }
-
-        $detail = $result;
-
-        $totalCost = 0;
-        $totalSell = 0;
-        foreach($detail as $row)
-        {   
-            $totalCost += $row->cost_val;
-            $totalSell += $row->sell_val;
-        }
-
-        $costV = $totalCost;
-        $sellV = $totalSell;
-        
-        #Insert And Delete Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        foreach($data as $shipping){
-            $totalCost  = $shipping->cost_val + $costV;
-            $totalSell  = $shipping->sell_val + $sellV;
-            $profit     = $totalSell - $totalCost;
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-
-            if(count($detail) < 1){
-                DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->delete();
-            }else{
-                try {
-                    DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
-                    ->update([
-                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                        'total_cost'            => $totalCost,
-                        'total_sell'            => $totalSell,
-                        'total_profit'          => $profit,
-                        'profit_pct'            => ($profit*100)/$totalSell,
-                        'created_by'            => $user,
-                        'created_on'            => $tanggal
-                    ]);
-                    $return_data = 'sukses';
-                } catch (\Exception $e) {
-                    $return_data = $e->getMessage();
-                }
-            }
-                
-        }
-            
-        $return_data = 'sukses';
+        $return_data = $this->hitung_profit($request->quote);
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
@@ -1304,58 +1192,7 @@ class QuotationController extends Controller
             DB::table('t_quote_dtl')->where('id', $id)->delete();
         }
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        $result = array();
-        foreach ($data as $key)
-        {
-            $result = array_merge($result, $key);
-        }
-
-        $detail = $result;
-
-        $totalCost = 0;
-        $totalSell = 0;
-        foreach($detail as $row)
-        {   
-            $totalCost += $row->cost_val;
-            $totalSell += $row->sell_val;
-        }
-
-        $costV = $totalCost;
-        $sellV = $totalSell;
-        
-        #Insert And Delete Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        foreach($data as $shipping){
-            $totalCost  = $shipping->cost_val + $costV;
-            $totalSell  = $shipping->sell_val + $sellV;
-            $profit     = $totalSell - $totalCost;
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-
-            if(count($detail) < 1){
-                DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)->delete();
-            }else{
-                try {
-                    DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
-                    ->update([
-                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                        'total_cost'            => $totalCost,
-                        'total_sell'            => $totalSell,
-                        'total_profit'          => $profit,
-                        'profit_pct'            => ($profit*100)/$totalSell,
-                        'created_by'            => $user,
-                        'created_on'            => $tanggal
-                    ]);
-                    $return_data = 'sukses';
-                } catch (\Exception $e) {
-                    $return_data = $e->getMessage();
-                }
-            }
-                
-        }
-            
-        $return_data = 'sukses';
+        $return_data = $this->hitung_profit($request->quote);
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
@@ -1383,64 +1220,18 @@ class QuotationController extends Controller
             'desc'              => $request->desc,
             'reimburse_flag'    => $r,
             't_mcurrency_id'    => $request->currency,
-            'rate'              => $request->rate,
-            'cost'              => $request->cost,
-            'sell'              => $request->sell,
-            'qty'               => $request->qty,
-            'cost_val'          => str_replace(',','', $request->cost_val),
-            'sell_val'          => str_replace(',','', $request->sell_val),
-            'vat'               => $request->vat,
-            'subtotal'          => str_replace(',','', $request->total),
+            'rate'              => str_replace('.', '', $request->rate),
+            'cost'              => str_replace('.', '', $request->cost),
+            'sell'              => str_replace('.', '', $request->sell),
+            'qty'               => str_replace('.', '', $request->qty),
+            'cost_val'          => str_replace('.', '', $request->cost_val),
+            'sell_val'          => str_replace('.','', $request->sell_val),
+            'vat'               => str_replace('.', '', $request->vat),
+            'subtotal'          => str_replace('.','', $request->total),
             'notes'             => $request->note,
         ]);
 
-        $data[] = DB::select("SELECT a.* FROM t_quote_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-
-        $result = array();
-        foreach ($data as $key)
-        {
-            $result = array_merge($result, $key);
-        }
-
-        $detail = $result;
-
-        $totalCost = 0;
-        $totalSell = 0;
-        foreach($detail as $row)
-        {   
-            $totalCost += $row->cost_val;
-            $totalSell += $row->sell_val;
-        }
-
-        $costV = $totalCost;
-        $sellV = $totalSell;
-        
-        #Insert Tabel t_quote_profit
-        $data = DB::select("SELECT a.* FROM t_quote_shipg_dtl a LEFT JOIN t_quote b ON a.t_quote_id = b.id WHERE b.id = '".$request->quote."'");
-        
-        foreach($data as $shipping){
-            $totalCost  = $shipping->cost_val + $costV;
-            $totalSell  = $shipping->sell_val + $sellV;
-            $profit     = $totalSell - $totalCost;
-            $user = Auth::user()->name;
-            $tanggal = Carbon::now();
-                try {
-                    DB::table('t_quote_profit')->where('t_quote_ship_dtl_id', $shipping->id)
-                    ->update([
-                        't_mcurrency_id'        => $shipping->t_mcurrency_id,
-                        'total_cost'            => $totalCost,
-                        'total_sell'            => $totalSell,
-                        'total_profit'          => $profit,
-                        'profit_pct'            => ($profit*100)/$totalSell,
-                        'created_by'            => $user,
-                        'created_on'            => $tanggal
-                    ]);
-                    $return_data = 'sukses';
-                } catch (\Exception $e) {
-                    $return_data = $e->getMessage();
-                }
-            }
-        $return_data = 'sukses';
+        $return_data = $this->hitung_profit($request->quote);
 
         header('Content-Type: application/json');
         echo json_encode($return_data);
@@ -1596,13 +1387,22 @@ class QuotationController extends Controller
                 'customer_id'           => $request->customer_add,
                 'activity'              => $request->activity,
                 't_mloaded_type_id'     => $request->t_mloaded_type_id,
+                't_mservice_type_id'    => $request->t_mservice_type_id,
                 't_mpic_id'             => $request->pic,
                 'shipment_by'           => $request->shipment,
                 'terms'                 => $request->terms,
                 'from_text'             => $request->from,
-                'from_id'               => $request->form_id,
+                'from_id'               => $request->from_id,
+                'from_country'          => $request->from_country,
+                'from_city'             => $request->from_city,
+                'from_postal'           => $request->from_postal,
+                'from_address'          => $request->from_address,
                 'to_text'               => $request->to,
                 'to_id'                 => $request->to_id,
+                'to_country'            => $request->to_country,
+                'to_city'               => $request->to_city,
+                'to_postal'             => $request->to_postal,
+                'to_address'            => $request->to_address,
                 'commodity'             => $request->commodity,
                 'pieces'                => $request->pieces,
                 'weight'                => $request->weight,

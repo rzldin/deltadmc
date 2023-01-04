@@ -52,11 +52,12 @@
                                 <div class="col-md-12">
                                     <input type="hidden" name="add_booking" value="true">
                                     @if ($quote->activity == 'domestic')
-                                    {{\App\Http\Controllers\BookingController::header_domestic($quote)}}
-                                    @elseif($quote->activity == 'export')
-                                    {{\App\Http\Controllers\BookingController::header_export($quote)}}
-                                    @elseif($quote->activity == 'import')
-                                    {{\App\Http\Controllers\BookingController::header_import($quote)}}
+                                        {{\App\Http\Controllers\BookingController::header_domestic($quote)}}
+                                            {{-- @elseif($quote->activity == 'export') --}}
+                                    @else
+                                        {{\App\Http\Controllers\BookingController::header_export($quote)}}
+                                            {{-- @elseif($quote->activity == 'import') --}}
+                                            {{-- {{\App\Http\Controllers\BookingController::header_import($quote)}} --}}
                                     @endif
                                 </div>
                             </div>
@@ -880,11 +881,12 @@
         })
     }
 
-    function portOfLoading()
+    function portOfLoading(id='')
     {
         $.ajax({
             url: "{{ route('get.port_b') }}",
             type: "GET",
+            data: "id="+id,
             dataType: "html",
             success: function(result) {
                 var final = JSON.parse(result);
@@ -893,11 +895,12 @@
         })
     }
 
-    function portOfTransit()
+    function portOfTransit(id='')
     {
         $.ajax({
             url: "{{ route('get.port_b') }}",
             type: "GET",
+            data: "id="+id,
             dataType: "html",
             success: function(result) {
                 var final = JSON.parse(result);
@@ -1665,6 +1668,39 @@
         }
     });
 
+    var pol = $('#pol');
+    var pot = $('#pot');
+    var podisc = $('#podisc');
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        type: 'POST',
+        url: "{{route('quotation.get_where_port')}}",
+        data : {
+            quote_id: '{{$quote->id}}',
+        },
+    }).then(function (data) {
+        // create the option and append to Select2
+        var pol_option = new Option(data.pol.text, data.pol.id, true, true);
+        pol.append(pol_option).trigger('change');
+        pol.trigger({
+            type: 'select2:select',
+            params: {
+                data: data
+            }
+        });
+
+        var podisc_option = new Option(data.pod.text, data.pod.id, true, true);
+        podisc.append(podisc_option).trigger('change');
+        podisc.trigger({
+            type: 'select2:select',
+            params: {
+                data: data
+            }
+        });
+    });
+
     $(function() {
         $('.select-ajax-port').select2({
             theme: "bootstrap4",
@@ -1682,7 +1718,6 @@
               return query;
             },
             processResults: function(data, params) {
-                console.log(data);
                 return {results: data};
             },
             cache: true
@@ -1692,9 +1727,9 @@
         get_customer({{ $quote->customer_id }});
         get_pic({{ $quote->customer_id }})
         load_carrier({{ $quote->carrier_id }})
-        // portOfLoading();
+        // portOfLoading({{ $quote->from_id}});
         // portOfTransit();
-        // portOfDischarge();
+        // portOfDischarge({{ $quote->to_id}});
         get_shipper();
         get_consignee();
         get_notifyParty();

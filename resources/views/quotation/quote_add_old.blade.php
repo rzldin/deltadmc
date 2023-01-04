@@ -21,412 +21,275 @@
 <!-- Main content -->
 <section class="content">
     <div class="container-fluid">
-      <div class="row">
+        <div class="row">
         <!-- left column -->
-        <div class="col-md-12">
-            <form action="{{ route('quotation.quote_doAdd') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
+            <div class="col-md-12">
+          <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Form</h3>
+                </div>
+                @if(count($errors)>0)
+                    @foreach($errors->all() as $error)
+                    <div class="alert alert-danger" role="alert">
+                        {{ $error }}
+                    </div>  		
+                    @endforeach
+                @endif
+            <!-- /.card-header -->
+            <!-- form start -->
+            @if ($version == '')
+              <?php $v = 1; ?>
+            @else
+              <?php $v = $version + 1; ?>
+            @endif
+                <form action="{{ route('quotation.quote_doAdd') }}" class="eventInsForm" method="post" target="_self" name="formku" id="formku" action=""> 
                 {{ csrf_field() }}   
-                  <!-- general form elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Form</h3>
-                    </div>
-                    @if(count($errors)>0)
-                        @foreach($errors->all() as $error)
-                        <div class="alert alert-danger" role="alert">
-                            {{ $error }}
-                        </div>  		
-                        @endforeach
-                    @endif
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    @if ($version == '')
-                      <?php $v = 1; ?>
-                    @else
-                      <?php $v = $version + 1; ?>
-                    @endif
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Customer <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="get_pic(this.value)">
-                                            
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1 mt-1">
-                                        <a href="javscript:;" onclick="addCustomer()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                                    </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Quote Number <font color="red">*</font></label>
                                 </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>PIC <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
-                                            <option>-- Select Customer First --</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1 mt-1">
-                                        <a href="javascript:;" onclick="addPic()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Date <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                            <input type="text" name="date" id="datex" class="form-control datetimepicker-input" data-target="#reservationdate"/>
-                                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ...">
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>Quote Number <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="quote_no" id="quote_no" placeholder="Quote No ...">
-                                    </div>
+                            <div class="row mb-3 mt-3">
+                                <div class="col-md-4">
+                                    <label>Version</label>
                                 </div>
-                                <div class="row mb-3 mt-3">
-                                    <div class="col-md-4">
-                                        <label>Version</label>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $v }}" onkeyup="numberOnly(this);" readonly>
-                                    </div>
-                                    <div class="col-md-4 mt-2">
-                                        <div class="icheck-primary d-inline">
-                                            <input type="checkbox" id="final" name="final">
-                                            <label for="final">
-                                                FINAL
-                                            </label>
-                                        </div>
-                                    </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" name="version" id="version" placeholder="Version ..." value="{{ $v }}" onkeyup="numberOnly(this);" readonly>
                                 </div>
-                                <div class="row mb-3 mt-3">
-                                    <div class="col-md-4">
-                                        <label>Activity <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity">
-                                            <option value="" selected>-- Select Activity --</option>
-                                            <option value="export">EXPORT</option>
-                                            <option value="import">IMPORT</option>
-                                            <option value="domestic">DOMESTIC</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-primary">
-                            <p>Shipment</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Shipment By <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;" onchange="processData(this.value)">
-                                            <option selected value="">-- Select Shipment --</option>
-                                            <option value="SEA">SEA</option>
-                                            <option value="AIR">AIR</option>
-                                            <option value="LAND">LAND</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Shipment Type <font color="red">*</font></label>
-                                    </div>
-                                    <div class="col-md-4" style="padding: 10px">
-                                        @foreach ($loaded as $l)
-                                        <div class="icheck-primary d-inline">
-                                            <input type="radio" class="loaded t_mloaded_type_id" id="loaded_{{ $l->id }}" name="t_mloaded_type_id" value="{{ $l->id }}">
-                                            <label for="loaded_{{ $l->id }}">
-                                                {{ $l->loaded_type }}
-                                            </label>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="row mb-3 show_service" style="display: none;">
-                            <div class="col-md-2">
-                                <label>Shipment Type <font color="red">*</font></label>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="btn-group" data-toggle="buttons">
-                                    @foreach ($service as $l)
-                                        <label class="btn btn-default mr-3">
-                                            <input type="radio" name="t_mservice_type_id" id="service_{{ $l->id }}" autocomplete="off" value="{{ $l->id }}" onchange="show_service(this.value)"> {{ $l->name }}
+                                <div class="col-md-4 mt-2">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="final" name="final">
+                                        <label for="final">
+                                            FINAL
                                         </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label>Date <font color="red">*</font></label>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                        <input type="text" name="date" id="datex" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label>Customer <font color="red">*</font></label>
+                                </div>
+                                <div class="col-md-7">
+                                    <select class="form-control select2bs44" style="width: 100%;" name="customer_add" id="customer_add" onchange="get_pic(this.value)">
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-md-1 mt-1">
+                                    <a href="javscript:;" onclick="addCustomer()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label>Activity <font color="red">*</font></label>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-control select2bs44" style="width: 100%;margin-bottom:5px;" name="activity" id="activity">
+                                        <option value="" selected>-- Select Activity --</option>
+                                        <option value="export">EXPORT</option>
+                                        <option value="import">IMPORT</option>
+                                        <option value="domestic">DOMESTIC</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4" style="padding: 10px">
+                                    @foreach ($loaded as $l)
+                                    <div class="icheck-primary d-inline">
+                                        <input type="radio" class="loaded" id="loaded_{{ $l->id }}" name="t_mloaded_type_id" value="{{ $l->id }}">
+                                        <label for="loaded_{{ $l->id }}">
+                                            {{ $l->loaded_type }}
+                                        </label>
+                                    </div>
                                     @endforeach
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card-body div_after" style="display: none;">
-                        <div class="card-primary">
-                            <p>Shipment Details</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 show_port_from" style="display: none;">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>From Country</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" name="from_country" id="from_country" style="width: 100%;">
-                                            <option selected>-- Select From Country --</option>
-                                            @foreach ($list_country as $i)
-                                                <option value="{{ $i->id }}">{{ $i->country_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>From Port</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ...">
-                                        <datalist id="fromx">
-                                        </datalist>
-                                        <input type="hidden" name="from_id" id="from_id">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="row mb-3 show_port_from" style="display: none;">
-                                    <div class="col-md-4">
-                                        <label>From City</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="from_city" id="from_city" placeholder="From City ...">
-                                    </div>
-                                </div>
-                                <div class="row mb-3 show_door_from" style="display: none;">
-                                    <div class="col-md-4">
-                                        <label>Postal Code</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="from_postal" id="from_postal" placeholder="Postal Code ...">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb-5 show_door_from" style="display: none;">
-                            <div class="col-md-2">
-                                <label>Address</label>
-                            </div>
-                            <div class="col-md-10">
-                                <textarea class="form-control" name="from_address" id="from_address"></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 show_port_to" style="display: none;">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>To Country</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" name="to_country" id="to_country" style="width: 100%;">
-                                            <option selected>-- Select to Country --</option>
-                                            @foreach ($list_country as $i)
-                                                <option value="{{ $i->id }}">{{ $i->country_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>To Port</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="to ...">
-                                        <datalist id="tox">
-                                        </datalist>
-                                        <input type="hidden" name="to_id" id="to_id">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="row mb-3 show_port_to" style="display: none;">
-                                    <div class="col-md-4">
-                                        <label>To City</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="to_city" id="to_city" placeholder="to City ...">
-                                    </div>
-                                </div>
-                                <div class="row mb-3 show_door_to" style="display: none;">
-                                    <div class="col-md-4">
-                                        <label>Postal Code</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="to_postal" id="to_postal" placeholder="Postal Code ...">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row show_door_to" style="display: none;">
-                            <div class="col-md-2">
-                                <label>Address</label>
-                            </div>
-                            <div class="col-md-10">
-                                <textarea class="form-control" name="to_address" id="to_address"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body div_after" style="display: none;">
-                        <div class="card-primary">
-                            <p>Shipment Details</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Terms</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <select class="form-control select2bs44" name="terms" id="terms" style="width: 100%;">
-                                            <option selected>-- Select Incoterms --</option>
-                                            @foreach ($inco as $i)
-                                            <option value="{{ $i->id }}">{{ $i->incoterns_code }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Commodity</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ...">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Pieces</label>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="pieces" id="pieces" onkeyup="numberOnly(this);" placeholder="Pieces ...">
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Weight</label>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" name="weight" id="weight" onkeyup="numberOnly(this);" placeholder="Weight ...">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control select2bs44" name="uom_weight" id="uom_weight" style="width: 100%;">
-                                            <option selected>-- Select UOM --</option>
-                                        @foreach ($uom as $u)
-                                            <option value="{{ $u->id }}">{{ $u->uom_code }}</option>
-                                        @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>Volume</label>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" name="volume" id="volume" onkeyup="numberOnly(this);" placeholder="Volume ...">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control select2bs44" name="uom_volume" id="uom_volume" style="width: 100%;">
-                                            <option selected>-- Select UOM --</option>
-                                        @foreach ($uom as $u)
-                                            <option value="{{ $u->id }}">{{ $u->uom_code }}</option>
-                                        @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
                             <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="hazard">
-                                        <label for="customCheckbox1" class="custom-control-label">Is Hazardous</label>
-                                    </div>
+                                <div class="col-md-4">
+                                    <label>From</label>
                                 </div>
-                                <div class="col-md-10">
-                                    <input type="text" class="form-control" name="hazard_txt" placeholder="Material Information .....">
+                                <div class="col-md-8">
+                                    <input type="text" list="fromx" class="form-control" name="from" id="from" placeholder="From ...">
+                                    <datalist id="fromx">
+                                    </datalist>
+                                    <input type="hidden" name="from_id" id="from_id">
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-md-2">
-                                    <label for="">Additional Information</label>
+                                <div class="col-md-4">
+                                    <label>To</label>
                                 </div>
-                                <div class="col-md 10">
-                                    <textarea class="form-control" rows="5" name="additional" placeholder="Additional Information ..."></textarea>
-                                </div>
-                            </div>
-                            <div class="row mt-3">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-3">
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="delivery">
-                                        <label for="customCheckbox2" class="custom-control-label">Need Pickup/ Delivery</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="custom">
-                                        <label for="customCheckbox3" class="custom-control-label">Need Custom Clearance</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="fumigation">
-                                        <label for="customCheckbox4" class="custom-control-label">Fumigation Required</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="goods">
-                                        <label for="customCheckbox5" class="custom-control-label">Goods are Stackable</label>
-                                    </div>
+                                <div class="col-md-8">
+                                    <input type="text" list="tox" class="form-control" name="to" id="to" placeholder="To ...">
+                                    <datalist id="tox">
+                                    </datalist>
+                                    <input type="hidden" name="to_id" id="to_id">
                                 </div>
                             </div>
-                            
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>PIC <font color="red">*</font></label>
+                            </div>
+                            <div class="col-md-7">
+                                <select class="form-control select2bs44" name="pic" id="pic" style="width: 100%;">
+                                    <option>-- Select Customer First --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 mt-1">
+                                <a href="javascript:;" onclick="addPic()" class="btn btn-success btn-sm"><i class="fa fa-plus"></i></a>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Shipment By <font color="red">*</font></label>
+                            </div>
+                            <div class="col-md-8">
+                                <select class="form-control select2bs44" name="shipment" id="shipment" style="width: 100%;" onchange="get_fromto(this.value)">
+                                    <option selected>-- Select Shipment --</option>
+                                    <option value="SEA">SEA</option>
+                                    <option value="AIR">AIR</option>
+                                    <option value="LAND">LAND</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Terms</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select class="form-control select2bs44" name="terms" id="terms" style="width: 100%;">
+                                    <option selected>-- Select Incoterms --</option>
+                                    @foreach ($inco as $i)
+                                    <option value="{{ $i->id }}">{{ $i->incoterns_code }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Commodity</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="commodity" id="commodity" placeholder="Commodity ...">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Pieces</label>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="pieces" id="pieces" onkeyup="numberOnly(this);" placeholder="Pieces ...">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Weight</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="weight" id="weight" onkeyup="numberOnly(this);" placeholder="Weight ...">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control select2bs44" name="uom_weight" id="uom_weight" style="width: 100%;">
+                                    <option selected>-- Select UOM --</option>
+                                @foreach ($uom as $u)
+                                    <option value="{{ $u->id }}">{{ $u->uom_code }}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label>Volume</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" name="volume" id="volume" onkeyup="numberOnly(this);" placeholder="Volume ...">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control select2bs44" name="uom_volume" id="uom_volume" style="width: 100%;">
+                                    <option selected>-- Select UOM --</option>
+                                @foreach ($uom as $u)
+                                    <option value="{{ $u->id }}">{{ $u->uom_code }}</option>
+                                @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    
+                    <div class="col-md-12">
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox1" name="hazard">
+                                    <label for="customCheckbox1" class="custom-control-label">Is Hazardous</label>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" name="hazard_txt" placeholder="Material Information .....">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <label for="">Additional Information</label>
+                            </div>
+                            <div class="col-md 10">
+                                <textarea class="form-control" rows="5" name="additional" placeholder="Additional Information ..."></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox2" name="delivery">
+                                    <label for="customCheckbox2" class="custom-control-label">Need Pickup/ Delivery</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox3" name="custom">
+                                    <label for="customCheckbox3" class="custom-control-label">Need Custom Clearance</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox4" name="fumigation">
+                                    <label for="customCheckbox4" class="custom-control-label">Fumigation Required</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" type="checkbox" id="customCheckbox5" name="goods">
+                                    <label for="customCheckbox5" class="custom-control-label">Goods are Stackable</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                    <button type="button" class="btn btn-primary float-right" id="saveData"><i class="fa fa-paper-plane"></i> Submit</button>
-                </div>
+                
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="button" class="btn btn-primary float-right" id="saveData"><i class="fa fa-paper-plane"></i> Submit</button>
+              </div>
             </form>
           </div>
           <!-- /.card -->
@@ -935,66 +798,21 @@
             }  
     }
 
-    function processData(val)
-    {
-        if(val!= ''){
-            if(val=='SEA'){
-                $('#loaded_1').prop('disabled', false);
-                $('.t_mloaded_type_id').prop('checked', false);
-            }else{
-                $('#loaded_1').prop('disabled', true);
-                $('#loaded_2').prop('checked', true);
-            }
-            $('.show_service').show();
-            get_fromto(val);
-        }else{
-            $('.show_service').hide();
-        }
-    }
-
-    function show_service(val)
-    {
-        if(val!= ''){
-            $('.div_after').show();
-            $('.show_port_from').hide();
-            $('.show_door_from').hide();
-            $('.show_port_to').hide();
-            $('.show_door_to').hide();
-            if(val==1){//port to port
-                $('.show_port_from').show();
-                $('.show_port_to').show();
-            }else if(val==2){//Port to Door
-                $('.show_port_from').show();
-                $('.show_port_to').show();
-                $('.show_door_to').show();
-            }else if(val==3){//door to port
-                $('.show_port_from').show();
-                $('.show_door_from').show();
-                $('.show_port_to').show();
-            }else if(val==4){//door to door
-                $('.show_port_from').show();
-                $('.show_door_from').show();
-                $('.show_port_to').show();
-                $('.show_door_to').show();
-            }
-        }else{
-            $('.div_after').hide();
-        }
-    }
-
     function get_fromto(val)
     {
-        $.ajax({
-            url: "{{ route('get.port') }}",
-            type: "POST",
-            data: "type="+val,
-            dataType: "html",
-            success: function(result) {
-                var port = JSON.parse(result);
-                $("#fromx").html(port);
-                $("#tox").html(port);
-            }
-        });
+        if(val!= ''){
+            $.ajax({
+                url: "{{ route('get.port') }}",
+                type: "POST",
+                data: "type="+val,
+                dataType: "html",
+                success: function(result) {
+                    var port = JSON.parse(result);
+                    $("#fromx").html(port);
+                    $("#tox").html(port);
+                }
+            });
+        }
     }
 
     $("#saveData").click(function(){
